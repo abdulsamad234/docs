@@ -1,33 +1,66 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "Introduction"
+description: "Push Lap Growth is an Affiliate Marketing Software and Network that lets you easily Track, Manage and Partner with Affiliates. This is the Custom API documentation that details how to use the API to track payments and attribute proper commissions."
 ---
 
+<img
+  className="block"
+  src="/images/manage-affiliates-1.jpg"
+  style={{ borderRadius: "10px" }}
+  alt="Hero Dark"
+/>
 <Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
+  The API is a premium feature that's only available to users who have an active
+  Business Plan. [See Pricing Page](https://pushlapgrowth.com/pricing)
 </Note>
 
 ## Welcome
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+To be able to use this API, you need to have created your Affiliate Program and entered all necessary details.
 
 <Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
+  title="Create Affiliate Program"
+  icon="computer"
+  href="https://pushlapgrowth.com/dashboard"
 >
-  View the OpenAPI specification file
+  Create your Affiliate Program and integrate the tracking code to your website.
 </Card>
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All API endpoints are authenticated using Bearer tokens, this requires you to have completed creating your Affiliate Program. Here's how you create an Auth Token:
+
+Step 1. Click on `API Keys` on your dashboard sidebar:
+
+<img
+  className="block"
+  src="/images/step-1.png"
+  style={{ borderRadius: "10px" }}
+  alt="Hero Dark"
+/>
+
+Step 2. Click on `Generate New API Key +`:
+
+<img
+  className="block"
+  src="/images/step-2.png"
+  style={{ borderRadius: "10px" }}
+  alt="Hero Dark"
+/>
+
+Step 3. Click the copy icon to copy your Auth Token:
+
+<img
+  className="block"
+  src="/images/step-3.png"
+  style={{ borderRadius: "10px" }}
+  alt="Hero Dark"
+/>
+
+Step 4. Add your Auth Token to your API requests:
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+{
+  "Authorization": "Bearer <YOUR_TOKEN>"
+}
 ```

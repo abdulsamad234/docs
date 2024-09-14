@@ -1,16 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
+    "title": "Push Lap Growth API",
+    "description": "API for managing affiliates, referrals, and sales for SaaS businesses",
     "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://www.pushlapgrowth.com/api/v1"
     }
   ],
   "security": [
@@ -19,29 +16,39 @@
     }
   ],
   "paths": {
-    "/plants": {
+    "/affiliates": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
+        "summary": "Get all affiliates or by ID/email",
+        "description": "Returns an Affiliate By ID or Email. If none is specified, all Affiliates from the Affiliate Program are returned.",
         "parameters": [
           {
-            "name": "limit",
+            "name": "id",
             "in": "query",
-            "description": "The maximum number of results to return",
+            "description": "The ID of the affiliate to retrieve",
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "The email of the affiliate to retrieve",
+            "schema": {
+              "type": "string",
+              "format": "email"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "A list of affiliates or a single affiliate",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Plant"
+                    "$ref": "#/components/schemas/Affiliate"
                   }
                 }
               }
@@ -60,13 +67,14 @@
         }
       },
       "post": {
-        "description": "Creates a new plant in the store",
+        "summary": "Create a new affiliate",
+        "description": "Creates a new affiliate on your Afffiliate Program.",
         "requestBody": {
-          "description": "Plant to add to the store",
+          "description": "Affiliate details",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/NewAffiliate"
               }
             }
           },
@@ -74,17 +82,77 @@
         },
         "responses": {
           "200": {
-            "description": "plant response",
+            "description": "Affiliate created successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
+                  "$ref": "#/components/schemas/Affiliate"
                 }
               }
             }
           },
           "400": {
-            "description": "unexpected error",
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update an Affiliate by ID",
+        "description": "Updates an Affiliate based on their ID",
+        "requestBody": {
+          "description": "Affiliate update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AffiliateUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Affiliate updated successfully"
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an Affiliate",
+        "description": "Deletes an Affiliate based on the ID provided",
+        "requestBody": {
+          "description": "Affiliate update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AffiliateDelete"
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "204": {
+            "description": "Sale deleted successfully"
+          },
+          "400": {
+            "description": "Unexpected error",
             "content": {
               "application/json": {
                 "schema": {
@@ -96,28 +164,333 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/referrals": {
+      "get": {
+        "summary": "Get all referrals or by ID/email/externalId",
+        "description": "Returns a list of referrals based on the affiliate program, filtered by optional referral ID, affiliate ID, affiliate email, or external ID",
         "parameters": [
           {
             "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
+            "in": "query",
+            "description": "The ID of the referral to retrieve",
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "affiliateId",
+            "in": "query",
+            "description": "The affiliate ID associated with the referral",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "affiliateEmail",
+            "in": "query",
+            "description": "The email of the affiliate associated with the referral",
+            "schema": {
+              "type": "string",
+              "format": "email"
+            }
+          },
+          {
+            "name": "externalId",
+            "in": "query",
+            "description": "The external ID of the referred user",
+            "schema": {
+              "type": "string"
             }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
+          "200": {
+            "description": "A list of referrals or a single referral",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Referral"
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "unexpected error",
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new referral",
+        "description": "Creates a new referral under the specified affiliate program. Note: an Affiliate is required to create a Referral.",
+        "requestBody": {
+          "description": "Referral details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewReferral"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Referral created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Referral"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a referral by ID",
+        "description": "Updates a referral based on their ID",
+        "requestBody": {
+          "description": "Referral update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReferralUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Referral updated successfully"
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a referral",
+        "description": "Deletes a referral based on the ID provided",
+        "requestBody": {
+          "description": "Referral update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReferralDelete"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Referral deleted successfully"
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales": {
+      "get": {
+        "summary": "Get all sales or by ID, affiliate, referral, or external ID",
+        "description": "Returns a list of sales based on the affiliate program, filtered by optional sale ID, affiliate ID, affiliate email, referral ID, or external ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The ID of the sale to retrieve",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "affiliateId",
+            "in": "query",
+            "description": "The affiliate ID associated with the sale",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "affiliateEmail",
+            "in": "query",
+            "description": "The email of the affiliate associated with the sale",
+            "schema": {
+              "type": "string",
+              "format": "email"
+            }
+          },
+          {
+            "name": "referralId",
+            "in": "query",
+            "description": "The referral ID associated with the sale",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "saleExternalId",
+            "in": "query",
+            "description": "The external ID of the sale",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of sales or a single sale",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Sale"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new sale",
+        "description": "Creates a new sale under the specified affiliate program. Note: a referral and affiliate are required to create a Sale.",
+        "requestBody": {
+          "description": "Sale details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewSale"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Sale created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sale"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a sale by ID",
+        "description": "Updates a sale based on their ID",
+        "requestBody": {
+          "description": "Sale update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaleUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Sale updated successfully"
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a sale",
+        "description": "Deletes a sale based on the ID provided",
+        "requestBody": {
+          "description": "Sale delete details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaleDelete"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Sale deleted successfully"
+          },
+          "400": {
+            "description": "Unexpected error",
             "content": {
               "application/json": {
                 "schema": {
@@ -132,55 +505,421 @@
   },
   "components": {
     "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
+      "Affiliate": {
         "type": "object",
         "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate ID"
           },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
+          "firstName": {
+            "type": "string",
+            "description": "First name of the affiliate"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name of the affiliate"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Full name of the affiliate (optional)"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email of the affiliate"
+          },
+          "password": {
+            "type": "string",
+            "nullable": true,
+            "description": "Hashed Password of the affiliate (optional)",
+            "deprecated": true
+          },
+          "emailVerified": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Flag to indicate if the email has been verified"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true,
+            "description": "Profile image URL of the affiliate"
+          },
+          "detailsComplete": {
+            "type": "boolean",
+            "description": "Flag to indicate if affiliate details are complete"
+          },
+          "programId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The program ID that the affiliate is associated with"
+          },
+          "payoutEmail": {
+            "type": "string",
+            "format": "email",
+            "description": "Email to be used for payouts"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "description": "Payment method for the affiliate (e.g., WISE)"
+          },
+          "commissionRate": {
+            "type": "number",
+            "format": "float",
+            "description": "Commission rate for the affiliate (0 - 100)"
+          },
+          "link": {
+            "type": "string",
+            "description": "Affiliate's custom referral link"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the affiliate (active/inactive)"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the affiliate was created"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the affiliate was last updated"
+          },
+          "numberOfReferredUsers": {
+            "type": "integer",
+            "description": "Number of users referred by the affiliate"
+          },
+          "numberOfClicks": {
+            "type": "integer",
+            "description": "Number of clicks generated by the affiliate"
+          },
+          "totalCommissionEarned": {
+            "type": "number",
+            "format": "float",
+            "description": "Total commission earned by the affiliate"
           }
         }
       },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
+      "NewAffiliate": {
+        "type": "object",
+        "required": ["firstName", "lastName", "email"],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "First name of the affiliate"
           },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
+          "lastName": {
+            "type": "string",
+            "description": "Last name of the affiliate"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email of the affiliate"
+          },
+          "commissionRate": {
+            "type": "number",
+            "format": "float",
+            "description": "Commission rate for the affiliate"
           }
-        ]
+        }
+      },
+      "AffiliateUpdate": {
+        "type": "object",
+        "required": ["affiliateId"],
+        "properties": {
+          "affiliateId": {
+            "type": "string",
+            "description": "The ID of the affiliate"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First name of the affiliate"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name of the affiliate"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email of the affiliate"
+          },
+          "commissionRate": {
+            "type": "number",
+            "format": "float",
+            "description": "Commission rate for the affiliate"
+          },
+          "affiliateStatus": {
+            "type": "string",
+            "description": "Status of the affiliate (active/inactive)"
+          }
+        }
+      },
+      "AffiliateDelete": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the affiliate"
+          }
+        }
+      },
+      "Referral": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The referral ID"
+          },
+          "affiliateId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate ID associated with the referral"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the referred user"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email of the referred user"
+          },
+          "referredUserExternalId": {
+            "type": "string",
+            "description": "The external ID of the referred user. This will be an ID you actively maintain that identifies the user on your server (for example, the User ID in your database, or Stripe Customer ID)"
+          },
+          "plan": {
+            "type": "string",
+            "description": "The plan associated with the referred user"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the referral (active/inactive)"
+          }
+        }
+      },
+      "NewReferral": {
+        "type": "object",
+        "required": ["affiliateId", "name", "email", "referredUserExternalId"],
+        "properties": {
+          "affiliateId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate ID associated with the referral"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the referred user"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email of the referred user"
+          },
+          "referredUserExternalId": {
+            "type": "string",
+            "description": "The external ID of the referred user"
+          },
+          "plan": {
+            "type": "string",
+            "description": "The plan associated with the referred user"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the referral (active/inactive)"
+          }
+        }
+      },
+      "ReferralUpdate": {
+        "type": "object",
+        "required": ["referralId"],
+        "properties": {
+          "referralId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The referral ID to update"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the referred user"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email of the referred user"
+          },
+          "referredUserExternalId": {
+            "type": "string",
+            "description": "The external ID of the referred user. This will be an ID you actively maintain that identifies the user on your server (for example, the User ID in your database, or Stripe Customer ID)"
+          },
+          "plan": {
+            "type": "string",
+            "description": "The plan associated with the referred user"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the referral (active/inactive)"
+          }
+        }
+      },
+
+      "ReferralDelete": {
+        "type": "object",
+        "required": ["referralId"],
+        "properties": {
+          "referralId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The referral ID to delete"
+          }
+        }
+      },
+      "Sale": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The sale ID"
+          },
+          "affiliateId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate ID associated with the sale"
+          },
+          "referralId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The referral ID associated with the sale"
+          },
+          "externalId": {
+            "type": "string",
+            "description": "The external ID of the sale"
+          },
+          "externalInvoiceId": {
+            "type": "string",
+            "description": "The external invoice ID of the sale"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the sale"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email associated with the sale"
+          },
+          "totalEarned": {
+            "type": "number",
+            "format": "float",
+            "description": "Total amount earned from the sale"
+          },
+          "commissionRate": {
+            "type": "number",
+            "format": "float",
+            "description": "Commission rate for the sale"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp of the sale"
+          }
+        }
+      },
+      "NewSale": {
+        "type": "object",
+        "required": ["referralId", "totalEarned", "name", "email"],
+        "properties": {
+          "referralId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The referral ID associated with the sale"
+          },
+          "externalId": {
+            "type": "string",
+            "description": "The external ID of the sale"
+          },
+          "externalInvoiceId": {
+            "type": "string",
+            "description": "The external invoice ID of the sale"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the sale"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email associated with the sale"
+          },
+          "totalEarned": {
+            "type": "number",
+            "format": "float",
+            "description": "Total amount earned from the sale"
+          },
+          "commissionRate": {
+            "type": "number",
+            "format": "float",
+            "description": "Commission rate for the sale"
+          }
+        }
+      },
+      "SaleUpdate": {
+        "type": "object",
+        "required": ["saleId"],
+        "properties": {
+          "saleId": {
+            "type": "integer",
+            "description": "The sale ID to delete"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the sale"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email of the customer associated with the sale"
+          },
+          "totalEarned": {
+            "type": "number",
+            "format": "float",
+            "description": "Total amount earned from the sale"
+          },
+          "commissionRate": {
+            "type": "number",
+            "format": "float",
+            "description": "Commission rate for the sale"
+          }
+        }
+      },
+      "SaleDelete": {
+        "type": "object",
+        "required": ["saleId"],
+        "properties": {
+          "saleId": {
+            "type": "integer",
+            "description": "The sale ID to delete"
+          }
+        }
       },
       "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
         "type": "object",
         "properties": {
           "error": {
             "type": "integer",
-            "format": "int32"
+            "description": "Error code"
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "description": "Error message"
           }
         }
       }
