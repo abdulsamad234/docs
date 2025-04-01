@@ -624,6 +624,10 @@
             "type": "number",
             "format": "float",
             "description": "Commission rate for the affiliate"
+          },
+          "affiliateLink": {
+            "type": "string",
+            "description": "Custom affiliate link for the affiliate"
           }
         }
       },
@@ -656,6 +660,10 @@
           "affiliateStatus": {
             "type": "string",
             "description": "Status of the affiliate (active/inactive)"
+          },
+          "affiliateLink": {
+            "type": "string",
+            "description": "Custom affiliate link for the affiliate"
           }
         }
       },
