@@ -1,0 +1,142 @@
+---
+title: "Zapier OAuth Integration"
+description: "Complete guide to integrating with Push Lap Growth via Zapier using OAuth 2.0 authentication flow"
+---
+
+# Zapier OAuth Integration
+
+Push Lap Growth provides OAuth 2.0 authentication for Zapier integrations, allowing users to securely connect their affiliate programs to Zapier workflows.
+
+## Overview
+
+The OAuth flow enables Zapier to authenticate with Push Lap Growth and perform actions on behalf of users within their selected affiliate programs. This integration allows for automated workflows based on affiliate events such as new sales, referrals, and affiliate sign-ups.
+
+## Authentication Flow
+
+### Step 1: Authorization Request
+
+Users are redirected to the Push Lap Growth authorization endpoint to begin the OAuth flow:
+
+```
+https://pushlapgrowth.com/connect/zapier/choose-affiliate-program
+```
+
+**Query Parameters:**
+
+- `state` (required) - A unique state parameter provided by Zapier for security
+- `redirect_uri` (required) - The callback URL where users will be redirected after authorization
+
+### Step 2: User Authorization
+
+On the authorization page, users will:
+
+1. Log in to their Push Lap Growth account (if not already authenticated)
+2. Select which affiliate program they want to connect to Zapier
+3. Confirm the connection by clicking "Connect"
+
+The authorization page displays:
+
+- Available affiliate programs associated with the user's account
+- Program details including name, domain, and logo
+- A confirmation dialog explaining the permissions Zapier will receive
+
+### Step 3: Authorization Code Exchange
+
+After the user authorizes the connection, they are redirected back to Zapier with an authorization code:
+
+```
+{redirect_uri}?code={authorization_code}&state={state}
+```
+
+### Step 4: Access Token Request
+
+Zapier exchanges the authorization code for an access token by making a POST request to:
+
+```
+POST https://pushlapgrowth.com/api/zapier/token
+```
+
+**Request Headers:**
+
+```
+Content-Type: application/x-www-form-urlencoded
+```
+
+**Request Body:**
+
+```
+code={authorization_code}
+```
+
+**Response:**
+
+```json
+{
+  "access_token": "auth_token_value"
+}
+```
+
+## Token Management
+
+### Access Token
+
+- **Lifetime**: Access tokens do not expire
+- **Refresh**: No refresh token is provided or required
+- **Storage**: Zapier securely stores the access token for ongoing API requests
+
+### Token Usage
+
+All API requests to Push Lap Growth endpoints must include the access token in the Authorization header:
+
+```
+Authorization: Bearer {access_token}
+```
+
+## Security Considerations
+
+- The `state` parameter should be validated to prevent CSRF attacks
+- Access tokens should be stored securely by Zapier
+- Users can revoke access through their Push Lap Growth dashboard
+
+## Error Handling
+
+### Common Error Responses
+
+**Invalid Authorization Code:**
+
+```json
+{
+  "error": "Invalid code"
+}
+```
+
+**Missing Authorization Code:**
+
+```json
+{
+  "error": "Code is required"
+}
+```
+
+## Permissions
+
+Once connected, Zapier can:
+
+- Trigger actions based on affiliate program events (new sales, referrals, affiliates)
+- Perform actions within the connected affiliate program
+- Access affiliate, sales, and referral data for the connected program
+
+## Integration Example
+
+Here's a typical flow for a Zapier integration:
+
+1. User initiates connection in Zapier
+2. Zapier redirects to `https://pushlapgrowth.com/connect/zapier/choose-affiliate-program?state=abc123&redirect_uri=https://zapier.com/callback`
+3. User logs in and selects an affiliate program
+4. User is redirected to `https://zapier.com/callback?code=auth_code_xyz&state=abc123`
+5. Zapier exchanges the code for an access token
+6. Zapier can now make authenticated API requests to Push Lap Growth
+
+## Support
+
+For technical support with the Zapier OAuth integration, please contact our support team or refer to the main API documentation for endpoint details.
