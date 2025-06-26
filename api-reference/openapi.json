@@ -719,8 +719,7 @@
         "properties": {
           "affiliateId": {
             "type": "string",
-            "format": "uuid",
-            "description": "The affiliate ID associated with the referral"
+            "description": "The affiliate ID/Link associated with the referral"
           },
           "name": {
             "type": "string",
@@ -848,7 +847,7 @@
           "referralId": {
             "type": "string",
             "format": "uuid",
-            "description": "The referral ID associated with the sale"
+            "description": "The referral ID, or affiliate link or affiliate ID associated with the sale"
           },
           "externalId": {
             "type": "string",
