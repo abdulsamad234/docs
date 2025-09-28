@@ -79,6 +79,15 @@
         "api-reference/sales/delete",
         "api-reference/sales/update"
       ]
+    },
+    {
+      "group": "Affiliate Link Endpoints",
+      "pages": [
+        "api-reference/links/get",
+        "api-reference/links/create",
+        "api-reference/links/delete",
+        "api-reference/links/update"
+      ]
     }
   ],
   "footerSocials": {
