@@ -328,6 +328,223 @@
         }
       }
     },
+    "/links": {
+      "get": {
+        "summary": "Get all affiliate links or by ID/link/affiliate",
+        "description": "Returns a list of affiliate links based on the affiliate program, filtered by optional link ID, link string, affiliate ID, or affiliate email",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The ID of the affiliate link to retrieve",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "link",
+            "in": "query",
+            "description": "The link string of the affiliate link to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "affiliateId",
+            "in": "query",
+            "description": "The affiliate ID to get links for",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "affiliateEmail",
+            "in": "query",
+            "description": "The email of the affiliate to get links for",
+            "schema": {
+              "type": "string",
+              "format": "email"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of affiliate links or a single affiliate link",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AffiliateLink"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new affiliate link",
+        "description": "Creates a new affiliate link for the specified affiliate. Note: an Affiliate is required to create an Affiliate Link.",
+        "requestBody": {
+          "description": "Affiliate link details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewAffiliateLink"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Affiliate link created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AffiliateLink"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update an affiliate link by ID or link string",
+        "description": "Updates an affiliate link based on their ID or link string",
+        "requestBody": {
+          "description": "Affiliate link update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AffiliateLinkUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Affiliate link updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AffiliateLink"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Affiliate link not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an affiliate link",
+        "description": "Deletes an affiliate link based on the ID or link string provided",
+        "requestBody": {
+          "description": "Affiliate link delete details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AffiliateLinkDelete"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Affiliate link deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Success message"
+                    },
+                    "deletedLink": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "link": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Affiliate link not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sales": {
       "get": {
         "summary": "Get all sales or by ID, affiliate, referral, or external ID",
@@ -914,6 +1131,154 @@
           "saleId": {
             "type": "integer",
             "description": "The sale ID to delete"
+          }
+        }
+      },
+      "AffiliateLink": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate link ID"
+          },
+          "link": {
+            "type": "string",
+            "description": "The affiliate link string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the affiliate link was created"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the affiliate link was last updated"
+          },
+          "affiliate": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "The affiliate ID"
+              },
+              "name": {
+                "type": "string",
+                "description": "Full name of the affiliate"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "description": "Email of the affiliate"
+              }
+            }
+          },
+          "program": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "The program ID"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of the affiliate program"
+              },
+              "currency": {
+                "type": "string",
+                "description": "Currency used by the program"
+              }
+            }
+          },
+          "clicks": {
+            "type": "integer",
+            "description": "Number of clicks on this affiliate link"
+          },
+          "referrals": {
+            "type": "integer",
+            "description": "Number of referrals generated by this link"
+          },
+          "sales": {
+            "type": "integer",
+            "description": "Number of sales generated by this link"
+          },
+          "totalRevenue": {
+            "type": "number",
+            "format": "float",
+            "description": "Total revenue generated by this link"
+          },
+          "fullURLs": {
+            "type": "array",
+            "description": "Array of full URLs for this affiliate link",
+            "items": {
+              "type": "object",
+              "properties": {
+                "baseUrl": {
+                  "type": "string",
+                  "description": "The base URL"
+                },
+                "fullUrl": {
+                  "type": "string",
+                  "description": "The complete affiliate URL with parameters"
+                }
+              }
+            }
+          }
+        }
+      },
+      "NewAffiliateLink": {
+        "type": "object",
+        "required": ["link"],
+        "properties": {
+          "link": {
+            "type": "string",
+            "description": "The affiliate link string (letters, numbers, and hyphens only)"
+          },
+          "affiliateId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate ID (required if affiliateEmail not provided)"
+          },
+          "affiliateEmail": {
+            "type": "string",
+            "format": "email",
+            "description": "The affiliate email (required if affiliateId not provided)"
+          }
+        }
+      },
+      "AffiliateLinkUpdate": {
+        "type": "object",
+        "required": ["newLink"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate link ID (required if link not provided)"
+          },
+          "link": {
+            "type": "string",
+            "description": "The current affiliate link string (required if id not provided)"
+          },
+          "newLink": {
+            "type": "string",
+            "description": "The new affiliate link string (letters, numbers, and hyphens only)"
+          }
+        }
+      },
+      "AffiliateLinkDelete": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate link ID (required if link not provided)"
+          },
+          "link": {
+            "type": "string",
+            "description": "The affiliate link string (required if id not provided)"
           }
         }
       },
