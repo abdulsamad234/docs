@@ -88,6 +88,24 @@
         "api-reference/links/delete",
         "api-reference/links/update"
       ]
+    },
+    {
+      "group": "Coupon Endpoints",
+      "pages": [
+        "api-reference/coupons/get",
+        "api-reference/coupons/create",
+        "api-reference/coupons/delete",
+        "api-reference/coupons/update"
+      ]
+    },
+    {
+      "group": "Promotional Code Endpoints",
+      "pages": [
+        "api-reference/promotional-codes/get",
+        "api-reference/promotional-codes/create",
+        "api-reference/promotional-codes/delete",
+        "api-reference/promotional-codes/update"
+      ]
     }
   ],
   "footerSocials": {

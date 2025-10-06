@@ -545,6 +545,459 @@
         }
       }
     },
+    "/coupons": {
+      "get": {
+        "summary": "Get all coupons or by ID/externalId/name",
+        "description": "Returns coupons based on the affiliate program. Coupons define the discount structure (amount, type, duration) that promotional codes will use.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The ID of the coupon to retrieve",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "externalId",
+            "in": "query",
+            "description": "The external ID of the coupon (e.g., Stripe coupon ID)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "The name of the coupon to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of coupons or a single coupon",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Coupon"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Coupon"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new coupon",
+        "description": "Creates a new coupon definition that can be used to generate promotional codes. Coupons define the discount structure.",
+        "requestBody": {
+          "description": "Coupon details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewCoupon"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Coupon created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Coupon"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a coupon",
+        "description": "Updates an existing coupon. Changes will affect all promotional codes using this coupon.",
+        "requestBody": {
+          "description": "Coupon update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Coupon updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Coupon"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Coupon not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a coupon",
+        "description": "Deletes a coupon and all associated promotional codes. This action is permanent.",
+        "requestBody": {
+          "description": "Coupon delete details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponDelete"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Coupon deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "deletedCoupon": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Coupon not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/promotional-codes": {
+      "get": {
+        "summary": "Get all promotional codes or by ID/code/couponId/affiliateId",
+        "description": "Returns promotional codes based on the affiliate program. Promotional codes are the actual discount codes customers use at checkout.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The ID of the promotional code to retrieve",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "code",
+            "in": "query",
+            "description": "The promotional code string to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "externalId",
+            "in": "query",
+            "description": "The external ID (e.g., Stripe promotion code ID)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "couponId",
+            "in": "query",
+            "description": "Get all promotional codes for a specific coupon",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "affiliateId",
+            "in": "query",
+            "description": "Get all promotional codes for a specific affiliate",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "affiliateEmail",
+            "in": "query",
+            "description": "Get all promotional codes for an affiliate by email",
+            "schema": {
+              "type": "string",
+              "format": "email"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of promotional codes or a single promotional code",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/PromotionalCode"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PromotionalCode"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new promotional code",
+        "description": "Creates a new promotional code linked to a coupon. Supports both manual codes and auto-generated codes based on structure.",
+        "requestBody": {
+          "description": "Promotional code details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewPromotionalCode"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Promotional code created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PromotionalCode"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a promotional code",
+        "description": "Updates an existing promotional code's properties like activation status, expiration, and limits.",
+        "requestBody": {
+          "description": "Promotional code update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromotionalCodeUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Promotional code updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PromotionalCode"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Promotional code not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a promotional code",
+        "description": "Deletes a promotional code. This action is permanent.",
+        "requestBody": {
+          "description": "Promotional code delete details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromotionalCodeDelete"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Promotional code deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "deletedCode": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Promotional code not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sales": {
       "get": {
         "summary": "Get all sales or by ID, affiliate, referral, or external ID",
@@ -1292,6 +1745,552 @@
           "link": {
             "type": "string",
             "description": "The affiliate link string (required if id not provided)"
+          }
+        }
+      },
+      "Coupon": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The coupon ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the coupon"
+          },
+          "externalId": {
+            "type": "string",
+            "nullable": true,
+            "description": "External ID (e.g., Stripe coupon ID)"
+          },
+          "couponType": {
+            "type": "string",
+            "enum": ["PERCENTAGE", "FLAT"],
+            "description": "Type of discount - percentage or flat amount"
+          },
+          "percentOff": {
+            "type": "number",
+            "format": "float",
+            "nullable": true,
+            "description": "Percentage off (1-100) for percentage coupons"
+          },
+          "amountOff": {
+            "type": "number",
+            "format": "float",
+            "nullable": true,
+            "description": "Amount off for flat coupons"
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true,
+            "description": "Currency for flat amount coupons (e.g., USD, EUR)"
+          },
+          "duration": {
+            "type": "string",
+            "enum": ["once", "forever", "repeating"],
+            "description": "How long the discount applies"
+          },
+          "durationInMonths": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Number of months for repeating duration"
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Maximum number of times this coupon can be redeemed"
+          },
+          "limitToProducts": {
+            "type": "boolean",
+            "description": "Whether coupon is limited to specific products"
+          },
+          "productIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of product IDs this coupon applies to"
+          },
+          "valid": {
+            "type": "boolean",
+            "description": "Whether the coupon is currently valid"
+          },
+          "redeemBy": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Date by which the coupon must be redeemed"
+          },
+          "integrationType": {
+            "type": "string",
+            "nullable": true,
+            "description": "Integration type (e.g., stripe, custom)"
+          },
+          "affiliateProgramId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate program ID"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the coupon was created"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the coupon was last updated"
+          },
+          "promotionalCodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PromotionalCode"
+            },
+            "description": "Promotional codes associated with this coupon"
+          }
+        }
+      },
+      "NewCoupon": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the coupon"
+          },
+          "externalId": {
+            "type": "string",
+            "description": "External ID (e.g., Stripe coupon ID)"
+          },
+          "couponType": {
+            "type": "string",
+            "enum": ["PERCENTAGE", "FLAT"],
+            "description": "Type of discount - percentage or flat amount (default: PERCENTAGE)"
+          },
+          "percentOff": {
+            "type": "number",
+            "format": "float",
+            "description": "Percentage off (1-100) - required for percentage coupons"
+          },
+          "amountOff": {
+            "type": "number",
+            "format": "float",
+            "description": "Amount off - required for flat coupons"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency (e.g., USD, EUR) - required for flat coupons"
+          },
+          "duration": {
+            "type": "string",
+            "enum": ["once", "forever", "repeating"],
+            "description": "How long the discount applies (default: forever)"
+          },
+          "durationInMonths": {
+            "type": "integer",
+            "description": "Number of months - required for repeating duration"
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "description": "Maximum number of times this coupon can be redeemed"
+          },
+          "limitToProducts": {
+            "type": "boolean",
+            "description": "Whether coupon is limited to specific products (default: false)"
+          },
+          "productIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of product IDs this coupon applies to"
+          },
+          "valid": {
+            "type": "boolean",
+            "description": "Whether the coupon is currently valid (default: true)"
+          },
+          "redeemBy": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date by which the coupon must be redeemed"
+          },
+          "integrationType": {
+            "type": "string",
+            "description": "Integration type (e.g., stripe, custom)"
+          }
+        }
+      },
+      "CouponUpdate": {
+        "type": "object",
+        "required": ["couponId"],
+        "properties": {
+          "couponId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The coupon ID to update"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the coupon"
+          },
+          "couponType": {
+            "type": "string",
+            "enum": ["PERCENTAGE", "FLAT"],
+            "description": "Type of discount"
+          },
+          "percentOff": {
+            "type": "number",
+            "format": "float",
+            "description": "Percentage off (1-100)"
+          },
+          "amountOff": {
+            "type": "number",
+            "format": "float",
+            "description": "Amount off"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency"
+          },
+          "duration": {
+            "type": "string",
+            "enum": ["once", "forever", "repeating"],
+            "description": "How long the discount applies"
+          },
+          "durationInMonths": {
+            "type": "integer",
+            "description": "Number of months for repeating duration"
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "description": "Maximum redemptions"
+          },
+          "limitToProducts": {
+            "type": "boolean",
+            "description": "Limit to specific products"
+          },
+          "productIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Product IDs"
+          },
+          "valid": {
+            "type": "boolean",
+            "description": "Whether the coupon is valid"
+          },
+          "redeemBy": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Redeem by date"
+          }
+        }
+      },
+      "CouponDelete": {
+        "type": "object",
+        "required": ["couponId"],
+        "properties": {
+          "couponId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The coupon ID to delete"
+          }
+        }
+      },
+      "PromotionalCode": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The promotional code ID"
+          },
+          "code": {
+            "type": "string",
+            "description": "The actual promotional code string"
+          },
+          "couponId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The parent coupon ID"
+          },
+          "affiliateId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "The affiliate ID this code is assigned to"
+          },
+          "externalId": {
+            "type": "string",
+            "nullable": true,
+            "description": "External ID (e.g., Stripe promotion code ID)"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Whether the promotional code is active"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Expiration date for the code"
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Maximum number of times this code can be used"
+          },
+          "timesRedeemed": {
+            "type": "integer",
+            "description": "Number of times this code has been redeemed"
+          },
+          "firstTimeOrder": {
+            "type": "boolean",
+            "description": "Whether this code is limited to first-time orders"
+          },
+          "minimumAmount": {
+            "type": "number",
+            "format": "float",
+            "nullable": true,
+            "description": "Minimum purchase amount required"
+          },
+          "minimumAmountCurrency": {
+            "type": "string",
+            "nullable": true,
+            "description": "Currency for minimum amount"
+          },
+          "limitToCustomers": {
+            "type": "boolean",
+            "description": "Whether code is limited to specific customers"
+          },
+          "customerId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Specific customer ID this code is limited to"
+          },
+          "limitToAffiliate": {
+            "type": "boolean",
+            "description": "Whether only the affiliate can use this code"
+          },
+          "isAutoGenerated": {
+            "type": "boolean",
+            "description": "Whether this code was auto-generated"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the code was created"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the code was last updated"
+          },
+          "coupon": {
+            "$ref": "#/components/schemas/Coupon",
+            "description": "The parent coupon details"
+          },
+          "affiliate": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "firstName": {
+                "type": "string"
+              },
+              "lastName": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              }
+            },
+            "description": "Affiliate details"
+          }
+        }
+      },
+      "NewPromotionalCode": {
+        "type": "object",
+        "required": ["couponId"],
+        "properties": {
+          "couponId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The coupon ID this promotional code belongs to"
+          },
+          "code": {
+            "type": "string",
+            "description": "The promotional code string (required if not auto-generated)"
+          },
+          "affiliateId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate ID to assign this code to"
+          },
+          "affiliateEmail": {
+            "type": "string",
+            "format": "email",
+            "description": "The affiliate email (alternative to affiliateId)"
+          },
+          "externalId": {
+            "type": "string",
+            "description": "External ID (e.g., Stripe promotion code ID)"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Whether the code is active (default: true)"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration date"
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "description": "Maximum redemptions"
+          },
+          "firstTimeOrder": {
+            "type": "boolean",
+            "description": "Limit to first-time orders (default: false)"
+          },
+          "minimumAmount": {
+            "type": "number",
+            "format": "float",
+            "description": "Minimum purchase amount"
+          },
+          "minimumAmountCurrency": {
+            "type": "string",
+            "description": "Currency for minimum amount"
+          },
+          "limitToCustomers": {
+            "type": "boolean",
+            "description": "Limit to specific customers (default: false)"
+          },
+          "customerId": {
+            "type": "string",
+            "description": "Specific customer ID"
+          },
+          "limitToAffiliate": {
+            "type": "boolean",
+            "description": "Only affiliate can use (default: false)"
+          },
+          "isAutoGenerated": {
+            "type": "boolean",
+            "description": "Whether to auto-generate the code (default: false)"
+          },
+          "codeStructure": {
+            "type": "object",
+            "description": "Structure for auto-generated codes (required if isAutoGenerated is true)",
+            "properties": {
+              "firstName": {
+                "type": "boolean",
+                "description": "Include affiliate's first name"
+              },
+              "lastName": {
+                "type": "boolean",
+                "description": "Include affiliate's last name"
+              },
+              "email": {
+                "type": "boolean",
+                "description": "Include part of affiliate's email"
+              },
+              "discountAmount": {
+                "type": "boolean",
+                "description": "Include discount value"
+              },
+              "couponName": {
+                "type": "boolean",
+                "description": "Include coupon name"
+              },
+              "randomChars": {
+                "type": "boolean",
+                "description": "Add random characters"
+              }
+            }
+          },
+          "prefix": {
+            "type": "string",
+            "description": "Prefix for auto-generated codes"
+          },
+          "randomCharsLength": {
+            "type": "integer",
+            "description": "Length of random characters (default: 4)"
+          },
+          "randomCharsCase": {
+            "type": "string",
+            "enum": ["uppercase", "lowercase", "mixed"],
+            "description": "Case for random characters (default: mixed)"
+          }
+        }
+      },
+      "PromotionalCodeUpdate": {
+        "type": "object",
+        "required": ["promotionalCodeId"],
+        "properties": {
+          "promotionalCodeId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The promotional code ID to update"
+          },
+          "code": {
+            "type": "string",
+            "description": "The promotional code string"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Whether the code is active"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration date"
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "description": "Maximum redemptions"
+          },
+          "firstTimeOrder": {
+            "type": "boolean",
+            "description": "Limit to first-time orders"
+          },
+          "minimumAmount": {
+            "type": "number",
+            "format": "float",
+            "description": "Minimum purchase amount"
+          },
+          "minimumAmountCurrency": {
+            "type": "string",
+            "description": "Currency for minimum amount"
+          },
+          "limitToCustomers": {
+            "type": "boolean",
+            "description": "Limit to specific customers"
+          },
+          "customerId": {
+            "type": "string",
+            "description": "Specific customer ID"
+          },
+          "limitToAffiliate": {
+            "type": "boolean",
+            "description": "Only affiliate can use"
+          }
+        }
+      },
+      "PromotionalCodeDelete": {
+        "type": "object",
+        "required": ["promotionalCodeId"],
+        "properties": {
+          "promotionalCodeId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The promotional code ID to delete"
           }
         }
       },
