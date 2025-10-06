@@ -233,7 +233,7 @@
       },
       "post": {
         "summary": "Create a new referral",
-        "description": "Creates a new referral under the specified affiliate program. Note: an Affiliate is required to create a Referral.",
+        "description": "Creates a new referral under the specified affiliate program. You must provide either an affiliateId, affiliateEmail, or promoCode to identify the affiliate. When using a promo code, it will be validated for expiration, redemption limits, and active status.",
         "requestBody": {
           "description": "Referral details",
           "content": {
@@ -623,7 +623,7 @@
       },
       "post": {
         "summary": "Create a new sale",
-        "description": "Creates a new sale under the specified affiliate program. Note: a referral and affiliate are required to create a Sale.",
+        "description": "Creates a new sale under the specified affiliate program. You must provide either a referralId, email, or promoCode to identify the affiliate and referral. When using a promo code, it will be validated for expiration, redemption limits, and active status.",
         "requestBody": {
           "description": "Sale details",
           "content": {
@@ -932,11 +932,20 @@
       },
       "NewReferral": {
         "type": "object",
-        "required": ["affiliateId", "name", "email", "referredUserExternalId"],
+        "required": ["name", "email", "referredUserExternalId"],
         "properties": {
           "affiliateId": {
             "type": "string",
-            "description": "The affiliate ID/Link associated with the referral"
+            "description": "The affiliate ID/Link associated with the referral (required if affiliateEmail and promoCode are not provided)"
+          },
+          "affiliateEmail": {
+            "type": "string",
+            "format": "email",
+            "description": "The affiliate email associated with the referral (required if affiliateId and promoCode are not provided)"
+          },
+          "promoCode": {
+            "type": "string",
+            "description": "The promotional code associated with an affiliate (required if affiliateId and affiliateEmail are not provided). When used, the promo code will be validated and its redemption count will be incremented."
           },
           "name": {
             "type": "string",
@@ -1059,12 +1068,25 @@
       },
       "NewSale": {
         "type": "object",
-        "required": ["referralId", "totalEarned", "name", "email"],
+        "required": ["totalEarned"],
         "properties": {
           "referralId": {
             "type": "string",
             "format": "uuid",
-            "description": "The referral ID, or affiliate link or affiliate ID associated with the sale"
+            "description": "The referral ID, or affiliate link or affiliate ID associated with the sale (required if email and promoCode are not provided)"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email associated with the sale (required if referralId and promoCode are not provided)"
+          },
+          "promoCode": {
+            "type": "string",
+            "description": "The promotional code associated with an affiliate (required if referralId and email are not provided). When used, the promo code will be validated and its redemption count will be incremented."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the customer (required if not found via referralId or email)"
           },
           "externalId": {
             "type": "string",
@@ -1074,15 +1096,6 @@
             "type": "string",
             "description": "The external invoice ID of the sale"
           },
-          "name": {
-            "type": "string",
-            "description": "Name of the sale"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "Email associated with the sale"
-          },
           "totalEarned": {
             "type": "number",
             "format": "float",
@@ -1091,7 +1104,7 @@
           "commissionRate": {
             "type": "number",
             "format": "float",
-            "description": "Commission rate for the sale"
+            "description": "Commission rate for the sale (optional, defaults to affiliate's commission rate)"
           }
         }
       },
