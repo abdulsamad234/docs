@@ -1042,7 +1042,7 @@
           {
             "name": "saleExternalId",
             "in": "query",
-            "description": "The external ID of the sale",
+            "description": "The external ID of the sale. This is the ID of the sale in the external system or your database.",
             "schema": {
               "type": "string"
             }
@@ -1487,15 +1487,15 @@
           },
           "externalId": {
             "type": "string",
-            "description": "The external ID of the sale"
+            "description": "The external ID of the sale. This is the ID of the sale in the external system or your database."
           },
           "externalInvoiceId": {
             "type": "string",
-            "description": "The external invoice ID of the sale"
+            "description": "The external invoice ID of the sale. This is the ID of the invoice in the external system or your database (Useful if you invoice your customers when they purchase your product)"
           },
           "name": {
             "type": "string",
-            "description": "Name of the sale"
+            "description": "Name of the customer who made the sale"
           },
           "email": {
             "type": "string",
@@ -1543,11 +1543,11 @@
           },
           "externalId": {
             "type": "string",
-            "description": "The external ID of the sale"
+            "description": "The external ID of the sale. This is the ID of the sale in the external system or your database."
           },
           "externalInvoiceId": {
             "type": "string",
-            "description": "The external invoice ID of the sale"
+            "description": "The external invoice ID of the sale. This is the ID of the invoice in the external system or your database (Useful if you invoice your customers when they purchase your product)."
           },
           "totalEarned": {
             "type": "number",
@@ -1571,7 +1571,7 @@
           },
           "name": {
             "type": "string",
-            "description": "Name of the sale"
+            "description": "Email associated with the sale"
           },
           "email": {
             "type": "string",
