@@ -1,24 +1,24 @@
 ---
 title: "Zapier OAuth Integration"
-description: "Complete guide to integrating with Push Lap Growth via Zapier using OAuth 2.0 authentication flow"
+description: "Complete guide to integrating with Referly via Zapier using OAuth 2.0 authentication flow"
 ---
 
 # Zapier OAuth Integration
 
-Push Lap Growth provides OAuth 2.0 authentication for Zapier integrations, allowing users to securely connect their affiliate programs to Zapier workflows.
+Referly provides OAuth 2.0 authentication for Zapier integrations, allowing users to securely connect their affiliate programs to Zapier workflows.
 
 ## Overview
 
-The OAuth flow enables Zapier to authenticate with Push Lap Growth and perform actions on behalf of users within their selected affiliate programs. This integration allows for automated workflows based on affiliate events such as new sales, referrals, and affiliate sign-ups.
+The OAuth flow enables Zapier to authenticate with Referly and perform actions on behalf of users within their selected affiliate programs. This integration allows for automated workflows based on affiliate events such as new sales, referrals, and affiliate sign-ups.
 
 ## Authentication Flow
 
 ### Step 1: Authorization Request
 
-Users are redirected to the Push Lap Growth authorization endpoint to begin the OAuth flow:
+Users are redirected to the Referly authorization endpoint to begin the OAuth flow:
 
 ```
-https://pushlapgrowth.com/connect/zapier/choose-affiliate-program
+https://referly.so/connect/zapier/choose-affiliate-program
 ```
 
 **Query Parameters:**
@@ -30,7 +30,7 @@ https://pushlapgrowth.com/connect/zapier/choose-affiliate-program
 
 On the authorization page, users will:
 
-1. Log in to their Push Lap Growth account (if not already authenticated)
+1. Log in to their Referly account (if not already authenticated)
 2. Select which affiliate program they want to connect to Zapier
 3. Confirm the connection by clicking "Connect"
 
@@ -53,7 +53,7 @@ After the user authorizes the connection, they are redirected back to Zapier wit
 Zapier exchanges the authorization code for an access token by making a POST request to:
 
 ```
-POST https://pushlapgrowth.com/api/zapier/token
+POST https://referly.so/api/zapier/token
 ```
 
 **Request Headers:**
@@ -86,7 +86,7 @@ code={authorization_code}
 
 ### Token Usage
 
-All API requests to Push Lap Growth endpoints must include the access token in the Authorization header:
+All API requests to Referly endpoints must include the access token in the Authorization header:
 
 ```
 Authorization: Bearer {access_token}
@@ -96,7 +96,7 @@ Authorization: Bearer {access_token}
 
 - The `state` parameter should be validated to prevent CSRF attacks
 - Access tokens should be stored securely by Zapier
-- Users can revoke access through their Push Lap Growth dashboard
+- Users can revoke access through their Referly dashboard
 
 ## Error Handling
 
@@ -131,11 +131,11 @@ Once connected, Zapier can:
 Here's a typical flow for a Zapier integration:
 
 1. User initiates connection in Zapier
-2. Zapier redirects to `https://pushlapgrowth.com/connect/zapier/choose-affiliate-program?state=abc123&redirect_uri=https://zapier.com/callback`
+2. Zapier redirects to `https://referly.so/connect/zapier/choose-affiliate-program?state=abc123&redirect_uri=https://zapier.com/callback`
 3. User logs in and selects an affiliate program
 4. User is redirected to `https://zapier.com/callback?code=auth_code_xyz&state=abc123`
 5. Zapier exchanges the code for an access token
-6. Zapier can now make authenticated API requests to Push Lap Growth
+6. Zapier can now make authenticated API requests to Referly
 
 ## Support
 

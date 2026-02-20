@@ -1,13 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Push Lap Growth API",
+    "title": "Referly API",
     "description": "API for managing affiliates, referrals, and sales for SaaS businesses",
     "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "https://www.pushlapgrowth.com/api/v1"
+      "url": "https://www.referly.so/api/v1"
     }
   ],
   "security": [

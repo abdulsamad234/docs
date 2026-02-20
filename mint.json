@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Push Lap Growth",
+  "name": "Referly",
   "logo": {
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg"
@@ -18,12 +18,12 @@
   "topbarLinks": [
     {
       "name": "Support",
-      "url": "mailto:ayo@pushlapgrowth.com"
+      "url": "mailto:ayo@referly.so"
     }
   ],
   "topbarCtaButton": {
     "name": "Dashboard",
-    "url": "https://pushlapgrowth.com/dashboard"
+    "url": "https://referly.so/dashboard"
   },
   "tabs": [
     {
@@ -35,12 +35,12 @@
     {
       "name": "Affiliate Programs Directory",
       "icon": "book-open-cover",
-      "url": "https://www.pushlapgrowth.com/affiliate-programs"
+      "url": "https://www.referly.so/affiliate-programs"
     },
     {
       "name": "Affiliate Managers Directory",
       "icon": "user",
-      "url": "https://www.pushlapgrowth.com/affiliate-program-managers"
+      "url": "https://www.referly.so/affiliate-program-managers"
     },
     {
       "name": "Discord Community",
@@ -109,8 +109,8 @@
     }
   ],
   "footerSocials": {
-    "x": "https://x.com/pushlapgrowth",
+    "x": "https://x.com/referlyso",
     "linkedin": "https://www.linkedin.com/company/104551551",
-    "instagram": "https://www.instagram.com/pushlapgrowth"
+    "instagram": "https://www.instagram.com/referly.so"
   }
 }
