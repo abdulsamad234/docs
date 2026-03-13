@@ -1558,6 +1558,16 @@
             "type": "number",
             "format": "float",
             "description": "Commission rate for the sale (optional, defaults to affiliate's commission rate)"
+          },
+          "tax": {
+            "type": "number",
+            "format": "float",
+            "description": "Optional tax amount to deduct from the commission calculation (when program has deduct tax enabled)"
+          },
+          "shipping": {
+            "type": "number",
+            "format": "float",
+            "description": "Optional shipping amount to deduct from the commission calculation (when program has deduct shipping enabled)"
           }
         }
       },
