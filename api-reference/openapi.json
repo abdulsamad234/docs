@@ -1141,6 +1141,53 @@
           }
         }
       },
+      "patch": {
+        "summary": "Mark a sale as refunded",
+        "description": "Marks an existing sale as refunded when it is still eligible to be refunded. If the sale has already been refunded, the endpoint still returns a successful response indicating that state.",
+        "requestBody": {
+          "description": "Sale refund details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaleRefund"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Sale refund status processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleRefundResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Sale cannot be marked as refunded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleRefundError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sale not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleRefundError"
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "summary": "Delete a sale",
         "description": "Deletes a sale based on the ID provided",
@@ -1559,6 +1606,10 @@
             "format": "float",
             "description": "Commission rate for the sale (optional, defaults to affiliate's commission rate)"
           },
+          "product": {
+            "$ref": "#/components/schemas/Product",
+            "description": "Product details for the sale"
+          },
           "tax": {
             "type": "number",
             "format": "float",
@@ -1568,6 +1619,28 @@
             "type": "number",
             "format": "float",
             "description": "Optional shipping amount to deduct from the commission calculation (when program has deduct shipping enabled)"
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string",
+            "description": "Product ID"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Quantity purchased"
+          },
+          "price": {
+            "type": "number",
+            "format": "float",
+            "description": "Unit price at time of sale"
+          },
+          "name": {
+            "type": "string",
+            "description": "Product name"
           }
         }
       },
@@ -1607,6 +1680,46 @@
           "saleId": {
             "type": "integer",
             "description": "The sale ID to delete"
+          }
+        }
+      },
+      "SaleRefund": {
+        "type": "object",
+        "required": ["saleId"],
+        "properties": {
+          "saleId": {
+            "type": "integer",
+            "description": "The sale ID to mark as refunded"
+          }
+        }
+      },
+      "SaleRefundResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the refund request was handled successfully"
+          },
+          "alreadyRefunded": {
+            "type": "boolean",
+            "description": "Whether the sale had already been marked as refunded before this request"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Result reason, such as refunded or already_refunded"
+          }
+        }
+      },
+      "SaleRefundError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "error message"
+          },
+          "reason": {
+            "type": "string",
+            "description": "error reason"
           }
         }
       },

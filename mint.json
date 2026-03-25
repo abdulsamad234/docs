@@ -76,6 +76,7 @@
       "pages": [
         "api-reference/sales/get",
         "api-reference/sales/create",
+        "api-reference/sales/refund",
         "api-reference/sales/delete",
         "api-reference/sales/update"
       ]
