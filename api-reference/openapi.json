@@ -1345,7 +1345,15 @@
           "affiliateLink": {
             "type": "string",
             "description": "Custom affiliate link for the affiliate"
-          }
+          },
+          "commissionPlanId": {
+            "type": "string",
+            "description": "Commission plan id to assign to affiliates"
+          },
+          "affiliateGroupId": {
+            "type": "string",
+            "description": "Affiliate group id to assign to affiliates"
+          },
         }
       },
       "AffiliateUpdate": {
