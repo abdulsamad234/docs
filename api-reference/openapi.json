@@ -19,12 +19,12 @@
     "/affiliates": {
       "get": {
         "summary": "Get all affiliates or by ID/email",
-        "description": "Returns an Affiliate By ID or Email. If none is specified, all Affiliates from the Affiliate Program are returned.",
+        "description": "Returns an affiliate by ID or email, or all affiliates for the program. Affiliate objects include an `affiliateLinks` array with every link slug for that affiliate. The legacy `link` field on the affiliate is deprecated and is usually null—use `affiliateLinks` instead.",
         "parameters": [
           {
             "name": "id",
             "in": "query",
-            "description": "The ID of the affiliate to retrieve",
+            "description": "Affiliate user ID (UUID), numeric click ID, or an affiliate link slug for this program",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -68,7 +68,7 @@
       },
       "post": {
         "summary": "Create a new affiliate",
-        "description": "Creates a new affiliate on your Afffiliate Program.",
+        "description": "Creates a new affiliate on your Affiliate Program. The response includes an `affiliateLinks` array (initially containing the link created from `affiliateLink`, or an auto-generated slug).",
         "requestBody": {
           "description": "Affiliate details",
           "content": {
@@ -1175,6 +1175,43 @@
   },
   "components": {
     "schemas": {
+      "AffiliateLinkRecord": {
+        "type": "object",
+        "description": "A single referral link belonging to an affiliate",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Affiliate link record ID"
+          },
+          "link": {
+            "type": "string",
+            "description": "Link slug (path segment) for this affiliate"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Affiliate user ID"
+          },
+          "programId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Affiliate program ID"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When this link was created"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When this link was last updated"
+          }
+        }
+      },
       "Affiliate": {
         "type": "object",
         "properties": {
@@ -1242,7 +1279,16 @@
           },
           "link": {
             "type": "string",
-            "description": "Affiliate's custom referral link"
+            "nullable": true,
+            "deprecated": true,
+            "description": "Deprecated legacy field; often null. Use `affiliateLinks` for all link slugs."
+          },
+          "affiliateLinks": {
+            "type": "array",
+            "description": "All affiliate link records for this affiliate. This is the source of truth for referral link slugs.",
+            "items": {
+              "$ref": "#/components/schemas/AffiliateLinkRecord"
+            }
           },
           "status": {
             "type": "string",
@@ -1297,7 +1343,7 @@
           },
           "affiliateLink": {
             "type": "string",
-            "description": "Custom affiliate link for the affiliate"
+            "description": "Optional slug for the affiliate's first referral link. If omitted, a slug is generated automatically."
           }
         }
       },
@@ -1333,7 +1379,7 @@
           },
           "affiliateLink": {
             "type": "string",
-            "description": "Custom affiliate link for the affiliate"
+            "description": "If set, adds a new affiliate link with this slug. Existing links are kept; this does not replace other `affiliateLinks`."
           }
         }
       },

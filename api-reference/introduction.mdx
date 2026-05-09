@@ -65,6 +65,15 @@ Step 4. Add your Auth Token to your API requests:
 }
 ```
 
+## Affiliates and referral links
+
+Affiliate objects returned by the Affiliates API (for example **Get Affiliate(s)** and **Create an Affiliate**) include an **`affiliateLinks`** array: one entry per referral link slug for that affiliate, each with `id`, `link`, timestamps, and related IDs.
+
+The legacy **`link`** property on the affiliate object is **deprecated** and may be `null`. Use **`affiliateLinks`** (and the **[Links](/api-reference/links/get)** endpoints to manage links) as the source of truth.
+
+- **Create affiliate** (`POST /affiliates`): optional body field **`affiliateLink`** sets the slug of the initial link; if omitted, a slug is generated.
+- **Update affiliate** (`PUT /affiliates`): optional **`affiliateLink`** **adds** a new link; it does not remove or replace existing `affiliateLinks`.
+
 ## Understanding Coupons & Promotional Codes
 
 The API includes powerful coupon and promotional code management features. Here's how they work together:
