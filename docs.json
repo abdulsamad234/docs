@@ -1,6 +1,9 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "almond",
+  "appearance": {
+    "default": "light"
+  },
   "name": "Referly",
   "colors": {
     "primary": "#7C4EDE",
