@@ -1,0 +1,739 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "almond",
+  "name": "Referly",
+  "colors": {
+    "primary": "#7C4EDE",
+    "light": "#7C4EDE",
+    "dark": "#7C4EDE"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Help Center",
+        "icon": "life-ring",
+        "groups": [
+          {
+            "group": " ",
+            "pages": [
+              "help-center"
+            ]
+          },
+          {
+            "group": "Getting started",
+            "pages": [
+              "help-center/getting-started/welcome",
+              {
+                "group": "Setting up your program",
+                "pages": [
+                  "help-center/getting-started/set-up-program/affiliate-program-setup",
+                  "help-center/getting-started/set-up-program/branding",
+                  "help-center/getting-started/set-up-program/login-and-sign-up"
+                ]
+              },
+              {
+                "group": "Setting up commissions",
+                "pages": [
+                  "help-center/getting-started/commissions/overview",
+                  "help-center/getting-started/commissions/product-based",
+                  "help-center/getting-started/commissions/conditional-rules",
+                  "help-center/getting-started/commissions/non-cash-rewards"
+                ]
+              },
+              {
+                "group": "Recruit your first affiliates",
+                "pages": [
+                  "help-center/getting-started/recruit/invite-affiliates",
+                  "help-center/getting-started/recruit/add-affiliates-manually",
+                  "help-center/getting-started/recruit/let-affiliates-sign-up",
+                  "help-center/getting-started/recruit/application-questions",
+                  "help-center/getting-started/recruit/approve-or-decline"
+                ]
+              },
+              {
+                "group": "Migrate to Referly",
+                "pages": [
+                  "help-center/getting-started/migrate/overview",
+                  "help-center/getting-started/migrate/csv",
+                  "help-center/getting-started/migrate/rewardful",
+                  "help-center/getting-started/migrate/firstpromoter",
+                  "help-center/getting-started/migrate/tapfiliate",
+                  "help-center/getting-started/migrate/partnerstack",
+                  "help-center/getting-started/migrate/tolt",
+                  "help-center/getting-started/migrate/partnero",
+                  "help-center/getting-started/migrate/trackdesk",
+                  "help-center/getting-started/migrate/dub"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Managing your program",
+            "pages": [
+              {
+                "group": "Affiliates",
+                "pages": [
+                  "help-center/manage/affiliates/overview",
+                  "help-center/manage/affiliates/statuses",
+                  "help-center/manage/affiliates/filters-and-columns",
+                  "help-center/manage/affiliates/bulk-actions",
+                  "help-center/manage/affiliates/affiliate-detail",
+                  "help-center/manage/affiliates/groups",
+                  "help-center/manage/affiliates/change-commission-plan",
+                  "help-center/manage/affiliates/give-a-bonus",
+                  "help-center/manage/affiliates/ban-or-deactivate",
+                  "help-center/manage/affiliates/import"
+                ]
+              },
+              {
+                "group": "Customers",
+                "pages": [
+                  "help-center/manage/customers/overview",
+                  "help-center/manage/customers/statuses",
+                  "help-center/manage/customers/add-a-sale",
+                  "help-center/manage/customers/change-commission-plan",
+                  "help-center/manage/customers/notes",
+                  "help-center/manage/customers/import"
+                ]
+              },
+              {
+                "group": "Rewards",
+                "pages": [
+                  "help-center/manage/rewards/overview",
+                  "help-center/manage/rewards/approve-or-decline",
+                  "help-center/manage/rewards/holds",
+                  "help-center/manage/rewards/calculation",
+                  "help-center/manage/rewards/refunds",
+                  "help-center/manage/rewards/bonuses",
+                  "help-center/manage/rewards/import"
+                ]
+              },
+              {
+                "group": "Payouts",
+                "pages": [
+                  "help-center/manage/payouts/overview",
+                  "help-center/manage/payouts/self-managed-vs-referly",
+                  "help-center/manage/payouts/payout-methods",
+                  "help-center/manage/payouts/batches",
+                  "help-center/manage/payouts/batch-statuses",
+                  "help-center/manage/payouts/schedule",
+                  "help-center/manage/payouts/minimum-amount",
+                  "help-center/manage/payouts/custom-bank-fields",
+                  "help-center/manage/payouts/export",
+                  "help-center/manage/payouts/failed-payouts",
+                  "help-center/manage/payouts/tax-and-invoices"
+                ]
+              },
+              {
+                "group": "Analytics",
+                "pages": [
+                  "help-center/manage/analytics/overview",
+                  "help-center/manage/analytics/performance",
+                  "help-center/manage/analytics/affiliate-acquisition",
+                  "help-center/manage/analytics/conversion-funnel",
+                  "help-center/manage/analytics/date-ranges"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Engaging affiliates",
+            "pages": [
+              {
+                "group": "Messages",
+                "pages": [
+                  "help-center/engage/messages/overview",
+                  "help-center/engage/messages/groups",
+                  "help-center/engage/messages/share-assets-and-bonuses"
+                ]
+              },
+              {
+                "group": "Announcements",
+                "pages": [
+                  "help-center/engage/announcements/overview",
+                  "help-center/engage/announcements/types",
+                  "help-center/engage/announcements/audience",
+                  "help-center/engage/announcements/poll-results"
+                ]
+              },
+              {
+                "group": "Marketing assets",
+                "pages": [
+                  "help-center/engage/assets/overview",
+                  "help-center/engage/assets/folders",
+                  "help-center/engage/assets/types"
+                ]
+              },
+              {
+                "group": "Coupons and promo codes",
+                "pages": [
+                  "help-center/engage/coupons/overview",
+                  "help-center/engage/coupons/connect-a-source",
+                  "help-center/engage/coupons/sync",
+                  "help-center/engage/coupons/create",
+                  "help-center/engage/coupons/promotional-codes",
+                  "help-center/engage/coupons/auto-generated-codes",
+                  "help-center/engage/coupons/restrictions"
+                ]
+              },
+              {
+                "group": "Referral widget",
+                "pages": [
+                  "help-center/engage/widget/overview",
+                  "help-center/engage/widget/install",
+                  "help-center/engage/widget/customize",
+                  "help-center/engage/widget/email-verification"
+                ]
+              },
+              {
+                "group": "Pop-ups and banners",
+                "pages": [
+                  "help-center/engage/popups-banners/overview",
+                  "help-center/engage/popups-banners/triggers",
+                  "help-center/engage/popups-banners/audience",
+                  "help-center/engage/popups-banners/install"
+                ]
+              },
+              {
+                "group": "Emails",
+                "pages": [
+                  "help-center/engage/emails/overview",
+                  "help-center/engage/emails/affiliate-emails",
+                  "help-center/engage/emails/your-emails",
+                  "help-center/engage/emails/custom-email-builder",
+                  "help-center/engage/emails/sending-domain",
+                  "help-center/engage/emails/tracking",
+                  "help-center/engage/emails/integrations"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Gamification",
+            "pages": [
+              "help-center/gamify/overview",
+              {
+                "group": "Affiliate milestones",
+                "pages": [
+                  "help-center/gamify/milestones/overview",
+                  "help-center/gamify/milestones/create"
+                ]
+              },
+              {
+                "group": "Performance bonuses",
+                "pages": [
+                  "help-center/gamify/performance-bonuses/overview",
+                  "help-center/gamify/performance-bonuses/create",
+                  "help-center/gamify/performance-bonuses/retroactive"
+                ]
+              },
+              {
+                "group": "Content rewards",
+                "pages": [
+                  "help-center/gamify/content-rewards/overview",
+                  "help-center/gamify/content-rewards/campaigns",
+                  "help-center/gamify/content-rewards/criteria",
+                  "help-center/gamify/content-rewards/submissions",
+                  "help-center/gamify/content-rewards/revert"
+                ]
+              },
+              {
+                "group": "Leaderboards",
+                "pages": [
+                  "help-center/gamify/leaderboards/overview",
+                  "help-center/gamify/leaderboards/criteria",
+                  "help-center/gamify/leaderboards/public"
+                ]
+              },
+              {
+                "group": "Contests",
+                "pages": [
+                  "help-center/gamify/contests/overview",
+                  "help-center/gamify/contests/create",
+                  "help-center/gamify/contests/winners"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Growth",
+            "pages": [
+              {
+                "group": "Influencer discovery",
+                "pages": [
+                  "help-center/grow/influencer-discovery/overview",
+                  "help-center/grow/influencer-discovery/search",
+                  "help-center/grow/influencer-discovery/match-score",
+                  "help-center/grow/influencer-discovery/invite",
+                  "help-center/grow/influencer-discovery/pipeline"
+                ]
+              },
+              {
+                "group": "Marketplace",
+                "pages": [
+                  "help-center/grow/marketplace/overview",
+                  "help-center/grow/marketplace/listing",
+                  "help-center/grow/marketplace/visibility",
+                  "help-center/grow/marketplace/licenses"
+                ]
+              },
+              {
+                "group": "Affiliate managers",
+                "pages": [
+                  "help-center/grow/affiliate-managers/overview"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Settings",
+            "pages": [
+              {
+                "group": "Program details",
+                "pages": [
+                  "help-center/settings/program/general",
+                  "help-center/settings/program/affiliate-groups",
+                  "help-center/settings/program/commission-plans",
+                  "help-center/settings/program/multi-level-commissions",
+                  "help-center/settings/program/fraud-prevention",
+                  "help-center/settings/program/tracking-methods",
+                  "help-center/settings/program/cross-domain-tracking",
+                  "help-center/settings/program/automated-short-links",
+                  "help-center/settings/program/payout-settings",
+                  "help-center/settings/program/tax-management",
+                  "help-center/settings/program/affiliate-questions",
+                  "help-center/settings/program/notifications"
+                ]
+              },
+              {
+                "group": "Affiliate portal",
+                "pages": [
+                  "help-center/settings/portal/branding",
+                  "help-center/settings/portal/login-and-sign-up",
+                  "help-center/settings/portal/social-login",
+                  "help-center/settings/portal/onboarding",
+                  "help-center/settings/portal/languages",
+                  "help-center/settings/portal/custom-domain",
+                  "help-center/settings/portal/custom-code",
+                  "help-center/settings/portal/bot-protection",
+                  "help-center/settings/portal/contact-widget",
+                  "help-center/settings/portal/shared-customer-data"
+                ]
+              },
+              {
+                "group": "Team and access",
+                "pages": [
+                  "help-center/settings/team/members",
+                  "help-center/settings/team/invitations"
+                ]
+              },
+              {
+                "group": "Advanced",
+                "pages": [
+                  "help-center/settings/advanced/api-keys",
+                  "help-center/settings/advanced/webhooks"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "help-center/integrations/overview",
+              {
+                "group": "Payments and ecommerce",
+                "pages": [
+                  "help-center/integrations/stripe",
+                  "help-center/integrations/shopify",
+                  "help-center/integrations/woocommerce",
+                  "help-center/integrations/paddle",
+                  "help-center/integrations/chargebee",
+                  "help-center/integrations/polar",
+                  "help-center/integrations/zylvie",
+                  "help-center/integrations/ecwid"
+                ],
+                "expanded": false
+              },
+              {
+                "group": "Stripe setups",
+                "pages": [
+                  "help-center/integrations/stripe/session-api",
+                  "help-center/integrations/stripe/payment-links",
+                  "help-center/integrations/stripe/pricing-table",
+                  "help-center/integrations/stripe/buy-button",
+                  "help-center/integrations/stripe/coupon-codes"
+                ],
+                "expanded": false
+              },
+              {
+                "group": "Automation",
+                "pages": [
+                  "help-center/integrations/zapier",
+                  "help-center/integrations/make"
+                ]
+              },
+              {
+                "group": "Email marketing",
+                "pages": [
+                  "help-center/integrations/klaviyo",
+                  "help-center/integrations/mailchimp",
+                  "help-center/integrations/mailerlite",
+                  "help-center/integrations/brevo"
+                ],
+                "expanded": false
+              },
+              {
+                "group": "Other platforms",
+                "pages": [
+                  "help-center/integrations/memberstack",
+                  "help-center/integrations/calendly",
+                  "help-center/integrations/cal-com",
+                  "help-center/integrations/skillplate",
+                  "help-center/integrations/pickaxe",
+                  "help-center/integrations/wordpress",
+                  "help-center/integrations/universal"
+                ],
+                "expanded": false
+              },
+              {
+                "group": "Payouts",
+                "pages": [
+                  "help-center/integrations/wise",
+                  "help-center/integrations/paypal",
+                  "help-center/integrations/referly-payouts"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Billing and plans",
+            "pages": [
+              "help-center/billing/plans-and-features",
+              "help-center/billing/subscription",
+              "help-center/billing/add-ons",
+              "help-center/billing/invoices",
+              "help-center/billing/api-access"
+            ]
+          },
+          {
+            "group": "For agencies",
+            "pages": [
+              "help-center/agencies/overview",
+              "help-center/agencies/client-programs",
+              "help-center/agencies/feature-access",
+              "help-center/agencies/payment-exemption",
+              "help-center/agencies/white-label",
+              "help-center/agencies/custom-domain",
+              "help-center/agencies/billing"
+            ]
+          },
+          {
+            "group": "For affiliates",
+            "pages": [
+              {
+                "group": "Getting started",
+                "pages": [
+                  "help-center/affiliates/portal-overview",
+                  "help-center/affiliates/sign-up",
+                  "help-center/affiliates/onboarding",
+                  "help-center/affiliates/profile"
+                ]
+              },
+              {
+                "group": "Promoting",
+                "pages": [
+                  "help-center/affiliates/referral-links",
+                  "help-center/affiliates/promo-codes",
+                  "help-center/affiliates/assets",
+                  "help-center/affiliates/content-rewards",
+                  "help-center/affiliates/performance-bonuses",
+                  "help-center/affiliates/leaderboards"
+                ]
+              },
+              {
+                "group": "Getting paid",
+                "pages": [
+                  "help-center/affiliates/payouts",
+                  "help-center/affiliates/cash-payouts",
+                  "help-center/affiliates/non-cash-payouts",
+                  "help-center/affiliates/invoice-details"
+                ]
+              },
+              {
+                "group": "Your account",
+                "pages": [
+                  "help-center/affiliates/my-programs",
+                  "help-center/affiliates/my-team",
+                  "help-center/affiliates/notifications",
+                  "help-center/affiliates/postback-url",
+                  "help-center/affiliates/access-issues"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Developer Documentation",
+        "icon": "book",
+        "groups": [
+          {
+            "group": " ",
+            "pages": [
+              "developer-documentation"
+            ]
+          },
+          {
+            "group": "Getting started",
+            "pages": [
+              "developer-documentation/getting-started/introduction",
+              "developer-documentation/getting-started/quickstart",
+              "developer-documentation/getting-started/core-concepts",
+              "developer-documentation/getting-started/glossary"
+            ]
+          },
+          {
+            "group": "Tracking",
+            "pages": [
+              {
+                "group": "Client-side tracking",
+                "pages": [
+                  "developer-documentation/tracking/install-the-snippet",
+                  "developer-documentation/tracking/url-parameters",
+                  "developer-documentation/tracking/cookies-and-storage",
+                  "developer-documentation/tracking/attribution",
+                  "developer-documentation/tracking/cross-domain-tracking",
+                  "developer-documentation/tracking/debug-mode"
+                ]
+              },
+              {
+                "group": "JavaScript API",
+                "pages": [
+                  "developer-documentation/tracking/javascript-api/reference",
+                  "developer-documentation/tracking/javascript-api/events",
+                  "developer-documentation/tracking/javascript-api/globals"
+                ]
+              },
+              {
+                "group": "What gets captured",
+                "pages": [
+                  "developer-documentation/tracking/click-data",
+                  "developer-documentation/tracking/utm-and-ad-click-ids",
+                  "developer-documentation/tracking/external-click-ids"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Server-side tracking",
+            "pages": [
+              "developer-documentation/server-side/overview",
+              "developer-documentation/server-side/reporting-sales",
+              "developer-documentation/server-side/capture-endpoints",
+              "developer-documentation/server-side/idempotency"
+            ]
+          },
+          {
+            "group": "API",
+            "pages": [
+              "developer-documentation/api/authentication",
+              "developer-documentation/api/rate-limits",
+              "developer-documentation/api/errors"
+            ]
+          },
+          {
+            "group": "Webhooks",
+            "pages": [
+              "developer-documentation/webhooks/introduction",
+              "developer-documentation/webhooks/managing-endpoints",
+              "developer-documentation/webhooks/event-types",
+              "developer-documentation/webhooks/payload-structure",
+              "developer-documentation/webhooks/verifying-signatures",
+              "developer-documentation/webhooks/retries-and-logs",
+              "developer-documentation/webhooks/testing"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "developer-documentation/integrations/overview",
+              {
+                "group": "Payments and ecommerce",
+                "pages": [
+                  "developer-documentation/integrations/stripe-app",
+                  "developer-documentation/integrations/shopify-app",
+                  "developer-documentation/integrations/woocommerce",
+                  "developer-documentation/integrations/payment-provider-webhooks"
+                ]
+              },
+              {
+                "group": "Automation platforms",
+                "pages": [
+                  "developer-documentation/integrations/zapier",
+                  "developer-documentation/integrations/make"
+                ]
+              },
+              {
+                "group": "Custom",
+                "pages": [
+                  "developer-documentation/integrations/universal",
+                  "developer-documentation/integrations/postback-url"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "developer-documentation/reference/data-model",
+              "developer-documentation/reference/statuses-and-enums",
+              "developer-documentation/reference/tracking-parameters"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "icon": "code",
+        "groups": [
+          {
+            "group": "API Documentation",
+            "icon": "book",
+            "pages": [
+              "api-reference/introduction",
+              "api-reference/authentication",
+              "api-reference/affiliate-links",
+              "api-reference/coupons-and-promotional-codes",
+              "api-reference/zapier/oauth"
+            ]
+          },
+          {
+            "group": "Affiliate Endpoints",
+            "icon": "users",
+            "pages": [
+              "api-reference/affiliates/get",
+              "api-reference/affiliates/create",
+              "api-reference/affiliates/delete",
+              "api-reference/affiliates/update"
+            ]
+          },
+          {
+            "group": "Referral Endpoints",
+            "icon": "share-nodes",
+            "pages": [
+              "api-reference/referrals/get",
+              "api-reference/referrals/create",
+              "api-reference/referrals/delete",
+              "api-reference/referrals/update"
+            ]
+          },
+          {
+            "group": "Sale Endpoints",
+            "icon": "cart-shopping",
+            "pages": [
+              "api-reference/sales/get",
+              "api-reference/sales/create",
+              "api-reference/sales/delete",
+              "api-reference/sales/update"
+            ]
+          },
+          {
+            "group": "Affiliate Link Endpoints",
+            "icon": "link",
+            "pages": [
+              "api-reference/links/get",
+              "api-reference/links/create",
+              "api-reference/links/delete",
+              "api-reference/links/update"
+            ]
+          },
+          {
+            "group": "Coupon Endpoints",
+            "icon": "ticket",
+            "pages": [
+              "api-reference/coupons/get",
+              "api-reference/coupons/create",
+              "api-reference/coupons/delete",
+              "api-reference/coupons/update"
+            ]
+          },
+          {
+            "group": "Promotional Code Endpoints",
+            "icon": "tag",
+            "pages": [
+              "api-reference/promotional-codes/get",
+              "api-reference/promotional-codes/create",
+              "api-reference/promotional-codes/delete",
+              "api-reference/promotional-codes/update"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "mailto:support@referly.so"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Dashboard",
+      "href": "https://referly.so/dashboard"
+    }
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/referlyso",
+      "linkedin": "https://www.linkedin.com/company/104551551",
+      "instagram": "https://www.instagram.com/referly.so"
+    }
+  },
+  "redirects": [
+    {
+      "source": "/api-reference",
+      "destination": "/api-reference/introduction"
+    }
+  ],
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude"
+    ]
+  },
+  "interaction": {
+    "drilldown": false
+  },
+  "seo": {
+    "indexing": "all",
+    "organization": {
+      "name": "Referly",
+      "legalName": "Referly",
+      "url": "https://www.referly.so",
+      "logo": "https://www.referly.so/logo/light.svg",
+      "sameAs": [
+        "https://x.com/referlyso",
+        "https://www.linkedin.com/company/104551551",
+        "https://www.instagram.com/referly.so"
+      ]
+    },
+    "metatags": {
+      "og:site_name": "Referly",
+      "og:type": "website",
+      "twitter:card": "summary_large_image",
+      "twitter:site": "@referlyso"
+    }
+  },
+  "metadata": {
+    "timestamp": true
+  }
+}

@@ -1,113 +1,96 @@
 ---
-title: "Introduction"
-description: "Referly is an Affiliate Marketing Software and Network that lets you easily Track, Manage and Partner with Affiliates. This is the Custom API documentation that details how to use the API to track payments and attribute proper commissions."
+title: "Referly API Reference"
+description: "The Referly REST API lets you read and write affiliates, referrals, sales, links, coupons, and promotional codes, and attribute commissions from your own systems."
+keywords:
+  [
+    "Referly API",
+    "affiliate API",
+    "REST API",
+    "affiliate marketing API",
+    "referral API",
+    "API reference",
+  ]
 ---
 
-<img
-  className="block"
-  src="/images/manage-affiliates-1.jpg"
-  style={{ borderRadius: "10px" }}
-  alt="Hero Dark"
-/>
+The Referly API lets you track payments and attribute commissions from your own systems. Everything
+you can do with affiliates, referrals, and sales in the dashboard, you can do here.
+
 <Note>
   The API is a premium feature that's only available to users who have an active
   Business Plan. [See Pricing Page](https://referly.so/pricing)
 </Note>
 
-## Welcome
+## Base URL
 
-To be able to use this API, you need to have created your Affiliate Program and entered all necessary details.
+All endpoints are relative to:
 
-<Card
-  title="Create Affiliate Program"
-  icon="computer"
-  href="https://referly.so/dashboard"
->
-  Create your Affiliate Program and integrate the tracking code to your website.
-</Card>
-
-## Authentication
-
-All API endpoints are authenticated using Bearer tokens, this requires you to have completed creating your Affiliate Program. Here's how you create an Auth Token:
-
-Step 1. Click on `API Keys` on your dashboard sidebar:
-
-<img
-  className="block"
-  src="/images/step-1.png"
-  style={{ borderRadius: "10px" }}
-  alt="Hero Dark"
-/>
-
-Step 2. Click on `Generate New API Key +`:
-
-<img
-  className="block"
-  src="/images/step-2.png"
-  style={{ borderRadius: "10px" }}
-  alt="Hero Dark"
-/>
-
-Step 3. Click the copy icon to copy your Auth Token:
-
-<img
-  className="block"
-  src="/images/step-3.png"
-  style={{ borderRadius: "10px" }}
-  alt="Hero Dark"
-/>
-
-Step 4. Add your Auth Token to your API requests:
-
-```json
-{
-  "Authorization": "Bearer <YOUR_TOKEN>"
-}
+```bash
+https://www.referly.so/api/v1
 ```
 
-## Affiliates and referral links
+## Get started
 
-Affiliate objects returned by the Affiliates API (for example **Get Affiliate(s)** and **Create an Affiliate**) include an **`affiliateLinks`** array: one entry per referral link slug for that affiliate, each with `id`, `link`, timestamps, and related IDs.
+<Columns cols={2}>
+  <Card title="Create your program" icon="computer" href="https://referly.so/dashboard">
+    Create your Affiliate Program and add the tracking code to your website.
+  </Card>
+  <Card title="Authenticate" icon="key" href="/api-reference/authentication">
+    Generate an API key and authorize your requests with a Bearer token.
+  </Card>
+</Columns>
 
-The legacy **`link`** property on the affiliate object is **deprecated** and may be `null`. Use **`affiliateLinks`** (and the **[Links](/api-reference/links/get)** endpoints to manage links) as the source of truth.
+Every request carries your key as a Bearer token:
 
-- **Create affiliate** (`POST /affiliates`): optional body field **`affiliateLink`** sets the slug of the initial link; if omitted, a slug is generated.
-- **Update affiliate** (`PUT /affiliates`): optional **`affiliateLink`** **adds** a new link; it does not remove or replace existing `affiliateLinks`.
+```bash
+curl https://www.referly.so/api/v1/affiliates \
+  -H "Authorization: Bearer <YOUR_TOKEN>"
+```
 
-## Understanding Coupons & Promotional Codes
+## Endpoints
 
-The API includes powerful coupon and promotional code management features. Here's how they work together:
+<Columns cols={2}>
+  <Card title="Affiliates" icon="users" href="/api-reference/affiliates/get">
+    The people promoting your program.
+  </Card>
+  <Card title="Referrals" icon="share-nodes" href="/api-reference/referrals/get">
+    The customers your affiliates brought in.
+  </Card>
+  <Card title="Sales" icon="cart-shopping" href="/api-reference/sales/get">
+    Purchases attributed to an affiliate.
+  </Card>
+  <Card title="Affiliate links" icon="link" href="/api-reference/links/get">
+    The referral links affiliates share.
+  </Card>
+  <Card title="Coupons" icon="ticket" href="/api-reference/coupons/get">
+    The discounts customers receive.
+  </Card>
+  <Card title="Promotional codes" icon="tag" href="/api-reference/promotional-codes/get">
+    The customer-facing codes tied to a coupon.
+  </Card>
+</Columns>
 
-### Coupons: The Discount Definition
+## Concepts
 
-**Coupons** define the structure and rules for discounts in your affiliate program. Think of them as templates that specify:
+<Columns cols={2}>
+  <Card title="Affiliates and referral links" icon="link" href="/api-reference/affiliate-links">
+    Why `affiliateLinks` replaces the deprecated `link` property.
+  </Card>
+  <Card
+    title="Coupons and promotional codes"
+    icon="ticket"
+    href="/api-reference/coupons-and-promotional-codes"
+  >
+    How a coupon's discount reaches a customer through a code.
+  </Card>
+</Columns>
 
-- **Discount Type**: Percentage (e.g., 20% off) or Flat amount (e.g., $10 off)
-- **Discount Value**: The actual amount or percentage
-- **Duration**: One-time use, forever, or repeating for X months
-- **Restrictions**: Product limits, expiration dates, maximum redemptions
+## Integrations
 
-### Promotional Codes: The Customer-Facing Codes
-
-**Promotional codes** are the actual discount codes that customers enter at checkout. They are linked to coupons and inherit their discount properties.
-
-Key characteristics:
-
-- Each promotional code is associated with one coupon
-- Multiple promotional codes can share the same coupon (same discount, different codes)
-- Promotional codes can be assigned to specific affiliates for tracking
-- Codes can be manually created or auto-generated based on customizable structures
-
-### Example Workflow
-
-1. **Create a Coupon**: Define a 20% discount that lasts for 3 months
-2. **Generate Promotional Codes**: Create codes like "JOHN20", "SARAH20", "MIKE20" that all use the same 20% discount
-3. **Assign to Affiliates**: Each code is assigned to a different affiliate for tracking
-4. **Track Performance**: Monitor which codes are used and attribute sales to the correct affiliates
-
-This two-tier system gives you flexibility to:
-
-- Maintain consistent discount structures across multiple affiliates
-- Generate unique codes for each affiliate while keeping the same discount terms
-- Update discount terms for all codes by modifying the parent coupon
-- Track performance at both the coupon level (overall discount performance) and code level (individual affiliate performance)
+<Columns cols={2}>
+  <Card title="Zapier OAuth" icon="bolt" href="/api-reference/zapier/oauth">
+    Connect Referly to Zapier using OAuth.
+  </Card>
+  <Card title="Developer Documentation" icon="code" href="/developer-documentation">
+    Tracking, webhooks, and platform integrations.
+  </Card>
+</Columns>
