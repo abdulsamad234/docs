@@ -75,7 +75,7 @@
             "group": "Managing your program",
             "pages": [
               {
-                "group": "Affiliates",
+                "group": "Managing Affiliates",
                 "pages": [
                   "help-center/manage/affiliates/overview",
                   "help-center/manage/affiliates/statuses",
@@ -90,7 +90,7 @@
                 ]
               },
               {
-                "group": "Customers",
+                "group": "Managing referred customers",
                 "pages": [
                   "help-center/manage/customers/overview",
                   "help-center/manage/customers/statuses",
@@ -101,7 +101,7 @@
                 ]
               },
               {
-                "group": "Rewards",
+                "group": "Managing rewards",
                 "pages": [
                   "help-center/manage/rewards/overview",
                   "help-center/manage/rewards/approve-or-decline",
@@ -113,7 +113,7 @@
                 ]
               },
               {
-                "group": "Payouts",
+                "group": "Managing payouts",
                 "pages": [
                   "help-center/manage/payouts/overview",
                   "help-center/manage/payouts/self-managed-vs-referly",
