@@ -1,6 +1,160 @@
 ---
 title: "Setting up your affiliate or referral program"
-description: "Every step of creating your program, from onboarding through to tracking on your site."
+description: "Create your Referly affiliate or referral program with the onboarding wizard: business type, program goal, website, name, subdomain, logo, and commission structure."
+keywords: ["set up affiliate program", "referral program setup", "Referly onboarding", "create affiliate program", "affiliate portal subdomain", "commission structure", "program details", "getting started"]
 ---
+When you sign in to Referly for the first time, a six-step wizard walks you through creating your program. By the end you have a live program, an affiliate portal, and a commission structure, and you land on your dashboard. It takes a couple of minutes.
 
-{/* TODO: Write this article. */}
+This guide covers each step so you know what every field does and what to expect. It stops at the point where you connect a payment or ecommerce integration, which has its own guide, and points you there as the next step.
+
+<Info>
+  You need a Referly account to start. If you have not created one yet, see [logging in and signing up](/help-center/getting-started/set-up-program/login-and-sign-up). New accounts open the onboarding wizard automatically at `/onboarding`.
+</Info>
+
+## What you set up during onboarding
+
+The wizard moves through six steps, shown by a progress bar at the top:
+
+1. **Welcome** to Referly.
+2. **Tell us about your business**: your business type and category.
+3. **What do you want your program to do**: your program goal.
+4. **Set up your referral program**: website, name, subdomain, and logo. Your program is created here.
+5. **Set up your commission structure**: how affiliates are rewarded.
+6. **You're all set**: choose a plan and go to your dashboard.
+
+You can go **Back** at any step, and you can change every choice later in [program settings](/help-center/settings/program/general).
+
+## Step through the wizard
+
+<Steps>
+  <Step title="Welcome">
+    The first screen introduces Referly and what you are about to build. Select **Get Started** to begin.
+
+    
+![onboarding-welcome](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784499528873-179373-SCR-20260719-upfd.jpeg)
+
+  </Step>
+
+  <Step title="Tell us about your business">
+    Pick the business type that fits you best: **SaaS**, **E-commerce**, **Agency**, or **Other**. Once you choose a type, a row of category chips appears below it. Select the category that best describes your niche.
+
+    Referly uses these answers to tailor the rest of your setup. Both a type and a category are required before you can continue.
+
+    
+![onboarding-business-type](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784499538062-529508-SCR-20260719-uqfq.png)
+
+  </Step>
+
+  <Step title="Choose your program goal">
+    Tell Referly what you want your program to do. There are three options:
+
+    - **Creators promote you**: affiliates and influencers send you new customers.
+    - **Customers refer friends**: your existing customers invite people they know.
+    - **A bit of both**: run creator and customer referrals together. This is the recommended, most popular choice.
+
+    Pick the goal that matters most right now. You can add the other later.
+
+    
+![onboarding-program-priority](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784499543467-460698-SCR-20260719-uqte.png)
+
+  </Step>
+
+  <Step title="Enter your program details">
+    This is where your program is created. Start by entering your **Website URL**, then select **Continue**.
+
+    Referly reads your website and pre-fills the rest of the form for you:
+
+    <Steps>
+      <Step title="Website URL">
+        The address of the site you run your program for. It has to be a valid URL. Referly adds `https://` if you leave it off.
+      </Step>
+      <Step title="Program Name">
+        Auto-suggested from your domain, for example `Acme Referral Program`. This is the name affiliates see. Edit it to anything you like.
+      </Step>
+      <Step title="Affiliate Portal Subdomain">
+        The web address where affiliates log in, register, and track their performance and payouts, for example `acme.referly.so`. Referly suggests one and checks it for availability as you type. A green check means it is free; a red message means it is taken, so try another. You can add a [custom domain](/help-center/settings/portal/custom-domain) later.
+      </Step>
+      <Step title="Program Logo">
+        Auto-fetched from your website. Select **Change** to upload your own image, or **Remove** to clear it. Maximum file size is 1 MB, and a square image of 512 by 512 pixels or larger works best.
+      </Step>
+    </Steps>
+
+    When the details look right, select **Create Program**. Referly creates your program and the affiliate portal, then moves you to the commission step.
+
+    
+![onboarding-program-details](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784499548751-779543-SCR-20260719-urfr.png)
+
+    <Note>
+      If you go back to this step later in the flow, Referly reuses the program you already created instead of making a duplicate.
+    </Note>
+  </Step>
+
+  <Step title="Set your commission structure">
+    Decide how and when you reward affiliates. First choose a reward type:
+
+    <Tabs>
+      <Tab title="Cash rewards">
+        Pay affiliates a monetary commission. Configure:
+
+        - **When affiliates earn commission**: **Customer Makes a Payment** (pay when a referred customer buys) or **New Lead Signs Up** (pay a flat rate when a referred person creates an account).
+        - **Commission frequency** (payment trigger only): **First Payment Only**, or **Recurring Basis** to pay on multiple customer payments. If you choose recurring, set a limit: until the customer cancels, by number of months, by number of payments, or both.
+        - **Commission type and rate** (payment trigger only): **Percentage** (a share of each sale, for example 10%) or **Flat Rate** (a fixed amount per sale). Sign-up commissions are always a fixed amount.
+        - **Currency**: shown next to a fixed amount. It defaults to USD.
+      </Tab>
+      <Tab title="Non-cash rewards">
+        Reward affiliates with coupons or custom credits instead of cash. You choose the reward type, when it is earned, and its settings. Non-cash rewards are a paid feature, so this option may be locked depending on your plan. See [non-cash rewards](/help-center/getting-started/commissions/non-cash-rewards) for the full setup.
+      </Tab>
+    </Tabs>
+
+    Select **Continue** to save your commission settings to the program. You can refine them and reach advanced options anytime in [commission plans](/help-center/settings/program/commission-plans). To learn more about how commissions work, see the [commissions overview](/help-center/getting-started/commissions/overview).
+
+    
+![onboarding-commission-structure](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784499560612-739397-SCR-20260720-bbhl.png)
+
+  </Step>
+
+  <Step title="Finish and land on your dashboard">
+    The final screen confirms your program is created, with a summary of your program name and affiliate portal link.
+
+    - If your account already has a plan, select **Go to Dashboard** to finish.
+    - If you have not subscribed yet, choose a plan here first. See [plans and features](/help-center/billing/plans-and-features) for what each one includes.
+
+    Either way, you land on your program dashboard.
+
+    
+![onboarding-completion](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784499570305-203957-SCR-20260720-bbss.jpeg)
+
+    <Check>
+      Your program, affiliate portal, and commission structure are set up. You are on the dashboard, ready to connect tracking and recruit affiliates.
+    </Check>
+
+    
+![program-dashboard](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784499581438-300791-SCR-20260720-bcsx.jpeg)
+
+  </Step>
+</Steps>
+
+## Next step: connect your tracking
+
+Onboarding creates your program, but sales do not flow in until Referly is connected to where your payments or orders happen. Connecting a payment or ecommerce platform is the natural next step.
+
+<Card title="Connect an integration" icon="plug" href="/help-center/integrations/overview" arrow>
+  Link Stripe, Shopify, and other tools so referred sales and rewards are tracked without manual work.
+</Card>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Set your commissions" icon="percent" href="/help-center/getting-started/commissions/overview" arrow>
+    Go deeper on commission types, product-based rules, and conditions.
+  </Card>
+  <Card title="Set up your branding" icon="palette" href="/help-center/getting-started/set-up-program/branding" arrow>
+    Make the affiliate portal look like your product.
+  </Card>
+  <Card title="Recruit your first affiliates" icon="user-plus" href="/help-center/getting-started/recruit/invite-affiliates" arrow>
+    Invite partners, add them manually, or open a sign-up page.
+  </Card>
+  <Card title="Program settings" icon="gear" href="/help-center/settings/program/general" arrow>
+    Change your program name, subdomain, currency, and more.
+  </Card>
+</Columns>
