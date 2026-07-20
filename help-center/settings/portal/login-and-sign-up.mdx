@@ -1,6 +1,142 @@
 ---
-title: "Affiliate login and sign up"
-description: "Control how affiliates get in."
+title: "Setting up login and sign up for affiliates"
+description: "Set up your affiliate login and sign-up pages in Referly: choose one of four page styles, customize the logo, title, subtitle, background, and carousel images, preview desktop and mobile, and see which styles need the Business plan."
+keywords: ["affiliate login page", "affiliate sign up page", "affiliate portal login settings", "Referly page style", "login page layout", "sign up page customization", "affiliate portal branding", "login background image", "login page carousel", "Business plan page styles"]
 ---
+Your login and sign-up pages are the first thing an affiliate sees when they join your program or come back to check their earnings. On the **Login and Sign Up** screen you pick the layout for those two pages and customize how they look, so they match your brand instead of showing a plain form. Everything you change shows up in a live preview, and nothing goes live until you save.
 
-{/* TODO: Write this article. */}
+To find it, open **Settings** from the left sidebar, go to **Affiliate Portal**, then select **Login and Sign Up**. The screen has three parts: the **Page Style** picker at the top, a live **Preview**, and a **Customization** area where you set the details.
+
+![login-signup-settings-overview](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784559345400-250003-SCR-20260720-onfo.png)
+
+<Info>
+  You need to be signed in to your Referly dashboard with access to program settings. Style 1 works on any paid plan. Styles 2, 3, and 4 need the Business plan or higher. See [plans and features](/help-center/billing/plans-and-features) for what each plan includes.
+</Info>
+
+## Choose a page style
+
+The **Page Style** section sets the overall layout of your login and sign-up pages. Pick one of four styles. Styles 2, 3, and 4 show a **PRO** badge because they need the Business plan or higher.
+
+![page-style-selector](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784559356477-830018-SCR-20260720-pnmg.png)
+
+Selecting a style updates the preview right away and changes which customization options you'll see below, since each layout supports different things.
+
+<Warning>
+  If you choose Style 2, 3, or 4 while on a plan that doesn't include it, you'll see a message saying "Styles 2, 3, and 4 require Business plan or higher" when you try to save, and your change won't be kept. Switch back to Style 1 or upgrade your plan to use the PRO styles.
+</Warning>
+
+### The four styles
+
+Here's what each layout looks like once it's live.
+
+![page-styles-compared](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784559379323-454654-SCR-20260720-pong.jpeg)
+
+- **Style 1** is a split, two-panel layout. The sign-up or login form sits on the left, and a colored panel on the right shows your logo, title, and subtitle. This is the default and it works on every paid plan.
+- **Style 2** is a centered, minimal layout. Your logo, title, subtitle, and the form all stack in the middle of the page on a clean background.
+- **Style 3** is a full-page background with a floating form card. Your background color or image fills the whole page, and a white card holding the form floats on top.
+- **Style 4** is a centered card with an image carousel. The form sits on one side of the card and a rotating set of images sits on the other.
+
+## Preview your pages
+
+The **Preview** panel shows a live version of your login and sign-up pages using your current settings. It updates as you make changes, so you can check the result before you save.
+
+Two sets of buttons control what you're looking at. Use the **desktop** and **mobile** buttons to see how each page looks on a computer versus a phone. Use the **Sign Up** and **Login** buttons to switch between the two pages, since you're setting up both at once.
+
+![preview-panel-toggles](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784559386864-192740-Area.gif)
+
+<Note>
+  The preview needs your portal address to work. If you haven't set a subdomain yet, you'll see "Set a subdomain to preview your pages" instead of the preview.
+</Note>
+
+## Customize your pages
+
+The **Customization** area is where you set the logo, text, background, and images. The sections you see depend on the page style you picked, so some of the options below won't appear for every style.
+
+### Logo
+
+The **Logo** section controls whether your logo shows and which version of it appears.
+
+![logo-customization](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784559409948-409201-SCR-20260720-pqok.jpeg)
+
+<Steps>
+  <Step title="Turn the logo on or off">
+    Use the **Show Logo** toggle to decide whether your logo appears on the login and sign-up pages. This toggle is available for Styles 1, 2, and 3.
+  </Step>
+  <Step title="Pick which logo to use">
+    Under **Select Logo**, choose which uploaded logo to show: **Main Logo**, **Dashboard Logo**, or **Collapsed Logo**. Only the versions you've already uploaded appear here.
+  </Step>
+</Steps>
+
+You upload these images on the [Branding](/help-center/getting-started/set-up-program/branding) page. If you haven't uploaded any yet, you'll see a note asking you to add them on the Branding page first.
+
+### Title and subtitle
+
+The **Title & Subtitle** section sets the welcome text on your pages. It's available for Styles 1, 2, and 3. Each of the title and subtitle has its own on/off switch, so you can show one, both, or neither.
+
+![title-subtitle-typography](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784559417882-891269-SCR-20260720-praq.jpeg)
+
+For each one, type your text into the **Text** field. The starting text uses placeholders like "Welcome to the `{affiliateProgramName}` affiliate program" for the title and "Earn `{commissionRate}` for every sale you refer" for the subtitle.
+
+<Steps>
+  <Step title="Add variables that fill themselves in">
+    Select the **Variables** button to open the **Insert Variable** window, then choose **Affiliate Program Name** or **Commission Rate**. These drop in as `{affiliateProgramName}` and `{commissionRate}` and are replaced with your real program name and commission rate when an affiliate views the page. That way the text stays correct even if those details change later. Each text field holds up to 200 characters.
+  </Step>
+  <Step title="Set the font size and weight">
+    Open the **Typography** controls under the field to change the **Size** and **Weight** of the text. Use the desktop and mobile buttons here to set different sizes for computers and phones, so long headings don't crowd a small screen.
+  </Step>
+</Steps>
+
+### Background
+
+The **Background** section sets what fills the page behind your form. It appears for **Style 1** and **Style 3**, the two layouts that use a background.
+
+![background-customization](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784559427078-565397-SCR-20260720-prip.jpeg)
+
+<Steps>
+  <Step title="Pick a color or gradient">
+    Use the **Background Color/Gradient** picker to set a solid color or build a gradient. This sits behind everything else.
+  </Step>
+  <Step title="Add a background image (optional)">
+    Under **Background Image**, choose one of the four presets, or select **Choose from Content Library** to use one of your own uploaded images. The image sits on top of the color. To clear an image, use the X on it.
+  </Step>
+  <Step title="Blend the color with the image">
+    Once you set a background image, a **Color/Gradient Opacity** slider appears. It controls how much of your color or gradient shows through on top of the image. A lower value shows more of the image.
+  </Step>
+</Steps>
+
+### Carousel images
+
+The **Carousel Images** section appears only for **Style 4**. These are the images that rotate on one side of the card.
+
+![carousel-images-style4](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784559435766-200650-SCR-20260720-prpb.png)
+
+You can add up to three images, all from your Content Library. Select **Add Image** to add one. To reorder them, drag an image by its handle. Each image also has buttons to swap it for another or remove it. For the best look, use portrait images about 1200 by 1600 pixels, or larger.
+
+### Save your changes
+
+As soon as you change anything on this screen, a **Save Changes** button appears at the bottom right. Your edits aren't live on the affiliate portal until you select it.
+
+![save-changes-button](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784559447179-270420-SCR-20260720-prrf.jpeg)
+
+<Check>
+  When the "Login & Sign Up settings saved successfully" message appears, your login and sign-up pages are live with the new look.
+</Check>
+
+If you leave the screen before selecting **Save Changes**, your edits won't be kept, so save before you navigate away.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Set up your branding" icon="palette" href="/help-center/getting-started/set-up-program/branding" arrow>
+    Upload the logos you pick from here and set your brand colors.
+  </Card>
+  <Card title="Social login" icon="right-to-bracket" href="/help-center/settings/portal/social-login" arrow>
+    Let affiliates sign in with a social account.
+  </Card>
+  <Card title="Let affiliates sign up" icon="user-plus" href="/help-center/getting-started/recruit/let-affiliates-sign-up" arrow>
+    Open your portal so new affiliates can apply.
+  </Card>
+  <Card title="Plans and features" icon="tags" href="/help-center/billing/plans-and-features" arrow>
+    See which plan unlocks the PRO page styles.
+  </Card>
+</Columns>
