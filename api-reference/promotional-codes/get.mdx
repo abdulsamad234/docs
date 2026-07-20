@@ -1,0 +1,28 @@
+---
+title: "Get Promotional Codes"
+openapi: "GET /promotional-codes"
+---
+
+## Understanding Promotional Codes
+
+Promotional codes are the actual discount codes that customers enter at checkout. Each promotional code is linked to a **coupon**, which defines the discount structure (amount, type, duration, etc.).
+
+### Key Concepts
+
+- **Promotional codes** are the customer-facing codes (e.g., "JOHN20", "SAVE20", "AFFILIATE10")
+- They inherit their discount properties from the parent **coupon**
+- Multiple promotional codes can share the same coupon (same discount, different codes)
+- Each promotional code can be assigned to a specific affiliate for tracking
+
+### Query Options
+
+You can retrieve promotional codes by:
+
+- **id**: Get a specific promotional code by ID
+- **code**: Get a promotional code by the actual code string
+- **externalId**: Get by external ID (e.g., Stripe promotion code ID)
+- **couponId**: Get all promotional codes for a specific coupon
+- **affiliateId**: Get all promotional codes for a specific affiliate
+- **affiliateEmail**: Get all promotional codes for an affiliate by email
+
+If no parameters are provided, all promotional codes for your program are returned.

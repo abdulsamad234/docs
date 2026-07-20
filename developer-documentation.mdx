@@ -1,0 +1,120 @@
+---
+title: "Referly Developer Documentation"
+description: "Install affiliate tracking, report conversions from your server, receive webhooks, and integrate Referly with your stack."
+keywords:
+  [
+    "affiliate tracking",
+    "conversion tracking",
+    "affiliate API",
+    "webhooks",
+    "referral tracking",
+    "Referly",
+  ]
+---
+
+[Referly](https://www.referly.so) tracks referrals, attributes sales to affiliates, and works out the
+commission owed. This section covers everything you build against: the tracking script, server-side
+conversion reporting, webhooks, and integrations.
+
+Whether you are:
+
+- adding [affiliate tracking](/developer-documentation/tracking/install-the-snippet) to a website
+- reporting [sales from your backend](/developer-documentation/server-side/reporting-sales)
+- reacting to [webhook events](/developer-documentation/webhooks/introduction) in your own systems
+- connecting Referly through an [integration](/developer-documentation/integrations/overview)
+
+start here.
+
+## How Referly works
+
+A visitor arrives through an affiliate's link or coupon and Referly records a **click**. When that
+visitor becomes a customer, the click becomes a **referral**. Each payment that customer makes is a
+**sale**, every sale produces a **commission** for the affiliate, and commissions are settled in a
+**payout**.
+
+<Card
+  title="Core concepts"
+  icon="diagram-project"
+  href="/developer-documentation/getting-started/core-concepts"
+  horizontal
+>
+  How programs, affiliates, clicks, referrals, sales, commissions, and payouts fit together.
+</Card>
+
+## What would you like to do?
+
+<Columns cols={2}>
+  <Card
+    title="Install tracking"
+    icon="code"
+    href="/developer-documentation/tracking/install-the-snippet"
+  >
+    Add the script that attributes clicks and sales to affiliates.
+  </Card>
+  <Card
+    title="Report a sale from your server"
+    icon="server"
+    href="/developer-documentation/server-side/reporting-sales"
+  >
+    Record conversions from your backend rather than the browser.
+  </Card>
+  <Card
+    title="Receive webhooks"
+    icon="webhook"
+    href="/developer-documentation/webhooks/introduction"
+  >
+    Get notified when affiliates, referrals, and sales change.
+  </Card>
+  <Card title="Use the API" icon="terminal" href="/api-reference/introduction">
+    Read and write affiliates, referrals, sales, links, and coupons.
+  </Card>
+</Columns>
+
+## Quickstart
+
+Add the tracking script to every page of your site:
+
+```html
+<script
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  src="https://www.referly.so/affiliate-tracker.js"
+></script>
+```
+
+<Card
+  title="Quickstart guide"
+  icon="bolt"
+  href="/developer-documentation/getting-started/quickstart"
+  horizontal
+>
+  Install the snippet, confirm attribution works, and record your first sale.
+</Card>
+
+## Integrations
+
+If you use one of these platforms, you may not need to write any code.
+
+<Columns cols={3}>
+  <Card title="Stripe" href="/developer-documentation/integrations/stripe-app" arrow />
+  <Card title="Shopify" href="/developer-documentation/integrations/shopify-app" arrow />
+  <Card title="WooCommerce" href="/developer-documentation/integrations/woocommerce" arrow />
+  <Card title="Zapier" href="/developer-documentation/integrations/zapier" arrow />
+  <Card title="Make" href="/developer-documentation/integrations/make" arrow />
+  <Card title="Everything else" href="/developer-documentation/integrations/overview" arrow />
+</Columns>
+
+## Reference
+
+<Columns cols={2}>
+  <Card title="Data model" icon="database" href="/developer-documentation/reference/data-model">
+    The core objects and how they relate.
+  </Card>
+  <Card
+    title="Statuses and enums"
+    icon="list-check"
+    href="/developer-documentation/reference/statuses-and-enums"
+  >
+    Every status value an object can hold.
+  </Card>
+</Columns>

@@ -1,0 +1,96 @@
+---
+title: "Referly API Reference"
+description: "The Referly REST API lets you read and write affiliates, referrals, sales, links, coupons, and promotional codes, and attribute commissions from your own systems."
+keywords:
+  [
+    "Referly API",
+    "affiliate API",
+    "REST API",
+    "affiliate marketing API",
+    "referral API",
+    "API reference",
+  ]
+---
+
+The Referly API lets you track payments and attribute commissions from your own systems. Everything
+you can do with affiliates, referrals, and sales in the dashboard, you can do here.
+
+<Note>
+  The API is a premium feature that's only available to users who have an active
+  Business Plan. [See Pricing Page](https://referly.so/pricing)
+</Note>
+
+## Base URL
+
+All endpoints are relative to:
+
+```bash
+https://www.referly.so/api/v1
+```
+
+## Get started
+
+<Columns cols={2}>
+  <Card title="Create your program" icon="computer" href="https://referly.so/dashboard">
+    Create your Affiliate Program and add the tracking code to your website.
+  </Card>
+  <Card title="Authenticate" icon="key" href="/api-reference/authentication">
+    Generate an API key and authorize your requests with a Bearer token.
+  </Card>
+</Columns>
+
+Every request carries your key as a Bearer token:
+
+```bash
+curl https://www.referly.so/api/v1/affiliates \
+  -H "Authorization: Bearer <YOUR_TOKEN>"
+```
+
+## Endpoints
+
+<Columns cols={2}>
+  <Card title="Affiliates" icon="users" href="/api-reference/affiliates/get">
+    The people promoting your program.
+  </Card>
+  <Card title="Referrals" icon="share-nodes" href="/api-reference/referrals/get">
+    The customers your affiliates brought in.
+  </Card>
+  <Card title="Sales" icon="cart-shopping" href="/api-reference/sales/get">
+    Purchases attributed to an affiliate.
+  </Card>
+  <Card title="Affiliate links" icon="link" href="/api-reference/links/get">
+    The referral links affiliates share.
+  </Card>
+  <Card title="Coupons" icon="ticket" href="/api-reference/coupons/get">
+    The discounts customers receive.
+  </Card>
+  <Card title="Promotional codes" icon="tag" href="/api-reference/promotional-codes/get">
+    The customer-facing codes tied to a coupon.
+  </Card>
+</Columns>
+
+## Concepts
+
+<Columns cols={2}>
+  <Card title="Affiliates and referral links" icon="link" href="/api-reference/affiliate-links">
+    Why `affiliateLinks` replaces the deprecated `link` property.
+  </Card>
+  <Card
+    title="Coupons and promotional codes"
+    icon="ticket"
+    href="/api-reference/coupons-and-promotional-codes"
+  >
+    How a coupon's discount reaches a customer through a code.
+  </Card>
+</Columns>
+
+## Integrations
+
+<Columns cols={2}>
+  <Card title="Zapier OAuth" icon="bolt" href="/api-reference/zapier/oauth">
+    Connect Referly to Zapier using OAuth.
+  </Card>
+  <Card title="Developer Documentation" icon="code" href="/developer-documentation">
+    Tracking, webhooks, and platform integrations.
+  </Card>
+</Columns>

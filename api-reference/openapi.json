@@ -1,0 +1,2487 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Referly API",
+    "description": "API for managing affiliates, referrals, and sales for SaaS businesses",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://www.referly.so/api/v1"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/affiliates": {
+      "get": {
+        "summary": "Get all affiliates or by ID/email",
+        "description": "Returns an affiliate by ID or email, or all affiliates for the program. Affiliate objects include an `affiliateLinks` array with every link slug for that affiliate. The legacy `link` field on the affiliate is deprecated and is usually null—use `affiliateLinks` instead.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Affiliate user ID (UUID), numeric click ID, or an affiliate link slug for this program",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "The email of the affiliate to retrieve",
+            "schema": {
+              "type": "string",
+              "format": "email"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of affiliates or a single affiliate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Affiliate"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new affiliate",
+        "description": "Creates a new affiliate on your Affiliate Program. The response includes an `affiliateLinks` array (initially containing the link created from `affiliateLink`, or an auto-generated slug).",
+        "requestBody": {
+          "description": "Affiliate details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewAffiliate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Affiliate created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Affiliate"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update an Affiliate by ID",
+        "description": "Updates an Affiliate based on their ID",
+        "requestBody": {
+          "description": "Affiliate update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AffiliateUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Affiliate updated successfully"
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an Affiliate",
+        "description": "Deletes an Affiliate based on the ID provided",
+        "requestBody": {
+          "description": "Affiliate update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AffiliateDelete"
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "204": {
+            "description": "Sale deleted successfully"
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/referrals": {
+      "get": {
+        "summary": "Get all referrals or by ID/email/externalId",
+        "description": "Returns a list of referrals based on the affiliate program, filtered by optional referral ID, affiliate ID, affiliate email, or external ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The ID of the referral to retrieve",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "affiliateId",
+            "in": "query",
+            "description": "The affiliate ID associated with the referral",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "affiliateEmail",
+            "in": "query",
+            "description": "The email of the affiliate associated with the referral",
+            "schema": {
+              "type": "string",
+              "format": "email"
+            }
+          },
+          {
+            "name": "externalId",
+            "in": "query",
+            "description": "The external ID of the referred user",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of referrals or a single referral",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Referral"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new referral",
+        "description": "Creates a new referral under the specified affiliate program. You must provide either an affiliateId, affiliateEmail, or promoCode to identify the affiliate. When using a promo code, it will be validated for expiration, redemption limits, and active status.",
+        "requestBody": {
+          "description": "Referral details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewReferral"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Referral created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Referral"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a referral by ID",
+        "description": "Updates a referral based on their ID",
+        "requestBody": {
+          "description": "Referral update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReferralUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Referral updated successfully"
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a referral",
+        "description": "Deletes a referral based on the ID provided",
+        "requestBody": {
+          "description": "Referral update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReferralDelete"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Referral deleted successfully"
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/links": {
+      "get": {
+        "summary": "Get all affiliate links or by ID/link/affiliate",
+        "description": "Returns a list of affiliate links based on the affiliate program, filtered by optional link ID, link string, affiliate ID, or affiliate email",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The ID of the affiliate link to retrieve",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "link",
+            "in": "query",
+            "description": "The link string of the affiliate link to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "affiliateId",
+            "in": "query",
+            "description": "The affiliate ID to get links for",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "affiliateEmail",
+            "in": "query",
+            "description": "The email of the affiliate to get links for",
+            "schema": {
+              "type": "string",
+              "format": "email"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of affiliate links or a single affiliate link",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AffiliateLink"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new affiliate link",
+        "description": "Creates a new affiliate link for the specified affiliate. Note: an Affiliate is required to create an Affiliate Link.",
+        "requestBody": {
+          "description": "Affiliate link details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewAffiliateLink"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Affiliate link created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AffiliateLink"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update an affiliate link by ID or link string",
+        "description": "Updates an affiliate link based on their ID or link string",
+        "requestBody": {
+          "description": "Affiliate link update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AffiliateLinkUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Affiliate link updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AffiliateLink"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Affiliate link not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an affiliate link",
+        "description": "Deletes an affiliate link based on the ID or link string provided",
+        "requestBody": {
+          "description": "Affiliate link delete details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AffiliateLinkDelete"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Affiliate link deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Success message"
+                    },
+                    "deletedLink": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "link": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Affiliate link not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/coupons": {
+      "get": {
+        "summary": "Get all coupons or by ID/externalId/name",
+        "description": "Returns coupons based on the affiliate program. Coupons define the discount structure (amount, type, duration) that promotional codes will use.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The ID of the coupon to retrieve",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "externalId",
+            "in": "query",
+            "description": "The external ID of the coupon (e.g., Stripe coupon ID)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "The name of the coupon to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of coupons or a single coupon",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Coupon"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Coupon"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new coupon",
+        "description": "Creates a new coupon definition that can be used to generate promotional codes. Coupons define the discount structure.",
+        "requestBody": {
+          "description": "Coupon details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewCoupon"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Coupon created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Coupon"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a coupon",
+        "description": "Updates an existing coupon. Changes will affect all promotional codes using this coupon.",
+        "requestBody": {
+          "description": "Coupon update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Coupon updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Coupon"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Coupon not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a coupon",
+        "description": "Deletes a coupon and all associated promotional codes. This action is permanent.",
+        "requestBody": {
+          "description": "Coupon delete details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponDelete"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Coupon deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "deletedCoupon": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Coupon not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/promotional-codes": {
+      "get": {
+        "summary": "Get all promotional codes or by ID/code/couponId/affiliateId",
+        "description": "Returns promotional codes based on the affiliate program. Promotional codes are the actual discount codes customers use at checkout.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The ID of the promotional code to retrieve",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "code",
+            "in": "query",
+            "description": "The promotional code string to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "externalId",
+            "in": "query",
+            "description": "The external ID (e.g., Stripe promotion code ID)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "couponId",
+            "in": "query",
+            "description": "Get all promotional codes for a specific coupon",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "affiliateId",
+            "in": "query",
+            "description": "Get all promotional codes for a specific affiliate",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "affiliateEmail",
+            "in": "query",
+            "description": "Get all promotional codes for an affiliate by email",
+            "schema": {
+              "type": "string",
+              "format": "email"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of promotional codes or a single promotional code",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/PromotionalCode"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PromotionalCode"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new promotional code",
+        "description": "Creates a new promotional code linked to a coupon. Supports both manual codes and auto-generated codes based on structure.",
+        "requestBody": {
+          "description": "Promotional code details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewPromotionalCode"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Promotional code created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PromotionalCode"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a promotional code",
+        "description": "Updates an existing promotional code's properties like activation status, expiration, and limits.",
+        "requestBody": {
+          "description": "Promotional code update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromotionalCodeUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Promotional code updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PromotionalCode"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Promotional code not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a promotional code",
+        "description": "Deletes a promotional code. This action is permanent.",
+        "requestBody": {
+          "description": "Promotional code delete details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromotionalCodeDelete"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Promotional code deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "deletedCode": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Promotional code not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales": {
+      "get": {
+        "summary": "Get all sales or by ID, affiliate, referral, or external ID",
+        "description": "Returns a list of sales based on the affiliate program, filtered by optional sale ID, affiliate ID, affiliate email, referral ID, or external ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The ID of the sale to retrieve",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "affiliateId",
+            "in": "query",
+            "description": "The affiliate ID associated with the sale",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "affiliateEmail",
+            "in": "query",
+            "description": "The email of the affiliate associated with the sale",
+            "schema": {
+              "type": "string",
+              "format": "email"
+            }
+          },
+          {
+            "name": "referralId",
+            "in": "query",
+            "description": "The referral ID associated with the sale",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "saleExternalId",
+            "in": "query",
+            "description": "The external ID of the sale. This is the ID of the sale in the external system or your database.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of sales or a single sale",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Sale"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new sale",
+        "description": "Creates a new sale under the specified affiliate program. You must provide either a referralId, email, or promoCode to identify the affiliate and referral. When using a promo code, it will be validated for expiration, redemption limits, and active status.",
+        "requestBody": {
+          "description": "Sale details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewSale"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Sale created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sale"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a sale by ID",
+        "description": "Updates a sale based on their ID",
+        "requestBody": {
+          "description": "Sale update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaleUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Sale updated successfully"
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Mark a sale as refunded",
+        "description": "Marks an existing sale as refunded when it is still eligible to be refunded. If the sale has already been refunded, the endpoint still returns a successful response indicating that state.",
+        "requestBody": {
+          "description": "Sale refund details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaleRefund"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Sale refund status processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleRefundResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Sale cannot be marked as refunded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleRefundError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sale not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleRefundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a sale",
+        "description": "Deletes a sale based on the ID provided",
+        "requestBody": {
+          "description": "Sale delete details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaleDelete"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Sale deleted successfully"
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AffiliateLinkRecord": {
+        "type": "object",
+        "description": "A single referral link belonging to an affiliate",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Affiliate link record ID"
+          },
+          "link": {
+            "type": "string",
+            "description": "Link slug (path segment) for this affiliate"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Affiliate user ID"
+          },
+          "programId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Affiliate program ID"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When this link was created"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When this link was last updated"
+          }
+        }
+      },
+      "Affiliate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate ID"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First name of the affiliate"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name of the affiliate"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Full name of the affiliate (optional)"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email of the affiliate"
+          },
+          "password": {
+            "type": "string",
+            "nullable": true,
+            "description": "Hashed Password of the affiliate (optional)",
+            "deprecated": true
+          },
+          "emailVerified": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Flag to indicate if the email has been verified"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true,
+            "description": "Profile image URL of the affiliate"
+          },
+          "detailsComplete": {
+            "type": "boolean",
+            "description": "Flag to indicate if affiliate details are complete"
+          },
+          "programId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The program ID that the affiliate is associated with"
+          },
+          "payoutEmail": {
+            "type": "string",
+            "format": "email",
+            "description": "Email to be used for payouts"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "description": "Payment method for the affiliate (e.g., WISE)"
+          },
+          "commissionRate": {
+            "type": "number",
+            "format": "float",
+            "description": "Commission rate for the affiliate (0 - 100)"
+          },
+          "link": {
+            "type": "string",
+            "nullable": true,
+            "deprecated": true,
+            "description": "Deprecated legacy field; often null. Use `affiliateLinks` for all link slugs."
+          },
+          "affiliateLinks": {
+            "type": "array",
+            "description": "All affiliate link records for this affiliate. This is the source of truth for referral link slugs.",
+            "items": {
+              "$ref": "#/components/schemas/AffiliateLinkRecord"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the affiliate (active/inactive)"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the affiliate was created"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the affiliate was last updated"
+          },
+          "numberOfReferredUsers": {
+            "type": "integer",
+            "description": "Number of users referred by the affiliate"
+          },
+          "numberOfClicks": {
+            "type": "integer",
+            "description": "Number of clicks generated by the affiliate"
+          },
+          "totalCommissionEarned": {
+            "type": "number",
+            "format": "float",
+            "description": "Total commission earned by the affiliate"
+          }
+        }
+      },
+      "NewAffiliate": {
+        "type": "object",
+        "required": ["firstName", "lastName", "email"],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "First name of the affiliate"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name of the affiliate"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email of the affiliate"
+          },
+          "commissionRate": {
+            "type": "number",
+            "format": "float",
+            "description": "Commission rate for the affiliate"
+          },
+          "affiliateLink": {
+            "type": "string",
+            "description": "Optional slug for the affiliate's first referral link. If omitted, a slug is generated automatically."
+          }
+        }
+      },
+      "AffiliateUpdate": {
+        "type": "object",
+        "required": ["affiliateId"],
+        "properties": {
+          "affiliateId": {
+            "type": "string",
+            "description": "The ID of the affiliate"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First name of the affiliate"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name of the affiliate"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email of the affiliate"
+          },
+          "commissionRate": {
+            "type": "number",
+            "format": "float",
+            "description": "Commission rate for the affiliate"
+          },
+          "affiliateStatus": {
+            "type": "string",
+            "description": "Status of the affiliate (active/inactive)"
+          },
+          "affiliateLink": {
+            "type": "string",
+            "description": "If set, adds a new affiliate link with this slug. Existing links are kept; this does not replace other `affiliateLinks`."
+          }
+        }
+      },
+      "AffiliateDelete": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the affiliate"
+          }
+        }
+      },
+      "Referral": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The referral ID"
+          },
+          "affiliateId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate ID associated with the referral"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the referred user"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email of the referred user"
+          },
+          "referredUserExternalId": {
+            "type": "string",
+            "description": "The external ID of the referred user. This will be an ID you actively maintain that identifies the user on your server (for example, the User ID in your database, or Stripe Customer ID)"
+          },
+          "plan": {
+            "type": "string",
+            "description": "The plan associated with the referred user"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the referral (active/inactive)"
+          }
+        }
+      },
+      "NewReferral": {
+        "type": "object",
+        "required": ["name", "email", "referredUserExternalId"],
+        "properties": {
+          "affiliateId": {
+            "type": "string",
+            "description": "The affiliate ID/Link associated with the referral (required if affiliateEmail and promoCode are not provided)"
+          },
+          "affiliateEmail": {
+            "type": "string",
+            "format": "email",
+            "description": "The affiliate email associated with the referral (required if affiliateId and promoCode are not provided)"
+          },
+          "promoCode": {
+            "type": "string",
+            "description": "The promotional code associated with an affiliate (required if affiliateId and affiliateEmail are not provided). When used, the promo code will be validated and its redemption count will be incremented."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the referred user"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email of the referred user"
+          },
+          "referredUserExternalId": {
+            "type": "string",
+            "description": "The external ID of the referred user"
+          },
+          "plan": {
+            "type": "string",
+            "description": "The plan associated with the referred user"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the referral (active/inactive)"
+          }
+        }
+      },
+      "ReferralUpdate": {
+        "type": "object",
+        "required": ["referralId"],
+        "properties": {
+          "referralId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The referral ID to update"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the referred user"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email of the referred user"
+          },
+          "referredUserExternalId": {
+            "type": "string",
+            "description": "The external ID of the referred user. This will be an ID you actively maintain that identifies the user on your server (for example, the User ID in your database, or Stripe Customer ID)"
+          },
+          "plan": {
+            "type": "string",
+            "description": "The plan associated with the referred user"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the referral (active/inactive)"
+          }
+        }
+      },
+
+      "ReferralDelete": {
+        "type": "object",
+        "required": ["referralId"],
+        "properties": {
+          "referralId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The referral ID to delete"
+          }
+        }
+      },
+      "Sale": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The sale ID"
+          },
+          "affiliateId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate ID associated with the sale"
+          },
+          "referralId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The referral ID associated with the sale"
+          },
+          "externalId": {
+            "type": "string",
+            "description": "The external ID of the sale. This is the ID of the sale in the external system or your database."
+          },
+          "externalInvoiceId": {
+            "type": "string",
+            "description": "The external invoice ID of the sale. This is the ID of the invoice in the external system or your database (Useful if you invoice your customers when they purchase your product)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the customer who made the sale"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email associated with the sale"
+          },
+          "totalEarned": {
+            "type": "number",
+            "format": "float",
+            "description": "Total amount earned from the sale"
+          },
+          "commissionRate": {
+            "type": "number",
+            "format": "float",
+            "description": "Commission rate for the sale"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp of the sale"
+          }
+        }
+      },
+      "NewSale": {
+        "type": "object",
+        "required": ["totalEarned"],
+        "properties": {
+          "referralId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The referral ID, or affiliate link or affiliate ID associated with the sale (required if email and promoCode are not provided)"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email associated with the sale (required if referralId and promoCode are not provided)"
+          },
+          "promoCode": {
+            "type": "string",
+            "description": "The promotional code associated with an affiliate (required if referralId and email are not provided). When used, the promo code will be validated and its redemption count will be incremented."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the customer (required if not found via referralId or email)"
+          },
+          "externalId": {
+            "type": "string",
+            "description": "The external ID of the sale. This is the ID of the sale in the external system or your database."
+          },
+          "externalInvoiceId": {
+            "type": "string",
+            "description": "The external invoice ID of the sale. This is the ID of the invoice in the external system or your database (Useful if you invoice your customers when they purchase your product)."
+          },
+          "totalEarned": {
+            "type": "number",
+            "format": "float",
+            "description": "Total amount earned from the sale"
+          },
+          "commissionRate": {
+            "type": "number",
+            "format": "float",
+            "description": "Commission rate for the sale (optional, defaults to affiliate's commission rate)"
+          },
+          "product": {
+            "$ref": "#/components/schemas/Product",
+            "description": "Product details for the sale"
+          },
+          "tax": {
+            "type": "number",
+            "format": "float",
+            "description": "Optional tax amount to deduct from the commission calculation (when program has deduct tax enabled)"
+          },
+          "shipping": {
+            "type": "number",
+            "format": "float",
+            "description": "Optional shipping amount to deduct from the commission calculation (when program has deduct shipping enabled)"
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string",
+            "description": "Product ID"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Quantity purchased"
+          },
+          "price": {
+            "type": "number",
+            "format": "float",
+            "description": "Unit price at time of sale"
+          },
+          "name": {
+            "type": "string",
+            "description": "Product name"
+          }
+        }
+      },
+      "SaleUpdate": {
+        "type": "object",
+        "required": ["saleId"],
+        "properties": {
+          "saleId": {
+            "type": "integer",
+            "description": "The sale ID to delete"
+          },
+          "name": {
+            "type": "string",
+            "description": "Email associated with the sale"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email of the customer associated with the sale"
+          },
+          "totalEarned": {
+            "type": "number",
+            "format": "float",
+            "description": "Total amount earned from the sale"
+          },
+          "commissionRate": {
+            "type": "number",
+            "format": "float",
+            "description": "Commission rate for the sale"
+          }
+        }
+      },
+      "SaleDelete": {
+        "type": "object",
+        "required": ["saleId"],
+        "properties": {
+          "saleId": {
+            "type": "integer",
+            "description": "The sale ID to delete"
+          }
+        }
+      },
+      "SaleRefund": {
+        "type": "object",
+        "required": ["saleId"],
+        "properties": {
+          "saleId": {
+            "type": "integer",
+            "description": "The sale ID to mark as refunded"
+          }
+        }
+      },
+      "SaleRefundResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the refund request was handled successfully"
+          },
+          "alreadyRefunded": {
+            "type": "boolean",
+            "description": "Whether the sale had already been marked as refunded before this request"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Result reason, such as refunded or already_refunded"
+          }
+        }
+      },
+      "SaleRefundError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "error message"
+          },
+          "reason": {
+            "type": "string",
+            "description": "error reason"
+          }
+        }
+      },
+      "AffiliateLink": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate link ID"
+          },
+          "link": {
+            "type": "string",
+            "description": "The affiliate link string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the affiliate link was created"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the affiliate link was last updated"
+          },
+          "affiliate": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "The affiliate ID"
+              },
+              "name": {
+                "type": "string",
+                "description": "Full name of the affiliate"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "description": "Email of the affiliate"
+              }
+            }
+          },
+          "program": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "The program ID"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of the affiliate program"
+              },
+              "currency": {
+                "type": "string",
+                "description": "Currency used by the program"
+              }
+            }
+          },
+          "clicks": {
+            "type": "integer",
+            "description": "Number of clicks on this affiliate link"
+          },
+          "referrals": {
+            "type": "integer",
+            "description": "Number of referrals generated by this link"
+          },
+          "sales": {
+            "type": "integer",
+            "description": "Number of sales generated by this link"
+          },
+          "totalRevenue": {
+            "type": "number",
+            "format": "float",
+            "description": "Total revenue generated by this link"
+          },
+          "fullURLs": {
+            "type": "array",
+            "description": "Array of full URLs for this affiliate link",
+            "items": {
+              "type": "object",
+              "properties": {
+                "baseUrl": {
+                  "type": "string",
+                  "description": "The base URL"
+                },
+                "fullUrl": {
+                  "type": "string",
+                  "description": "The complete affiliate URL with parameters"
+                }
+              }
+            }
+          }
+        }
+      },
+      "NewAffiliateLink": {
+        "type": "object",
+        "required": ["link"],
+        "properties": {
+          "link": {
+            "type": "string",
+            "description": "The affiliate link string (letters, numbers, and hyphens only)"
+          },
+          "affiliateId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate ID (required if affiliateEmail not provided)"
+          },
+          "affiliateEmail": {
+            "type": "string",
+            "format": "email",
+            "description": "The affiliate email (required if affiliateId not provided)"
+          }
+        }
+      },
+      "AffiliateLinkUpdate": {
+        "type": "object",
+        "required": ["newLink"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate link ID (required if link not provided)"
+          },
+          "link": {
+            "type": "string",
+            "description": "The current affiliate link string (required if id not provided)"
+          },
+          "newLink": {
+            "type": "string",
+            "description": "The new affiliate link string (letters, numbers, and hyphens only)"
+          }
+        }
+      },
+      "AffiliateLinkDelete": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate link ID (required if link not provided)"
+          },
+          "link": {
+            "type": "string",
+            "description": "The affiliate link string (required if id not provided)"
+          }
+        }
+      },
+      "Coupon": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The coupon ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the coupon"
+          },
+          "externalId": {
+            "type": "string",
+            "nullable": true,
+            "description": "External ID (e.g., Stripe coupon ID)"
+          },
+          "couponType": {
+            "type": "string",
+            "enum": ["PERCENTAGE", "FLAT"],
+            "description": "Type of discount - percentage or flat amount"
+          },
+          "percentOff": {
+            "type": "number",
+            "format": "float",
+            "nullable": true,
+            "description": "Percentage off (1-100) for percentage coupons"
+          },
+          "amountOff": {
+            "type": "number",
+            "format": "float",
+            "nullable": true,
+            "description": "Amount off for flat coupons"
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true,
+            "description": "Currency for flat amount coupons (e.g., USD, EUR)"
+          },
+          "duration": {
+            "type": "string",
+            "enum": ["once", "forever", "repeating"],
+            "description": "How long the discount applies"
+          },
+          "durationInMonths": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Number of months for repeating duration"
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Maximum number of times this coupon can be redeemed"
+          },
+          "limitToProducts": {
+            "type": "boolean",
+            "description": "Whether coupon is limited to specific products"
+          },
+          "productIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of product IDs this coupon applies to"
+          },
+          "valid": {
+            "type": "boolean",
+            "description": "Whether the coupon is currently valid"
+          },
+          "redeemBy": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Date by which the coupon must be redeemed"
+          },
+          "integrationType": {
+            "type": "string",
+            "nullable": true,
+            "description": "Integration type (e.g., stripe, custom)"
+          },
+          "affiliateProgramId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate program ID"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the coupon was created"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the coupon was last updated"
+          },
+          "promotionalCodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PromotionalCode"
+            },
+            "description": "Promotional codes associated with this coupon"
+          }
+        }
+      },
+      "NewCoupon": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the coupon"
+          },
+          "externalId": {
+            "type": "string",
+            "description": "External ID (e.g., Stripe coupon ID)"
+          },
+          "couponType": {
+            "type": "string",
+            "enum": ["PERCENTAGE", "FLAT"],
+            "description": "Type of discount - percentage or flat amount (default: PERCENTAGE)"
+          },
+          "percentOff": {
+            "type": "number",
+            "format": "float",
+            "description": "Percentage off (1-100) - required for percentage coupons"
+          },
+          "amountOff": {
+            "type": "number",
+            "format": "float",
+            "description": "Amount off - required for flat coupons"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency (e.g., USD, EUR) - required for flat coupons"
+          },
+          "duration": {
+            "type": "string",
+            "enum": ["once", "forever", "repeating"],
+            "description": "How long the discount applies (default: forever)"
+          },
+          "durationInMonths": {
+            "type": "integer",
+            "description": "Number of months - required for repeating duration"
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "description": "Maximum number of times this coupon can be redeemed"
+          },
+          "limitToProducts": {
+            "type": "boolean",
+            "description": "Whether coupon is limited to specific products (default: false)"
+          },
+          "productIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of product IDs this coupon applies to"
+          },
+          "valid": {
+            "type": "boolean",
+            "description": "Whether the coupon is currently valid (default: true)"
+          },
+          "redeemBy": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date by which the coupon must be redeemed"
+          },
+          "integrationType": {
+            "type": "string",
+            "description": "Integration type (e.g., stripe, custom)"
+          }
+        }
+      },
+      "CouponUpdate": {
+        "type": "object",
+        "required": ["couponId"],
+        "properties": {
+          "couponId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The coupon ID to update"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the coupon"
+          },
+          "couponType": {
+            "type": "string",
+            "enum": ["PERCENTAGE", "FLAT"],
+            "description": "Type of discount"
+          },
+          "percentOff": {
+            "type": "number",
+            "format": "float",
+            "description": "Percentage off (1-100)"
+          },
+          "amountOff": {
+            "type": "number",
+            "format": "float",
+            "description": "Amount off"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency"
+          },
+          "duration": {
+            "type": "string",
+            "enum": ["once", "forever", "repeating"],
+            "description": "How long the discount applies"
+          },
+          "durationInMonths": {
+            "type": "integer",
+            "description": "Number of months for repeating duration"
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "description": "Maximum redemptions"
+          },
+          "limitToProducts": {
+            "type": "boolean",
+            "description": "Limit to specific products"
+          },
+          "productIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Product IDs"
+          },
+          "valid": {
+            "type": "boolean",
+            "description": "Whether the coupon is valid"
+          },
+          "redeemBy": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Redeem by date"
+          }
+        }
+      },
+      "CouponDelete": {
+        "type": "object",
+        "required": ["couponId"],
+        "properties": {
+          "couponId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The coupon ID to delete"
+          }
+        }
+      },
+      "PromotionalCode": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The promotional code ID"
+          },
+          "code": {
+            "type": "string",
+            "description": "The actual promotional code string"
+          },
+          "couponId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The parent coupon ID"
+          },
+          "affiliateId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "The affiliate ID this code is assigned to"
+          },
+          "externalId": {
+            "type": "string",
+            "nullable": true,
+            "description": "External ID (e.g., Stripe promotion code ID)"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Whether the promotional code is active"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Expiration date for the code"
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Maximum number of times this code can be used"
+          },
+          "timesRedeemed": {
+            "type": "integer",
+            "description": "Number of times this code has been redeemed"
+          },
+          "firstTimeOrder": {
+            "type": "boolean",
+            "description": "Whether this code is limited to first-time orders"
+          },
+          "minimumAmount": {
+            "type": "number",
+            "format": "float",
+            "nullable": true,
+            "description": "Minimum purchase amount required"
+          },
+          "minimumAmountCurrency": {
+            "type": "string",
+            "nullable": true,
+            "description": "Currency for minimum amount"
+          },
+          "limitToCustomers": {
+            "type": "boolean",
+            "description": "Whether code is limited to specific customers"
+          },
+          "customerId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Specific customer ID this code is limited to"
+          },
+          "limitToAffiliate": {
+            "type": "boolean",
+            "description": "Whether only the affiliate can use this code"
+          },
+          "isAutoGenerated": {
+            "type": "boolean",
+            "description": "Whether this code was auto-generated"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the code was created"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the code was last updated"
+          },
+          "coupon": {
+            "$ref": "#/components/schemas/Coupon",
+            "description": "The parent coupon details"
+          },
+          "affiliate": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "firstName": {
+                "type": "string"
+              },
+              "lastName": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              }
+            },
+            "description": "Affiliate details"
+          }
+        }
+      },
+      "NewPromotionalCode": {
+        "type": "object",
+        "required": ["couponId"],
+        "properties": {
+          "couponId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The coupon ID this promotional code belongs to"
+          },
+          "code": {
+            "type": "string",
+            "description": "The promotional code string (required if not auto-generated)"
+          },
+          "affiliateId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The affiliate ID to assign this code to"
+          },
+          "affiliateEmail": {
+            "type": "string",
+            "format": "email",
+            "description": "The affiliate email (alternative to affiliateId)"
+          },
+          "externalId": {
+            "type": "string",
+            "description": "External ID (e.g., Stripe promotion code ID)"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Whether the code is active (default: true)"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration date"
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "description": "Maximum redemptions"
+          },
+          "firstTimeOrder": {
+            "type": "boolean",
+            "description": "Limit to first-time orders (default: false)"
+          },
+          "minimumAmount": {
+            "type": "number",
+            "format": "float",
+            "description": "Minimum purchase amount"
+          },
+          "minimumAmountCurrency": {
+            "type": "string",
+            "description": "Currency for minimum amount"
+          },
+          "limitToCustomers": {
+            "type": "boolean",
+            "description": "Limit to specific customers (default: false)"
+          },
+          "customerId": {
+            "type": "string",
+            "description": "Specific customer ID"
+          },
+          "limitToAffiliate": {
+            "type": "boolean",
+            "description": "Only affiliate can use (default: false)"
+          },
+          "isAutoGenerated": {
+            "type": "boolean",
+            "description": "Whether to auto-generate the code (default: false)"
+          },
+          "codeStructure": {
+            "type": "object",
+            "description": "Structure for auto-generated codes (required if isAutoGenerated is true)",
+            "properties": {
+              "firstName": {
+                "type": "boolean",
+                "description": "Include affiliate's first name"
+              },
+              "lastName": {
+                "type": "boolean",
+                "description": "Include affiliate's last name"
+              },
+              "email": {
+                "type": "boolean",
+                "description": "Include part of affiliate's email"
+              },
+              "discountAmount": {
+                "type": "boolean",
+                "description": "Include discount value"
+              },
+              "couponName": {
+                "type": "boolean",
+                "description": "Include coupon name"
+              },
+              "randomChars": {
+                "type": "boolean",
+                "description": "Add random characters"
+              }
+            }
+          },
+          "prefix": {
+            "type": "string",
+            "description": "Prefix for auto-generated codes"
+          },
+          "randomCharsLength": {
+            "type": "integer",
+            "description": "Length of random characters (default: 4)"
+          },
+          "randomCharsCase": {
+            "type": "string",
+            "enum": ["uppercase", "lowercase", "mixed"],
+            "description": "Case for random characters (default: mixed)"
+          }
+        }
+      },
+      "PromotionalCodeUpdate": {
+        "type": "object",
+        "required": ["promotionalCodeId"],
+        "properties": {
+          "promotionalCodeId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The promotional code ID to update"
+          },
+          "code": {
+            "type": "string",
+            "description": "The promotional code string"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Whether the code is active"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration date"
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "description": "Maximum redemptions"
+          },
+          "firstTimeOrder": {
+            "type": "boolean",
+            "description": "Limit to first-time orders"
+          },
+          "minimumAmount": {
+            "type": "number",
+            "format": "float",
+            "description": "Minimum purchase amount"
+          },
+          "minimumAmountCurrency": {
+            "type": "string",
+            "description": "Currency for minimum amount"
+          },
+          "limitToCustomers": {
+            "type": "boolean",
+            "description": "Limit to specific customers"
+          },
+          "customerId": {
+            "type": "string",
+            "description": "Specific customer ID"
+          },
+          "limitToAffiliate": {
+            "type": "boolean",
+            "description": "Only affiliate can use"
+          }
+        }
+      },
+      "PromotionalCodeDelete": {
+        "type": "object",
+        "required": ["promotionalCodeId"],
+        "properties": {
+          "promotionalCodeId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The promotional code ID to delete"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "integer",
+            "description": "Error code"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
