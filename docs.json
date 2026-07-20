@@ -152,12 +152,11 @@
                 ]
               },
               {
-                "group": "Announcements",
+                "group": "Affiliate announcements",
                 "pages": [
                   "help-center/engage/announcements/overview",
                   "help-center/engage/announcements/types",
-                  "help-center/engage/announcements/audience",
-                  "help-center/engage/announcements/poll-results"
+                  "help-center/engage/announcements/audience"
                 ]
               },
               {
@@ -290,14 +289,13 @@
             ]
           },
           {
-            "group": "Settings",
+            "group": "Program settings",
             "pages": [
               {
                 "group": "Program details",
                 "pages": [
                   "help-center/settings/program/general",
                   "help-center/settings/program/affiliate-groups",
-                  "help-center/settings/program/commission-plans",
                   "help-center/settings/program/multi-level-commissions",
                   "help-center/settings/program/fraud-prevention",
                   "help-center/settings/program/tracking-methods",
@@ -305,14 +303,12 @@
                   "help-center/settings/program/automated-short-links",
                   "help-center/settings/program/payout-settings",
                   "help-center/settings/program/tax-management",
-                  "help-center/settings/program/affiliate-questions",
                   "help-center/settings/program/notifications"
                 ]
               },
               {
-                "group": "Affiliate portal",
+                "group": "Affiliate portal settings",
                 "pages": [
-                  "help-center/settings/portal/branding",
                   "help-center/settings/portal/login-and-sign-up",
                   "help-center/settings/portal/social-login",
                   "help-center/settings/portal/onboarding",
