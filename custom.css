@@ -55,3 +55,15 @@
   padding: 0.5rem 0.75rem;
   font-weight: 500;
 }
+
+/* Article width. Almond hard-caps the article at max-w-xl (36rem), which is
+ * sized for a 1280px window and leaves ~650px unused on a 1920px one. Raise the
+ * cap so the article grows with the window, the way aspen does
+ * (`xl:w-[calc(100%-28rem)]`).
+ *
+ * The article is a flex child with min-w-0, so this is a ceiling and not a fixed
+ * width — it still shrinks correctly next to the table of contents and on small
+ * screens. Lower the value if lines start feeling too long to scan. */
+#content-area {
+  max-width: 60rem;
+}
