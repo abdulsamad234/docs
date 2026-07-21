@@ -25,7 +25,7 @@ You can start an import from a couple of places:
 - From anywhere in your dashboard, select the **plus (+)** button in the top bar and choose **Import Data**.
 - From your **Affiliates**, **Customers**, or **Sales** page, use the **Import** button on that page.
 
-{/* TODO screenshot: open-import — upload it in the local Documentation Agent */}
+![open-import](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784647051316-128124-SCR-20260721-pvsp.png)
 
 This opens the import window. Select **Create New Import** to begin. The same window also lists your recent imports, so you can come back here later to check on one or start another.
 
@@ -39,7 +39,7 @@ Next, choose the type of data in your file:
 - **Customers** — the people your affiliates referred, each linked to their referring affiliate.
 - **Sales** — past transactions and commissions, linked to customers and affiliates.
 
-{/* TODO screenshot: select-import-type — upload it in the local Documentation Agent */}
+![select-import-type](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784647058359-385911-SCR-20260721-pwbz.png)
 
 Referly shows a recommended order at the top — **Affiliates → Customers → Sales** — and will gray out a type if it needs another import to finish first. For example, you cannot import sales while an affiliate or customer import is still running. If a card is disabled, it tells you what to wait for.
 
@@ -57,7 +57,7 @@ Here is what each type needs at a minimum:
 
 Drag your CSV onto the upload area, or select it from your computer.
 
-{/* TODO screenshot: upload-csv — upload it in the local Documentation Agent */}
+![upload-csv](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784647069230-555203-SCR-20260721-pwes.png)
 
 As soon as the file is read, Referly counts your rows and takes you straight to the mapping stage. Large files are fine — Referly reads a sample of your rows to build the preview and to suggest matches, then imports every row when you start the job.
 
@@ -69,7 +69,7 @@ This is the heart of the import. The mapping stage is a table with three columns
 - **Maps To** — the Referly field each column should become. This is a dropdown you control.
 - **Sample Data** — a couple of real values from your file, so you can confirm you are matching the right column.
 
-{/* TODO screenshot: mapping-table — upload it in the local Documentation Agent */}
+![mapping-table](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784647088966-724943-SCR-20260721-pwuf.png)
 
 At the top, a summary bar shows your file name, how many records it contains, and a counter like **5/13 mapped**. A green checkmark means every required field is matched; an amber triangle means something required is still missing. You cannot start the import until the checkmark is green.
 
@@ -109,7 +109,7 @@ If you map a column to **Affiliate Link/Ref**, Referly needs to know how to pull
 - **Use path after /** — use the last part of the path. Choose this when your links look like `yoursite.com/jane` rather than using a query parameter.
 - **Use full value** — take the cell exactly as it is. Choose this when your column already holds bare reference codes (like `jane`) rather than full URLs.
 
-{/* TODO screenshot: url-parameter-detection — upload it in the local Documentation Agent */}
+![url-parameter-detection](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784647097465-841386-SCR-20260721-pxbs.png)
 
 Referly guesses the most likely option and previews the result under **Generated Link Examples**, showing each original value turning into the referral link Referly will create (for example, `https://yoursite.com?ref=jane`). Check those examples before continuing — they are the quickest way to confirm your affiliates keep the same reference codes they had before, so their existing links and shares keep working.
 
@@ -124,7 +124,7 @@ As you map the email column, Referly checks your file against itself and against
 - **Skip Duplicates** — ignore the duplicate rows and only create genuinely new affiliates. This is the default and the safest option.
 - **Merge Duplicates** — instead of creating a second account, add the row's new referral link and/or promo code to the affiliate who already exists. Use this when the same partner appears more than once because they have multiple links or codes you want to keep.
 
-{/* TODO screenshot: duplicate-handling — upload it in the local Documentation Agent */}
+![duplicate-handling](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784647110866-433511-SCR-20260721-pxjt.png)
 
 The panel tells you where the duplicates came from — how many emails already exist in your program versus how many are repeated inside your file — so you can pick with confidence.
 
@@ -139,7 +139,7 @@ For each value, pick the target from the dropdown:
 - **Commission plan values** map to any of your [commission plans](/help-center/getting-started/commissions/overview), including your program's base plan.
 - **Affiliate group values** map to any of your [affiliate groups](/help-center/manage/affiliates/groups), or to no group.
 
-{/* TODO screenshot: value-mapping — upload it in the local Documentation Agent */}
+![value-mapping](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784647117673-966742-SCR-20260721-pxvz.png)
 
 Any value you leave as **Not mapped** simply is not applied — those affiliates come in on your program defaults. This lets you translate someone else's tiers into your own structure in one pass, rather than fixing every affiliate by hand afterward.
 
@@ -156,7 +156,7 @@ Affiliates often promote with discount codes as well as links. Referly gives you
 
 Then pick the platform the codes belong to — **API** (codes Referly manages directly), **Shopify**, **Stripe**, **WooCommerce**, or **Polar**. Connected platforms show a checkmark; if you pick one that is not connected yet, Referly prompts you to connect it before importing.
 
-{/* TODO screenshot: promo-code-import — upload it in the local Documentation Agent */}
+![promo-code-import](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784647125710-589754-SCR-20260721-pyfa.png)
 
 When you are creating new codes and your file also has **Discount Name** and **Discount Amount** columns mapped, you get an extra shortcut: **Auto-create coupons from CSV**. Turn it on and Referly builds the coupons for you from those two columns, and you tell it whether the discount is a **percentage** or a **fixed amount**. Codes that share the same discount name and amount reuse the same coupon, so you do not end up with duplicates. If you would rather attach every imported code to one coupon you already made, leave the toggle off and select that coupon instead.
 
@@ -174,7 +174,7 @@ Spreadsheets describe payment and refund status in all kinds of ways — `yes` o
 
 **Map Refund Status Values** works the same way when you map a **Refund Status** column: toggle which of your values mean a sale was refunded. Refunds are tracked separately from payment, so a sale can be both paid and refunded.
 
-{/* TODO screenshot: paid-refund-mapping — upload it in the local Documentation Agent */}
+![paid-refund-mapping](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784647134264-235995-SCR-20260721-pzcy.png)
 
 One more sales safeguard: if Referly spots rows with a **negative** transaction amount (often refund lines exported as negatives), it warns you and skips them during the import, so they do not distort your totals.
 
@@ -190,7 +190,7 @@ Open the import from the list at any time to watch it. The details view shows a 
 - **Failed** — rows Referly could not import, each with an error message explaining why.
 - **Pending** — rows still waiting to be processed.
 
-{/* TODO screenshot: import-progress — upload it in the local Documentation Agent */}
+![import-progress](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784647146214-916639-SCR-20260721-pywv.png)
 
 Below the summary, every row from your file is listed with its status. Filter to **Failed** to focus on problems, and select a row to expand it and see its full data alongside the exact error — a missing email, an affiliate that could not be matched, and so on. Fix those rows in your spreadsheet and run a smaller follow-up import just for them.
 
