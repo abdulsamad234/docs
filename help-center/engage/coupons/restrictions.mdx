@@ -1,6 +1,63 @@
 ---
 title: "Restrict a code"
-description: "Limit a code by affiliate, customer, product, or amount."
+description: "Restrict a coupon code in Referly. Limit it to specific products, require a minimum order, allow first-time customers only, cap total redemptions, or set an expiry date so discounts apply exactly where you want."
+keywords: ["restrict coupon code", "coupon restrictions", "minimum order coupon", "first-time customer discount", "limit coupon to products", "redemption limit", "coupon expiry", "referly coupon rules"]
 ---
+Restrictions control exactly when a code works — which products it covers, how big the order has to be, whether it's for new customers only, and when it stops. Setting the right limits protects your margins and keeps a deal doing what you intended.
 
-{/* TODO: Write this article. */}
+You set restrictions while [creating a coupon](/help-center/engage/coupons/create) or by opening an existing coupon from your library and editing it.
+
+## Limit to specific products
+
+By default a code applies to the whole order. Turn on **Limit to specific products** and choose which products (or, on some platforms, collections) the discount covers. The code then only takes money off those items — useful when you want affiliates promoting one product line, not your entire catalogue.
+
+{/* TODO screenshot: limit-to-products — upload it in the local Documentation Agent */}
+
+## Require a minimum order
+
+Set a **minimum order amount** so the code only works once the cart reaches a value you choose. Leave it as **No minimum** to let the code apply to any order. A minimum is a simple way to protect margin — for example, only give 20% off on orders over $50.
+
+## First-time customers only
+
+Turn on **first-time order only** to make the code work for a customer's first purchase and not for repeat orders. This is common for acquisition deals, where the discount is meant to win a new customer rather than reward an existing one.
+
+{/* TODO screenshot: first-time-minimum — upload it in the local Documentation Agent */}
+
+## Cap redemptions and set an expiry
+
+Under **Redemption Limits** you control how long and how widely a code lives:
+
+- **Maximum redemptions** — the total number of times the code can be used before it stops working. Leave it as **Unlimited** for no cap. A cap is handy for limited launches or a set number of early-bird deals.
+- **Expiry date** — a date after which the code no longer works, so a seasonal promotion ends on its own.
+
+{/* TODO screenshot: redemption-limits — upload it in the local Documentation Agent */}
+
+## Limit who can use a code
+
+You can also tie a code to one person so nobody else can use it:
+
+- **Limit to specific affiliate** — the code only credits and works for that affiliate.
+- **Limit to specific customer** — the code only works for that one customer.
+
+Both of these are set on the code itself — see [Promotional codes](/help-center/engage/coupons/promotional-codes) for how they affect tracking.
+
+<Note>
+Restrictions stack. A single code can require a minimum order, apply to first-time customers only, cover just one product, and expire on a set date — all at once. Only set the limits you actually need so the code stays easy for customers to use.
+</Note>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Promotional codes" icon="tag" href="/help-center/engage/coupons/promotional-codes" arrow>
+    Tie a code to a specific affiliate or customer.
+  </Card>
+  <Card title="Auto-generate codes" icon="wand-magic-sparkles" href="/help-center/engage/coupons/auto-generated-codes" arrow>
+    Apply the same rules to codes generated for every affiliate.
+  </Card>
+  <Card title="Create a coupon" icon="ticket" href="/help-center/engage/coupons/create" arrow>
+    Set up the discount you're restricting.
+  </Card>
+  <Card title="Coupons overview" icon="ticket" href="/help-center/engage/coupons/overview" arrow>
+    See how coupons fit into your program.
+  </Card>
+</Columns>

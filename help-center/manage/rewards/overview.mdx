@@ -1,6 +1,99 @@
 ---
 title: "Rewards overview"
-description: "Review the commissions your affiliates have earned."
+description: "Learn how the Rewards page in Referly works: review every commission your affiliates earn, read each column, understand reward and payout statuses, filter and search, and approve, pay, refund, or export rewards."
+keywords: ["referly rewards", "affiliate rewards", "affiliate commissions", "review rewards", "reward status", "rewards page", "commission list", "approve rewards", "affiliate earnings", "manage rewards"]
 ---
+A reward is what an affiliate earns for sending you business. Most rewards come from a referred sale — someone clicks an affiliate's link, buys, and the affiliate earns a commission — but a reward can also be a bonus you hand out or a payment for content an affiliate created. The **Rewards** page is where every one of these lands, so you can see what's been earned, check it's right, approve it, and get it ready to pay.
 
-{/* TODO: Write this article. */}
+This page is a tour of that screen: where to find it, what each column means, the statuses a reward moves through, and the things you can do with a reward once it's there.
+
+## Find your rewards
+
+Rewards live under **Rewards** in the left sidebar of your program. Open it and you'll see a table with one row per reward, newest first. At the top the page reads **View and manage all rewards earned by your affiliates from referred sales**.
+
+{/* TODO screenshot: rewards-page — upload it in the local Documentation Agent */}
+
+If you're just getting started and haven't tracked any sales yet, you'll see **No rewards yet** instead, with buttons to [import past sales](/help-center/manage/rewards/import) or add one by hand.
+
+## What each column tells you
+
+Each row is a single reward. The columns break down where it came from and where it stands:
+
+- **Customer** — the referred person the reward is tied to. For a reward that isn't from a sale, this shows a gift icon labelled **Bonus** or **Content rewards** instead.
+- **Affiliate** — who earned it. A tag here can mark an affiliate as a **Downline** or **Original Referrer** when you run [multi-level commissions](/help-center/settings/program/multi-level-commissions).
+- **Revenue** — how much the sale itself was worth.
+- **Reward** — what the affiliate earns from it. This can be cash, a coupon, or credits, depending on the plan.
+- **Type** — whether the reward came from a **Sign Up**, a **Purchase**, a **Bonus**, or a **Content reward**.
+- **Source** — how the sale reached Referly, such as an integration or an **Imported** upload.
+- **Date** — when it was recorded.
+- **Payout** — whether the money has gone out yet (see below).
+- **Status** — where the reward stands with you (see below).
+
+You can show, hide, and reorder these columns to suit how you work — select **Toggle columns** above the table and switch columns on or off, or drag them into the order you want. A few columns, like **Group**, start hidden.
+
+{/* TODO screenshot: reward-columns — upload it in the local Documentation Agent */}
+
+## Reward statuses
+
+The **Status** badge tells you whether a reward is cleared to be paid. There are four:
+
+- **Accepted** (green) — approved, and clear to be included in a payout.
+- **On Hold** (amber) — waiting for your review. It won't be paid until you approve it. See [Why a reward is on hold](/help-center/manage/rewards/holds).
+- **Declined** (red) — turned down. The affiliate won't be paid for it.
+- **Refunded** (red) — the underlying sale was refunded, so the reward won't be paid. See [Refunds](/help-center/manage/rewards/refunds).
+
+Whether new rewards arrive Accepted or On Hold depends on your auto-approve setting — [Approve or decline a reward](/help-center/manage/rewards/approve-or-decline) covers how to change it.
+
+## Whether a reward has been paid
+
+Status and payout are two different things. A reward can be **Accepted** but not yet paid — it still has to be collected into a payout. The **Payout** column tracks that side:
+
+- **Unpaid** — earned and approved, but not yet in a payout.
+- **Payout Created** — added to a payout batch that's being processed.
+- **Paid** — the money has gone out.
+
+How rewards turn into money is covered in the [Payouts overview](/help-center/manage/payouts/overview).
+
+## Find a specific reward
+
+With a busy program the list gets long, so there are three ways to narrow it:
+
+- **Search** — the box at the top finds rewards by the customer's name or email.
+- **Filter** — select **Filter** to narrow by affiliate, customer, group, source, status, payout, country, or type, or to set a minimum and maximum on the revenue or reward amount. Hold **Shift** while picking options to select several at once.
+- **Sort** — select the **Customer**, **Revenue**, or **Date** header to sort by it.
+
+## Open a reward for its details
+
+Select any row to open the reward's detail panel. It has two tabs:
+
+- **Details** — the date, the type, the commission plan behind it, and the revenue, with the reward amount, affiliate, and payout status in the side panel.
+- **Calculation** — a step-by-step trace of exactly how the amount was worked out. See [How a reward was calculated](/help-center/manage/rewards/calculation).
+
+{/* TODO screenshot: reward-detail-panel — upload it in the local Documentation Agent */}
+
+## Act on a reward
+
+Each row has a menu with the actions for that single reward: **Mark as paid** or **Mark as unpaid**, **Mark as refunded**, **Edit** (to correct the revenue or reward amount), **Change status**, and **Delete**. When a reward is **On Hold**, hovering its status badge gives you **Accept** and **Reject** right there.
+
+To handle many at once, tick the checkboxes on the rows you want. A bar appears with the number selected and the actions you can apply to all of them: **Create Payout**, and — under the overflow menu — **Export**, **Accept rewards**, **Reject rewards**, **Mark as paid**, **Mark as unpaid**, **Mark as refunded**, and **Delete rewards**.
+
+{/* TODO screenshot: bulk-actions-bar — upload it in the local Documentation Agent */}
+
+Each of these has its own page below with the full detail.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Approve or decline a reward" icon="circle-check" href="/help-center/manage/rewards/approve-or-decline" arrow>
+    Review rewards before they're paid, and set auto-approval.
+  </Card>
+  <Card title="Why a reward is on hold" icon="clock" href="/help-center/manage/rewards/holds" arrow>
+    Understand what puts a reward on hold and how to clear it.
+  </Card>
+  <Card title="How a reward was calculated" icon="calculator" href="/help-center/manage/rewards/calculation" arrow>
+    Read the calculation trace behind any amount.
+  </Card>
+  <Card title="Import sales" icon="file-import" href="/help-center/manage/rewards/import" arrow>
+    Bring historical sales in from a CSV or another platform.
+  </Card>
+</Columns>

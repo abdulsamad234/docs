@@ -1,6 +1,49 @@
 ---
 title: "Export payouts"
-description: "Download Wise, PayPal, or bank CSV files."
+description: "Export a Referly payout batch as a CSV formatted for Wise, PayPal, or bank transfer, pay affiliates in your provider, then mark the batch as paid."
+keywords: ["export payouts", "payout CSV", "Wise CSV export", "PayPal mass payment CSV", "bank payout CSV", "download payouts", "bulk pay affiliates", "mark as paid"]
 ---
+If you manage payouts yourself, exporting a batch as a CSV is often the fastest way to pay everyone at once. Referly builds the file in the format your payout provider expects, so you can upload it straight to Wise or PayPal, or use it as a record for bank transfers. This page covers how to export and what you get.
 
-{/* TODO: Write this article. */}
+Exports happen from inside a single payout batch, which you open from **Payouts** in the left sidebar. See [Payout batches](/help-center/manage/payouts/batches) for finding the batch you want.
+
+{/* TODO screenshot: export-menu — upload it in the local Documentation Agent */}
+
+## When to export
+
+Exporting is for **self-managed** cash payouts — batches paid with Wise, PayPal, or manual bank transfer. It's useful when you'd rather pay everyone in one upload to your provider than pay affiliate by affiliate, or when you need a file to work from for bank transfers. Referly Payouts batches are paid through Referly, so they're not exported this way (you can download an invoice for those instead).
+
+## Export a batch
+
+Open the batch, then use the **Export** option. Referly matches the file to the batch's method:
+
+- **Export Wise CSV** — formatted to upload to Wise as a batch transfer.
+- **Export PayPal CSV** — formatted for a PayPal mass payment.
+- **Export Bank CSV** — the affiliate bank details for the batch, including any [custom bank fields](/help-center/manage/payouts/custom-bank-fields) you collect, so you can make the transfers.
+
+You can export the whole batch, or select specific payouts first and export only those. Choosing **Export Payouts CSV** from the batch's actions menu exports every payout in the batch.
+
+## Pay, then mark as paid
+
+Once you've uploaded the file to Wise or PayPal, or made the bank transfers, come back to the batch and select **Mark as paid** on the payouts you sent. This keeps Referly's records in sync with what you've actually paid, so affiliates see the right status and the batch is marked complete.
+
+<Note>
+  Exporting doesn't send any money on its own — it only creates the file. The payment happens in your provider, and marking the batch as paid records it in Referly.
+</Note>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Payout batches" icon="layer-group" href="/help-center/manage/payouts/batches" arrow>
+    Open a batch and review its payouts before exporting.
+  </Card>
+  <Card title="Payout methods" icon="wallet" href="/help-center/manage/payouts/payout-methods" arrow>
+    Connect Wise, PayPal, or bank transfer.
+  </Card>
+  <Card title="Custom bank account fields" icon="building-columns" href="/help-center/manage/payouts/custom-bank-fields" arrow>
+    Collect the bank details you need for transfers.
+  </Card>
+  <Card title="Tax and invoices" icon="file-invoice" href="/help-center/manage/payouts/tax-and-invoices" arrow>
+    Generate invoices and handle VAT for payouts.
+  </Card>
+</Columns>

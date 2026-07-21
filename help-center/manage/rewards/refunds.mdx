@@ -1,6 +1,62 @@
 ---
 title: "Refunds"
-description: "What happens to commission when a sale is refunded."
+description: "See what happens to affiliate rewards when a sale is refunded in Referly — the reward is voided and marked Refunded, kept out of payouts, and the refund window that blocks refunding rewards already paid."
+keywords: ["refund reward", "refunded sale", "mark as refunded", "clawback commission", "affiliate refund", "refund window", "void commission", "restore refunded reward", "refund status"]
 ---
+When a customer gets their money back, the affiliate shouldn't keep the commission for that sale. Referly handles this through refunds: when a sale is refunded, the reward tied to it is voided so it won't be paid, and it drops out of your payouts. This page explains how a sale gets refunded, what that does to the reward, and the limits on when a refund can still be applied.
 
-{/* TODO: Write this article. */}
+## How a sale gets refunded
+
+A sale can be marked as refunded in a few ways:
+
+- **Automatically from your payment platform.** If you've connected an integration like Stripe, Shopify, Paddle, Chargebee, or Polar, refunding the order there tells Referly to mark the matching sale as refunded — you don't have to do anything.
+- **By hand.** Open a reward's **⋯** menu and choose **Mark as refunded** to refund a single sale yourself. This is useful for sales that weren't tracked through a connected platform.
+- **On import.** When you [import sales](/help-center/manage/rewards/import), the file can include a refund status, so historical refunds come in already marked.
+
+{/* TODO screenshot: mark-as-refunded — upload it in the local Documentation Agent */}
+
+## What a refund does to the reward
+
+Once a sale is refunded, Referly updates its reward straight away:
+
+- The reward's **Status** changes to **Refunded** (red).
+- The reward amount is set to nothing — the **Reward** column shows **Not rewarded**, because the reward isn't given for a refunded sale.
+- The reward is left out of your active totals and won't be collected into any payout.
+
+{/* TODO screenshot: refunded-status — upload it in the local Documentation Agent */}
+
+So a refund cleanly reverses the earning: the affiliate isn't paid for a sale that didn't stick, and your reports reflect the reversal.
+
+## The refund window
+
+A refund can only be applied while the reward hasn't been paid yet. If you try to mark a reward as refunded after that, Referly stops you and explains why:
+
+- If the reward has already been **paid** — or is already sitting in a payout batch that's being processed — it can't be refunded, because the money has effectively left.
+- If the reward is **past the refund window**, you'll see **Cannot mark this reward as refunded because it has passed the refund window**. The window matches your payout [holding period](/help-center/manage/payouts/schedule) — the same waiting time that protects you against refunds in the first place.
+
+This is exactly why the holding period matters: the longer you hold earnings before paying them, the more room you have to catch a refund before the affiliate has been paid. If a refund comes in after payment, you'll need to recover it outside Referly.
+
+## Restore a refunded reward
+
+Refunds aren't always final. If a sale was refunded by mistake, or the customer re-purchases, you can bring the reward back by approving it again. Accepting a refunded reward restores it to its original amount — and when you [accept rewards in bulk](/help-center/manage/rewards/approve-or-decline), any that were previously refunded are restored along with the rest.
+
+## Refund several sales at once
+
+To refund a batch of sales together, select their rows on the Rewards page and choose **Mark as refunded** from the bulk action menu. A confirmation reminds you that the associated sales will be marked as refunded and their rewards declined, and that this can't be easily undone. Confirm to apply it to all of them.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Holding period and frequency" icon="calendar-days" href="/help-center/manage/payouts/schedule" arrow>
+    Set how long earnings are held to catch refunds before payout.
+  </Card>
+  <Card title="Approve or decline a reward" icon="circle-check" href="/help-center/manage/rewards/approve-or-decline" arrow>
+    Accept a reward to restore it after a refund.
+  </Card>
+  <Card title="Rewards overview" icon="gift" href="/help-center/manage/rewards/overview" arrow>
+    A tour of the Rewards page and every status.
+  </Card>
+  <Card title="Import sales" icon="file-import" href="/help-center/manage/rewards/import" arrow>
+    Bring historical sales — and their refund status — in from a file.
+  </Card>
+</Columns>

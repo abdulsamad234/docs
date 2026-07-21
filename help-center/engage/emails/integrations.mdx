@@ -1,6 +1,79 @@
 ---
 title: "Email marketing integrations"
-description: "Connect Klaviyo, Mailchimp, Mailerlite, or Brevo."
+description: "Connect Klaviyo, Mailchimp, MailerLite, or Brevo to Referly to automatically sync your affiliates into an email list. Add your API key, pick a list, and keep new affiliates flowing in."
+keywords: ["email marketing integration", "klaviyo affiliates", "mailchimp affiliates", "mailerlite integration", "brevo integration", "sync affiliates to email list", "affiliate email marketing"]
 ---
+Referly sends your affiliates the [transactional emails](/help-center/engage/emails/affiliate-emails) that keep your program running. When you want to send them broader campaigns — a newsletter, a new-product push, a seasonal promotion — you can connect your email marketing tool so your affiliates flow into a list there automatically.
 
-{/* TODO: Write this article. */}
+Referly connects with **Klaviyo**, **Mailchimp**, **MailerLite**, and **Brevo**.
+
+## Open the integration picker
+
+In the left sidebar, select **Settings**, open **Affiliate Portal**, then **Email Settings**. Select **Connect Email Integration** to open the **Choose Email Integration** window, then pick your provider.
+
+{/* TODO screenshot: connect-integration-button — upload it in the local Documentation Agent */}
+
+{/* TODO screenshot: choose-integration — upload it in the local Documentation Agent */}
+
+## Connect your tool
+
+Each provider connects the same way — with an API key, which is a secret code that lets Referly add contacts to your account on your behalf.
+
+<Steps>
+  <Step title="Get your API key">
+    Sign in to your email tool and find its API key. The exact spot differs by provider:
+    - **Klaviyo** — Account settings, then API keys, then create a private API key.
+    - **Mailchimp** — Account, then Extras, then API keys.
+    - **MailerLite** — Integrations, then API.
+    - **Brevo** — the SMTP & API settings area.
+  </Step>
+  <Step title="Paste and validate it">
+    Back in Referly, paste the key into the **API key** field and validate it. Referly checks the key and loads the lists in your account.
+  </Step>
+  <Step title="Choose or create a list">
+    Pick an existing list, audience, or group to add your affiliates to — or type a name to have Referly create a new one for you. Some providers also ask for an account name so you can recognise the connection, and Brevo asks which folder the list lives in.
+  </Step>
+  <Step title="Connect">
+    Select **Connect**. Referly adds all of your current affiliates to the list you chose.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: connect-provider — upload it in the local Documentation Agent */}
+
+## What gets synced
+
+When you connect, Referly adds every affiliate you already have to the chosen list. From then on, each new affiliate is added automatically as they join your program, so your list stays up to date without any manual exports. Referly syncs your affiliates' contact details — it does not sync your customers.
+
+## Disconnect
+
+To stop syncing, open the same window, select the connected provider, and choose to disconnect. Your affiliates already in the list stay there; Referly just stops adding new ones.
+
+## Provider guides
+
+For step-by-step help with a specific tool, see its guide:
+
+<Columns cols={2}>
+  <Card title="Klaviyo" icon="envelope" href="/help-center/integrations/klaviyo" arrow>
+    Connect Klaviyo and sync affiliates to a list.
+  </Card>
+  <Card title="Mailchimp" icon="envelope" href="/help-center/integrations/mailchimp" arrow>
+    Connect Mailchimp and sync affiliates to an audience.
+  </Card>
+  <Card title="MailerLite" icon="envelope" href="/help-center/integrations/mailerlite" arrow>
+    Connect MailerLite and sync affiliates to a group.
+  </Card>
+  <Card title="Brevo" icon="envelope" href="/help-center/integrations/brevo" arrow>
+    Connect Brevo and sync affiliates to a list.
+  </Card>
+</Columns>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Email settings overview" icon="gear" href="/help-center/engage/emails/overview" arrow>
+    See how all of Referly's email settings fit together.
+  </Card>
+  <Card title="Emails your affiliates receive" icon="paper-plane" href="/help-center/engage/emails/affiliate-emails" arrow>
+    The transactional emails Referly sends on its own.
+  </Card>
+</Columns>

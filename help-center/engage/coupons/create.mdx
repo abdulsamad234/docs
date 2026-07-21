@@ -1,6 +1,83 @@
 ---
 title: "Create a coupon"
-description: "Set the discount, duration, and limits."
+description: "Create a coupon in Referly: choose your source, set a percentage or flat-rate discount, pick a duration, add redemption limits, and Referly builds it on Stripe, Shopify, WooCommerce, or Polar for you."
+keywords: ["create a coupon", "make a discount code", "set up affiliate coupon", "percentage discount", "flat rate coupon", "coupon duration", "redemption limit", "referly create coupon"]
 ---
+Creating a coupon in Referly builds the discount for you on your connected platform, so it works the moment a customer enters the code at checkout. You choose the discount and the rules; Referly handles the rest.
 
-{/* TODO: Write this article. */}
+## Before you start
+
+Connect the platform your customers pay on first — see [Connect a coupon source](/help-center/engage/coupons/connect-a-source). If you already made the coupon on that platform, [sync it](/help-center/engage/coupons/sync) instead of building a new one.
+
+## Start a new coupon
+
+Open your campaign, select **Coupons** in the left sidebar, then select **Create Coupon** in the top right.
+
+{/* TODO screenshot: create-coupon-button — upload it in the local Documentation Agent */}
+
+### Choose the source
+
+At the top, pick where the coupon should be created — **Stripe**, **Shopify**, **WooCommerce**, **Polar**, or the **API**. This is the platform Referly will build the coupon on. If the one you want isn't connected yet, you'll be prompted to [connect it](/help-center/engage/coupons/connect-a-source) first.
+
+### Name the coupon
+
+Give the coupon a name so you can recognise it later in your library — for example "Summer 20%" or "Creator deal". This is an internal label; it's not the code customers type. That comes next as a [promotional code](/help-center/engage/coupons/promotional-codes).
+
+### Set the discount
+
+Choose how much money the coupon takes off:
+
+- **Percentage** — a percent off the order, like 20%. Enter the number in the **Percentage Off** field.
+- **Flat Rate** — a fixed amount off, like $10. Enter the number in the **Amount Off** field, and pick the currency.
+
+{/* TODO screenshot: coupon-discount-type — upload it in the local Documentation Agent */}
+
+### Choose how long it lasts
+
+For subscription products, the duration decides how many billing cycles the discount applies to:
+
+- **Forever** — the discount applies for the life of the subscription.
+- **One-time** — the discount applies to the first payment only.
+- **A set number of months** — the discount repeats for the number of months you enter, then stops.
+
+For one-off purchases, the discount simply applies to that order.
+
+{/* TODO screenshot: coupon-duration — upload it in the local Documentation Agent */}
+
+### Add redemption limits (optional)
+
+Under **Redemption Limits** you can cap how widely the coupon is used:
+
+- **Maximum redemptions** — the total number of times the coupon can be used across everyone. Leave it as **Unlimited** for no cap.
+- **Expiry date** — a date after which the coupon stops working.
+
+These apply to the coupon as a whole. You can also set finer limits on individual codes and add product or order rules — see [Restrict a code](/help-center/engage/coupons/restrictions).
+
+### Create it
+
+Select **Create** at the bottom. Referly builds the coupon on your connected platform and adds it to your library, ready to assign to affiliates.
+
+{/* TODO screenshot: create-coupon-form — upload it in the local Documentation Agent */}
+
+## What to do next
+
+- Add the [promotional code](/help-center/engage/coupons/promotional-codes) customers will type, or tie a code to a specific affiliate.
+- [Auto-generate a unique code](/help-center/engage/coupons/auto-generated-codes) for every affiliate from this coupon.
+- Add [restrictions](/help-center/engage/coupons/restrictions) like a minimum order or first-time-customer rule.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Promotional codes" icon="tag" href="/help-center/engage/coupons/promotional-codes" arrow>
+    Add the codes customers type at checkout.
+  </Card>
+  <Card title="Auto-generate codes" icon="wand-magic-sparkles" href="/help-center/engage/coupons/auto-generated-codes" arrow>
+    Give every affiliate their own unique code.
+  </Card>
+  <Card title="Restrict a code" icon="lock" href="/help-center/engage/coupons/restrictions" arrow>
+    Limit a code to products, a minimum order, or first-time buyers.
+  </Card>
+  <Card title="Connect a coupon source" icon="plug" href="/help-center/engage/coupons/connect-a-source" arrow>
+    Link the platform Referly builds the coupon on.
+  </Card>
+</Columns>

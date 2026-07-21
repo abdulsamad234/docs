@@ -1,6 +1,58 @@
 ---
 title: "Date ranges and granularity"
-description: "Change the period and resolution of your charts."
+description: "Set the time period for your Referly analytics with presets or a custom range, and understand how chart granularity — hourly, daily, weekly, or monthly — changes with the period you choose."
+keywords: ["analytics date range", "chart granularity", "hourly daily weekly monthly", "time period", "date presets", "custom date range", "affiliate analytics period", "compare to last period"]
 ---
+Every chart and number in your [Analytics](/help-center/manage/analytics/overview) area reflects a time period you choose. The date control sits at the top of the page and applies to both the [Program Performance](/help-center/manage/analytics/performance) and [Affiliate Acquisition](/help-center/manage/analytics/affiliate-acquisition) tabs at once.
 
-{/* TODO: Write this article. */}
+## Pick a period
+
+Select the date control at the top of the page to open it. You can choose a ready-made preset or set your own dates:
+
+- **Maximum** — everything since your program started.
+- **Today** and **Yesterday**.
+- **Last 7 days**, **Last 14 days**, and **Last 30 days**.
+- **This week** and **Last week**.
+- **This month** and **Last month**.
+
+Analytics opens on **This month** by default. To set an exact window instead, pick a start and end date on the calendar.
+
+{/* TODO screenshot: date-picker-open — upload it in the local Documentation Agent */}
+
+## Your period is remembered
+
+The period you choose is saved, so when you come back to Analytics later it opens on the same range rather than resetting. It also stays put as you switch between the Program Performance and Affiliate Acquisition tabs, so you're always comparing the same window.
+
+## Compare to the previous period
+
+The "from last period" figure beneath each headline number always compares your chosen range to the one immediately before it, of the same length. Pick **Last 7 days** and it compares against the 7 days before that; pick **Last month** and it compares against the month before. Choosing a shorter, more recent range is the quickest way to see whether things are trending up or down right now.
+
+## How granularity works
+
+Granularity is how finely the chart is sliced — by hour, day, week, or month. Above the chart you'll see a toggle for **Hourly**, **Daily**, **Weekly**, and **Monthly**, but only the resolutions that make sense for your chosen period are available. Referly picks a sensible default based on how long your range is:
+
+- **A single day** shows **Hourly**, so you can see the shape of activity through the day.
+- **A week or less** shows **Daily**.
+- **Up to about a month** lets you choose **Daily** or **Weekly**.
+- **Longer than a month** lets you choose **Weekly** or **Monthly**, which keeps long ranges readable instead of cramming in hundreds of points.
+
+Switch between the available options whenever you want a coarser or finer view of the same period — it only changes how the chart is drawn, not the totals.
+
+{/* TODO screenshot: granularity-toggle — upload it in the local Documentation Agent */}
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Analytics overview" icon="chart-simple" href="/help-center/manage/analytics/overview" arrow>
+    A tour of the whole Analytics area.
+  </Card>
+  <Card title="Performance" icon="chart-line" href="/help-center/manage/analytics/performance" arrow>
+    Track clicks, referrals, revenue, and commission.
+  </Card>
+  <Card title="Affiliate acquisition" icon="users" href="/help-center/manage/analytics/affiliate-acquisition" arrow>
+    See where your affiliates come from and how they onboard.
+  </Card>
+  <Card title="Conversion funnel" icon="filter" href="/help-center/manage/analytics/conversion-funnel" arrow>
+    Follow visitors from click through to sale.
+  </Card>
+</Columns>

@@ -1,6 +1,84 @@
 ---
 title: "Manage payouts yourself or let Referly handle them"
-description: "Choose who moves the money."
+description: "Compare managing affiliate payouts yourself with Wise, PayPal, or bank transfer against letting Referly pay your affiliates in 178 countries with tax-compliant invoicing."
+keywords: ["self-managed payouts", "Referly Payouts", "let Referly handle payouts", "cash payout management", "pay affiliates automatically", "ACH payout fee", "card payout fee", "automatically perform payouts"]
 ---
+When it comes to paying affiliates in cash, Referly gives you two paths. You can wire up your own payout accounts and send every payment yourself, or you can let Referly pay your affiliates on your behalf. This page explains both so you can pick the one that fits how you want to work.
 
-{/* TODO: Write this article. */}
+You make the choice under **Program Settings → Program details → Payout settings**, at the top of the page under **Cash Payout Management**. It's shown as two cards — pick one, then save. You can switch later.
+
+{/* TODO screenshot: cash-payout-management-choice — upload it in the local Documentation Agent */}
+
+<Note>
+  This choice only affects **cash** payouts. Non-cash rewards like coupons and credits are always delivered by Referly automatically, whichever option you choose.
+</Note>
+
+## Manage payouts yourself
+
+With **Manage payouts yourself**, you stay in full control of the money. You connect your own payout accounts and send each payout using them.
+
+- You connect **Wise** or **PayPal**, or collect **bank details** from affiliates to pay them by transfer.
+- When a payout batch is ready, you send it using your connected account, or export it and pay outside Referly.
+- You're responsible for your own tax reporting on those payments.
+
+Choose this if you already have a Wise or PayPal account you want to pay from, or you prefer to handle transfers your own way. The next step is connecting a method — see [Payout methods](/help-center/manage/payouts/payout-methods).
+
+## Let Referly handle your payouts
+
+With **Let Referly handle your payouts**, Referly pays your affiliates for you. It sends tax-compliant payouts to affiliates in 178 countries, so you don't have to manage individual transfers or worry about reaching affiliates in different regions.
+
+Here's how it works:
+
+- You add a **payment method** — a card or a bank account — that Referly can charge.
+- When a payout batch is due, Referly charges your payment method and sends the money to your affiliates.
+- Each payout comes with a compliant invoice, so your records stay clean.
+
+### Add a payment method
+
+Under the Referly Payouts section, select **Add payment method** and choose either a card or a bank account, then connect it. Each method carries a small processing fee, shown next to it when you connect:
+
+- **Bank account (ACH)** has the lower fee.
+- **Card** is charged immediately, so payouts go out faster.
+
+You can add more than one method and set which one is the default. The fee percentages are shown in the dashboard when you add a method.
+
+{/* TODO screenshot: referly-payouts-payment-methods — upload it in the local Documentation Agent */}
+
+### Choose when payouts are sent
+
+By default, a Referly Payouts batch waits for you to review and pay it. If you'd rather it run hands-free, turn on **Automatically perform payouts**. When that's on, new batches are charged and sent to affiliates without you clicking Pay each time.
+
+Keep timing in mind when picking a method:
+
+- For **ACH (bank)**, it takes up to four days for Referly to receive the payment before affiliates are paid.
+- For **card**, the payment is received immediately and sent to affiliates right away.
+
+{/* TODO screenshot: automatically-perform-payouts — upload it in the local Documentation Agent */}
+
+<Note>
+  If your program is managed by an agency, the agency may keep Referly Payouts turned off. In that case only **Manage payouts yourself** is available.
+</Note>
+
+## Which should you choose?
+
+- Pick **Manage payouts yourself** if you want to use your existing Wise or PayPal account, keep full control of each transfer, and handle your own tax reporting.
+- Pick **Let Referly handle your payouts** if you'd rather not manage transfers, want to reach affiliates in many countries easily, and want compliant invoices generated for you.
+
+Whichever you choose, everything else about payouts — batches, schedules, and minimums — works the same way.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Payout methods" icon="wallet" href="/help-center/manage/payouts/payout-methods" arrow>
+    Connect Wise, PayPal, or bank transfer for self-managed payouts.
+  </Card>
+  <Card title="Referly Payouts" icon="building-columns" href="/help-center/integrations/referly-payouts" arrow>
+    A closer look at letting Referly pay your affiliates for you.
+  </Card>
+  <Card title="Payout batches" icon="layer-group" href="/help-center/manage/payouts/batches" arrow>
+    See how earnings are grouped, reviewed, and paid out.
+  </Card>
+  <Card title="Tax and invoices" icon="file-invoice" href="/help-center/manage/payouts/tax-and-invoices" arrow>
+    Set your legal entity details and generate self-billing invoices.
+  </Card>
+</Columns>

@@ -1,6 +1,62 @@
 ---
 title: "How a reward was calculated"
-description: "Read the calculation trace behind an amount."
+description: "See exactly how Referly worked out a reward amount. Open a reward's Calculation tab to read the step-by-step trace from sale to Final Commission, and understand the commission-plan factors behind it."
+keywords: ["reward calculation", "how commission is calculated", "calculation trace", "commission breakdown", "why reward amount", "commission plan rate", "reward detail", "final commission", "decision trace"]
 ---
+Every reward amount can be traced back to a reason. When you want to know why an affiliate earned exactly what they did — or a number looks wrong and you want to check it — Referly can show you the full working behind it, step by step. This page shows where to find that trace and how to read it.
 
-{/* TODO: Write this article. */}
+## Open a reward's calculation
+
+From your [Rewards list](/help-center/manage/rewards/overview), select the reward you want to look at. Its detail panel opens with two tabs: **Details** and **Calculation**.
+
+{/* TODO screenshot: reward-details-tab — upload it in the local Documentation Agent */}
+
+Start on **Details** to see the context around the reward:
+
+- **Date** — when it was recorded.
+- **Type** — whether it came from a **Sign Up**, a **Purchase**, or a **Bonus**.
+- **Commission Plan** — the plan whose terms set the amount. If the affiliate is on your baseline terms, this reads **Base Plan**.
+- **Revenue** — the value of the sale the reward is based on.
+
+The side panel shows the reward amount itself, the affiliate who earned it, and its payout status. Together these tell you *what* the reward is; the Calculation tab tells you *how* it got there.
+
+## Read the calculation steps
+
+Open the **Calculation** tab. Referly lays out how the amount was worked out as a timeline you read top to bottom. Each step names one thing that was checked — the plan that applied, the rate it used, any rule or condition that was met — along with the outcome of that check. The last step, **Final Commission**, is highlighted in green and shows the amount the affiliate ended up earning.
+
+{/* TODO screenshot: reward-calculation-tab — upload it in the local Documentation Agent */}
+
+Reading down the steps, you can see the path from the sale to the final figure: which plan applied, whether the reward was a percentage of the sale or a flat amount, and whether any product-specific or conditional rule changed the result. If a reward wasn't given at all, the trace explains why — for example, a rule that wasn't met or a sale that didn't qualify.
+
+## What shapes the amount
+
+The steps you see reflect how you set up the affiliate's [commission plan](/help-center/getting-started/commissions/overview). Any of these can play a part:
+
+- **The rate** — a percentage of the sale, or a flat amount per sale.
+- **One-time or recurring** — whether the affiliate earns once, or on repeat payments from the same customer.
+- **Product-based amounts** — a [different reward for different products](/help-center/getting-started/commissions/product-based), so the item bought changes the figure.
+- **Conditional rules** — [rules](/help-center/getting-started/commissions/conditional-rules) that only pay, or pay more, when a condition is met, such as the order value, the product, or the coupon used.
+- **Multi-level commissions** — when you run [multi-level commissions](/help-center/settings/program/multi-level-commissions), a step can show a reward passed up to an affiliate who recruited the one who made the sale.
+
+If the amount surprises you, the trace usually points straight to the setting responsible, so you know exactly which part of the plan to adjust.
+
+## When no calculation is shown
+
+Some rewards don't have a trace to show. If you open the Calculation tab and see **Decision trace is not available for this transaction**, it's usually because the reward wasn't produced by the plan engine in the normal way — for example a sale you [imported](/help-center/manage/rewards/import) with the commission already set, or a reward added by hand. The reward amount is still shown on the Details tab; there just isn't a step-by-step breakdown to walk through.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Commission plans overview" icon="money-bill" href="/help-center/getting-started/commissions/overview" arrow>
+    Set the rates and terms the calculation follows.
+  </Card>
+  <Card title="Product-based commissions" icon="box" href="/help-center/getting-started/commissions/product-based" arrow>
+    Pay a different reward depending on the product sold.
+  </Card>
+  <Card title="Conditional commission rules" icon="code-branch" href="/help-center/getting-started/commissions/conditional-rules" arrow>
+    Change the reward when certain conditions are met.
+  </Card>
+  <Card title="Rewards overview" icon="gift" href="/help-center/manage/rewards/overview" arrow>
+    A tour of the Rewards page and every column.
+  </Card>
+</Columns>

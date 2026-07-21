@@ -1,6 +1,70 @@
 ---
 title: "Promotional codes"
-description: "The codes customers actually type in."
+description: "Learn how promotional codes work in Referly: the actual codes customers type at checkout. Add one or more codes to a coupon and tie each one to a specific affiliate or customer."
+keywords: ["promotional codes", "promo codes", "add a promo code", "assign code to affiliate", "coupon code vs promo code", "customer-specific code", "referly promotional code"]
 ---
+A coupon holds the discount. A **promotional code** is the actual text a customer types at checkout to claim it, like `PROMO30`. One coupon can have several promotional codes, and each code can be pointed at a specific affiliate or customer — which is how Referly knows who to credit for the sale.
 
-{/* TODO: Write this article. */}
+## Coupon vs promotional code
+
+Think of it as two layers:
+
+- The **coupon** is the deal — for example "20% off, forever".
+- The **promotional code** is a way in to that deal — the words someone enters to get the 20% off.
+
+Because one coupon can carry many codes, you can give the same 20% deal a different code for each affiliate (`SARAH20`, `JAMES20`) while managing one discount behind the scenes.
+
+## Add a promotional code
+
+When you [create a coupon](/help-center/engage/coupons/create), scroll to the **Promotion Codes** section. You can also open an existing coupon from your library and add codes to it there.
+
+<Steps>
+  <Step title="Enter the code">
+    Type the code customers will use — for example `PROMO30`. Keep it short and easy to remember or say out loud. Referly checks that the code isn't already taken.
+  </Step>
+  <Step title="Add more if you need them">
+    Add another code to the same coupon whenever you want a second way in — a different code for a different affiliate or campaign, all sharing the one discount.
+  </Step>
+  <Step title="Save">
+    Save the coupon. Each code is created on your connected platform and starts working right away.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: promotion-codes-section — upload it in the local Documentation Agent */}
+
+## Tie a code to an affiliate
+
+To make sure a code credits the right person, turn on **Limit to specific affiliate** and search for the affiliate. From then on, every order placed with that code is tracked to them and earns them commission — exactly like a referral link would.
+
+Leave this off for a general code that anyone can use without crediting a particular affiliate.
+
+{/* TODO screenshot: limit-code-affiliate — upload it in the local Documentation Agent */}
+
+## Tie a code to a customer
+
+You can also turn on **Limit to specific customer** and choose a customer, so the code only works for that one person. This is useful for a one-off deal you've agreed with a single buyer, rather than a code you hand to an affiliate to share.
+
+## Turning a code on or off
+
+Each code can be active or inactive. Deactivate a code to stop it working at checkout without deleting it — handy when a promotion ends but you want to keep the history. You can reactivate it later if the deal comes back.
+
+## Give every affiliate their own code automatically
+
+Adding codes one at a time works for a handful of affiliates. When you want a unique code for everyone in your program, let Referly build them for you from a pattern — see [Auto-generate codes](/help-center/engage/coupons/auto-generated-codes).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Auto-generate codes" icon="wand-magic-sparkles" href="/help-center/engage/coupons/auto-generated-codes" arrow>
+    Create a unique code for every affiliate from a pattern.
+  </Card>
+  <Card title="Restrict a code" icon="lock" href="/help-center/engage/coupons/restrictions" arrow>
+    Limit a code by product, order value, or expiry.
+  </Card>
+  <Card title="Create a coupon" icon="ticket" href="/help-center/engage/coupons/create" arrow>
+    Set up the discount your codes belong to.
+  </Card>
+  <Card title="Coupons overview" icon="ticket" href="/help-center/engage/coupons/overview" arrow>
+    See how coupons and codes fit together.
+  </Card>
+</Columns>

@@ -1,6 +1,207 @@
 ---
 title: "Migrate from FirstPromoter"
-description: "Import your FirstPromoter data using an API key and account ID."
+description: "Step-by-step guide to migrating from FirstPromoter to Referly: create your FirstPromoter API key, find your Account ID, connect the account, choose which affiliate, referral, and sales fields to import, and run each import in the right order."
+keywords: ["migrate from firstpromoter", "firstpromoter to referly", "import firstpromoter affiliates", "firstpromoter api key", "firstpromoter account id", "import promoters", "import referrals", "import commissions", "switch from firstpromoter", "affiliate program migration"]
 ---
+Coming to Referly from FirstPromoter doesn't mean rebuilding your program by hand. By connecting your FirstPromoter account, Referly pulls your **promoters**, the **referrals** they brought in, and your past **commissions** straight across — no CSV exports, no file wrangling. You give Referly two values from FirstPromoter, choose what to bring over, and it does the rest in the background.
 
-{/* TODO: Write this article. */}
+This guide walks through the whole move end to end: getting the two credentials out of FirstPromoter, connecting the account to Referly, choosing exactly which details come across, and running each import in the right order.
+
+<Note>
+  New to migrating in general? Start with the [Migration overview](/help-center/getting-started/migrate/overview) for how imports work, then come back here for the FirstPromoter-specific steps.
+</Note>
+
+## Before you start
+
+You'll need:
+
+- **Admin access to your FirstPromoter account**, so you can create an API key and see your Account ID.
+- **Your Referly program open** in the dashboard, ready to import into.
+- A few minutes. Larger programs take longer to pull across, but the import runs in the background — you don't have to wait on the screen.
+
+You'll bring your data across in three passes — affiliates, then referrals, then sales — because each one builds on the one before it. Keep that order in mind; the last section explains why it matters.
+
+<Warning>
+  Your FirstPromoter API key grants access to your FirstPromoter data. Treat it like a password: copy it straight into Referly, don't paste it anywhere public, and don't share it. Referly stores it securely so you only enter it once.
+</Warning>
+
+## Get your FirstPromoter API key and Account ID
+
+Referly connects to FirstPromoter using two things from your FirstPromoter account: an **API key** and an **Account ID**. You create both inside FirstPromoter, and you only need to do this once.
+
+<Steps>
+  <Step title="Open your API settings in FirstPromoter">
+    Log in to your FirstPromoter dashboard, then go to **Settings**, open **Integrations**, and select **Manage API Keys**.
+  </Step>
+  <Step title="Create a new API key">
+    Choose **Add new Key** (if you don't already have one), give it a descriptive name so you remember what it's for — for example, `Referly import` — and create it.
+  </Step>
+  <Step title="Copy the key straight away">
+    FirstPromoter shows your new API key only once, at the moment you create it. Copy it and paste it somewhere safe right away — if you lose it, you'll need to create a new one.
+  </Step>
+  <Step title="Find your Account ID">
+    Your **Account ID** is shown in the same **Settings → Integrations** panel, alongside your API keys. Copy it too — you'll paste both values into Referly next.
+  </Step>
+</Steps>
+
+With both values copied, head back to Referly.
+
+## Open the import tool and choose FirstPromoter
+
+<Steps>
+  <Step title="Open the import tool">
+    In your Referly dashboard, select the **plus (+)** button in the top bar, then choose **Import Data**. You can also select **Import** at the top of your **Affiliates**, **Customers**, or **Sales** pages.
+  </Step>
+  <Step title="Pick FirstPromoter as your source">
+    On the **Choose your source** screen, select **FirstPromoter** from the list of platforms.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: fp-import-source — upload it in the local Documentation Agent */}
+
+## Connect your FirstPromoter account
+
+Referly now shows a connection screen with a **FirstPromoter → Referly** banner at the top. This is where your two credentials go.
+
+<Steps>
+  <Step title="Enter your credentials">
+    Paste your FirstPromoter **API key** into the API key field, and your **Account ID** into the Account ID field. The API key is hidden as you type, the same way a password field is.
+  </Step>
+  <Step title="Save the connection">
+    Select **Save connection**. Referly checks the credentials with FirstPromoter as it saves — you'll briefly see **Validating…** while it does. If either value is wrong, the connection won't save, so you can fix it before going any further.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: fp-connection-form — upload it in the local Documentation Agent */}
+
+Once it saves, Referly keeps this as a **saved connection** you can reuse, so your next imports won't ask for your credentials again. To swap in different credentials later, select **Replace connection**.
+
+## Choose what to import
+
+After the connection is saved, Referly shows the three kinds of data it can pull from FirstPromoter. Here's how they line up:
+
+| Select this in Referly | What it brings across from FirstPromoter |
+| --- | --- |
+| **Affiliates** | Your promoters, with their names, emails, and referral links. |
+| **Referrals** | The customers your promoters referred, each linked back to the promoter who referred them. |
+| **Sales** | Your commissions — past transactions and what each affiliate earned. |
+
+You can tick one, two, or all three — but the **order you import them matters**. Referrals attach to affiliates, and sales attach to customers, so those have to exist in Referly first. Always bring your **affiliates over first**, then referrals, then sales. See [Import in the right order](#import-in-the-right-order) below.
+
+{/* TODO screenshot: fp-select-objects — upload it in the local Documentation Agent */}
+
+### Pick which details come across
+
+When you tick one of the three, Referly expands it to show every detail it can import for that type. Each detail has a checkbox, so you decide exactly what comes across. A few are marked **Required** and stay ticked — those are the details Referly needs to create clean records and match them to the right people.
+
+Here's what you can bring across for each type.
+
+<AccordionGroup>
+  <Accordion title="Affiliates (your promoters)">
+    - **First name** *(required)* — the promoter's first name.
+    - **Last name** *(required)* — the promoter's last name.
+    - **Email** *(required)* — the promoter's email. This is how each affiliate is matched, and how their referrals and sales find them.
+    - **Full name** — the combined name, useful when a promoter has only a single name on file.
+    - **Join date** — when they joined your FirstPromoter program, so their history stays intact.
+    - **Payout email** — the email you send their payouts to, when it's different from their login email.
+    - **Affiliate link** — their referral link or ref code.
+    - **Provider affiliate ID** — the ID this promoter had in FirstPromoter, handy for cross-referencing later.
+    - **Provider status** — the status they had in FirstPromoter (for example, active or pending).
+  </Accordion>
+  <Accordion title="Referrals (the customers they referred)">
+    - **First name** *(required)* — the customer's first name.
+    - **Last name** *(required)* — the customer's last name.
+    - **Email** *(required)* — the customer's email.
+    - **Affiliate email** *(required)* — the email of the promoter who referred the customer. This is what links each customer back to the right affiliate, which is why affiliates must be imported first.
+    - **Full name** — the combined customer name.
+    - **Join date** — when the referral was first created.
+    - **External user ID** — the customer's identifier on FirstPromoter's side.
+    - **Provider customer ID** — the referral's ID in FirstPromoter, kept for your reference.
+    - **Provider status** — the referral's status in FirstPromoter.
+  </Accordion>
+  <Accordion title="Sales (your commissions)">
+    - **Customer email** *(required)* — the email of the customer who made the purchase.
+    - **Transaction amount** *(required)* — the gross sale amount.
+    - **Commission** *(required)* — what the affiliate earned on the sale.
+    - **Customer name** — the name of the customer who bought.
+    - **Affiliate email** — the email of the affiliate credited for the sale.
+    - **Transaction date** — when the sale or commission happened.
+    - **Paid status** — whether the commission was already marked paid in FirstPromoter, so your payout history stays right.
+    - **Promo code** — the coupon or promo code used, when there was one.
+    - **Affiliate link** — the referral link tied to the sale.
+    - **Provider transaction ID** — the commission or transaction ID from FirstPromoter, kept for your reference.
+    - **Provider status** — the commission's status in FirstPromoter.
+  </Accordion>
+</AccordionGroup>
+
+The default selections cover what most programs want, so if you're not sure, leaving them as they are is a safe choice. You can always run another import later. When you're happy with your picks, select **Continue**.
+
+## Check the field matches
+
+Before anything is imported, Referly shows a preview of your FirstPromoter data lined up against the matching Referly fields. This is your chance to confirm everything landed in the right place — that names, emails, and amounts match the fields you'd expect.
+
+{/* TODO screenshot: fp-field-mapping — upload it in the local Documentation Agent */}
+
+Look the preview over, and when it looks right, confirm to start the import.
+
+## Start the import and follow its progress
+
+Imports run in the background, so you can close the panel and keep working. Every import you start appears in the **Recent Imports** list inside the import tool, each with its own progress.
+
+An import moves through these states:
+
+| Status | What it means |
+| --- | --- |
+| **Pending** | Queued and about to start. |
+| **Processing** | Bringing your records in right now. |
+| **Paused** | You've paused it; resume it any time. |
+| **Completed** | Finished — all records handled. |
+| **Failed** | The import stopped before finishing. |
+| **Cancelled** | The import was stopped and won't continue. |
+
+Each card shows a progress bar and a running count of how many records came in and how many were **skipped**. A record is skipped when it's missing a detail Referly needs — for example, a referral with no customer email, or a commission with no customer attached. That's normal; the skipped count just tells you those few couldn't be brought across.
+
+{/* TODO screenshot: fp-import-progress — upload it in the local Documentation Agent */}
+
+You can **pause** a running import and **resume** it later, open **Details** for the full breakdown, or **delete** one you no longer need.
+
+## Import in the right order
+
+Each type of data leans on the one before it: referrals attach to the affiliate who referred them, and sales attach to those affiliates and customers. If you import out of order, there's nothing yet for the later records to link to.
+
+Always go in this order, and let each finish before starting the next:
+
+<Steps>
+  <Step title="Affiliates first">
+    Bring your promoters in, so there's an affiliate for every referral and sale to attach to.
+  </Step>
+  <Step title="Referrals next">
+    Import the referred customers. Each one links to its affiliate by email — which only works once those affiliates are already in.
+  </Step>
+  <Step title="Sales last">
+    Import your commissions, credited to the right affiliates and matched to their customers.
+  </Step>
+</Steps>
+
+Referly won't let you start a referral or sales import while the affiliate import it depends on is still running. Since your FirstPromoter connection is saved, each round just means reopening the import tool, picking FirstPromoter, and choosing the next object.
+
+<Tip>
+  Check each import's results — the imported and skipped counts — before moving on to the next type. Getting your affiliates in cleanly first means your referrals and sales attach to the right partners automatically.
+</Tip>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Migration overview" icon="map" href="/help-center/getting-started/migrate/overview" arrow>
+    How imports work and what you can bring across.
+  </Card>
+  <Card title="Migrate from CSV" icon="file-csv" href="/help-center/getting-started/migrate/csv" arrow>
+    Prefer a spreadsheet? Import affiliates, customers, or sales from a file.
+  </Card>
+  <Card title="Commission plans overview" icon="money-bill" href="/help-center/getting-started/commissions/overview" arrow>
+    Set the terms your migrated affiliates earn on.
+  </Card>
+  <Card title="Invite affiliates" icon="paper-plane" href="/help-center/getting-started/recruit/invite-affiliates" arrow>
+    Bring new partners into your program by email.
+  </Card>
+</Columns>

@@ -1,6 +1,87 @@
 ---
 title: "Import sales"
-description: "Bring historical sales in from a CSV or another platform."
+description: "Import historical sales and their affiliate rewards into Referly from a CSV or another affiliate platform. Learn the import order, required CSV columns, field mapping, and what happens after importing."
+keywords: ["import sales", "import transactions", "import commissions", "sales CSV", "migrate sales", "historical sales", "import order", "affiliate import", "CSV columns", "imported sales"]
 ---
+If you're moving to Referly from another tool, or you've been tracking sales somewhere else, you can bring your past sales in rather than starting from an empty list. Importing sales recreates each one along with the reward the affiliate earned, so your history and totals carry over. You can import from a spreadsheet, or pull directly from another affiliate platform.
 
-{/* TODO: Write this article. */}
+## Import in the right order
+
+A sale connects a customer to an affiliate, so both of those need to exist in Referly before the sale can attach to them. That gives a recommended import order:
+
+<Steps>
+  <Step title="Affiliates first">
+    Import your [affiliates](/help-center/manage/affiliates/import) so their accounts exist.
+  </Step>
+  <Step title="Customers next">
+    Import your [referred customers](/help-center/manage/customers/import) so sales have someone to belong to.
+  </Step>
+  <Step title="Sales last">
+    Import your sales, which link to the affiliates and customers you've already brought in.
+  </Step>
+</Steps>
+
+Because of this, Referly won't let you start a sales import while an affiliate or customer import is still running — let those finish first.
+
+## Start the import
+
+Go to your [Rewards page](/help-center/manage/rewards/overview) and select **Import Sales**. If you don't have any rewards yet, the same button is on the empty state next to **Add Sale**.
+
+{/* TODO screenshot: import-sales-button — upload it in the local Documentation Agent */}
+
+The import wizard opens and asks where your data is coming from:
+
+- **Import from CSV file** — upload a spreadsheet of your sales.
+- **Import from another affiliate software** — connect the platform you're leaving and pull your sales across without a file.
+
+{/* TODO screenshot: import-source-step — upload it in the local Documentation Agent */}
+
+If you're coming from a specific tool, we have step-by-step guides for each in [Migrate to Referly](/help-center/getting-started/migrate/overview). The rest of this page covers the CSV route. When asked to choose what you're importing, select **Sales**.
+
+## Prepare your CSV
+
+Your file should have one row per sale, with a column for each detail below. Three are required; the rest fill in more of the picture where you have it:
+
+- **Customer Email** (required) — who the sale belongs to.
+- **Transaction Amount** (required) — the value of the sale.
+- **Commission** (required) — the reward the affiliate earned on it.
+- **Customer Name** — the customer's name.
+- **Affiliate Email** — the affiliate who should be credited.
+- **Transaction Date** — when the sale happened, so your history lines up.
+- **Paid Status** — whether the reward has already been paid.
+- **Refund Status** — whether the sale was refunded.
+- **Promo Code** — the coupon used, if any.
+- **Affiliate Link/Ref** — the referral link or code behind the sale.
+
+<Note>
+  Because you provide the **Commission** for each row, imported rewards use the amount from your file rather than being recalculated from a commission plan. That's why an imported reward won't show a step-by-step [calculation trace](/help-center/manage/rewards/calculation).
+</Note>
+
+## Map your columns
+
+After you upload the file, Referly shows a **Map fields** step. Match each Referly column on the left to the matching column from your file on the right. Referly lines up the obvious ones for you; check the rest, and make sure the three required fields are matched before you continue. Then start the import.
+
+{/* TODO screenshot: import-map-fields — upload it in the local Documentation Agent */}
+
+## After the import
+
+Your imported sales appear in the Rewards list with their rewards attached. Each one is marked with an **Imported** source badge — hover it and it reads **This sale was imported from a CSV/spreadsheet upload** — so you can always tell imported history from sales tracked live.
+
+From here they behave like any other reward: you can review them, and any you marked as paid or refunded in your file come in that way. It's worth a quick scan of the imported rows to confirm the amounts and affiliates matched up as you expected.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Migrate to Referly" icon="right-left" href="/help-center/getting-started/migrate/overview" arrow>
+    Step-by-step guides for moving from other platforms.
+  </Card>
+  <Card title="Import affiliates" icon="users" href="/help-center/manage/affiliates/import" arrow>
+    Bring your affiliates in first.
+  </Card>
+  <Card title="Import customers" icon="user-plus" href="/help-center/manage/customers/import" arrow>
+    Bring your referred customers in before sales.
+  </Card>
+  <Card title="Rewards overview" icon="gift" href="/help-center/manage/rewards/overview" arrow>
+    See your imported sales alongside everything else.
+  </Card>
+</Columns>

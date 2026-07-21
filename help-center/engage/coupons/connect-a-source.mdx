@@ -1,6 +1,81 @@
 ---
 title: "Connect a coupon source"
-description: "Link Stripe or Shopify to manage coupons."
+description: "Connect Stripe, Shopify, WooCommerce, or Polar as your coupon source in Referly so the codes you create work at checkout and every redemption is tracked to the right affiliate."
+keywords: ["connect coupon source", "coupon integration", "Stripe coupons", "Shopify discount codes", "WooCommerce coupons", "Polar coupons", "affiliate coupon setup", "referly coupon integration"]
 ---
+For a coupon to work when a customer checks out, it has to exist on the platform where they pay. Connecting a coupon source links Referly to that platform, so every code you create in Referly is created there too — and every redemption is tracked back to the right affiliate automatically.
 
-{/* TODO: Write this article. */}
+You only need to connect a source once. After that, creating and [syncing coupons](/help-center/engage/coupons/sync) happens without leaving Referly.
+
+## Sources you can connect
+
+Referly can create and track coupons on these platforms:
+
+- **Stripe** — create coupons directly on your Stripe account. See the [Stripe integration](/help-center/integrations/stripe).
+- **Shopify** — create discount codes directly on your Shopify store. See the [Shopify integration](/help-center/integrations/shopify).
+- **WooCommerce** — create coupons directly on your WooCommerce store. See the [WooCommerce integration](/help-center/integrations/woocommerce).
+- **Polar** — create coupons directly on your Polar store. See the [Polar integration](/help-center/integrations/polar).
+
+There's also an **API** option, which lets you manage coupons from your own server instead of a store platform. This is for programs with a custom checkout — most people use one of the platforms above.
+
+## Where to connect
+
+You connect a source from the same place you create coupons. Open your campaign, select **Coupons** in the left sidebar, then select **Create Coupon**. At the top of the dialog you'll pick where the coupon should be created.
+
+{/* TODO screenshot: choose-coupon-source — upload it in the local Documentation Agent */}
+
+### Pick your source
+
+Choose the platform your customers pay on. Each option shows whether it's already connected. If you pick one that's connected, you can go straight to [creating a coupon](/help-center/engage/coupons/create).
+
+### Connect it
+
+If the source you picked isn't connected yet, Referly shows a short prompt explaining that you need to connect the integration to create coupons on that platform, with a **Connect** button.
+
+{/* TODO screenshot: connect-prompt — upload it in the local Documentation Agent */}
+
+Select **Connect** to open that platform's connection screen. It lists what connecting unlocks and gives you the button to link your account:
+
+<Steps>
+  <Step title="Start the connection">
+    Select the connect button for your platform — for example **Connect Stripe Account** or **Connect Shopify Store**.
+  </Step>
+  <Step title="Authorise Referly">
+    You'll be taken to the platform to sign in and approve access. Once you approve, you're returned to Referly and the source shows as **Connected**.
+  </Step>
+  <Step title="Create your first coupon">
+    With the source connected, close the connection screen and continue to [creating a coupon](/help-center/engage/coupons/create).
+  </Step>
+</Steps>
+
+{/* TODO screenshot: integration-connect-dialog — upload it in the local Documentation Agent */}
+
+<Note>
+With Stripe you can also choose **Connect Test Mode** to link a test account first. Use this to try coupons end to end before you switch on real discounts.
+</Note>
+
+## After you connect
+
+Once a source is connected you can:
+
+- [Create a coupon](/help-center/engage/coupons/create) that's built on that platform for you.
+- [Sync coupons](/help-center/engage/coupons/sync) you already made on that platform into Referly.
+
+If you ever need to switch platforms or unlink one, you can disconnect it from the same connection screen.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Sync coupons" icon="arrows-rotate" href="/help-center/engage/coupons/sync" arrow>
+    Pull discount codes you already created into Referly.
+  </Card>
+  <Card title="Create a coupon" icon="ticket" href="/help-center/engage/coupons/create" arrow>
+    Build a new coupon on your connected platform.
+  </Card>
+  <Card title="Stripe integration" icon="stripe" href="/help-center/integrations/stripe" arrow>
+    Full setup guide for connecting Stripe to Referly.
+  </Card>
+  <Card title="Shopify integration" icon="shopify" href="/help-center/integrations/shopify" arrow>
+    Full setup guide for connecting your Shopify store.
+  </Card>
+</Columns>

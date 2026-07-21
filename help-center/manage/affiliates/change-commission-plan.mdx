@@ -1,6 +1,67 @@
 ---
 title: "Change an affiliate's commission plan"
-description: "Move an affiliate onto different terms."
+description: "Move a Referly affiliate onto a different commission plan from their detail page or in bulk. Learn what changes for future vs existing referrals and how to set a custom rate."
+keywords: ["change commission plan", "affiliate commission plan", "move affiliate plan", "custom commission rate", "update existing referrals", "bulk change plan", "affiliate earning terms", "referly commission plan"]
 ---
+A [commission plan](/help-center/getting-started/commissions/overview) sets how much an affiliate earns. Most affiliates sit on your base plan, but you'll sometimes want to move one onto different terms — bump a top performer onto a richer plan, or put a special partner on a plan of their own. This is how you switch an affiliate from one plan to another.
 
-{/* TODO: Write this article. */}
+## Change one affiliate's plan
+
+The most direct way is from the affiliate themselves.
+
+<Steps>
+  <Step title="Open the affiliate">
+    From your [affiliates list](/help-center/manage/affiliates/overview), select the affiliate to open their [detail page](/help-center/manage/affiliates/affiliate-detail).
+  </Step>
+  <Step title="Open the Commission Plan section">
+    Find the **Commission Plan** section, which shows the plan they're currently on, and select **Change Plan**.
+  </Step>
+  <Step title="Pick the new plan">
+    In the **Change Commission Plan** dialog, open the **Commission Plan** dropdown and choose a plan. You'll see your **Base commission plan** plus every custom plan you've built, each showing its rate (like `20% per sale`) so you know what you're moving them to. You can search by name if you have a lot of plans.
+  </Step>
+  <Step title="Decide about past referrals">
+    Choose whether to also update their existing referrals — see [What changing a plan affects](#what-changing-a-plan-affects) below — then select **Save Changes**.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: plan-section — upload it in the local Documentation Agent */}
+
+{/* TODO screenshot: change-plan-dialog — upload it in the local Documentation Agent */}
+
+You can also start this straight from the list: hover over an affiliate's entry in the **Commission Plan** column and select **Change** to open the same dialog without leaving the page.
+
+## What changing a plan affects
+
+The dialog shows two notices, and they're worth understanding before you save:
+
+- **Only future referrals use the new plan.** By default, the change applies going forward — the customers this affiliate refers *after* the change earn on the new plan, while their existing referrals keep the plan they were already on. To bring their past referrals onto the new plan as well, turn on **Update existing referrals** in the dialog.
+- **A manual change turns off automatic milestone moves.** If you use [affiliate milestones](/help-center/gamify/milestones/overview) to move affiliates between plans automatically as they hit targets, setting a plan by hand takes this affiliate out of that automation — from then on, their plan is whatever you set, and milestones won't change it. This keeps a deliberate choice from being overwritten later.
+
+## Change the plan for many affiliates at once
+
+To move a whole group of affiliates onto the same plan, do it in bulk. Select the affiliates in your list with their checkboxes, then choose **Change commission plan** from the selection bar. You pick a plan the same way, and you get the same **apply to all existing referrals** option for the whole selection. See [Bulk actions](/help-center/manage/affiliates/bulk-actions).
+
+<Tip>
+  Pair this with [filters](/help-center/manage/affiliates/filters-and-columns) — for example, filter to everyone who's driven more than a certain amount of revenue, then move them all onto a higher-paying plan in one step.
+</Tip>
+
+## Set a custom rate for one affiliate
+
+Sometimes you don't want a whole plan for a single person — just a different rate. On the affiliate's detail page, the actions menu lets you switch between **Use Commission Plan Rate** (the plan's standard rate) and **Use Affiliate Rate** (a custom rate you set just for them). Use this when one affiliate has negotiated their own terms but everything else about their plan should stay the same.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Commission plans overview" icon="money-bill" href="/help-center/getting-started/commissions/overview" arrow>
+    How commission plans are built and what they can pay.
+  </Card>
+  <Card title="Bulk actions" icon="layer-group" href="/help-center/manage/affiliates/bulk-actions" arrow>
+    Change the plan for many affiliates at once.
+  </Card>
+  <Card title="Affiliate milestones" icon="trophy" href="/help-center/gamify/milestones/overview" arrow>
+    Move affiliates between plans automatically as they perform.
+  </Card>
+  <Card title="The affiliate detail view" icon="id-card" href="/help-center/manage/affiliates/affiliate-detail" arrow>
+    Where the Commission Plan section and custom rate live.
+  </Card>
+</Columns>

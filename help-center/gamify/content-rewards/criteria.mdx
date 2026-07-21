@@ -1,6 +1,70 @@
 ---
 title: "Social metrics or manual review"
-description: "Reward on views and likes, or approve submissions yourself."
+description: "Choose how content reward submissions qualify in Referly: automatic social metrics like views and likes, or manual review of proof. Learn both options."
+keywords: ["content reward criteria", "social metrics", "manual submission", "views reward", "likes reward", "pay per view", "proof of content", "referly content rewards criteria"]
 ---
+Every content reward [campaign](/help-center/gamify/content-rewards/campaigns) needs a way to decide whether a submission qualifies and how much it's worth. In the **Criteria** section you choose between two approaches: **Social Metrics**, where the reward is based on the real views or likes a post earns, and **Manual Submission**, where you review the proof yourself and decide.
 
-{/* TODO: Write this article. */}
+{/* TODO screenshot: cr-criteria-toggle — upload it in the local Documentation Agent */}
+
+<Note>
+  Whichever you pick, you always have the final say — no submission is ever paid without you [approving it](/help-center/gamify/content-rewards/submissions). Social metrics work out the reward *amount*; they don't approve the post on their own.
+</Note>
+
+## Social metrics
+
+With social metrics, the reward is tied to how a post actually performs. You set it up in three parts.
+
+### The platform and metric
+
+Pick the **platform** the post lives on — **YouTube**, **Instagram**, **TikTok**, **X / Twitter**, or **LinkedIn** — and the **metric** that counts: **Views** or **Likes**. Most platforms support both; LinkedIn supports likes only (shown there as **Reactions**).
+
+### How the reward is worked out
+
+You have a few ways to price it:
+
+- **A flat fee per post** — turn on **Pay a flat fee per post** to reward a set amount for each qualifying post, with no minimum to hit. Good for simply paying creators to post.
+- **A threshold** — leave the flat fee off to require the post to reach a minimum first: *if their post hits a number of views (or likes), reward them a set amount.* This rewards posts that actually get traction.
+- **Pay more for more** — turn on **Reward extra performance** to keep paying as a post grows: for every extra chunk of views or likes, add a bit more, up to a cap you set. A post that keeps performing keeps earning.
+
+{/* TODO screenshot: cr-social-metrics — upload it in the local Documentation Agent */}
+
+### How the numbers are checked
+
+So the metrics are trustworthy, affiliates connect and verify the account they'll post from before they can submit to a social campaign. Referly then reads that specific post's views or likes from the connected account and keeps them up to date over time — which is what lets a reward grow after approval when you've turned on extra performance. If you ever need the latest figures on a submission, you can refresh them (roughly once a day per post).
+
+## Manual submission
+
+With manual submission, there's no automatic metric — the affiliate sends you proof and you decide. By default they get an open text field to describe what they did, and you can also require:
+
+- **At least one image** — for a screenshot of the post or its stats.
+- **At least one link** — the URL of the post. You can cap how many links they add and limit them to certain sites (for example, only `x.com`).
+
+For the reward, you choose:
+
+- **Flat rate** — a fixed amount paid on approval, the same for every accepted submission.
+- **Custom amount** — you set the exact amount when you approve each submission. You give affiliates a label to show on the campaign card (like *Earn up to $100* or *Get a free hoodie*), and decide the real figure case by case.
+
+{/* TODO screenshot: cr-manual — upload it in the local Documentation Agent */}
+
+## Which should you use?
+
+- Use **social metrics** when you want to reward reach and let performance set the price automatically — pay-per-view style campaigns, or paying for posts that clear a bar.
+- Use **manual submission** when the content lives somewhere you can't measure automatically, when "proof" is a screenshot or a link, or when you want to judge each entry and set its reward yourself.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Create a campaign" icon="plus" href="/help-center/gamify/content-rewards/campaigns" arrow>
+    Set up the campaign these criteria belong to.
+  </Card>
+  <Card title="Review submissions" icon="clipboard-check" href="/help-center/gamify/content-rewards/submissions" arrow>
+    Approve or reject submissions and set custom amounts.
+  </Card>
+  <Card title="Content rewards overview" icon="circle-info" href="/help-center/gamify/content-rewards/overview" arrow>
+    How content rewards work from start to finish.
+  </Card>
+  <Card title="Social connections" icon="share-nodes" href="/help-center/settings/portal/social-connections" arrow>
+    How affiliates connect the accounts social campaigns measure.
+  </Card>
+</Columns>

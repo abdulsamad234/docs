@@ -1,6 +1,81 @@
 ---
 title: "Payout batches"
-description: "How payouts are grouped and processed."
+description: "Understand payout batches in Referly — how earnings are grouped, how to read the batches table, and how to review, pay, export, and manage batches in bulk."
+keywords: ["payout batch", "payout batches", "pay affiliates", "mark batch as paid", "auto-generated batch", "payout batch table", "review payouts", "pay now"]
 ---
+Referly doesn't pay each commission on its own. It gathers all of an affiliate's eligible earnings into a single **payout**, then groups every affiliate's payout for one run into a **payout batch**. A batch is the thing you review and pay — one screen that covers everyone due this round.
 
-{/* TODO: Write this article. */}
+You'll find your batches under **Payouts** in the left sidebar. This page explains what a batch contains, how to read the list, and the actions you can take on one.
+
+{/* TODO screenshot: payout-batches-page — upload it in the local Documentation Agent */}
+
+## What's in a batch
+
+Each batch collects all the eligible commissions since the last payout for the affiliates it covers. A batch is for one **payout method** and one **reward type**, so cash, coupon, and credit earnings are grouped into separate batches even when they're created at the same time.
+
+The batches table shows a row per batch, with columns you can turn on or off:
+
+- **Method** — how this batch will be paid (Wise, PayPal, manual bank, Referly Payouts, or a coupon or credit source).
+- **Reward** — whether the batch pays out **Cash**, **Coupons**, or **Credits**.
+- **Total Amount** — the total value of every payout in the batch.
+- **Transactions** — how many sales are included.
+- **Affiliates** — how many affiliates are paid in this batch.
+- **Type** — whether the batch was **Auto-Generated** on your schedule or **Manually Created**.
+- **Created On** — when the batch was created.
+- **Status** — where the batch is in the payout process. See [Payout batch statuses](/help-center/manage/payouts/batch-statuses).
+
+## Auto-generated vs manually created batches
+
+A batch gets created one of two ways:
+
+- **Auto-Generated** — Referly creates it for you on the schedule you set, if you've turned on automated payouts. See [Holding period and frequency](/help-center/manage/payouts/schedule).
+- **Manually Created** — you create it yourself when you want to pay affiliates outside the normal schedule.
+
+Either way, you still review and pay the batch. Automating creation doesn't send money on its own unless you've turned on automatic paying under Referly Payouts.
+
+## Find a batch
+
+At the top of the list you can search by keyword and open **Filters** to narrow down by status, method, type, reward type, affiliate, or amount ranges. Active filters show as chips you can clear one at a time. This is handy when you want to see, for example, only failed cash batches, or every batch that included a particular affiliate.
+
+{/* TODO screenshot: payout-batch-filters — upload it in the local Documentation Agent */}
+
+## Pay a batch
+
+Select a batch to open it and see every affiliate payout inside. From there:
+
+- Select **Pay Now** to pay a cash batch, or **Process Rewards** to deliver a non-cash batch. Referly then walks you through paying with the batch's method.
+- Select individual payouts and choose **Mark as paid** if you paid them elsewhere and want to record that.
+- Use the **Export** option to download the payouts as a CSV for Wise, PayPal, or your bank — see [Export payouts](/help-center/manage/payouts/export).
+- For a Referly Payouts batch, choose **Download Invoice** to save the invoice for your records.
+
+{/* TODO screenshot: single-batch-pay-now — upload it in the local Documentation Agent */}
+
+## Manage batches in bulk
+
+Back on the list, you can select several batches at once (or select all that match your current filters) and then:
+
+- **Mark as paid** — record a set of batches as paid in one go.
+- **Delete** — remove batches you don't need.
+
+You can also mark a single batch as paid or delete it from the actions menu at the end of its row.
+
+<Note>
+  You can't delete a batch that has already been paid, and you can't manually mark a Referly Payouts batch as paid once Referly has charged you for it — those are settled through Referly.
+</Note>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Payout batch statuses" icon="signal" href="/help-center/manage/payouts/batch-statuses" arrow>
+    Learn what each batch status means and what to do next.
+  </Card>
+  <Card title="Holding period and frequency" icon="calendar-days" href="/help-center/manage/payouts/schedule" arrow>
+    Control when batches are automatically created.
+  </Card>
+  <Card title="Export payouts" icon="file-arrow-down" href="/help-center/manage/payouts/export" arrow>
+    Download a batch as a CSV to pay affiliates.
+  </Card>
+  <Card title="Failed payouts" icon="triangle-exclamation" href="/help-center/manage/payouts/failed-payouts" arrow>
+    Find out why a payout failed and how to retry it.
+  </Card>
+</Columns>

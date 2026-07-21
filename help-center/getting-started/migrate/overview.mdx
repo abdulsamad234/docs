@@ -1,6 +1,128 @@
 ---
 title: "Migration overview"
-description: "Move affiliates, customers, and sales from another platform."
+description: "Move your affiliates, referred customers, and sales into Referly from a CSV file or another affiliate platform like Rewardful, FirstPromoter, PartnerStack, Tapfiliate, Tolt, Partnero, Trackdesk, or Dub."
+keywords: ["migrate to referly", "affiliate program migration", "import affiliates", "import customers", "import sales", "switch affiliate platform", "csv import", "rewardful migration", "firstpromoter migration", "import order"]
 ---
+Switching from another affiliate platform — or from a spreadsheet you've been keeping by hand — doesn't mean starting over. Referly can bring your existing **affiliates**, their **referred customers**, and past **sales** in with you, so your program picks up where it left off instead of from zero.
 
-{/* TODO: Write this article. */}
+This page is the map for that move. It covers the two ways to get data in, what you can bring across, the order to do it in, and how to follow each import while it runs. When you're ready to migrate from a specific tool, jump to its guide at the bottom.
+
+## Two ways to bring your data in
+
+Every migration starts by choosing where the data comes from. You have two options:
+
+- **Upload a CSV file.** Export your affiliates, customers, or sales from your old tool (or your own spreadsheet) as a CSV, then upload it and match up the columns. This works no matter what you're coming from. See [Migrate from CSV](/help-center/getting-started/migrate/csv).
+- **Connect another affiliate platform.** If you're leaving one of the platforms Referly supports directly, you can connect it and pull your data across through its own connection — no exporting or file wrangling. You provide a key (and, for some platforms, an extra ID) from your old account, and Referly reads the data for you.
+
+Referly can connect directly to these platforms today:
+
+<Columns cols={2}>
+  <Card title="Rewardful" href="/help-center/getting-started/migrate/rewardful" arrow>Connect with your Rewardful API secret.</Card>
+  <Card title="FirstPromoter" href="/help-center/getting-started/migrate/firstpromoter" arrow>Connect with your API key and Account ID.</Card>
+  <Card title="PartnerStack" href="/help-center/getting-started/migrate/partnerstack" arrow>Connect with your PartnerStack API key.</Card>
+  <Card title="Tapfiliate" href="/help-center/getting-started/migrate/tapfiliate" arrow>Connect with your Tapfiliate API key.</Card>
+  <Card title="Tolt" href="/help-center/getting-started/migrate/tolt" arrow>Connect with your API key and program ID.</Card>
+  <Card title="Partnero" href="/help-center/getting-started/migrate/partnero" arrow>Connect with your Partnero API key.</Card>
+  <Card title="Trackdesk" href="/help-center/getting-started/migrate/trackdesk" arrow>Connect with your tenant ID and API key.</Card>
+  <Card title="Dub" href="/help-center/getting-started/migrate/dub" arrow>Connect with your Dub API key.</Card>
+</Columns>
+
+Not on the list? Export from your current tool and use the [CSV import](/help-center/getting-started/migrate/csv) instead — it handles any source.
+
+{/* TODO screenshot: choose-import-source — upload it in the local Documentation Agent */}
+
+## What you can bring across
+
+A migration is made up of three kinds of data, and you import them one at a time:
+
+- **Affiliates** — your partners, with their names, emails, and referral links or codes.
+- **Customers** — the people your affiliates referred, each linked back to the affiliate who referred them.
+- **Sales** — past transactions and the commissions attached to them, credited to the right affiliate.
+
+You don't have to import all three. If you only want your affiliate list to come across, import affiliates and stop there. But if you want your program's history intact — who referred whom, and what they earned — you'll want all three.
+
+## Import in the right order
+
+Order matters, because each layer builds on the one before it. Customers are linked to their affiliates, and sales are linked to their customers, so those affiliates and customers need to exist in Referly first.
+
+Always migrate in this order:
+
+<Steps>
+  <Step title="Affiliates first">
+    Bring your partners in so there's someone for every customer and sale to attach to.
+  </Step>
+  <Step title="Customers next">
+    Import the referred customers. Each one links to the affiliate who referred them.
+  </Step>
+  <Step title="Sales last">
+    Import the transactions and commissions, credited to the affiliates and matched to their customers.
+  </Step>
+</Steps>
+
+Referly reminds you of this order as you go, and it won't let you start a customer or sales import while the affiliate import it depends on is still running — so wait for each step to finish before starting the next.
+
+{/* TODO screenshot: choose-what-to-import — upload it in the local Documentation Agent */}
+
+## Start an import
+
+You can begin a migration from anywhere in your dashboard:
+
+<Steps>
+  <Step title="Open the import tool">
+    Select the **plus (+)** button in the top bar, then choose **Import Data**. You can also select **Import** from the top of your **Affiliates**, **Customers**, or **Sales** pages.
+  </Step>
+  <Step title="Choose your source">
+    Pick **Import from CSV file**, or select the platform you're migrating from.
+  </Step>
+  <Step title="Choose what to import">
+    Pick affiliates, customers, or sales — starting with affiliates, following the order above.
+  </Step>
+  <Step title="Connect or upload, then match your fields">
+    For a CSV, upload the file. For a connected platform, enter your key and save the connection. Referly then shows your data and lines its columns up with the right fields, so you can check the matches before importing.
+  </Step>
+  <Step title="Start the import">
+    Confirm, and Referly begins bringing your data in. Repeat for the next type of data.
+  </Step>
+</Steps>
+
+The exact fields and options differ slightly by source — each platform's guide walks through its own screen in detail.
+
+## Track an import while it runs
+
+Imports run in the background, so you don't have to sit and watch. Every import you start appears in the **Recent Imports** list inside the import tool, each showing its own progress.
+
+An import moves through these states:
+
+| Status | What it means |
+| --- | --- |
+| **Pending** | Queued and about to start. |
+| **Processing** | Bringing your records in right now. |
+| **Paused** | You've paused it; resume it any time. |
+| **Completed** | Finished — all records handled. |
+| **Failed** | The import stopped before finishing. |
+| **Cancelled** | The import was stopped and won't continue. |
+
+Each card also shows a progress bar and a running count of how many records came in successfully and how many were skipped, so you can spot problems early. You can **pause** an import that's running and **resume** it later, open **Details** to see the full breakdown, or **delete** an import you no longer need.
+
+{/* TODO screenshot: import-progress-list — upload it in the local Documentation Agent */}
+
+<Note>
+  Take your time and check each import's results before moving to the next type. Getting affiliates in cleanly first means your customers and sales attach to the right partners automatically.
+</Note>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Migrate from CSV" icon="file-csv" href="/help-center/getting-started/migrate/csv" arrow>
+    Import affiliates, customers, or sales from a spreadsheet.
+  </Card>
+  <Card title="Invite affiliates" icon="paper-plane" href="/help-center/getting-started/recruit/invite-affiliates" arrow>
+    Bring new partners into your program by email.
+  </Card>
+  <Card title="Commission plans overview" icon="money-bill" href="/help-center/getting-started/commissions/overview" arrow>
+    Set the terms your migrated affiliates earn on.
+  </Card>
+  <Card title="Add a sale" icon="cart-shopping" href="/help-center/manage/customers/add-a-sale" arrow>
+    Record a one-off sale by hand after you've migrated.
+  </Card>
+</Columns>

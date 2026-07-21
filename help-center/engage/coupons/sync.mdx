@@ -1,6 +1,66 @@
 ---
 title: "Sync coupons"
-description: "Bring existing coupons into Referly."
+description: "Sync existing discount codes from Stripe, Shopify, WooCommerce, or Polar into Referly. Import all your coupons or pick specific ones so you can assign and track them without recreating them."
+keywords: ["sync coupons", "import coupons", "sync Stripe coupons", "sync Shopify discount codes", "import existing coupons", "referly sync coupons", "coupon import"]
 ---
+If you already built discount codes on Stripe, Shopify, WooCommerce, or Polar, you don't need to recreate them in Referly. Syncing pulls those existing codes in, so you can assign them to affiliates and track redemptions like any coupon you built here.
 
-{/* TODO: Write this article. */}
+Syncing brings the coupon's details across — its discount, its codes, and how many times it's been redeemed — and keeps them tied to the original on your platform.
+
+## Before you start
+
+You need the platform connected first. If you haven't done that yet, see [Connect a coupon source](/help-center/engage/coupons/connect-a-source). Syncing is available for **Stripe**, **Shopify**, **WooCommerce**, and **Polar**.
+
+## Open the sync window
+
+Open your campaign, select **Coupons** in the left sidebar, then select **Sync** in the top right.
+
+{/* TODO screenshot: sync-button — upload it in the local Documentation Agent */}
+
+### Choose where to sync from
+
+If you have more than one platform connected, pick which one to pull coupons from. When only one platform is connected, Referly skips this step and goes straight to the sync options.
+
+{/* TODO screenshot: sync-choose-integration — upload it in the local Documentation Agent */}
+
+### Sync all or pick specific coupons
+
+Next, choose how much to bring in:
+
+- **Sync all** — import every coupon that exists on the connected platform. This is the fastest way to get set up if most of your codes belong in your program.
+- **Sync some** — Referly lists the coupons on that platform so you can tick only the ones you want. Use this when you keep unrelated discounts on the same platform and only want your affiliate codes in Referly.
+
+{/* TODO screenshot: sync-all-or-some — upload it in the local Documentation Agent */}
+
+### Run the sync
+
+Select the sync button to finish. Referly confirms when the coupons are synced, and they appear in your coupon library right away. If a coupon you synced already existed in Referly, its details are refreshed rather than duplicated.
+
+## After syncing
+
+Synced coupons behave like any other coupon in Referly. From here you can:
+
+- Open a coupon to add or edit its [promotional codes](/help-center/engage/coupons/promotional-codes).
+- [Auto-generate a unique code](/help-center/engage/coupons/auto-generated-codes) per affiliate from a synced coupon.
+- Add [restrictions](/help-center/engage/coupons/restrictions) such as a minimum order or an expiry.
+
+<Note>
+Syncing is a one-time import of what's on your platform at that moment. Run it again whenever you add new codes on the platform and want them in Referly.
+</Note>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Connect a coupon source" icon="plug" href="/help-center/engage/coupons/connect-a-source" arrow>
+    Link the platform you want to sync coupons from.
+  </Card>
+  <Card title="Create a coupon" icon="ticket" href="/help-center/engage/coupons/create" arrow>
+    Build a brand-new coupon instead of syncing one.
+  </Card>
+  <Card title="Promotional codes" icon="tag" href="/help-center/engage/coupons/promotional-codes" arrow>
+    Manage the codes customers type at checkout.
+  </Card>
+  <Card title="Coupons overview" icon="ticket" href="/help-center/engage/coupons/overview" arrow>
+    See how coupons fit into your program.
+  </Card>
+</Columns>

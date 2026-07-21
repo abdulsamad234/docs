@@ -1,6 +1,50 @@
 ---
 title: "Custom bank account fields"
-description: "Collect the bank details your payouts need."
+description: "Collect extra banking details from affiliates paid by bank transfer in Referly — add custom bank account fields like branch name, SWIFT, or IBAN with required options."
+keywords: ["custom bank account fields", "extra bank fields", "SWIFT field", "IBAN field", "bank branch name", "manual bank transfer details", "affiliate bank details"]
 ---
+When you pay affiliates by manual bank transfer, the details you need vary by country — a branch name here, a SWIFT or IBAN there. **Custom bank account fields** let you collect exactly those extra details from affiliates, on top of the standard bank fields Referly already asks for. This page shows how to add and manage them.
 
-{/* TODO: Write this article. */}
+These fields only apply to the **Manual Bank Account** payout method, so you'll see them under **Program Settings → Program details → Payout settings** once bank transfer is turned on. See [Payout methods](/help-center/manage/payouts/payout-methods) for enabling bank transfer.
+
+{/* TODO screenshot: custom-bank-fields-panel — upload it in the local Documentation Agent */}
+
+## Turn on custom fields
+
+In the **Custom Bank Account Fields** panel, switch on the toggle to start collecting extra banking details. With it off, affiliates only fill in the standard bank fields. With it on, any fields you add appear on the bank details form affiliates complete when they choose bank transfer.
+
+## Add a field
+
+Under **Add New Field**, describe the detail you want to collect:
+
+- **Field Title** — the label the affiliate sees, for example `Bank Branch Name` or `SWIFT / BIC`.
+- **Placeholder Text** — the greyed-out hint shown inside the empty box, for example `Enter your bank branch name`.
+- **Required field** — turn this on if an affiliate must fill it in before they can save their bank details.
+
+A live **Field Preview** shows exactly how the field will look to affiliates as you type. When it looks right, select **Add Field**. Repeat for each extra detail you need.
+
+{/* TODO screenshot: add-custom-bank-field — upload it in the local Documentation Agent */}
+
+## Edit or remove a field
+
+Every field you've added is listed under **Current Fields**, showing its title, whether it's required, and its placeholder.
+
+- Select the **pencil** icon to change a field's title, placeholder, or required setting, then save.
+- Select the **trash** icon to remove a field. You'll be asked to confirm, and removing a field can't be undone.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Payout methods" icon="wallet" href="/help-center/manage/payouts/payout-methods" arrow>
+    Turn on manual bank transfer and other payout methods.
+  </Card>
+  <Card title="Export payouts" icon="file-arrow-down" href="/help-center/manage/payouts/export" arrow>
+    Download bank payout details as a CSV to make transfers.
+  </Card>
+  <Card title="Payout batches" icon="layer-group" href="/help-center/manage/payouts/batches" arrow>
+    Review and pay batches once details are collected.
+  </Card>
+  <Card title="Payouts overview" icon="wallet" href="/help-center/manage/payouts/overview" arrow>
+    See how the whole payout process fits together.
+  </Card>
+</Columns>

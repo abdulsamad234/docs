@@ -1,6 +1,51 @@
 ---
 title: "Revert a paid reward"
-description: "Undo a content reward that has already paid out."
+description: "Undo a content reward in Referly by changing a submission's status. Learn what happens to paid and unpaid payouts when you revert an approval."
+keywords: ["revert content reward", "undo approved submission", "change submission status", "delete unpaid payout", "content reward payout", "revert paid reward", "referly content rewards"]
 ---
+If you approved a content reward submission by mistake, or something about the post changes your mind, you can undo it. You do this by changing the submission's status — and Referly asks what should happen to any reward it already created.
 
-{/* TODO: Write this article. */}
+## Reverting a submission
+
+Open the submission from the **Submissions** tab. Once a submission has been [reviewed](/help-center/gamify/content-rewards/submissions) — approved or rejected — the review panel gives you a **Change status** control instead of the approve and reject buttons. To undo an approval, change the status to **Pending review** (to look at it again later) or **Rejected** (to turn it down).
+
+{/* TODO screenshot: cr-change-status — upload it in the local Documentation Agent */}
+
+You can also do this from the table: select one or more submissions and use the set-status control in the selection bar.
+
+## Choosing what happens to the payout
+
+Because the approval created a reward, moving an approved submission away from **Approved** opens a **What should happen to the payouts?** window. It gives you two choices:
+
+- **Keep the payouts** — the reward stays in the affiliate's earnings and can still be paid out, even though the submission is no longer approved.
+- **Delete the unpaid payouts** — the reward is removed, so it won't be paid.
+
+{/* TODO screenshot: cr-revert-dialog — upload it in the local Documentation Agent */}
+
+<Warning>
+  A reward that has **already been paid out** (or marked as paid) is always kept — reverting the submission can't claw back money that's already gone out. The choice above only affects rewards that were created but haven't been paid yet.
+</Warning>
+
+## After reverting
+
+- A submission moved to **Pending review** is back in your queue, and you can approve or reject it again. Re-approving creates its reward afresh.
+- A submission moved to **Rejected** is turned down; the affiliate is notified, as with any rejection.
+
+If you'd rather remove an entry entirely — the submission and any reward it created — use the **Delete** action instead. That permanently removes it, so reach for a status change when you only want to undo the approval.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Review submissions" icon="clipboard-check" href="/help-center/gamify/content-rewards/submissions" arrow>
+    Approve or reject submissions in the first place.
+  </Card>
+  <Card title="Content rewards overview" icon="circle-info" href="/help-center/gamify/content-rewards/overview" arrow>
+    How content rewards work from start to finish.
+  </Card>
+  <Card title="Managing rewards" icon="gift" href="/help-center/manage/rewards/bonuses" arrow>
+    Find content rewards among your other rewards.
+  </Card>
+  <Card title="Managing payouts" icon="money-check-dollar" href="/help-center/manage/payouts/overview" arrow>
+    How created rewards get paid out.
+  </Card>
+</Columns>

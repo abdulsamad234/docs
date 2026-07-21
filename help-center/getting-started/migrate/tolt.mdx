@@ -1,6 +1,221 @@
 ---
 title: "Migrate from Tolt"
-description: "Import your Tolt data using an API key and program ID."
+description: "Import your affiliates, referred customers, and sales from Tolt into Referly using your Tolt API key and program ID. Step-by-step guide to finding both credentials in Tolt, connecting, and every import setting."
+keywords: ["migrate from tolt", "tolt to referly", "import tolt affiliates", "tolt api key", "tolt program id", "tolt migration", "switch from tolt", "import tolt partners", "import tolt commissions", "affiliate program migration"]
 ---
+Moving from Tolt doesn't mean rebuilding your program by hand. Referly connects straight to your Tolt account and pulls your **affiliates** (Tolt calls them partners), their **referred customers**, and your past **sales and commissions** across for you — no CSV exports, no file wrangling. You give Referly two things from Tolt — an **API key** and a **program ID** — choose what to bring over, and it does the rest in the background.
 
-{/* TODO: Write this article. */}
+This guide walks through the whole move: where to find both credentials inside Tolt, how to connect, every setting you'll see while choosing what to import, and how to follow each import as it runs.
+
+<Note>
+  New to migrating in general? Start with the [Migration overview](/help-center/getting-started/migrate/overview) for how imports work, then come back here for the Tolt-specific steps.
+</Note>
+
+## Before you start
+
+You'll need:
+
+- **Admin access to your Tolt account**, so you can reach its settings and copy your API key.
+- **Your Tolt program ID** — the ID of the program you're importing from. Finding it is covered below.
+- **Your Referly program open** in the dashboard, ready to import into.
+- A few minutes. Larger programs take longer to pull across, but the import runs in the background — you don't have to wait on the screen.
+
+<Warning>
+  Your Tolt API key grants full access to your Tolt account. Treat it like a password: copy it straight into Referly, don't paste it anywhere public, and don't commit it into code or share it. Referly stores it securely so you only enter it once.
+</Warning>
+
+## Get your API key from Tolt
+
+Referly connects to Tolt using your **API key**. Here's how to find it on Tolt's side:
+
+<Steps>
+  <Step title="Log in to Tolt">
+    Sign in to your Tolt account as an admin at `app.tolt.io`.
+  </Step>
+  <Step title="Open Settings, then Integrations">
+    Go to **Settings**, then open the **Integrations** tab. This is where Tolt keeps your API keys.
+  </Step>
+  <Step title="Copy your API key">
+    Copy the API key shown there. A live key starts with `tlt_live_` followed by a long string of letters and numbers. This one value is the first of the two things Referly needs.
+  </Step>
+</Steps>
+
+<Note>
+  If you don't see a key yet, create one on that same Integrations tab. If you ever think a key has been exposed, rotate it in Tolt and reconnect in Referly with the new key.
+</Note>
+
+## Find your Tolt program ID
+
+Tolt lets you run more than one program, so alongside the API key Referly needs the **program ID** of the exact program you want to bring across. A Tolt program ID looks like `prg_` followed by a string of letters and numbers, for example `prg_YRsbPDAKhWfdqJbFACheh`.
+
+The surest way to get it is to look it up from Tolt directly, using the same API key you just copied. On any computer, run this in a terminal, replacing `YOUR_API_KEY` with your key:
+
+```bash
+curl https://api.tolt.com/v1/programs -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+Tolt returns a list of your programs, each with an `id` (the value starting with `prg_`) and its `name`. Copy the `id` of the program you're migrating — if you only run one program, there'll be just one to choose from.
+
+<Tip>
+  Not comfortable running that yourself? Ask whoever set up Tolt for you, or Tolt's support team, for the program ID of the program you want to import — it's a safe value to share, and it's all Referly needs alongside the key.
+</Tip>
+
+With your API key and program ID in hand, head back to Referly.
+
+## Open the import tool and choose Tolt
+
+<Steps>
+  <Step title="Open the import tool">
+    In your Referly dashboard, select the **plus (+)** button in the top bar, then choose **Import Data**. You can also select **Import** from the top of your **Affiliates**, **Customers**, or **Sales** pages.
+  </Step>
+  <Step title="Pick Tolt as your source">
+    On the **Choose your source** screen, select **Tolt** from the list of platforms.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: choose-tolt-source — upload it in the local Documentation Agent */}
+
+## Connect your Tolt account
+
+The next screen shows Tolt connecting to Referly, with two fields: **API key** and **Program ID**.
+
+<Steps>
+  <Step title="Paste your API key">
+    Paste the API key you copied from Tolt into the **API key** field. It's hidden as you type, the same way a password field is.
+  </Step>
+  <Step title="Enter your program ID">
+    Paste your program ID (the value starting with `prg_`) into the **Program ID** field. This tells Referly exactly which Tolt program to read from.
+  </Step>
+  <Step title="Save the connection">
+    Select **Save connection**. Referly checks your key and program ID with Tolt right away. If it works, you'll see the connection saved with a green **Saved connection** badge. If it doesn't, double-check that you copied the whole key and the right program ID, then try again.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: tolt-connection-form — upload it in the local Documentation Agent */}
+
+Referly remembers this connection, so the next time you import from Tolt — say, to bring sales across after your affiliates — you won't have to enter your key and program ID again. To swap in a different key or program later, select **Replace connection**.
+
+## Choose what to import
+
+Once the connection is saved, you choose which parts of your Tolt program to bring over. There are three, and they line up with Tolt like this:
+
+| Select this in Referly | What it brings over from Tolt |
+| --- | --- |
+| **Affiliates** | Your partners, with their names, emails, and referral links. |
+| **Referrals** | The customers your partners referred, each linked back to the partner who referred them. |
+| **Sales** | Your past commissions and the sales behind them, credited to the right partner. |
+
+You can tick one, two, or all three — but the **order you import them matters**. Referred customers attach to affiliates, and sales attach to customers, so those have to exist in Referly first. Always bring your **affiliates over first**, then referrals, then sales. See [Import in the right order](#import-in-the-right-order) below.
+
+{/* TODO screenshot: select-objects-and-fields — upload it in the local Documentation Agent */}
+
+### Pick the fields to bring across
+
+When you tick an object, it expands to show every field Referly can pull from Tolt for it. Each field has a checkbox, so you decide exactly what comes across. A few fields are marked **Required** — these are the details Referly needs to create the record, so they're always on and can't be switched off.
+
+Here's what you can bring for each object.
+
+<AccordionGroup>
+  <Accordion title="Affiliate (partner) fields">
+    - **First name** *(required)* — the partner's first name.
+    - **Last name** *(required)* — the partner's last name.
+    - **Email** *(required)* — the partner's email address. This is also how Referly links their referred customers and sales back to them.
+    - **Join date** — when they joined your Tolt program, so their history stays accurate.
+    - **Payout email** — their payout email, when Tolt has one on file.
+    - **Affiliate link** — their referral link, so their existing links carry over.
+    - **Provider affiliate ID** — the ID Tolt used for the partner, kept for your reference.
+    - **Provider status** — the partner's status in Tolt (for example, active), kept for your reference.
+  </Accordion>
+  <Accordion title="Referral (customer) fields">
+    - **First name** *(required)* — the customer's first name.
+    - **Last name** *(required)* — the customer's last name.
+    - **Email** *(required)* — the customer's email address.
+    - **Affiliate email** *(required)* — the email of the partner who referred them. This is how each customer gets attached to the right partner, which is why affiliates must be imported first.
+    - **Join date** — when the referral was first created in Tolt.
+    - **External user ID** — the customer's ID from your own system as Tolt recorded it, kept for your reference.
+    - **Provider customer ID** — the referral's ID in Tolt, kept for your reference.
+    - **Provider status** — the referral's status in Tolt.
+  </Accordion>
+  <Accordion title="Sale fields">
+    - **Customer email** *(required)* — the email of the customer who bought.
+    - **Customer name** — the customer's name.
+    - **Affiliate email** — the email of the partner credited for the sale.
+    - **Transaction amount** *(required)* — the value of the sale.
+    - **Transaction date** — when the sale or charge happened.
+    - **Commission** *(required)* — the commission earned on that sale.
+    - **Paid status** — whether the commission was paid or unpaid in Tolt, so your payout history stays right.
+    - **Promo code** — the coupon or promo code used on the sale, when Tolt has one.
+    - **Provider transaction ID** — the commission's ID in Tolt, kept for your reference.
+    - **Provider status** — the commission's status in Tolt.
+  </Accordion>
+</AccordionGroup>
+
+The default selections cover what most programs want, so if you're not sure, leaving them as they are is a safe choice. When you're happy with your picks, select **Continue**.
+
+## Check the field matches
+
+Before anything is imported, Referly shows you a preview of your Tolt data lined up against the matching Referly fields. This is your chance to confirm everything landed in the right place — that names, emails, and amounts are matched to the fields you'd expect.
+
+{/* TODO screenshot: map-fields-review — upload it in the local Documentation Agent */}
+
+Look the preview over, and when it looks right, confirm to start the import.
+
+## Start the import and follow its progress
+
+Imports run in the background, so you can close the panel and keep working. Every import appears in the **Recent Imports** list inside the import tool, each with its own progress.
+
+An import moves through these states:
+
+| Status | What it means |
+| --- | --- |
+| **Pending** | Queued and about to start. |
+| **Processing** | Bringing your records in right now. |
+| **Paused** | You've paused it; resume it any time. |
+| **Completed** | Finished — all records handled. |
+| **Failed** | The import stopped before finishing. |
+| **Cancelled** | The import was stopped and won't continue. |
+
+Each card shows a progress bar and a running count of how many records came in and how many were **skipped**. A record is skipped when it's missing a detail Referly needs — for example, a Tolt referral with no customer email, or a sale with no partner attached. That's normal; the skipped count just tells you those few couldn't be brought across.
+
+{/* TODO screenshot: tolt-import-progress — upload it in the local Documentation Agent */}
+
+You can **pause** a running import and **resume** it later, open **Details** for the full breakdown, or **delete** one you no longer need.
+
+## Import in the right order
+
+Because referred customers attach to affiliates and sales attach to customers, run your Tolt imports in this order and let each finish before starting the next:
+
+<Steps>
+  <Step title="Affiliates first">
+    Bring your partners over so there's an affiliate for every customer and sale to attach to.
+  </Step>
+  <Step title="Referrals next">
+    Import your referred customers. Each one links to its partner by email — which only works once those affiliates are already in.
+  </Step>
+  <Step title="Sales last">
+    Import your commissions and sales, credited to the partners and matched to their customers.
+  </Step>
+</Steps>
+
+Referly reminds you of this order as you go, and it won't let you start a customer or sales import while the affiliate import it depends on is still running. Since your Tolt connection is saved, each round just means reopening the import tool, picking Tolt, and choosing the next object.
+
+<Tip>
+  Check each import's results — the imported and skipped counts — before moving on to the next type. Getting affiliates in cleanly first means your customers and sales attach to the right partners automatically.
+</Tip>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Migration overview" icon="map" href="/help-center/getting-started/migrate/overview" arrow>
+    How imports work and what you can bring across.
+  </Card>
+  <Card title="Migrate from CSV" icon="file-csv" href="/help-center/getting-started/migrate/csv" arrow>
+    Prefer a spreadsheet? Import affiliates, customers, or sales from a file.
+  </Card>
+  <Card title="Commission plans overview" icon="money-bill" href="/help-center/getting-started/commissions/overview" arrow>
+    Set the terms your migrated affiliates earn on.
+  </Card>
+  <Card title="Invite affiliates" icon="paper-plane" href="/help-center/getting-started/recruit/invite-affiliates" arrow>
+    Bring new partners into your program by email.
+  </Card>
+</Columns>

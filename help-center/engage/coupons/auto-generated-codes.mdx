@@ -1,6 +1,78 @@
 ---
 title: "Auto-generate codes"
-description: "Build codes from affiliate names, discounts, and random characters."
+description: "Auto-generate a unique coupon code for every affiliate in Referly. Build codes from an affiliate's name, your coupon name, a prefix, and random characters, and limit generation to specific groups."
+keywords: ["auto-generate coupon codes", "unique code per affiliate", "automatic promo codes", "code structure", "personalised affiliate codes", "bulk coupon codes", "referly auto generate codes"]
 ---
+Adding a code by hand is fine for a few affiliates. When you want every affiliate to have their own code, let Referly generate them for you. You design one pattern, and Referly turns it into a unique code for each affiliate — so `SARAH-20` and `JAMES-20` are created and assigned without you typing a thing.
 
-{/* TODO: Write this article. */}
+## When to use this
+
+Auto-generated codes are the fast way to give a whole program personalised codes. Each affiliate gets a code that's clearly theirs, every order placed with it credits them, and new affiliates can be handed a code the moment they join.
+
+## Add an auto-generated code
+
+Open a coupon from your library, or [create a new one](/help-center/engage/coupons/create), and add an **auto-generated code** in the Promotion Codes section. Instead of typing a code, you'll build the pattern Referly uses to make one per affiliate.
+
+## Design the code pattern
+
+### Choose what goes in the code
+
+Under **Include in code**, pick the pieces that make up each code. You can combine any of:
+
+- **Partner name** — the affiliate's first name.
+- **Partner last name** — their last name.
+- **Partner email address** — part of their email.
+- **Discount amount** — the coupon's discount, like `20`.
+- **Coupon name** — the name you gave the coupon.
+- **Random characters** — a short random string that keeps every code unique.
+
+{/* TODO screenshot: code-structure-options — upload it in the local Documentation Agent */}
+
+### Add a prefix
+
+Optionally set a **prefix** — a fixed word at the front of every code, like `PROMO`. This keeps your codes consistent and recognisable (for example `PROMO-SARAH-20`).
+
+### Tune the random characters
+
+If you include random characters, choose their **length** and **case** (for example **Mixed case**). More characters mean less chance of two codes ever clashing; shorter codes are easier to type and say.
+
+### Check the preview
+
+As you build the pattern, the **Example Code Preview** shows what a finished code will look like. Adjust the pieces until it reads the way you want before you save.
+
+{/* TODO screenshot: code-preview — upload it in the local Documentation Agent */}
+
+## Limit which affiliates get a code
+
+By default Referly generates a code for every affiliate. To narrow that, turn on **Limit auto-generation to specific affiliate groups** and choose the [groups](/help-center/manage/affiliates/groups) that should receive codes — useful when only your top tier gets a particular deal.
+
+{/* TODO screenshot: limit-groups — upload it in the local Documentation Agent */}
+
+## Add rules to the codes
+
+Auto-generated codes can carry the same limits as any other code — first-time orders only, a minimum order amount, an expiry date, or a redemption cap. Set these alongside the pattern. For what each rule does, see [Restrict a code](/help-center/engage/coupons/restrictions).
+
+## Regenerate codes later
+
+If you change the pattern, or add affiliates after setting it up, you can regenerate the codes so everyone gets one that matches the current pattern. New affiliates are picked up too, so your whole program stays covered.
+
+<Note>
+Regenerating replaces existing auto-generated codes with new ones. If affiliates have already shared their current codes, let them know the code has changed.
+</Note>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Promotional codes" icon="tag" href="/help-center/engage/coupons/promotional-codes" arrow>
+    Add or assign a single code by hand instead.
+  </Card>
+  <Card title="Restrict a code" icon="lock" href="/help-center/engage/coupons/restrictions" arrow>
+    Add first-time-order, minimum-order, and expiry rules.
+  </Card>
+  <Card title="Affiliate groups" icon="users" href="/help-center/manage/affiliates/groups" arrow>
+    Group affiliates so you can target who gets a code.
+  </Card>
+  <Card title="Create a coupon" icon="ticket" href="/help-center/engage/coupons/create" arrow>
+    Set up the discount your codes belong to.
+  </Card>
+</Columns>

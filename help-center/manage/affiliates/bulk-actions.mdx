@@ -1,6 +1,95 @@
 ---
 title: "Bulk actions"
-description: "Approve, decline, group, or export many affiliates at once."
+description: "Act on many Referly affiliates at once: change their commission plan or group, message, export, give a bonus, approve, reactivate, deactivate, decline, ban, or delete — all in one step."
+keywords: ["bulk actions", "select affiliates", "bulk approve affiliates", "bulk change commission plan", "bulk ban affiliates", "bulk deactivate", "export affiliates", "bulk delete affiliates", "select all affiliates", "referly bulk edit"]
 ---
+When you need to do the same thing to a lot of affiliates — approve a batch of applicants, move a set of partners onto a new plan, or export a segment — you don't have to work through them one by one. Select the affiliates you want and apply a single action to all of them at once.
 
-{/* TODO: Write this article. */}
+## Select the affiliates you want
+
+Every row in the [affiliates list](/help-center/manage/affiliates/overview) has a checkbox on the left. Tick the ones you want to work with. To grab everyone on the current page, use the checkbox in the header row.
+
+The moment you select at least one affiliate, a bar appears across the top of the table showing how many you've picked, along with the actions you can run on them.
+
+{/* TODO screenshot: selection-bar — upload it in the local Documentation Agent */}
+
+### Select everyone that matches
+
+If your list runs to more than one page, selecting the header checkbox only picks the affiliates on the page you're looking at. To act on your *whole* list, look for the **Select all [number] affiliates** link in the bar — it extends your selection to every affiliate that matches your current search and filters, across all pages. To go back to just the visible rows, choose **Select visible only**.
+
+<Tip>
+  Combine this with [filters](/help-center/manage/affiliates/filters-and-columns) to act on an exact segment. Filter down to, say, everyone who's still pending in one country, then select all matching and approve them in a single step.
+</Tip>
+
+## The actions you can run
+
+With affiliates selected, one button and a menu give you everything you can do to the group. Select **Change commission plan** directly, or open the three-dots menu for the rest.
+
+{/* TODO screenshot: bulk-more-menu — upload it in the local Documentation Agent */}
+
+The status actions — approve, reactivate, deactivate, and so on — only appear when they make sense for who you've selected. If none of your selection is pending, for example, you won't see **Approve**.
+
+### Change commission plan
+
+Moves every selected affiliate onto a commission plan you choose. You can also tick **Also apply this plan to all existing referrals** so their past referrals switch to the new plan too, not just future ones. Note that setting a plan by hand takes those affiliates out of any automatic affiliate-milestone changes. For the full walkthrough, see [Change an affiliate's commission plan](/help-center/manage/affiliates/change-commission-plan).
+
+### Change group
+
+Assigns the selected affiliates to an [affiliate group](/help-center/manage/affiliates/groups), so you can organize them and target them with group-specific commissions, links, and messages.
+
+### Create message group
+
+Starts a group conversation with everyone you've selected, so you can message the whole set at once. See [Message groups](/help-center/engage/messages/groups).
+
+### Export
+
+Downloads the selected affiliates as a spreadsheet (CSV), so you can work with the data outside Referly. Pair this with filters and **Select all matching** to export a precise segment.
+
+### Give bonus
+
+Awards a one-off bonus to everyone selected — a quick way to reward a group of top performers. See [Give a bonus](/help-center/manage/affiliates/give-a-bonus).
+
+### Approve affiliates
+
+Approves the selected pending or invited affiliates and sets them to active. They receive approval and welcome emails, and their promo codes are created. This is the fast way to clear an approval queue. See [Approve or decline applications](/help-center/getting-started/recruit/approve-or-decline).
+
+### Reactivate affiliates
+
+Brings previously deactivated affiliates back. Their referral links start working again and they can log in and earn on new sales.
+
+### Deactivate affiliates
+
+Switches off the selected affiliates and disables their active links, while keeping their commissions and payouts intact. This is reversible — you can reactivate them later. See [Ban or deactivate an affiliate](/help-center/manage/affiliates/ban-or-deactivate).
+
+### Decline affiliates
+
+Turns down the selected pending applicants. They receive a decline notification email.
+
+### Ban affiliates
+
+Permanently bans the selected affiliates, disables all their active links, and cancels all their pending payouts. You choose a reason for the ban, and this **can't be undone**. See [Ban or deactivate an affiliate](/help-center/manage/affiliates/ban-or-deactivate).
+
+### Delete affiliates
+
+Permanently removes the selected affiliates along with all their referred customers, sales, commissions, earnings, and payout history. This **can't be undone**, so reach for deactivate or ban instead unless you're certain you want everything gone.
+
+<Warning>
+  Ban and delete are permanent. Before running either on a large selection, double-check your count and your filters so you don't catch affiliates you didn't mean to.
+</Warning>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Filters and columns" icon="sliders" href="/help-center/manage/affiliates/filters-and-columns" arrow>
+    Narrow your list to the exact segment before selecting all.
+  </Card>
+  <Card title="Change an affiliate's commission plan" icon="money-bill-transfer" href="/help-center/manage/affiliates/change-commission-plan" arrow>
+    The full guide to moving affiliates between plans.
+  </Card>
+  <Card title="Ban or deactivate an affiliate" icon="ban" href="/help-center/manage/affiliates/ban-or-deactivate" arrow>
+    Pause or remove affiliates, one or many.
+  </Card>
+  <Card title="Affiliate groups" icon="object-group" href="/help-center/manage/affiliates/groups" arrow>
+    Organize affiliates into groups you can act on together.
+  </Card>
+</Columns>

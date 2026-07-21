@@ -1,6 +1,74 @@
 ---
 title: "Coupons overview"
-description: "Let affiliates promote a discount code instead of a link."
+description: "Learn how coupons work in Referly. Let affiliates promote a discount code instead of a link, connect Stripe, Shopify, WooCommerce, or Polar, sync existing codes, and track sales by coupon."
+keywords: ["affiliate coupons", "coupon codes", "affiliate discount codes", "referly coupons", "promo codes for affiliates", "track sales by coupon", "coupon tracking", "affiliate promo code"]
 ---
+Coupons let your affiliates promote a discount code instead of (or alongside) a referral link. When a customer enters the code at checkout, the sale is tracked to the affiliate who owns that code — so the people you work with can send traffic with a memorable code like `SARAH20` instead of a long tracking link, and you still get full credit and commission tracking.
 
-{/* TODO: Write this article. */}
+This page is a tour of how coupons work in Referly and where each setting lives. Each part links to a deeper guide when you want more detail.
+
+## Why use coupons
+
+Some audiences respond better to a code than a link. A creator can say their discount code out loud in a video, print it on a card, or drop it in a caption — no clickable link required. Coupons are also how you run influencer and word-of-mouth deals where the offer itself (a percentage or amount off) is the hook.
+
+Because each code is tied to one affiliate, every order placed with it is attributed automatically. You get the same reporting and commissions you'd get from link tracking, without asking customers to click anything.
+
+## Where coupons live
+
+Open your campaign and select **Coupons** in the left sidebar. This is your coupon library — every coupon you've created or synced is listed here, along with how many times each one has been redeemed. From this page you create new coupons, sync codes from a connected platform, and open any coupon to edit it.
+
+{/* TODO screenshot: coupons-page — upload it in the local Documentation Agent */}
+
+## Customer coupons and payout coupons
+
+A switch at the top of the page splits your coupons into two kinds:
+
+- **Customer coupons** are the discounts your affiliates share with the people they refer. This is what most programs use — a code that gives the customer a deal and credits the affiliate for the sale.
+- **Payout coupons** are store credit you hand to your affiliates themselves as a non-cash reward — for example, giving an affiliate a code for free product instead of a cash payout. These pair with [non-cash rewards](/help-center/getting-started/commissions/non-cash-rewards).
+
+Most of this section is about customer coupons. Switch to **Payout** only when you're setting up rewards you pay out in credit.
+
+{/* TODO screenshot: customer-vs-payout-toggle — upload it in the local Documentation Agent */}
+
+## Connect a coupon source
+
+For a coupon to actually work at your checkout, it has to exist on the platform where customers pay. Referly connects to your billing or store platform so the codes you create here are created on that platform too, and redemptions flow back into your reports. You can connect **Stripe**, **Shopify**, **WooCommerce**, or **Polar**, or use the **API** to manage coupons from your own server.
+
+Start here: [Connect a coupon source](/help-center/engage/coupons/connect-a-source).
+
+## Sync coupons you already have
+
+If you already created discount codes on Stripe, Shopify, WooCommerce, or Polar, you don't have to rebuild them. Syncing pulls those existing codes into Referly so you can assign and track them like any other coupon. See [Sync coupons](/help-center/engage/coupons/sync).
+
+## Create a coupon
+
+When you build a coupon in Referly you choose the discount (a percentage or a fixed amount off), how long it lasts, and any limits — then Referly creates it on your connected platform for you. Full walkthrough: [Create a coupon](/help-center/engage/coupons/create).
+
+## Promotional codes
+
+A coupon holds the discount; a **promotional code** is the actual text a customer types at checkout, like `PROMO30`. One coupon can have several codes, and you can tie a code to a specific affiliate or customer. Learn more in [Promotional codes](/help-center/engage/coupons/promotional-codes).
+
+## Give every affiliate their own code
+
+Instead of handing out codes one by one, you can have Referly generate a unique code for each affiliate automatically — built from their name, your coupon name, random characters, or a prefix you choose. See [Auto-generate codes](/help-center/engage/coupons/auto-generated-codes).
+
+## Add restrictions
+
+You can limit where and how a code applies — to specific products, a minimum order value, first-time customers only, an expiry date, or a redemption cap. See [Restrict a code](/help-center/engage/coupons/restrictions).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Connect a coupon source" icon="plug" href="/help-center/engage/coupons/connect-a-source" arrow>
+    Link Stripe, Shopify, WooCommerce, or Polar so codes work at checkout.
+  </Card>
+  <Card title="Create a coupon" icon="ticket" href="/help-center/engage/coupons/create" arrow>
+    Set the discount, duration, and limits for a new coupon.
+  </Card>
+  <Card title="Auto-generate codes" icon="wand-magic-sparkles" href="/help-center/engage/coupons/auto-generated-codes" arrow>
+    Give every affiliate their own unique code automatically.
+  </Card>
+  <Card title="Non-cash rewards" icon="gift" href="/help-center/getting-started/commissions/non-cash-rewards" arrow>
+    Reward affiliates with store credit using payout coupons.
+  </Card>
+</Columns>

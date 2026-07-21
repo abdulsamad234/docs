@@ -1,6 +1,73 @@
 ---
 title: "Target an audience"
-description: "Send an announcement to everyone or a filtered group."
+description: "Send a Referly announcement to every affiliate or filter it to a group by status, group, country, or commission plan. Combine filters, check the audience size, and preview recipients."
+keywords: ["announcement audience", "target affiliates", "filter affiliates announcement", "send to affiliate group", "announcement targeting", "audience size", "affiliate segments", "referly announcement audience"]
 ---
+Every announcement needs an audience — the affiliates who'll actually see it. You can send to your whole program or narrow it down to a specific group, so the right message reaches the right people. This page covers where audience settings live and how to build a targeted group.
 
-{/* TODO: Write this article. */}
+You'll find these options on the **Setup** tab of the announcement editor, in the **Which Affiliates** section.
+
+## Everyone or a filtered group
+
+Open the **Which Affiliates** section and pick one of two options:
+
+- **All affiliates** — every affiliate in your program sees the announcement. Best for program-wide news like a new promotion or a policy change.
+- **Some affiliates** — only the affiliates matching the filters you set will see it. Best when a message is only relevant to part of your program.
+
+{/* TODO screenshot: audience-all-or-filtered — upload it in the local Documentation Agent */}
+
+## Filter your affiliates
+
+When you choose **Some affiliates**, a set of filters appears. Mix and match them to describe exactly who you're targeting. You can filter by:
+
+- **Group** — affiliates in a specific [affiliate group](/help-center/manage/affiliates/groups), such as your VIPs or a regional segment.
+- **Status** — where affiliates are in their lifecycle: active, pending, invited, declined, deactivated, or banned. For most announcements you'll target **active** affiliates.
+- **Country** — where your affiliates are based.
+- **Commission plan** — the [commission plan](/help-center/manage/affiliates/change-commission-plan) an affiliate is on.
+- **How they joined** — the source an affiliate came through.
+
+Each filter you add shows up as a chip, so you can see your current selection at a glance and remove any of them with a click.
+
+{/* TODO screenshot: audience-filters — upload it in the local Documentation Agent */}
+
+## Match all or any of your filters
+
+When you apply two or more filters, an **AND / OR** connector appears between them:
+
+- **AND** — an affiliate must match *all* of your filters to receive the announcement. Use this to narrow down, for example "active affiliates **and** in the VIP group".
+- **OR** — an affiliate only has to match *at least one* filter. Use this to widen out, for example "in the VIP group **or** from France".
+
+{/* TODO screenshot: audience-and-or — upload it in the local Documentation Agent */}
+
+## Check the audience size
+
+As you adjust your filters, the **Audience size** card in the editor updates live to show how many affiliates currently match. It's a quick sanity check — if the number looks too high or too low, revisit your filters before you send.
+
+For a one-time announcement, select **View recipients** on that card to open the full list of affiliates who'll receive it. You can search the list by name or email to confirm specific people are included.
+
+{/* TODO screenshot: audience-size-recipients — upload it in the local Documentation Agent */}
+
+## Targeting an automated announcement
+
+If your announcement is delivered as an [automation](/help-center/engage/announcements/overview) rather than a one-time send, the audience works the same way — you still choose all affiliates or a filtered group. The difference is *when* it reaches them: instead of going out at once, it's shown to each affiliate when they meet the automation's condition, such as a set number of days after joining. The card shows an **estimated audience** because the group changes as affiliates qualify over time.
+
+## Who the announcement appears from
+
+Separately from the audience, you can set who an announcement appears to come from. In the **From** section, choose to send it from your **program** or from a specific **team member**, so a personal note reads as coming from a real person on your team.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Announcements overview" icon="bullhorn" href="/help-center/engage/announcements/overview" arrow>
+    How announcements work and where they appear.
+  </Card>
+  <Card title="Pop-up settings" icon="window-maximize" href="/help-center/engage/announcements/types" arrow>
+    Choose a pop-up, banner, or poll and design it.
+  </Card>
+  <Card title="Affiliate groups" icon="users" href="/help-center/manage/affiliates/groups" arrow>
+    Organize affiliates into groups you can target.
+  </Card>
+  <Card title="Filters and columns" icon="filter" href="/help-center/manage/affiliates/filters-and-columns" arrow>
+    The same filters you use to segment your affiliate list.
+  </Card>
+</Columns>

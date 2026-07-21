@@ -1,6 +1,85 @@
 ---
 title: "Import affiliates"
-description: "Bring affiliates in from a CSV or another platform."
+description: "Add affiliates to Referly in bulk from a CSV file or another platform. Learn the required fields, how to map and run the import, and why affiliates go first."
+keywords: ["import affiliates", "bulk add affiliates", "affiliate CSV", "import affiliate list", "affiliate import fields", "migrate affiliates", "upload affiliates", "referly import affiliates"]
 ---
+When you're bringing a lot of affiliates into Referly at once — a list you've collected, or a whole program moving over from another tool — you don't add them one at a time. You import them in bulk, either from a spreadsheet or straight from another affiliate platform.
 
-{/* TODO: Write this article. */}
+## Open the importer
+
+From your [affiliates list](/help-center/manage/affiliates/overview), select **Import Affiliates**. You can also open the importer from the **plus (+)** button in the top bar and choose **Import Data**, then **Create New Import** and pick **Affiliates** as the type.
+
+{/* TODO screenshot: import-affiliates-button — upload it in the local Documentation Agent */}
+
+Next, choose where your affiliates are coming from: a **CSV file**, or another **affiliate platform** you connect and pull from.
+
+{/* TODO screenshot: import-source-step — upload it in the local Documentation Agent */}
+
+## Import from another platform
+
+If you're switching from another affiliate tool, Referly can pull your affiliates in directly instead of you exporting a file. Connect the platform and Referly brings your affiliates across for you. There are step-by-step guides for each:
+
+<Columns cols={2}>
+  <Card title="Rewardful" href="/help-center/getting-started/migrate/rewardful" arrow>Migrate from Rewardful.</Card>
+  <Card title="FirstPromoter" href="/help-center/getting-started/migrate/firstpromoter" arrow>Migrate from FirstPromoter.</Card>
+  <Card title="Tolt" href="/help-center/getting-started/migrate/tolt" arrow>Migrate from Tolt.</Card>
+  <Card title="PartnerStack" href="/help-center/getting-started/migrate/partnerstack" arrow>Migrate from PartnerStack.</Card>
+</Columns>
+
+See the [Migration overview](/help-center/getting-started/migrate/overview) for the full list of platforms.
+
+## Import affiliates from a CSV
+
+If your affiliates are in a spreadsheet, a CSV import is the way to go.
+
+### Prepare your file
+
+Your CSV needs a column for each affiliate detail. Referly reads these fields:
+
+| Field | Required? |
+| --- | --- |
+| **First Name** | Required |
+| **Last Name** | Required |
+| **Email Address** | Required — also how each affiliate's referred customers and sales get linked back to them. |
+| **Join Date** | Optional — keeps their original join date instead of today's. |
+| **Payout Email** | Optional — where they get paid, if different from their email. |
+| **Affiliate Link/Ref** | Optional — their existing referral code, so their links carry over. |
+
+Each affiliate needs at least a first name, last name, and email. The rest are optional but worth including if you have them.
+
+### Upload and map
+
+Upload your CSV, then match each column in your file to the matching Referly field. Referly shows which fields are **Required** and which are **Optional** so you know what has to be matched before you can continue.
+
+{/* TODO screenshot: affiliate-csv-fields — upload it in the local Documentation Agent */}
+
+### Run it and track progress
+
+Start the import and it runs in the background — you can close the panel and keep working. Every import shows up in the **Recent Imports** list with its progress and a count of how many affiliates came in and how many were skipped. An affiliate is skipped when a required detail is missing, such as a row with no email.
+
+For the full mechanics of CSV imports — preparing your file, mapping columns, and reading the results — see [Migrate from CSV](/help-center/getting-started/migrate/csv).
+
+## Import affiliates before customers and sales
+
+If you're also bringing over referred customers and past sales, **import your affiliates first**. Customers attach to affiliates, and sales attach to customers, so those imports need your affiliates to already be in place — they're matched by email. Referly won't let you start a customer or sales import until the affiliate import it depends on has finished. See [Migration overview](/help-center/getting-started/migrate/overview) for the recommended order.
+
+## After the import
+
+Imported affiliates appear in your list like any others, tagged with an **Imported** source so you can tell where they came from. From there you can [organize them into groups](/help-center/manage/affiliates/groups), [set their commission plan](/help-center/manage/affiliates/change-commission-plan), or filter and message them like the rest of your affiliates.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Migrate from CSV" icon="file-csv" href="/help-center/getting-started/migrate/csv" arrow>
+    The full guide to importing from a spreadsheet.
+  </Card>
+  <Card title="Migration overview" icon="map" href="/help-center/getting-started/migrate/overview" arrow>
+    Bring affiliates, customers, and sales across in order.
+  </Card>
+  <Card title="Add affiliates manually" icon="user-plus" href="/help-center/getting-started/recruit/add-affiliates-manually" arrow>
+    Adding just a few? Create them by hand instead.
+  </Card>
+  <Card title="Affiliates overview" icon="users" href="/help-center/manage/affiliates/overview" arrow>
+    Where your imported affiliates land.
+  </Card>
+</Columns>

@@ -1,6 +1,86 @@
 ---
 title: "Tax and invoices"
-description: "Tax management and affiliate invoice details."
+description: "Set your legal entity details, add and verify an EU VAT number, generate self-billing invoices, and handle VAT and NL tax exports for affiliate payouts in Referly."
+keywords: ["payout tax", "self-billing invoice", "affiliate invoice", "VAT number", "VIES validation", "reverse charge VAT", "require invoice information", "ICP export", "BTW summary", "affiliate payout VAT"]
 ---
+Paying affiliates comes with paperwork: invoices for your records and, if you're in the EU, VAT to account for correctly. Referly handles the heavy lifting — it generates self-billing invoices for your payouts and works out the VAT treatment from the countries involved. Your job is to give it your legal entity details once, and this page walks through that.
 
-{/* TODO: Write this article. */}
+You'll find everything under **Program Settings → Program details → Invoice settings**, shown as the **Tax management** page.
+
+{/* TODO screenshot: tax-management-page — upload it in the local Documentation Agent */}
+
+<Note>
+  Invoice generation is a paid feature. If the section is locked, you'll see an upgrade prompt.
+</Note>
+
+## Set your legal entity details
+
+The first section, **Legal entity on invoices**, is your business's details. These appear as the payer on every self-billing invoice, and your **Country** decides how VAT is applied to payouts. Fill in:
+
+- **Country** — your business's country. This drives the VAT treatment, so make sure it's right.
+- **Invoice email** — where billing correspondence goes.
+- **Company name** — your legal business name. Referly builds your invoice number prefix from this name, and shows you the prefix it will use.
+- **Address**, **City**, **State / province**, and **ZIP / postal code**.
+
+Select **Save changes** when you're done.
+
+## Add your VAT number (EU)
+
+If your country is in the EU, a **VAT number** field appears. Enter your VAT number using the two-letter country code followed by your national number, for example `NL123456789B01`.
+
+Referly checks the number against the EU VIES registry as you type. A green check means it's verified; an amber warning means the number's format is off, it isn't registered, or the registry couldn't be reached. If you get the warning, double-check the digits and country prefix, then use the retry option.
+
+{/* TODO screenshot: vat-number-vies — upload it in the local Documentation Agent */}
+
+## How VAT is applied to payouts
+
+Referly works out the VAT treatment for each payout automatically, based on your country, the affiliate's country, and whether the affiliate is a business or an individual. The invoice note reflects the result. In short:
+
+- **Same country (EU business)** — your country's standard VAT rate is added.
+- **Another EU country (business)** — the VAT is reverse charged (0% here), noted under Article 196 of the VAT Directive.
+- **Outside the EU** — the payout is outside the scope of EU VAT.
+- **Individuals** — no VAT applies.
+
+Non-EU businesses don't get EU VAT math: a payout is treated as domestic only when the affiliate is in your country, and otherwise as non-EU.
+
+<Note>
+  This is here to make invoicing easier, not to replace tax advice. Check with your accountant that the treatment matches your obligations.
+</Note>
+
+## Require invoice details from affiliates
+
+Turn on **Require invoice information from affiliates** if you need affiliates to supply their own invoice and tax details before they can be paid. With it on, an affiliate must complete those details before they can receive payouts — useful when your compliance rules need a proper invoice from each affiliate.
+
+{/* TODO screenshot: require-invoice-info — upload it in the local Documentation Agent */}
+
+## Download an invoice
+
+For **Referly Payouts** batches, you can save the invoice for your records: open the batch and choose **Download Invoice** to get a PDF. Self-billing invoices for your affiliates are generated from the legal entity and VAT details you set above.
+
+## Netherlands tax exports
+
+If your country is the **Netherlands**, an extra **NL reporting exports** section appears. It lets you pick a date range and download two CSVs built from your paid payouts in that period:
+
+- **ICP** — intra-EU supply lines.
+- **BTW summary** — rubric totals for your VAT return.
+
+A preview of both loads on screen first, and the CSV downloads unlock once the preview has loaded. These exports only show for NL businesses.
+
+{/* TODO screenshot: nl-reporting-exports — upload it in the local Documentation Agent */}
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Self-managed vs Referly Payouts" icon="scale-balanced" href="/help-center/manage/payouts/self-managed-vs-referly" arrow>
+    See which option generates invoices for you.
+  </Card>
+  <Card title="Export payouts" icon="file-arrow-down" href="/help-center/manage/payouts/export" arrow>
+    Download batches as CSVs for your payout provider.
+  </Card>
+  <Card title="Payout batches" icon="layer-group" href="/help-center/manage/payouts/batches" arrow>
+    Open a batch to download its invoice.
+  </Card>
+  <Card title="Payouts overview" icon="wallet" href="/help-center/manage/payouts/overview" arrow>
+    How the whole payout process fits together.
+  </Card>
+</Columns>

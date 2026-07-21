@@ -1,6 +1,82 @@
 ---
 title: "Customers overview"
-description: "Review the customers your affiliates referred."
+description: "See every customer your affiliates referred in Referly. Understand the Customers table columns, how customers get added, their status, and what you can do from the screen."
+keywords: ["referred customers", "customers overview", "referrals dashboard", "affiliate referrals", "customer list", "referral status", "referral source", "manage referrals", "customer table", "affiliate marketing customers"]
 ---
+Your customers are the people your affiliates referred to you — the sign-ups, trials, and buyers that came in through an affiliate's link. Every one of them is collected in one place so you can see who referred whom, how much each customer is worth, and where your commissions are coming from.
 
-{/* TODO: Write this article. */}
+This article is a tour of that screen. The step-by-step tasks — recording a sale, changing a plan, leaving a note, importing in bulk — each have their own article, linked at the end.
+
+## Where to find your customers
+
+From your campaign dashboard, open **Referrals** in the left sidebar. This is your customers list: one row per referred customer, newest first.
+
+{/* TODO screenshot: customers-list — upload it in the local Documentation Agent */}
+
+Across the top you'll find a search box and filters for narrowing the list, a way to choose which columns show, and the controls for adding a customer or importing in bulk.
+
+## What the table shows
+
+Each row is one customer, and the columns tell you the story of that referral at a glance:
+
+| Column | What it tells you |
+| --- | --- |
+| **Customer** | The customer's name and email. |
+| **Affiliate** | The affiliate who referred them, so you always know who to credit. |
+| **Group** | The affiliate group that referral belongs to, if you use groups. |
+| **Revenue** | The total sales value recorded against this customer. |
+| **Profit** | What's left after the affiliate's commission is taken out. |
+| **Source** | How the customer came in — see below. |
+| **Joined Date** | When the referral was first created. |
+| **Status** | Whether the referral is Active, Submitted, or Rejected. See [Customer statuses](/help-center/manage/customers/statuses). |
+| **Commission Plan** | The plan deciding what the referring affiliate earns from this customer. |
+| **Notes** | Any private note you've left on the customer. |
+
+You don't have to show every column. Use the columns control in the toolbar to turn any of them on or off, and drag them into the order you prefer — your choice is remembered the next time you open the page.
+
+## How customers get added
+
+Most customers arrive on their own. When someone follows an affiliate's link and signs up or buys, Referly records the referral automatically. The **Source** column shows exactly how each one came in:
+
+- **Integration** — created automatically through a connected tool like Stripe, Shopify, or Zapier when a customer subscribes or pays.
+- **JavaScript** — captured by the tracking snippet on your own site.
+- **Affiliate** — submitted by an affiliate themselves from their portal.
+- **Manual** — added by hand from this dashboard.
+- **Imported** — brought in from a spreadsheet upload.
+- **API** — created through Referly's developer API.
+
+You can also add customers yourself. Use **Manually Create Customer** to add a single referral and assign it to an affiliate, or **Import Customers** to bring in many at once from a CSV — useful when you're moving over from another platform.
+
+{/* TODO screenshot: add-customer-menu — upload it in the local Documentation Agent */}
+
+## What you can do from here
+
+Open a customer's actions menu on their row to work with a single referral.
+
+{/* TODO screenshot: customer-row-actions — upload it in the local Documentation Agent */}
+
+From here you can:
+
+- **Record a sale** against the customer so the right commission is credited to their affiliate. See [Add a sale](/help-center/manage/customers/add-a-sale).
+- **Change the commission plan** for just that customer, without touching anyone else. See [Change a customer's commission plan](/help-center/manage/customers/change-commission-plan).
+- **Leave a note** to keep context that only your team sees. See [Notes](/help-center/manage/customers/notes).
+- **Edit the customer** to fix a name or email, or move them to a different status.
+
+You can also act on many customers together: select rows with their checkboxes to accept, reject, reactivate, or delete them in one go, or export the current list to a CSV from the toolbar.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Customer statuses" icon="circle-check" href="/help-center/manage/customers/statuses" arrow>
+    What Active, Submitted, and Rejected mean, and when each is used.
+  </Card>
+  <Card title="Add a sale" icon="cart-plus" href="/help-center/manage/customers/add-a-sale" arrow>
+    Record a purchase against a customer to credit their affiliate.
+  </Card>
+  <Card title="Change a customer's commission plan" icon="arrow-right-arrow-left" href="/help-center/manage/customers/change-commission-plan" arrow>
+    Override the plan for a single referral.
+  </Card>
+  <Card title="Import customers" icon="file-import" href="/help-center/manage/customers/import" arrow>
+    Bring referrals in from a CSV or another platform.
+  </Card>
+</Columns>

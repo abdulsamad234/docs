@@ -1,6 +1,212 @@
 ---
 title: "Migrate from Partnero"
-description: "Import your Partnero data using an API key."
+description: "Import your affiliates, referred customers, and past sales from Partnero into Referly with a Partnero API key. Step-by-step guide to creating the key in Partnero, connecting, choosing what to import, and every field setting."
+keywords: ["migrate from partnero", "partnero to referly", "import partnero affiliates", "partnero api key", "partnero migration", "switch from partnero", "import partnero partners", "import partnero customers", "import partnero transactions", "affiliate program migration"]
 ---
+Moving from Partnero doesn't mean rebuilding your program by hand. Referly connects straight to your Partnero account and pulls your **partners** (your affiliates), the **customers** they referred, and your past **transactions and commissions** across for you — no CSV exports, no file wrangling. You create one key inside Partnero, paste it into Referly, choose what to bring over, and it does the rest in the background.
 
-{/* TODO: Write this article. */}
+This guide walks through the whole move: how to create the key on Partnero's side, how to connect, every setting you'll see while choosing what to import, and how to follow each import as it runs.
+
+<Note>
+  New to migrating in general? Start with the [Migration overview](/help-center/getting-started/migrate/overview) for how imports work, then come back here for the Partnero-specific steps.
+</Note>
+
+## Before you start
+
+You'll need:
+
+- **Admin access to your Partnero account**, so you can open your program's settings and create an API key.
+- **The right Partnero program in mind.** In Partnero, an API key belongs to a single program. If you run more than one program in Partnero, decide which one you're migrating before you create the key, and create it inside that program.
+- **Your Referly program open** in the dashboard, ready to import into.
+- A few minutes. Larger programs take longer to pull across, but the import runs in the background — you don't have to wait on the screen.
+
+<Warning>
+  A Partnero API key grants access to that program's data. Treat it like a password: copy it straight into Referly, don't paste it into public code, screenshots, or repositories, and don't share it. Referly stores it securely so you only enter it once.
+</Warning>
+
+## Create your API key in Partnero
+
+Referly connects to Partnero using an **API key** that you create inside the Partnero program you're migrating. Partnero shows a new key **only once**, at the moment you create it, so have Referly open in another tab and be ready to copy the key straight away.
+
+<Steps>
+  <Step title="Log in to Partnero">
+    Sign in to your Partnero account as an admin.
+  </Step>
+  <Step title="Open the program you're migrating">
+    Open the specific program whose affiliates, customers, and sales you want to bring into Referly. The key you create will only cover this one program.
+  </Step>
+  <Step title="Go to Integration, then the API tab">
+    In the **Programs** section, open **Integration**, then switch to the **API** tab.
+  </Step>
+  <Step title="Create the key">
+    Select **Create API key**, give it a name you'll recognize later (for example, `Referly import`), then confirm with **Create**.
+  </Step>
+  <Step title="Copy the key right away">
+    Copy or download the key immediately. Partnero shows it only this once — if you close the window without copying it, you'll have to create a new one. Keep it handy for the next step.
+  </Step>
+</Steps>
+
+<Note>
+  If you ever lose the key or think it's been exposed, create a fresh API key in Partnero and reconnect in Referly with the new one. There's no need to reuse the old key.
+</Note>
+
+With the key copied, head back to Referly.
+
+## Open the import tool and choose Partnero
+
+<Steps>
+  <Step title="Open the import tool">
+    In your Referly dashboard, select the **plus (+)** button in the top bar, then choose **Import Data**. You can also select **Import** from the top of your **Affiliates**, **Customers**, or **Sales** pages.
+  </Step>
+  <Step title="Pick Partnero as your source">
+    On the **Choose your source** screen, select **Partnero** from the list of platforms.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: choose-partnero-source — upload it in the local Documentation Agent */}
+
+## Connect your Partnero account
+
+The next screen shows Partnero connecting to Referly, with a single **API key** field.
+
+<Steps>
+  <Step title="Paste your API key">
+    Paste the key you copied from Partnero into the **API key** field. It's hidden as you type, the same way a password field is.
+  </Step>
+  <Step title="Save the connection">
+    Select **Save connection**. Referly checks the key with Partnero right away. If it works, you'll see the connection saved with a green **Saved connection** badge. If it doesn't, confirm you copied the whole key, and that you created it inside the program you mean to import, then try again.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: partnero-connection-form — upload it in the local Documentation Agent */}
+
+Referly remembers this connection, so the next time you import from Partnero — say, to bring sales across after your affiliates — you won't have to enter the key again. To swap in a different key later, select **Replace connection**.
+
+## Choose what to import
+
+Once the connection is saved, you choose which parts of your Partnero program to bring over. There are three, and they line up with Partnero like this:
+
+| Select this in Referly | What it brings over from Partnero |
+| --- | --- |
+| **Affiliates** | Your **partners**, with their names, emails, and referral links. |
+| **Referrals** | The **customers** your partners referred, each linked back to the partner who referred them. |
+| **Sales** | Your past **transactions** and the commissions on them, credited to the right partner. |
+
+You can tick one, two, or all three — but the **order you import them matters**. Referred customers attach to affiliates, and sales attach to customers, so those have to exist in Referly first. Always bring your **affiliates over first**, then referrals, then sales. See [Import in the right order](#import-in-the-right-order) below.
+
+{/* TODO screenshot: select-objects-and-fields — upload it in the local Documentation Agent */}
+
+### Pick the fields to bring across
+
+When you tick an object, it expands to show every field Referly can pull from Partnero for it. Each field has a checkbox, so you decide exactly what comes across. A few fields are marked **Required** — these are the details Referly needs to create the record, so they're always on and can't be switched off.
+
+Here's what you can bring for each object.
+
+<AccordionGroup>
+  <Accordion title="Affiliate fields">
+    - **First name** *(required)* — the partner's first name.
+    - **Last name** *(required)* — the partner's last name.
+    - **Email** *(required)* — the partner's email address. This is also how Referly links their referred customers and sales back to them.
+    - **Join date** — when they joined your Partnero program, so their history stays accurate.
+    - **Payout email** — their payout email, when Partnero has one on file.
+    - **Affiliate link** — their referral link, so their existing links carry over.
+    - **Provider affiliate ID** — the ID Partnero used for the partner, kept for your reference.
+    - **Provider status** — the partner's status in Partnero, kept for your reference.
+  </Accordion>
+  <Accordion title="Referral (customer) fields">
+    - **First name** *(required)* — the customer's first name.
+    - **Last name** *(required)* — the customer's last name.
+    - **Email** *(required)* — the customer's email address.
+    - **Affiliate email** *(required)* — the email of the partner who referred them. This is how each customer gets attached to the right partner, which is why affiliates must be imported first.
+    - **Join date** — when the customer was first created in Partnero.
+    - **External user ID** — the customer's ID from Partnero, kept for your reference.
+    - **Provider customer ID** — the customer's ID in Partnero, kept for your reference.
+    - **Provider status** — the customer's status in Partnero.
+  </Accordion>
+  <Accordion title="Sale fields">
+    - **Customer email** *(required)* — the email of the customer who bought.
+    - **Customer name** — the customer's name.
+    - **Affiliate email** — the email of the partner credited for the sale.
+    - **Transaction amount** *(required)* — the value of the transaction.
+    - **Transaction date** — when the transaction happened.
+    - **Commission** *(required)* — the commission (reward) earned on that transaction. Where a transaction carries more than one reward in Partnero, Referly adds them together.
+    - **Paid status** — whether the commission was paid or still pending in Partnero, so your payout history stays right.
+    - **Promo code** — the coupon or promo code used on the sale, when Partnero has one.
+    - **Provider transaction ID** — the transaction's ID in Partnero, kept for your reference.
+    - **Provider status** — the transaction's status in Partnero.
+  </Accordion>
+</AccordionGroup>
+
+The default selections cover what most programs want, so if you're not sure, leaving them as they are is a safe choice. When you're happy with your picks, select **Continue**.
+
+## Check the field matches
+
+Before anything is imported, Referly shows you a preview of your Partnero data lined up against the matching Referly fields. This is your chance to confirm everything landed in the right place — that names, emails, and amounts are matched to the fields you'd expect.
+
+{/* TODO screenshot: map-fields-review — upload it in the local Documentation Agent */}
+
+Look the preview over, and when it looks right, confirm to start the import.
+
+## Start the import and follow its progress
+
+Imports run in the background, so you can close the panel and keep working. Every import appears in the **Recent Imports** list inside the import tool, each with its own progress.
+
+An import moves through these states:
+
+| Status | What it means |
+| --- | --- |
+| **Pending** | Queued and about to start. |
+| **Processing** | Bringing your records in right now. |
+| **Paused** | You've paused it; resume it any time. |
+| **Completed** | Finished — all records handled. |
+| **Failed** | The import stopped before finishing. |
+| **Cancelled** | The import was stopped and won't continue. |
+
+Each card shows a progress bar and a running count of how many records came in and how many were **skipped**. A record is skipped when it's missing a detail Referly needs — for example, a Partnero customer with no email, or a transaction with no customer attached. That's normal; the skipped count just tells you those few couldn't be brought across.
+
+{/* TODO screenshot: partnero-import-progress — upload it in the local Documentation Agent */}
+
+You can **pause** a running import and **resume** it later, open **Details** for the full breakdown, or **delete** one you no longer need.
+
+<Note>
+  Partnero keeps each transaction tied to a customer, and each customer tied to the partner who referred them. Referly reads all three together so your sales land on the right customer and get credited to the right affiliate — which is why bringing affiliates and customers across first matters.
+</Note>
+
+## Import in the right order
+
+Because referred customers attach to affiliates and sales attach to customers, run your Partnero imports in this order and let each finish before starting the next:
+
+<Steps>
+  <Step title="Affiliates first">
+    Bring your partners over so there's an affiliate for every customer and sale to attach to.
+  </Step>
+  <Step title="Referrals next">
+    Import your referred customers. Each one links to its partner by email — which only works once those affiliates are already in.
+  </Step>
+  <Step title="Sales last">
+    Import your transactions and commissions, credited to the affiliates and matched to their customers.
+  </Step>
+</Steps>
+
+Referly reminds you of this order as you go, and it won't let you start a customer or sales import while the affiliate import it depends on is still running. Since your Partnero connection is saved, each round just means reopening the import tool, picking Partnero, and choosing the next object.
+
+<Tip>
+  Check each import's results — the imported and skipped counts — before moving on to the next type. Getting affiliates in cleanly first means your customers and sales attach to the right partners automatically.
+</Tip>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Migration overview" icon="map" href="/help-center/getting-started/migrate/overview" arrow>
+    How imports work and what you can bring across.
+  </Card>
+  <Card title="Migrate from CSV" icon="file-csv" href="/help-center/getting-started/migrate/csv" arrow>
+    Prefer a spreadsheet? Import affiliates, customers, or sales from a file.
+  </Card>
+  <Card title="Commission plans overview" icon="money-bill" href="/help-center/getting-started/commissions/overview" arrow>
+    Set the terms your migrated affiliates earn on.
+  </Card>
+  <Card title="Invite affiliates" icon="paper-plane" href="/help-center/getting-started/recruit/invite-affiliates" arrow>
+    Bring new partners into your program by email.
+  </Card>
+</Columns>

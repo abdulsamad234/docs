@@ -1,6 +1,58 @@
 ---
 title: "Failed payouts"
-description: "Find out why a payout failed and what to do."
+description: "Find out why a Referly payout failed and how to fix it — read the failure reason, resolve the cause, and retry the payout batch."
+keywords: ["failed payout", "payout failed", "retry payout", "payout error", "payment declined", "insufficient funds payout", "Wise payout failed", "PayPal payout failed"]
 ---
+Sometimes a payout doesn't go through. When that happens, the batch shows a **Failed** status, and Referly records why. The good news is that a failed payout is almost always fixable — you find the reason, sort out the cause, and retry. This page shows how.
 
-{/* TODO: Write this article. */}
+Failed batches appear on the [payout batches](/help-center/manage/payouts/batches) list under **Payouts** in the left sidebar, with a red **Failed** label.
+
+{/* TODO screenshot: failed-batch — upload it in the local Documentation Agent */}
+
+## Find out why it failed
+
+Referly attaches a reason to every failure. To see it:
+
+- **On the list** — hover over the red **Failed** label and the reason appears in a tooltip.
+- **Inside the batch** — open the batch to see the reason at the top, and hover the status on any individual payout that failed to see its specific reason.
+
+Read the reason first — it tells you exactly what to fix before you retry.
+
+## Common reasons and how to fix them
+
+Most failures come down to one of these:
+
+- **The payout method isn't connected.** If your Wise or PayPal connection dropped or was never finished, the batch can't be sent. Reconnect the method under [Payout settings](/help-center/manage/payouts/payout-methods), then retry.
+- **Not enough funds.** If the account you pay from doesn't have enough to cover the batch, the payment fails. Top up your Wise, PayPal, or bank balance and retry.
+- **A payment method was declined.** For Referly Payouts, if the card or bank account Referly charges is declined or can't be charged, the batch fails. Update or switch your payment method, then retry.
+- **An affiliate's payout details are wrong.** If an affiliate's bank, PayPal, or Wise details are invalid, their payout can fail. Ask the affiliate to correct their details before you retry.
+
+## Retry the payout
+
+Once you've fixed the cause, open the batch and select **Retry Payout**. Referly attempts the payment again with the same batch — you don't need to recreate it.
+
+- For a **Wise** batch, if the connection was the problem, you'll be prompted to connect Wise before the retry runs.
+- For a **Referly Payouts** batch, retrying charges your payment method again and sends the payout.
+
+If a retry keeps failing for the same reason, re-check the reason message — the underlying cause probably hasn't been resolved yet.
+
+<Note>
+  If only some payouts in a batch failed, you can also mark the ones that did succeed as paid so your records stay accurate while you sort out the rest.
+</Note>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Payout batch statuses" icon="signal" href="/help-center/manage/payouts/batch-statuses" arrow>
+    Understand every status a batch can show.
+  </Card>
+  <Card title="Payout methods" icon="wallet" href="/help-center/manage/payouts/payout-methods" arrow>
+    Reconnect Wise, PayPal, or bank transfer.
+  </Card>
+  <Card title="Payout batches" icon="layer-group" href="/help-center/manage/payouts/batches" arrow>
+    Open a batch to review and retry payouts.
+  </Card>
+  <Card title="Self-managed vs Referly Payouts" icon="scale-balanced" href="/help-center/manage/payouts/self-managed-vs-referly" arrow>
+    How each payout option is charged and sent.
+  </Card>
+</Columns>

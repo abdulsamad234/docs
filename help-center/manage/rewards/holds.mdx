@@ -1,6 +1,72 @@
 ---
 title: "Why a reward is on hold"
-description: "Program settings, fraud prevention, and affiliate status holds."
+description: "Understand why a reward is On Hold in Referly — manual approval settings, fraud prevention (self-referral, email or IP match), a deactivated or banned affiliate, or a manual hold — and how to clear it."
+keywords: ["reward on hold", "why reward on hold", "on hold status", "fraud prevention", "self referral", "email match", "IP match", "affiliate banned", "manual hold", "hold for review", "clear a hold"]
 ---
+When a reward shows the amber **On Hold** badge in your [Rewards list](/help-center/manage/rewards/overview), it means the reward is waiting and won't be included in any payout until it's approved. Referly holds a reward for one of a few clear reasons, and each one tells you something different about what to check before you accept it.
 
-{/* TODO: Write this article. */}
+{/* TODO screenshot: on-hold-badge — upload it in the local Documentation Agent */}
+
+Hover the **On Hold** badge and Referly shows you why that reward is being held, along with the buttons to approve or decline it. Here's what each reason means.
+
+## Your settings require review
+
+The most common reason is that you asked for it. If you've turned off automatic reward approval — either for your whole program or for the plan this reward came from — every new reward lands on hold so you can review it first. Hovering the badge shows **Held for review due to program or commission plan settings**, with **Accept** and **Reject** buttons.
+
+This is expected behaviour, not a warning. To change whether rewards are held this way, see [Approve or decline a reward](/help-center/manage/rewards/approve-or-decline).
+
+## Fraud prevention flagged it
+
+Referly can automatically hold rewards that look like an affiliate referring themselves, so an affiliate can't earn commission by buying through their own link. When this is what's holding the reward, the badge opens a **Fraud Prevention** panel that names the reason:
+
+- **Referral's email matches affiliate's email** — the customer used the same email address as the affiliate.
+- **Referral's IP address matches affiliate's IP address** — the customer bought from the same device or network as the affiliate.
+- **Potential self-referral detected** — a more general flag when a referral looks like it came from the affiliate.
+
+{/* TODO screenshot: fraud-hold-panel — upload it in the local Documentation Agent */}
+
+Review the reward and decide. If it's a genuine sale — plenty of real customers share a network with the person who referred them — select **Accept**. If it's really the affiliate buying from themselves, select **Reject**.
+
+The panel also has a checkbox: **Ignore fraud prevention for future rewards for this referral**. Tick it before you accept, and Referly won't hold future rewards from this same customer for the same reason — useful when you've confirmed the match is legitimate and don't want to keep reviewing it.
+
+### Choose what fraud prevention does
+
+Whether flagged rewards are held or turned away is up to you. Go to **Settings → Program details → Fraud prevention**. There you can turn the checks on or off, choose which signals to watch (**Email matching** and **IP address matching**), and set the action:
+
+- **Hold for review** — flagged rewards go on hold for you to decide, as described above.
+- **Reject automatically** — flagged rewards are declined without waiting for you.
+
+{/* TODO screenshot: fraud-prevention-settings — upload it in the local Documentation Agent */}
+
+## The affiliate is deactivated or banned
+
+Rewards earned while an affiliate is [deactivated or banned](/help-center/manage/affiliates/ban-or-deactivate) are held rather than paid. This makes sure you don't pay someone you've removed from your program. If you reactivate the affiliate and the reward is legitimate, you can approve it from its badge.
+
+## You put it on hold yourself
+
+You can also hold a reward by hand. Using **Change status** in a reward's **⋯** menu, setting a reward to **On Hold** parks it while you look into something — a sale you want to verify, or an affiliate you're reviewing. It stays out of payouts until you accept it.
+
+## On hold vs the holding period
+
+An **On Hold** status is different from your payout **holding period**. On Hold means the reward still needs your approval. The holding period is a waiting time that applies to rewards that are *already* accepted — they're approved, but held back from payout for a set number of days to give you a window for refunds. A reward can be accepted and simply waiting out its holding period without ever being On Hold. See [Holding period and frequency](/help-center/manage/payouts/schedule) for that side.
+
+## Clear a hold
+
+To release any held reward, hover its **On Hold** badge and select **Accept**, or reject it if it isn't legitimate. To approve several at once, select them and use the bulk **Accept rewards** action. Both are covered in [Approve or decline a reward](/help-center/manage/rewards/approve-or-decline).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Approve or decline a reward" icon="circle-check" href="/help-center/manage/rewards/approve-or-decline" arrow>
+    Accept or reject held rewards, and control auto-approval.
+  </Card>
+  <Card title="Fraud prevention" icon="shield-halved" href="/help-center/settings/program/fraud-prevention" arrow>
+    Set up the checks that flag possible self-referrals.
+  </Card>
+  <Card title="Ban or deactivate an affiliate" icon="user-slash" href="/help-center/manage/affiliates/ban-or-deactivate" arrow>
+    See what happens to rewards when you remove an affiliate.
+  </Card>
+  <Card title="Holding period and frequency" icon="calendar-days" href="/help-center/manage/payouts/schedule" arrow>
+    The separate waiting time before accepted rewards are paid.
+  </Card>
+</Columns>

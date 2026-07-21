@@ -1,6 +1,64 @@
 ---
 title: "Payout methods"
-description: "Wise, PayPal, bank transfer, credits, and coupons."
+description: "Learn the affiliate payout methods in Referly: Wise, PayPal, manual bank transfer, Referly Payouts, and automatic delivery of coupons and credits."
+keywords: ["payout methods", "Wise payouts", "PayPal payouts", "manual bank transfer", "pay affiliates", "affiliate payout options", "coupon reward", "credit reward", "Referly Payouts"]
 ---
+A payout method is how an affiliate's money actually reaches them. Referly lets you offer more than one, so affiliates can pick what suits them, and you decide which methods your program supports. This page walks through each cash method, when to use it, and how non-cash rewards are handled.
 
-{/* TODO: Write this article. */}
+You choose your methods under **Program Settings → Program details → Payout settings**. If you've chosen to manage payouts yourself, you'll see the **Cash Payout Methods** section here. If you've chosen to let Referly handle payouts, your method is Referly Payouts instead — see [Manage payouts yourself or let Referly handle them](/help-center/manage/payouts/self-managed-vs-referly).
+
+{/* TODO screenshot: cash-payout-methods — upload it in the local Documentation Agent */}
+
+<Note>
+  You must keep at least one cash method turned on. Affiliates then choose their preferred method from the ones you've enabled.
+</Note>
+
+## Wise
+
+**Wise** sends cash commissions directly through your Wise account. Affiliates can receive payouts into their Wise balance or their local bank account, which makes Wise a good fit for paying affiliates in different countries.
+
+To use it, turn on the Wise card and select **Connect account** to link your Wise account. A green dot and your Wise profile name show when it's connected. Until it's connected, the card shows a "Not connected" warning.
+
+## PayPal
+
+**PayPal** sends cash commissions to your affiliates' PayPal accounts. Turn on the PayPal card and select **Connect account** to link PayPal. This is a simple choice when most of your affiliates already use PayPal.
+
+## Manual bank transfer
+
+**Manual Bank Account** collects bank details from each affiliate so you can pay them by transfer. With this method, Referly gathers the details and tracks the payout, but you make the actual transfer yourself outside Referly, then mark the batch as paid.
+
+Two things to know:
+
+- When bank transfer is on, you can collect extra banking details (like a branch name or SWIFT code) using [custom bank account fields](/help-center/manage/payouts/custom-bank-fields).
+- Manual bank transfer isn't available while **Wise** is turned on, because Wise already handles direct bank transfers for you. Turn Wise off first if you want to collect bank details manually.
+
+## See all payout integrations
+
+Select **See all Payout Integrations** to view every connection Referly supports and manage them in one place. This is also where you go to reconnect or update a method later.
+
+{/* TODO screenshot: payout-integrations-dialog — upload it in the local Documentation Agent */}
+
+## Referly Payouts
+
+If you'd rather not send transfers yourself, **Referly Payouts** is a method where Referly pays your affiliates for you in 178 countries and generates compliant invoices. Instead of connecting Wise or PayPal, you add a card or bank account that Referly charges when a batch is due. Setup is covered in [Manage payouts yourself or let Referly handle them](/help-center/manage/payouts/self-managed-vs-referly).
+
+## Coupons and credits
+
+Not every reward is cash. If a commission plan pays a **coupon** or **credits**, those are non-cash rewards, and they aren't a withdrawal method affiliates choose. Referly delivers them automatically when you pay out the batch — you don't connect anything for them. To set them up, see [Non-cash rewards](/help-center/getting-started/commissions/non-cash-rewards).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Self-managed vs Referly Payouts" icon="scale-balanced" href="/help-center/manage/payouts/self-managed-vs-referly" arrow>
+    Decide between paying affiliates yourself and letting Referly do it.
+  </Card>
+  <Card title="Custom bank account fields" icon="building-columns" href="/help-center/manage/payouts/custom-bank-fields" arrow>
+    Collect extra banking details from affiliates paid by transfer.
+  </Card>
+  <Card title="Export payouts" icon="file-arrow-down" href="/help-center/manage/payouts/export" arrow>
+    Download a batch as a CSV to pay affiliates in Wise or PayPal.
+  </Card>
+  <Card title="Non-cash rewards" icon="ticket" href="/help-center/getting-started/commissions/non-cash-rewards" arrow>
+    Reward affiliates with coupons or credits instead of cash.
+  </Card>
+</Columns>

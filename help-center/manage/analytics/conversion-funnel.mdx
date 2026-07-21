@@ -1,6 +1,69 @@
 ---
 title: "Conversion funnel"
-description: "Follow visitors from click through to sale."
+description: "Follow visitors from click to sale with Referly's conversion funnel: see your overall conversion rate, where people drop off between steps, and switch the middle step between referrals and add-to-carts."
+keywords: ["conversion funnel", "affiliate conversion rate", "clicks to sales", "funnel drop off", "add to cart tracking", "new vs recurring sales", "referral funnel", "affiliate program funnel"]
 ---
+The **conversion funnel** shows the journey a visitor takes from clicking an affiliate's link all the way to buying, and where along the way people fall out. It sits at the bottom of the [Program Performance](/help-center/manage/analytics/performance) tab, and like the rest of that tab it reflects the [time period and filters](/help-center/manage/analytics/date-ranges) you've chosen.
 
-{/* TODO: Write this article. */}
+## The three steps
+
+The funnel has three stages, shown as bars that narrow as fewer people make it through:
+
+1. **Clicks** — everyone who clicked an affiliate link.
+2. **Referrals** — the visitors who became tracked referrals (the middle step; you can change this — see below).
+3. **Sales** — the referrals who went on to buy.
+
+In the top-right corner, the **conversion rate** tells you what share of all those clicks ended in a sale — your single headline number for how efficiently traffic turns into revenue.
+
+{/* TODO screenshot: funnel-card — upload it in the local Documentation Agent */}
+
+## See the detail behind each step
+
+Hover over any step to open its details. For each one you'll see:
+
+- **The conversion rate from the previous step** — for example, how many of your clicks became referrals.
+- **How many dropped off** — the number of people lost between that step and the one before it.
+- **Value per action** — the average revenue behind each click, referral, or sale at that step.
+- **Top affiliates and countries** — who and where is driving that step.
+
+This makes it easy to find the weak point. A big drop between clicks and referrals points to a traffic-quality or landing-page problem; a big drop between referrals and sales points to something in your checkout or offer.
+
+{/* TODO screenshot: funnel-step-detail — upload it in the local Documentation Agent */}
+
+## Choose the middle step
+
+Select the gear icon in the top-right of the funnel card to open its settings. The **Middle funnel step** toggle lets you choose what the middle stage counts:
+
+- **Referrals** — visitors who became tracked referrals in the period. This is the default.
+- **Carts** — unique add-to-cart events tied to affiliate clicks, so you can see how many shoppers added a product before buying.
+
+The **Carts** view only shows numbers if add-to-cart tracking is set up for your store. This setting applies to your whole program, so changing it here changes the funnel for everyone on your team.
+
+{/* TODO screenshot: funnel-settings — upload it in the local Documentation Agent */}
+
+## Choose what the sales step counts
+
+The same settings popover has a **Last step: sales** toggle that changes which sales the final step includes:
+
+- **All** — every sale in the period.
+- **New** — only each referred customer's first-ever purchase.
+- **Repeat** — only the sales that came after a customer's first purchase, such as renewals.
+
+Switching to **New** shows how well your affiliates convert fresh customers, while **Repeat** shows the ongoing value of customers they referred earlier. Unlike the middle-step choice, this toggle only changes your own view.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Performance" icon="chart-line" href="/help-center/manage/analytics/performance" arrow>
+    Track clicks, referrals, revenue, and commission.
+  </Card>
+  <Card title="Analytics overview" icon="chart-simple" href="/help-center/manage/analytics/overview" arrow>
+    A tour of the whole Analytics area.
+  </Card>
+  <Card title="Affiliate acquisition" icon="users" href="/help-center/manage/analytics/affiliate-acquisition" arrow>
+    See where your affiliates come from and how they onboard.
+  </Card>
+  <Card title="Date ranges and granularity" icon="calendar" href="/help-center/manage/analytics/date-ranges" arrow>
+    Change the period and resolution of your charts.
+  </Card>
+</Columns>

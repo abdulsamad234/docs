@@ -1,6 +1,65 @@
 ---
 title: "Holding period and frequency"
-description: "Control when payouts are created."
+description: "Set how long Referly holds affiliate commissions and how often payout batches are created — holding period, payout frequency, and automated payout scheduling."
+keywords: ["holding period", "payout frequency", "payout schedule", "automated payouts", "days until eligible", "refund protection", "weekly payouts", "monthly payouts", "affiliate payout schedule"]
 ---
+Two settings decide the rhythm of your payouts: how long you hold earnings before they can be paid, and how often a new payout batch is created. Together they let you pay affiliates on a predictable schedule while giving yourself a safety window against refunds. Both live in the **Payout Schedule** section under **Program Settings → Program details → Payout settings**.
 
-{/* TODO: Write this article. */}
+{/* TODO screenshot: payout-schedule-section — upload it in the local Documentation Agent */}
+
+## Turn on automated payouts
+
+The schedule runs on **Enable Automated Payouts**. When it's on, Referly creates payout batches for you on the frequency you set, for both cash and non-cash rewards. When it's off, no batches are created automatically and you create them yourself.
+
+Automating creation doesn't take money out of your hands. You still review and approve each batch before anything is sent — automation just prepares the batch for you.
+
+<Note>
+  Automated payouts are a paid feature. If it's locked, you'll see an upgrade prompt on the toggle. Once it's on, the holding period, frequency, and minimum-amount fields appear.
+</Note>
+
+## Set the holding period
+
+The **Holding Period (Days)** is the number of days a commission is held before it becomes eligible for payout. If you set it to 30, a commission earned today won't be included in a batch until 30 days have passed.
+
+The point of the holding period is protection. It gives you time to handle refunds, chargebacks, or fraudulent orders before that money leaves your account, so you're not paying out on a sale that later reverses. Sales younger than the holding period simply wait — they'll be picked up by a later batch once they've aged past it.
+
+Set it to a number that matches your refund window. Thirty days is a common starting point; shorten it to pay affiliates faster, or lengthen it if your refunds tend to come in later.
+
+{/* TODO screenshot: holding-period-field — upload it in the local Documentation Agent */}
+
+## Choose how often affiliates are paid
+
+**Payout Frequency** controls how often a new batch is created. Each new batch collects all the eligible earnings since the last one. There are three options, and each one asks for a bit more detail:
+
+- **Every Month** — pick the **Day of Month** (1 to 31) the batch is created.
+- **Every Week** — pick the **Day of Week** the batch is created.
+- **Every Day** — choose which days count as **Active Payout Days**. Turn off any days you want to skip, for example weekends.
+
+{/* TODO screenshot: payout-frequency-options — upload it in the local Documentation Agent */}
+
+Pick the cadence that fits your program. Monthly keeps fees and admin low; weekly or daily pays affiliates sooner, which some affiliates prefer.
+
+## Keep funds ready
+
+Because batches are created on a schedule, make sure the account you pay from has enough funds before each scheduled date. If you're managing payouts yourself, that's your connected Wise, PayPal, or bank balance. The schedule section shows a reminder about this, with a link to manage your payout integrations.
+
+<Note>
+  The holding period and frequency decide **when** affiliates are paid. **How much** they must reach before they're included is set separately — see [Minimum payout amount](/help-center/manage/payouts/minimum-amount).
+</Note>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Minimum payout amount" icon="coins" href="/help-center/manage/payouts/minimum-amount" arrow>
+    Set the threshold an affiliate must reach to be paid.
+  </Card>
+  <Card title="Payout batches" icon="layer-group" href="/help-center/manage/payouts/batches" arrow>
+    See how scheduled batches are reviewed and paid.
+  </Card>
+  <Card title="Payout batch statuses" icon="signal" href="/help-center/manage/payouts/batch-statuses" arrow>
+    Follow a batch from Preparing to Paid.
+  </Card>
+  <Card title="Payouts overview" icon="wallet" href="/help-center/manage/payouts/overview" arrow>
+    How commissions become payable earnings.
+  </Card>
+</Columns>

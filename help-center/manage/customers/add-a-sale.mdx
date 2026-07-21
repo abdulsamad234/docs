@@ -1,6 +1,61 @@
 ---
 title: "Add a sale"
-description: "Record a sale against a referred customer."
+description: "Manually record a sale against a referred customer in Referly so their affiliate earns commission. Enter the order amount and optionally override the commission rate."
+keywords: ["add a sale", "record a sale", "manual sale", "referral sale", "credit affiliate commission", "order amount", "override commission rate", "add revenue", "log a purchase", "affiliate commission"]
 ---
+Most sales are recorded for you — when a referred customer buys through a connected tool like Stripe or Shopify, Referly logs the sale and credits the affiliate automatically. But sometimes you need to add one by hand: a payment taken offline, a deal closed over email, or a sale from a source Referly doesn't track. Adding a sale records that purchase against the customer and credits commission to the affiliate who referred them.
 
-{/* TODO: Write this article. */}
+## Add a sale to a customer
+
+<Steps>
+  <Step title="Open the customer's actions">
+    In your [Customers list](/help-center/manage/customers/overview), find the customer and open their actions menu on the right of their row. Choose **Add Sale**.
+
+    {/* TODO screenshot: add-sale-menu — upload it in the local Documentation Agent */}
+  </Step>
+  <Step title="Enter the order amount">
+    In the **Order Amount** field, type the value of the sale in the customer's currency. This is the total the customer paid, and it's what the affiliate's commission is worked out from.
+
+    {/* TODO screenshot: add-sale-dialog — upload it in the local Documentation Agent */}
+  </Step>
+  <Step title="Add the sale">
+    Select **Add Sale**. The sale is recorded against the customer, their revenue updates, and commission is credited to the referring affiliate based on that affiliate's commission plan.
+  </Step>
+</Steps>
+
+## Override the commission rate
+
+By default, the commission for the sale is worked out from the affiliate's [commission plan](/help-center/manage/customers/change-commission-plan) — you don't have to think about the rate at all. If this one sale should pay a different rate, turn on **Override Commission Rate** before adding it.
+
+A **Commission Rate** field appears where you enter a percentage from 0 to 100. That rate applies to this sale only; it doesn't change the customer's plan or affect any other sale.
+
+{/* TODO screenshot: add-sale-override — upload it in the local Documentation Agent */}
+
+Use this when a single order has special terms — a one-off higher rate to reward a big deal, or a lower rate on a discounted purchase — without setting up a whole new plan.
+
+## What happens after
+
+Once a sale is added:
+
+- The customer's **Revenue** and **Profit** update to include it.
+- Commission is credited to the referring affiliate, ready to be approved and paid out on your normal schedule.
+- The sale is counted in your program's totals and reports.
+
+You can add more than one sale to the same customer over time — each is recorded separately and credited on its own.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Change a customer's commission plan" icon="arrow-right-arrow-left" href="/help-center/manage/customers/change-commission-plan" arrow>
+    Set which plan decides what a customer's sales pay.
+  </Card>
+  <Card title="Customer statuses" icon="circle-check" href="/help-center/manage/customers/statuses" arrow>
+    Only active customers credit commission — see how statuses work.
+  </Card>
+  <Card title="Customers overview" icon="users" href="/help-center/manage/customers/overview" arrow>
+    A tour of the Customers screen and everything it shows.
+  </Card>
+  <Card title="Notes" icon="note-sticky" href="/help-center/manage/customers/notes" arrow>
+    Keep a private note on a customer.
+  </Card>
+</Columns>

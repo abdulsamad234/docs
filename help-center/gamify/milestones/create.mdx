@@ -1,6 +1,83 @@
 ---
 title: "Create a milestone"
-description: "Set the referral and revenue thresholds."
+description: "Add an affiliate milestone in Referly: set a referral or revenue goal and choose the commission plan affiliates upgrade to when they reach it."
+keywords: ["create affiliate milestone", "add milestone", "milestone conditions", "referral threshold", "revenue threshold", "upgrade commission plan", "commission tier", "referly milestone setup"]
 ---
+A milestone links a goal to a reward: when an affiliate reaches the referral or revenue target you set, Referly moves them onto the commission plan you choose. This page walks through adding one. For the bigger picture, see the [milestones overview](/help-center/gamify/milestones/overview).
 
-{/* TODO: Write this article. */}
+## Before you start
+
+A milestone always upgrades affiliates onto a **commission plan**, so the plan you want to reward them with needs to exist first. If you haven't built it yet, set it up under [commissions](/help-center/getting-started/commissions/overview) — or create one on the spot while adding the milestone, using the **+ Create new plan** link in the dialog.
+
+## Add a milestone
+
+<Steps>
+  <Step title="Open Affiliate Milestones">
+    Select **Affiliate Milestones** in the left sidebar. You'll see your existing milestones as cards, starting with Milestone 1 (your default).
+  </Step>
+  <Step title="Pick a group (optional)">
+    If you want this milestone to apply only to a specific [affiliate group](/help-center/manage/affiliates/groups) rather than your whole program, choose it from the group selector at the top right. Otherwise leave it on **Default Group**.
+  </Step>
+  <Step title="Choose Add New Milestone">
+    Select the **Add New Milestone** tile at the end of the grid.
+  </Step>
+  <Step title="Give it an emoji and a name">
+    Click the circle at the top to pick an **emoji**, then type a **Milestone Name** — something your affiliates will recognise, like Bronze, Silver, or Gold. Both are required.
+  </Step>
+  <Step title="Choose the commission plan">
+    Under **Commission Plan**, search for and select the plan affiliates should be upgraded to when they reach this milestone. This is the reward — it can pay a higher rate, run longer, or be a non-cash plan like a coupon or credits.
+  </Step>
+  <Step title="Set the upgrade conditions">
+    Under **Upgrade Conditions**, tick **Number of Referrals**, **Revenue Generated**, or both, and enter the target for each. See below for how the two combine.
+  </Step>
+  <Step title="Create the milestone">
+    Select **Create Milestone**. It's added to the ladder right away.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: milestone-dialog — upload it in the local Documentation Agent */}
+
+<Note>
+  As soon as you save, any existing affiliate who already meets the conditions is upgraded to this milestone and its commission plan automatically — unless they're [exempt from milestone changes](/help-center/gamify/milestones/overview#exempting-an-affiliate).
+</Note>
+
+## Setting the upgrade conditions
+
+You can require a number of referrals, an amount of revenue, or both:
+
+- **Number of Referrals** — the minimum number of referred customers the affiliate needs.
+- **Revenue Generated** — the minimum revenue the affiliate needs to have driven, in your program's currency.
+
+When you turn on **both**, you choose how they combine:
+
+- **Any** — the affiliate reaches the milestone as soon as they meet *either* target.
+- **All** — the affiliate must meet *both* targets to reach the milestone.
+
+{/* TODO screenshot: upgrade-conditions-both — upload it in the local Documentation Agent */}
+
+Set your milestones so each one is harder to reach than the last. Referly always places an affiliate on the highest milestone they qualify for, so the ladder should climb from your standard terms up to your most generous.
+
+## The default milestone is different
+
+Milestone 1 is your default — the starting point for every affiliate. You can rename it and change its emoji, but its conditions (zero referrals and zero revenue) and its commission plan are fixed, because it's the baseline everyone begins from. Every milestone you add sits above it.
+
+## Edit or remove a milestone
+
+Hover over any milestone card to reveal its **edit** (pencil) and **delete** (trash) icons. Editing opens the same dialog so you can adjust the name, plan, or conditions. Deleting a milestone renumbers the ones above it and re-checks where each affiliate belongs. The default milestone can be renamed but not deleted.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Milestones overview" icon="circle-info" href="/help-center/gamify/milestones/overview" arrow>
+    How milestones work and what affiliates see as they climb.
+  </Card>
+  <Card title="Setting up commissions" icon="percent" href="/help-center/getting-started/commissions/overview" arrow>
+    Build the commission plans a milestone upgrades affiliates onto.
+  </Card>
+  <Card title="Non-cash rewards" icon="gift" href="/help-center/getting-started/commissions/non-cash-rewards" arrow>
+    Reward a milestone with a coupon or account credits instead of cash.
+  </Card>
+  <Card title="Affiliate groups" icon="users" href="/help-center/manage/affiliates/groups" arrow>
+    Give a specific group its own set of milestones.
+  </Card>
+</Columns>

@@ -1,6 +1,88 @@
 ---
 title: "Performance"
-description: "Break results down by affiliate, traffic source, location, and device."
+description: "Read the Program Performance tab in Referly: track clicks, referrals, revenue, and commission over time, and break every metric down by affiliate, group, link, traffic source, country, and device."
+keywords: ["affiliate performance analytics", "clicks referrals revenue commission", "unique clicks", "new vs recurring revenue", "traffic source breakdown", "UTM analytics", "top affiliates", "affiliate program metrics"]
 ---
+The **Program Performance** tab is where you see the results your affiliates drive — the traffic they send, the customers they refer, and the money that follows. You'll find it as the first tab in your [Analytics](/help-center/manage/analytics/overview) area.
 
-{/* TODO: Write this article. */}
+Everything on this tab reflects the [time period and filters](/help-center/manage/analytics/date-ranges) you've chosen at the top of the page.
+
+## Choose a metric
+
+At the top of the tab is one large number for the metric you're looking at, with a chart plotting it over time underneath. Use the dropdown on the right to switch between the four metrics:
+
+- **Clicks** — how many times your affiliates' links were clicked.
+- **Referrals** — how many customers those clicks turned into.
+- **Revenue** — the sales your affiliates drove.
+- **Commission** — what your affiliates earned on those sales.
+
+Revenue and commission are shown in your program's currency.
+
+{/* TODO screenshot: performance-controls — upload it in the local Documentation Agent */}
+
+## Compare to the last period
+
+Just below the big number, you'll see a percentage with "from last period" next to it. This compares your current total to the period right before it — for example, if you're looking at the last 7 days, it compares them to the 7 days before that. Green means the metric went up, red means it went down, so you can tell at a glance whether things are trending in the right direction.
+
+## Split clicks into all or unique
+
+When **Clicks** is the selected metric, a small toggle appears with two options:
+
+- **All clicks** — every tracked click in the period, including repeat clicks from the same person.
+- **Unique clicks** — only counts one click per unique visitor.
+
+Unique clicks give you a cleaner read on how many real people your affiliates reached, while all clicks include everyone who clicked more than once.
+
+{/* TODO screenshot: clicks-all-unique — upload it in the local Documentation Agent */}
+
+## Split revenue into new or recurring
+
+When **Revenue** is the selected metric, a toggle lets you separate first-time sales from repeat ones:
+
+- **All revenue** — every sale in the period.
+- **New revenue** — only each referred customer's first-ever purchase.
+- **Recurring revenue** — the follow-on sales after a customer's first purchase, such as subscription renewals.
+
+This is useful for seeing how much of your affiliate revenue is fresh growth versus repeat income from customers who were referred earlier.
+
+## Read the breakdown cards
+
+Below the chart, a set of cards breaks the selected metric down so you can see exactly what's behind the totals. Each card has tabs across the top to switch between related views:
+
+- **Affiliates, Affiliate groups, and Affiliate Links** — who is driving the metric, which groups they belong to, and which specific links are performing.
+- **Traffic sources and UTM parameters** — where the clicks are coming from, and how they break down by UTM source, medium, campaign, term, and content.
+- **Countries and Continents** — where in the world your traffic and sales come from.
+- **Devices, Browsers, and Operating systems** — what people are using when they click.
+
+Each card ranks its results by whatever metric you've selected, so switching from clicks to revenue re-sorts every card to show your best performers for that metric. When there's more to show than fits, use the arrows at the bottom of a card to page through the rest.
+
+{/* TODO screenshot: performance-breakdowns — upload it in the local Documentation Agent */}
+
+## Drill into a single value
+
+Any bar in a breakdown card is clickable. Select one — say a single affiliate, country, or device — and the whole page filters down to just that value, so every number, the chart, and the other cards all update to reflect it. It's the quickest way to go from a top-line number to the story behind it.
+
+To layer several filters, or to filter by something that isn't shown as a bar, use the **Filter** button at the top of the page. Your filters stay applied as you switch metrics and change the date range.
+
+{/* TODO screenshot: filter-from-bar — upload it in the local Documentation Agent */}
+
+## See the full journey to a sale
+
+Below the breakdown cards sits the conversion funnel, which shows how visitors move from a click through to a completed sale and where they drop off along the way. It has its own guide — see [Conversion funnel](/help-center/manage/analytics/conversion-funnel).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Analytics overview" icon="chart-simple" href="/help-center/manage/analytics/overview" arrow>
+    A tour of the whole Analytics area.
+  </Card>
+  <Card title="Conversion funnel" icon="filter" href="/help-center/manage/analytics/conversion-funnel" arrow>
+    Follow visitors from click through to sale.
+  </Card>
+  <Card title="Affiliate acquisition" icon="users" href="/help-center/manage/analytics/affiliate-acquisition" arrow>
+    See where your affiliates come from and how they onboard.
+  </Card>
+  <Card title="Date ranges and granularity" icon="calendar" href="/help-center/manage/analytics/date-ranges" arrow>
+    Change the period and resolution of your charts.
+  </Card>
+</Columns>

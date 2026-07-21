@@ -1,6 +1,56 @@
 ---
 title: "Change a customer's commission plan"
-description: "Override the plan for a single referral."
+description: "Override the commission plan for a single referred customer in Referly. Choose a new plan for that customer's future sales without affecting past transactions or other customers."
+keywords: ["change commission plan", "customer commission plan", "override commission plan", "referral commission plan", "commission plan per customer", "future transactions", "custom commission", "affiliate commission plan"]
 ---
+Every customer earns their affiliate commission through a commission plan — the set of rules that decides how much a sale pays. A customer starts on the plan that applies to the affiliate who referred them, but you can put a single customer on a different plan when their terms should stand apart from everyone else's.
 
-{/* TODO: Write this article. */}
+This is a per-customer override. It changes that one customer only, and leaves every other customer, and the affiliate's own plan, exactly as they were.
+
+## Change the plan for one customer
+
+<Steps>
+  <Step title="Open the customer's actions">
+    In your [Customers list](/help-center/manage/customers/overview), find the customer and open their actions menu on the right of their row. Choose **Change Commission Plan**.
+
+    {/* TODO screenshot: change-plan-menu — upload it in the local Documentation Agent */}
+  </Step>
+  <Step title="Pick a plan">
+    In the **Commission Plan** box, search for and select the plan you want this customer on. You can choose any plan you've set up, or pick your program's default plan to put the customer back on the standard terms.
+
+    {/* TODO screenshot: change-plan-dialog — upload it in the local Documentation Agent */}
+  </Step>
+  <Step title="Save the change">
+    Select **Update Plan**. The customer moves to the plan straight away.
+  </Step>
+</Steps>
+
+## What the change affects
+
+Changing a plan only looks forward:
+
+- **Future sales** from this customer are worked out using the new plan.
+- **Sales already recorded** keep the commission they were given — past transactions are never recalculated.
+
+So if you want a plan change to cover a sale, change the plan before you [add the sale](/help-center/manage/customers/add-a-sale).
+
+## Change several customers at once
+
+If a group of customers should all move to the same plan, select them with the checkboxes on their rows and use the bulk **Change Commission Plan** action. Every selected customer moves to the plan you choose, with the same forward-only rule — future sales use the new plan, past ones stay as they are.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Add a sale" icon="cart-plus" href="/help-center/manage/customers/add-a-sale" arrow>
+    Record a sale — change the plan first if it should apply.
+  </Card>
+  <Card title="Customers overview" icon="users" href="/help-center/manage/customers/overview" arrow>
+    A tour of the Customers screen and everything it shows.
+  </Card>
+  <Card title="Commission plans overview" icon="money-bill-trend-up" href="/help-center/getting-started/commissions/overview" arrow>
+    Learn how commission plans decide what your affiliates earn.
+  </Card>
+  <Card title="Customer statuses" icon="circle-check" href="/help-center/manage/customers/statuses" arrow>
+    See how Active, Submitted, and Rejected affect commission.
+  </Card>
+</Columns>

@@ -1,6 +1,62 @@
 ---
 title: "Track opens and clicks"
-description: "See how your emails perform."
+description: "See how your affiliate emails perform. Referly tracks opens and clicks automatically, with open and click rates, a Sent-Opened-Clicked funnel, date ranges, and recent recipients for each email."
+keywords: ["email open tracking", "email click tracking", "open rate", "click rate", "email funnel", "affiliate email performance", "email analytics"]
 ---
+Referly keeps track of how your affiliate emails perform, so you can see whether people are actually opening them and clicking through. There's nothing to switch on — tracking is built in and runs automatically on the emails Referly sends to your affiliates.
 
-{/* TODO: Write this article. */}
+## Where to see your email stats
+
+In the left sidebar, select **Settings**, open **Affiliate Portal**, then **Email Settings**. Once an email has been sent a few times, its card shows a quick summary underneath its name: how many were **sent**, the **opens** percentage, and the **clicks** percentage.
+
+{/* TODO screenshot: card-stats-line — upload it in the local Documentation Agent */}
+
+## What Referly tracks
+
+- **Opens** — how many recipients opened the email.
+- **Clicks** — how many recipients clicked a link inside it.
+
+These are counted as *unique* by person: if the same affiliate opens the same email ten times, that still counts as one open. So the numbers reflect how many different people engaged, not how many total times they did.
+
+## Open the funnel
+
+Select any email to open its details. At the top you'll see a funnel with three steps:
+
+1. **Sent** — the email went out.
+2. **Opened** — the recipient opened it.
+3. **Clicked** — the recipient clicked a link inside it.
+
+Each step shows how many people reached it. Hover over a step to see how it converts from the step before, how many people dropped off, and the conversion all the way from **Sent**. This is the quickest way to spot where you're losing people — a low open rate points to the subject line or sending address, while good opens but few clicks points to the email's content or call to action.
+
+{/* TODO screenshot: email-funnel — upload it in the local Documentation Agent */}
+
+## Change the date range
+
+Use the date picker above the funnel to focus on a period — for example **Last 7 days**, **Last 30 days**, or **This month**. The stats update to cover only emails sent in that range, which is handy for comparing before and after you change an email.
+
+## See who opened or clicked
+
+Hover a funnel step to see a short list of recent recipients for that step — **Recent Recipients** for sent, **Recently Opened** for opens, and **Recently Clicked** for clicks. It's a quick way to put names to the numbers and confirm the right people are engaging.
+
+{/* TODO screenshot: funnel-step-detail — upload it in the local Documentation Agent */}
+
+## A note on open rates
+
+Open tracking works by including a tiny invisible image in each email that loads when the email is viewed. Some email apps block or preload images, so open rates are a strong signal of engagement rather than an exact count — treat them as a trend to watch over time. Click tracking is more precise, since it records an actual action the recipient took.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Emails your affiliates receive" icon="envelope" href="/help-center/engage/emails/affiliate-emails" arrow>
+    The emails these stats are measured on.
+  </Card>
+  <Card title="Custom email builder" icon="pen-to-square" href="/help-center/engage/emails/custom-email-builder" arrow>
+    Improve an email's content to lift opens and clicks.
+  </Card>
+  <Card title="Send from your own domain" icon="at" href="/help-center/engage/emails/sending-domain" arrow>
+    Better deliverability means more of your emails get opened.
+  </Card>
+  <Card title="Email settings overview" icon="gear" href="/help-center/engage/emails/overview" arrow>
+    See how all of Referly's email settings fit together.
+  </Card>
+</Columns>

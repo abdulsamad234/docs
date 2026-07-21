@@ -1,6 +1,80 @@
 ---
 title: "Payouts overview"
-description: "How affiliates get paid."
+description: "Learn how payouts work in Referly: how commissions become payable, self-managed vs Referly-handled payouts, payout methods, batches, schedules, and where to manage everything."
+keywords: ["Referly payouts", "affiliate payouts", "pay affiliates", "payout batch", "payout methods", "affiliate commission payout", "holding period", "payout schedule", "Referly Payouts"]
 ---
+A payout is how an affiliate finally gets paid for the commissions they've earned. Referly collects each affiliate's approved earnings, groups them into a batch on your schedule, and then sends the money (or delivers the coupon or credits) once you're ready. This page is the map for that whole process, so you know what happens between a sale being tracked and an affiliate being paid.
 
-{/* TODO: Write this article. */}
+Payouts live under **Payouts** in the left sidebar of your program. The settings that control them live under **Program Settings → Program details → Payout settings**.
+
+## From commission to payout
+
+Every payout starts as a commission. When a referred customer signs up or buys, Referly records a commission for the affiliate. That commission has to clear two gates before it can be paid:
+
+- **Approval** — the commission is accepted, either automatically or after you review it, depending on the plan's auto-approve setting.
+- **Holding period** — an optional waiting time that keeps a commission out of payouts for a set number of days, giving you a window to handle refunds or chargebacks before the money goes out.
+
+Once a commission is approved and past its holding period, it becomes eligible and waits to be collected into the next payout batch.
+
+{/* TODO screenshot: payout-lifecycle — upload it in the local Documentation Agent */}
+
+## Two ways to run payouts
+
+Referly gives you two ways to handle **cash** payouts, and you choose per program:
+
+- **Manage payouts yourself** — you connect Wise, PayPal, or collect bank details, and you send each payout using your own connected accounts. You also handle your own tax reporting.
+- **Let Referly handle your payouts** — Referly pays your affiliates for you in 178 countries with tax-compliant invoicing. You add a payment method, and Referly charges you when payouts are due.
+
+Non-cash rewards like coupons and credits are always delivered by Referly automatically, no matter which option you pick. See [Manage payouts yourself or let Referly handle them](/help-center/manage/payouts/self-managed-vs-referly) for a full comparison.
+
+## Payout methods
+
+The **payout method** is how the money actually reaches an affiliate. Which ones you can use depends on the option above:
+
+- **Wise** and **PayPal** for direct cash transfers you send yourself.
+- **Manual bank transfer**, where you collect bank details and pay each affiliate outside Referly.
+- **Referly Payouts**, where Referly sends the money for you.
+- **Coupons and credits** for non-cash rewards.
+
+[Payout methods](/help-center/manage/payouts/payout-methods) covers each one and how to connect it.
+
+## How payouts are grouped into batches
+
+Referly doesn't pay each commission one at a time. It collects all of an affiliate's eligible earnings into a single **payout** for that affiliate, and groups every affiliate's payout for a given run into a **payout batch**. A batch is what you review and pay.
+
+You can create batches on a schedule automatically, or make them yourself. Each batch moves through a series of statuses from the moment it's created until it's fully paid. Learn more in [Payout batches](/help-center/manage/payouts/batches) and [Payout batch statuses](/help-center/manage/payouts/batch-statuses).
+
+{/* TODO screenshot: payout-batches-list — upload it in the local Documentation Agent */}
+
+## Set the rules that control payouts
+
+A handful of settings decide when and how much you pay. You'll find them under **Program details → Payout settings**:
+
+- [Holding period and frequency](/help-center/manage/payouts/schedule) — how long earnings are held, and how often a new batch is created.
+- [Minimum payout amount](/help-center/manage/payouts/minimum-amount) — the amount an affiliate must reach in cash before they're included in a batch.
+- [Custom bank account fields](/help-center/manage/payouts/custom-bank-fields) — extra banking details to collect from affiliates paid by bank transfer.
+
+## Records, tax, and troubleshooting
+
+Once payouts are running, a few more pages help you keep clean records and fix problems:
+
+- [Export payouts](/help-center/manage/payouts/export) — download a batch as a CSV, ready to upload to Wise or PayPal, or to keep for your records.
+- [Tax and invoices](/help-center/manage/payouts/tax-and-invoices) — set your legal entity details, generate self-billing invoices, and handle VAT.
+- [Failed payouts](/help-center/manage/payouts/failed-payouts) — find out why a payout didn't go through and how to retry it.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Self-managed vs Referly Payouts" icon="scale-balanced" href="/help-center/manage/payouts/self-managed-vs-referly" arrow>
+    Compare running payouts yourself against letting Referly pay affiliates for you.
+  </Card>
+  <Card title="Payout methods" icon="wallet" href="/help-center/manage/payouts/payout-methods" arrow>
+    See every way you can pay affiliates and how to connect each one.
+  </Card>
+  <Card title="Payout batches" icon="layer-group" href="/help-center/manage/payouts/batches" arrow>
+    Understand how earnings are grouped, reviewed, and paid.
+  </Card>
+  <Card title="Holding period and frequency" icon="calendar-days" href="/help-center/manage/payouts/schedule" arrow>
+    Choose how long earnings are held and how often affiliates are paid.
+  </Card>
+</Columns>

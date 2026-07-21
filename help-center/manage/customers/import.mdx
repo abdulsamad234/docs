@@ -1,6 +1,79 @@
 ---
 title: "Import customers"
-description: "Bring referrals in from a CSV or another platform."
+description: "Bulk import referred customers into Referly from a CSV or another affiliate platform. Map your columns, link each customer to their affiliate by email, and run the import."
+keywords: ["import customers", "import referrals", "csv import", "bulk import customers", "migrate customers", "affiliate email mapping", "map columns", "import file", "upload customers csv", "customer import"]
 ---
+When you're moving to Referly from another platform, or you already have a list of referred customers somewhere else, you can bring them in all at once instead of adding them by hand. Importing loads your customers in bulk and links each one to the affiliate who referred them.
 
-{/* TODO: Write this article. */}
+## Start an import
+
+Open your [Customers list](/help-center/manage/customers/overview) and choose **Import Customers**. This opens the import window, which walks you through a few short steps.
+
+{/* TODO screenshot: import-customers-button — upload it in the local Documentation Agent */}
+
+### Choose how to import
+
+First, pick where your customers are coming from:
+
+- **Import from CSV file** — upload a spreadsheet you've exported from anywhere.
+- **Connect another platform** — pull your data straight from another affiliate tool through its connection, if it's one of the supported platforms shown.
+
+{/* TODO screenshot: import-source-step — upload it in the local Documentation Agent */}
+
+The rest of this article follows the CSV route, which is the most common. For moving from a specific tool, see the [migration guides](/help-center/getting-started/migrate/overview).
+
+### Upload your file
+
+Drag your CSV onto the upload area, or select it from your computer. Referly only accepts `.csv` files, so if your list is in a spreadsheet, export or save it as CSV first.
+
+{/* TODO screenshot: import-upload-step — upload it in the local Documentation Agent */}
+
+### Match your columns
+
+Once your file is read, you tell Referly which column holds which piece of information. Referly matches obvious columns for you based on their headings — you just check them and fill in anything it couldn't guess.
+
+{/* TODO screenshot: import-map-fields — upload it in the local Documentation Agent */}
+
+Two fields are required for every customer:
+
+| Field | What it is |
+| --- | --- |
+| **Email** | The customer's email address. This identifies the customer. |
+| **Affiliate Email** | The email of the affiliate who referred them. This is how each customer gets linked to the right affiliate, so make sure it matches an affiliate in your program. |
+
+The rest are optional and fill in more detail if you have it:
+
+- **Full Name**, or **First Name** and **Last Name**
+- **Join Date** — when the customer was originally referred
+- **External User ID** — the customer's ID in your own system, if you track one
+
+### Run the import
+
+When your columns are mapped, start the import. It runs in the background, so you don't have to wait on the screen — large lists keep processing while you carry on. You can follow its progress and see whether it finished in the imports list, and open any import to see its details, including any rows that were skipped.
+
+## Prepare your file
+
+A little tidying before you upload saves trouble:
+
+- Include a header row, so Referly can match your columns automatically.
+- Make sure every row has both an **email** and the **affiliate's email**.
+- Check that each affiliate email belongs to an affiliate who's already in your program, so their customers link up correctly.
+
+Imported customers appear in your list with a source of **Imported**, so you can always tell how they came in.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Customers overview" icon="users" href="/help-center/manage/customers/overview" arrow>
+    A tour of the Customers screen and everything it shows.
+  </Card>
+  <Card title="Migrate to Referly" icon="truck-fast" href="/help-center/getting-started/migrate/overview" arrow>
+    Move your program over from another affiliate platform.
+  </Card>
+  <Card title="Add a sale" icon="cart-plus" href="/help-center/manage/customers/add-a-sale" arrow>
+    Record sales against your imported customers.
+  </Card>
+  <Card title="Customer statuses" icon="circle-check" href="/help-center/manage/customers/statuses" arrow>
+    Understand what happens to customers once they're in.
+  </Card>
+</Columns>

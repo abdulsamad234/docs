@@ -1,6 +1,57 @@
 ---
 title: "Customer statuses"
-description: "What active, submitted, and rejected mean."
+description: "Understand Referly's customer statuses — Active, Submitted, and Rejected. Learn what each means for commissions and how to accept, reject, or reactivate referred customers."
+keywords: ["customer status", "referral status", "active referral", "submitted referral", "rejected referral", "pending review", "accept referral", "reject referral", "reactivate customer", "approve referrals"]
 ---
+Every customer in your list carries a status that tells you where the referral stands — whether it's counting toward commissions, waiting on your decision, or turned away. You'll see it in the **Status** column, shown as a colored badge.
 
-{/* TODO: Write this article. */}
+{/* TODO screenshot: status-badges — upload it in the local Documentation Agent */}
+
+There are three statuses.
+
+## Active
+
+An **Active** customer (green) is accepted and counting. Their referring affiliate earns commission on the sales recorded against them, and the customer shows up in your totals and reports.
+
+Most customers are Active from the moment they're created. When someone is tracked automatically — through an integration like Stripe or Shopify, or your site's tracking snippet — the referral comes in Active straight away, because you've already decided to trust that source.
+
+## Submitted
+
+A **Submitted** customer (yellow) is waiting for your review. Nothing is credited yet — the referral sits in a pending state until you accept or reject it.
+
+This usually happens when an affiliate submits a referral themselves from their portal. Rather than crediting it automatically, Referly holds it for you to check first, so an affiliate can't claim a customer you don't recognize.
+
+To clear it, hover the **Submitted** badge and choose **Accept** to make the customer Active, or **Reject** to turn it away.
+
+{/* TODO screenshot: pending-review-popover — upload it in the local Documentation Agent */}
+
+## Rejected
+
+A **Rejected** customer (red) is one you turned away. No commission is credited, and the customer is kept out of your active totals. You might reject a referral that looks like a duplicate, a test, or one an affiliate shouldn't be credited for.
+
+Rejecting isn't permanent. If you change your mind, hover the **Rejected** badge and choose **Accept** to move the customer back to Active.
+
+## Change a customer's status
+
+You can change a status from the **Status** badge on any row — hover it and pick the option you want. A Submitted customer offers **Accept** and **Reject**; a Rejected customer offers **Accept** to reactivate it.
+
+To handle several at once, select customers using the checkboxes on their rows. The bulk action bar lets you **Accept**, **Reject**, or **Reactivate** every selected customer together — handy when a batch of submissions comes in and you want to clear them in one pass.
+
+{/* TODO screenshot: bulk-status-actions — upload it in the local Documentation Agent */}
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Customers overview" icon="users" href="/help-center/manage/customers/overview" arrow>
+    A tour of the Customers screen and everything it shows.
+  </Card>
+  <Card title="Add a sale" icon="cart-plus" href="/help-center/manage/customers/add-a-sale" arrow>
+    Record a purchase against an active customer.
+  </Card>
+  <Card title="Notes" icon="note-sticky" href="/help-center/manage/customers/notes" arrow>
+    Keep a private note on a customer — useful when reviewing submissions.
+  </Card>
+  <Card title="Import customers" icon="file-import" href="/help-center/manage/customers/import" arrow>
+    Bring referrals in from a CSV or another platform.
+  </Card>
+</Columns>

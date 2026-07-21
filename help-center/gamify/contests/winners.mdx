@@ -1,6 +1,69 @@
 ---
 title: "Pick winners"
-description: "Choose winners at the end or on a schedule."
+description: "See how affiliate contest winners are picked automatically at the end of each period, how cash and non-cash prizes are awarded, and where to view the winners."
+keywords: ["contest winners", "pick winners", "award prizes", "contest prize payout", "winner frequency", "cash prize bonus", "non-cash prize", "view winners"]
 ---
+You don't have to tally results or choose winners by hand. When a contest period ends, Referly picks the winners for you — it ranks everyone by the contest's metric, matches each top position to its prize, and awards it automatically. This page explains exactly how that works and what happens next.
 
-{/* TODO: Write this article. */}
+## How winners are chosen
+
+At the end of a contest period, Referly looks at the final standings for that period and awards each ranked position the prize you set for it:
+
+- The affiliate in **1st** gets the 1st-place prize, **2nd** gets the second prize, and so on.
+- **Only ranks with a prize win.** If you set prizes for the top three, the top three finishers win and everyone else simply took part.
+- Each affiliate's score is measured **only over the contest period**, using the [ranking metric](/help-center/gamify/leaderboards/criteria) you chose — so contest standings can look different from your all-time leaderboard.
+
+This happens on its own, at the moment the period ends. There's nothing you need to press.
+
+## When winners are picked
+
+That timing follows the **winner frequency** you set when you [created the contest](/help-center/gamify/contests/create):
+
+<CardGroup cols={2}>
+  <Card title="At the end of the contest" icon="flag-checkered">
+    A single set of winners is picked once, when the contest's end date passes. The contest is then marked **Completed**.
+  </Card>
+  <Card title="Daily, Weekly, Monthly, or Yearly" icon="arrows-rotate">
+    Winners are picked at the end of every period. The same contest keeps crowning fresh winners each cycle until its final period, then it's marked **Completed**.
+  </Card>
+</CardGroup>
+
+<Note>
+  Winners are only picked while a contest is **live**. If you pause a contest, results for that stretch wait until you resume it.
+</Note>
+
+## What winners receive
+
+The prize each winner gets depends on how you set it up:
+
+- **Cash prizes** are awarded **automatically as a bonus**. The amount lands in that affiliate's rewards like any other commission, so it flows into your normal payout process — no manual payment needed. You'll find it alongside your other [bonuses](/help-center/manage/rewards/bonuses).
+- **Non-cash prizes** are recorded against the winner with the description and any delivery note you added. Referly doesn't ship these for you — **you fulfill them**, using your deliverable note as a reminder.
+
+Winning affiliates are notified with a celebration in their portal, so they know right away that they placed.
+
+## View the winners
+
+Open **Contests** from the left sidebar and select **View winners** on any contest to see who won, their winning position, the metric they hit, and the prize awarded. For a recurring contest, winners are grouped by period, so you can see each cycle's results.
+
+{/* TODO screenshot: contest-winners-dialog — upload it in the local Documentation Agent */}
+
+<Note>
+  Winners appear here once a contest period has ended and been finalized. Until then, the contest is still running and the list stays empty.
+</Note>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Create a contest" icon="plus" href="/help-center/gamify/contests/create" arrow>
+    Set the prizes and winner frequency winners are drawn from.
+  </Card>
+  <Card title="Contests overview" icon="trophy" href="/help-center/gamify/contests/overview" arrow>
+    How contests work from start to finish.
+  </Card>
+  <Card title="Managing bonuses" icon="gift" href="/help-center/manage/rewards/bonuses" arrow>
+    Where cash prizes show up as rewards.
+  </Card>
+  <Card title="Managing payouts" icon="money-check-dollar" href="/help-center/manage/payouts/overview" arrow>
+    How prize bonuses get paid out.
+  </Card>
+</Columns>

@@ -1,6 +1,86 @@
 ---
 title: "Ban or deactivate an affiliate"
-description: "Stop an affiliate from earning, with or without a reason."
+description: "Deactivate an affiliate to pause them (reversible) or ban them to remove them for good in Referly. Learn the difference, plus how to reactivate and how to act in bulk."
+keywords: ["ban affiliate", "deactivate affiliate", "reactivate affiliate", "remove affiliate", "pause affiliate", "affiliate fraud", "ban reason", "delete affiliate", "referly ban affiliate"]
 ---
+Sometimes an affiliate needs to come out of your program — maybe they've gone quiet and you want to pause them, or maybe they've broken your rules and need to be removed for good. Referly gives you two tools for this, and the difference between them matters.
 
-{/* TODO: Write this article. */}
+## Deactivate, ban, or delete — which to use
+
+| Action | What happens | Reversible? |
+| --- | --- | --- |
+| **Deactivate** | Turns the affiliate off and disables their links. Their commissions and payouts stay intact. | Yes — reactivate them any time. |
+| **Ban** | Permanently removes the affiliate, disables their links, and cancels their pending payouts. You record a reason. | No. |
+| **Delete** | Permanently erases the affiliate and everything tied to them — referred customers, sales, commissions, and payout history. | No. |
+
+The rule of thumb: **deactivate** when you might want them back, **ban** when they've done something serious and you want a record of why, and **delete** only when you genuinely want every trace of them gone. Both ban and delete can't be undone, so reach for deactivate whenever you're unsure.
+
+## Deactivate an affiliate
+
+Deactivating is the gentle option — it pauses someone without losing anything.
+
+<Steps>
+  <Step title="Open the affiliate">
+    From your [affiliates list](/help-center/manage/affiliates/overview), select the affiliate to open their [detail page](/help-center/manage/affiliates/affiliate-detail).
+  </Step>
+  <Step title="Choose Deactivate Affiliate">
+    Open the three-dots actions menu and select **Deactivate Affiliate**.
+  </Step>
+  <Step title="Confirm">
+    The dialog explains that this disables all their active links while their commissions and payouts remain intact. Select **Deactivate affiliate** to confirm.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: deactivate-dialog — upload it in the local Documentation Agent */}
+
+Once deactivated, the affiliate's links stop working and they can't log in or earn on new sales, but everything they've already earned stays exactly as it was. Their [status](/help-center/manage/affiliates/statuses) changes to **Deactivated**.
+
+## Reactivate an affiliate
+
+Changed your mind, or the affiliate is ready to come back? Open their detail page, choose **Reactivate Affiliate** from the actions menu, and confirm. Their referral links start working again and they can access their portal and earn commissions on new sales. Their status returns to **Active**.
+
+## Ban an affiliate
+
+Banning is for affiliates who've broken your rules — fraud, spam, brand abuse, and the like. It's permanent, so Referly asks you to confirm carefully.
+
+<Steps>
+  <Step title="Open the affiliate and choose Ban Affiliate">
+    On the affiliate's detail page, open the actions menu and select **Ban Affiliate**.
+  </Step>
+  <Step title="Choose a ban reason">
+    Pick a **Ban reason** from the list — Terms of Service Violation, Inappropriate or Offensive Content, Artificial Traffic, Fraudulent Activity, Spam, or Brand Abuse. The reason is saved and shows on their banned badge later, so you always know why they were removed.
+  </Step>
+  <Step title="Type the confirmation">
+    Because a ban can't be undone, you'll be asked to type `confirm ban affiliate` in the confirmation field. This stops an accidental ban.
+  </Step>
+  <Step title="Ban">
+    Select **Ban affiliate**. Their links are disabled, their pending payouts are cancelled, and their status changes to **Banned**.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: ban-dialog — upload it in the local Documentation Agent */}
+
+<Warning>
+  Banning cancels the affiliate's **pending payouts** and can't be reversed. If you only want to stop them temporarily, or you still owe them for work already done, deactivate them instead.
+</Warning>
+
+## Do it for many affiliates at once
+
+All three actions are available in bulk. Select affiliates in your list with their checkboxes, then choose **Deactivate**, **Reactivate**, **Ban**, or **Delete** from the selection bar. A bulk ban asks for a single reason that applies to everyone selected. See [Bulk actions](/help-center/manage/affiliates/bulk-actions).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Affiliate statuses" icon="circle-info" href="/help-center/manage/affiliates/statuses" arrow>
+    What Deactivated and Banned mean for an affiliate.
+  </Card>
+  <Card title="Bulk actions" icon="layer-group" href="/help-center/manage/affiliates/bulk-actions" arrow>
+    Deactivate, ban, or delete many affiliates at once.
+  </Card>
+  <Card title="Fraud prevention" icon="shield-halved" href="/help-center/settings/program/fraud-prevention" arrow>
+    Catch bad actors before they cost you.
+  </Card>
+  <Card title="The affiliate detail view" icon="id-card" href="/help-center/manage/affiliates/affiliate-detail" arrow>
+    Where the deactivate and ban actions live.
+  </Card>
+</Columns>

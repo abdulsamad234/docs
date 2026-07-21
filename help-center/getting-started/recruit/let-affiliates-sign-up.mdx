@@ -1,6 +1,92 @@
 ---
 title: "Let affiliates sign up"
-description: "Open your portal so affiliates can apply."
+description: "Share your Referly sign-up link so affiliates can join on their own. Learn the general sign-up link, special links for a commission plan or affiliate group, the default group, and how affiliates log in with an email code or Google."
+keywords: ["affiliate sign up", "affiliate sign-up link", "commission plan sign-up link", "affiliate group sign-up link", "default group", "affiliate registration page", "affiliate login", "email one-time code", "google login for affiliates", "let affiliates apply", "referly recruit affiliates"]
 ---
+Letting affiliates sign up is the hands-off way to grow your program: instead of inviting people one by one, you share a link, and anyone who follows it can apply and join on their own. It's the right choice when you want your program open to the public, or when you're pointing a whole audience — newsletter readers, customers, a creator's followers — to one place to join.
 
-{/* TODO: Write this article. */}
+This page covers where to find your sign-up link, what affiliates see when they join, how they log in afterward, and how special sign-up links let you drop new affiliates straight onto the terms you want them on.
+
+## Find your sign-up link
+
+Your program comes with a public sign-up page that's ready to share. To find it, go to your dashboard home and look at the **Quick Links** panel. Select the **Sign Up Page** card (labeled **Affiliate registration**) to open your sign-up page, then copy the address from your browser to share it.
+
+{/* TODO screenshot: sign-up-link-card — upload it in the local Documentation Agent */}
+
+Your sign-up link looks like `yourbrand.referly.so/register`. If you've connected your own [custom domain](/help-center/settings/portal/custom-domain), it uses that instead. Put this link anywhere you want people to join — your website, footer, social profiles, or a "Become an affiliate" button.
+
+## What affiliates see when they sign up
+
+The sign-up page carries your [branding](/help-center/getting-started/set-up-program/branding) and asks for just a few details: **First Name**, **Last Name**, and **Email address**. There's a **See Commission Plan** link so people can check what they'll earn before joining.
+
+{/* TODO screenshot: sign-up-page — upload it in the local Documentation Agent */}
+
+Signing up is passwordless — there's no password to create. When someone fills in the form and selects **Sign Up**, Referly emails them a six-digit code. They enter it on the **Verify Email** screen, and their account is created. From there they land in your program on the terms you've set (more on that below) and can start promoting right away — unless your program [reviews new affiliates first](/help-center/getting-started/recruit/approve-or-decline), in which case they wait for your approval.
+
+You control how this page looks and behaves — the layout, wording, and whether people must agree to your terms — from your [login and sign-up settings](/help-center/settings/portal/login-and-sign-up).
+
+## How affiliates log in
+
+Once affiliates have an account, they sign back in at your portal's login page (`yourbrand.referly.so/login`). There are two ways in.
+
+{/* TODO screenshot: login-page — upload it in the local Documentation Agent */}
+
+### Email with a one-time code
+
+This is the default, and it works for everyone. An affiliate enters their **Email address** and selects **Sign In**. Referly emails them a six-digit code, they enter it on the **Verify Email** screen, and they're in. There's no password to remember or reset — the emailed code is what proves it's them each time.
+
+### Login with Google
+
+Affiliates can also select **Login with Google** to sign in with their Google account in one step, instead of waiting for a code. This button only appears if you've turned Google login on for your program. To enable it, follow [Set up Google login for affiliates](/help-center/settings/portal/social-login).
+
+## Send new affiliates to a specific commission plan
+
+By default, everyone who uses your general sign-up link joins on your program's standard terms. But you can also create a **special sign-up link tied to one commission plan**, so anyone who joins through it lands directly on that plan. This is useful when you're recruiting a particular partner or running a campaign that should earn different terms from everyone else.
+
+To get the link, go to **Settings**, open **Program Details**, and find your **Commission Plans**. Select the copy-link icon on the plan you want — the tooltip reads **Copy sign-up link for this commission plan** — and Referly copies it to your clipboard and confirms with **Sign-up link copied to clipboard**. Share that link instead of your general one.
+
+{/* TODO screenshot: plan-sign-up-link — upload it in the local Documentation Agent */}
+
+An affiliate who signs up through a commission plan link is **pinned to that plan**. They stay on those exact terms and aren't affected by tier or [milestone](/help-center/gamify/milestones/overview) changes that would otherwise move other affiliates around. If the plan belongs to a group, they're placed in that group too — but the plan is what they're locked to.
+
+## Send new affiliates to an affiliate group
+
+You can also create a **special sign-up link tied to an [affiliate group](/help-center/settings/program/affiliate-groups)**. Everyone who joins through it lands in that group and picks up the group's terms. Use this when you're recruiting a batch of people who belong together — a region, a creator's audience, a partner type — and want them to share the same starting point.
+
+To get the link, go to **Settings**, open **Program Details**, and find your **Affiliate Groups**. Select the copy-link button on the group you want — the tooltip reads **Copy sign-up link** — and it's copied to your clipboard.
+
+{/* TODO screenshot: group-sign-up-link — upload it in the local Documentation Agent */}
+
+An affiliate who signs up through a group link **inherits that group's default commission plan and starting tier**. Because they follow the group, if the group later moves up a tier or you change the group's default plan, these affiliates move with it.
+
+## Where affiliates land by default
+
+If someone signs up through your plain sign-up link — no special commission plan or group link — they join your **Default group** and start on your program's default commission plan. The Default group is where every affiliate who isn't assigned to a specific group lives, so it's the fallback for anyone who joins openly. You'll see the **Default** group listed alongside your other groups in **Program Details**.
+
+## Group link vs commission plan link
+
+Both kinds of special link decide a new affiliate's starting terms, but they behave differently afterward — the same way they do when you [invite affiliates](/help-center/getting-started/recruit/invite-affiliates):
+
+- **A group link** puts the affiliate on shared, changeable terms. They follow the group, so they move whenever the group's tier or default plan changes. Reach for this when you're recruiting people who should stay in step with a group.
+- **A commission plan link** pins the affiliate to a fixed set of terms. They stay put regardless of tier or milestone changes. Reach for this when this affiliate should be on exact terms that won't shift underneath them.
+
+<Note>
+  The short version: use a **group link** when you want new affiliates to follow shared terms that can change, and a **commission plan link** when you want them locked to a fixed set of terms.
+</Note>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Invite affiliates" icon="envelope" href="/help-center/getting-started/recruit/invite-affiliates" arrow>
+    Bring specific people in by emailing them an invitation.
+  </Card>
+  <Card title="Set up Google login for affiliates" icon="google" href="/help-center/settings/portal/social-login" arrow>
+    Turn on one-tap Google sign-in for your portal.
+  </Card>
+  <Card title="Affiliate groups" icon="users" href="/help-center/settings/program/affiliate-groups" arrow>
+    Group affiliates and give each group its own terms.
+  </Card>
+  <Card title="Commission plans overview" icon="money-bill" href="/help-center/getting-started/commissions/overview" arrow>
+    See how plans decide what each affiliate earns.
+  </Card>
+</Columns>

@@ -1,6 +1,106 @@
 ---
 title: "Add affiliates manually"
-description: "Create an affiliate record yourself."
+description: "Create an affiliate account yourself in Referly: add their name and email, assign a group or commission plan, and activate them instantly. Learn how adding an affiliate manually differs from sending an invitation."
+keywords: ["add affiliate manually", "create affiliate account", "manually add affiliate", "Referly add affiliate", "invite vs add affiliate", "assign commission plan", "affiliate group", "active affiliate"]
 ---
+Sometimes you already know who you want in your program. Maybe you signed a partner over email, met a creator at an event, or ran your first affiliates in a spreadsheet. Instead of waiting for them to accept an invite or fill out a sign-up form, you can create their affiliate account yourself in a few seconds.
 
-{/* TODO: Write this article. */}
+Adding an affiliate manually creates a fully active account right away, complete with a referral link, so the affiliate can start promoting as soon as they log in. This guide walks through how to do it and how it differs from sending an invitation.
+
+## When to add an affiliate manually
+
+Add an affiliate manually when you already have an agreement in place and simply want them set up and active. Because the account is created and activated instantly, there is no approval step and nothing for the affiliate to accept first.
+
+Reach for a different path when:
+
+- You want to reach out and let the person decide whether to join. [Invite them](/help-center/getting-started/recruit/invite-affiliates) instead so they receive an email invitation.
+- You have a whole list of partners to bring over. [Import them from a CSV](/help-center/manage/affiliates/import) rather than adding one at a time.
+- You would rather people apply to you. [Open your sign-up page](/help-center/getting-started/recruit/let-affiliates-sign-up) and review applications.
+
+The [difference between adding and inviting](#adding-manually-vs-inviting) is covered in full below.
+
+## Add an affiliate
+
+You can add an affiliate from anywhere in your dashboard using the quick actions button.
+
+{/* TODO screenshot: quick-actions-add-affiliate — upload it in the local Documentation Agent */}
+
+<Steps>
+  <Step title="Open quick actions">
+    Select the **plus (+)** button in the top bar, then choose **Add an Affiliate**.
+  </Step>
+  <Step title="Enter their details">
+    Fill in the affiliate's **First Name**, **Last Name**, and **Email**. All three are required. The email is the address they will use to log in, so make sure it is correct.
+  </Step>
+  <Step title="Choose how they're assigned">
+    Under **Assign to**, decide which commission the affiliate starts on (explained in the next section).
+  </Step>
+  <Step title="Create the account">
+    Select **Add**. The affiliate is created and set to **Active** immediately, and appears in your affiliates list.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: add-affiliate-form — upload it in the local Documentation Agent */}
+
+<Note>
+  If someone with that email already exists in this program, Referly tells you the affiliate already exists instead of creating a duplicate. It also checks your plan's affiliate limit before adding a new one.
+</Note>
+
+## Choose how they're assigned
+
+The **Assign to** box decides what the affiliate earns. Pick one of two options:
+
+{/* TODO screenshot: assign-to-options — upload it in the local Documentation Agent */}
+
+- **Affiliate group** — place the affiliate in one of your [groups](/help-center/manage/affiliates/groups). They inherit that group's default commission plan and tier, and they will follow the group as it changes over time (for example, when a [milestone](/help-center/gamify/milestones/overview) moves them up).
+- **Commission plan** — assign a specific [commission plan](/help-center/getting-started/commissions/overview) directly. This is a fixed choice: the affiliate stays on that plan and is not affected by milestone changes.
+
+If you leave the group empty, the affiliate is placed on your program's default commission plan. You can always change this later from their [affiliate details](/help-center/manage/affiliates/affiliate-detail) or by [changing their commission plan](/help-center/manage/affiliates/change-commission-plan).
+
+## What happens after you add them
+
+Creating the affiliate does a few things at once:
+
+- **The account goes live as Active.** There is no pending or invited stage — a manually added affiliate can be paid and tracked right away. See the full list of [affiliate statuses](/help-center/manage/affiliates/statuses).
+- **A referral link is generated automatically**, so the affiliate has something to share the moment they log in.
+- **Their source is recorded as Manual.** In your affiliates list, the Source column shows **Manual**, which tells you this account was created by you from the dashboard rather than through an invite, sign-up, import, or the API.
+- **They receive a welcome email** letting them know their account is ready.
+
+{/* TODO screenshot: manual-source-badge — upload it in the local Documentation Agent */}
+
+<Info>
+  A manually added affiliate has not set a password or payout method yet. They need to log in with their email at least once to finish setting up their account and choose how they get paid. The welcome email points them there.
+</Info>
+
+If your program has any promo codes tied to affiliates, Referly also creates the affiliate's codes as part of adding them.
+
+## Adding manually vs. inviting
+
+Both options live in the same quick actions menu, and both let you assign a group or commission plan up front. The difference is the starting state of the account and who takes the next step.
+
+| | Add an Affiliate | Invite Affiliate |
+| --- | --- | --- |
+| **What it does** | Creates the account directly | Sends an email invitation |
+| **Starting status** | Active straight away | Invited until they accept |
+| **Who acts next** | Nobody — they're already in | The affiliate accepts and finishes signing up |
+| **Required details** | First name, last name, email | Email only (name optional) |
+| **Best for** | Partners you've already agreed with | Reaching out to people who haven't joined yet |
+
+In short: **add** an affiliate when the relationship is settled and you just want them set up; **invite** an affiliate when you want to reach out and let them opt in. You can read more about invitations in [Invite affiliates](/help-center/getting-started/recruit/invite-affiliates).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Invite affiliates" icon="envelope" href="/help-center/getting-started/recruit/invite-affiliates" arrow>
+    Send an email invitation and let partners accept on their own.
+  </Card>
+  <Card title="Import affiliates" icon="file-arrow-up" href="/help-center/manage/affiliates/import" arrow>
+    Bring over a whole list of partners from a CSV at once.
+  </Card>
+  <Card title="Affiliate statuses" icon="circle-dot" href="/help-center/manage/affiliates/statuses" arrow>
+    Understand Active, Invited, Pending, and every other status.
+  </Card>
+  <Card title="Affiliate groups" icon="users" href="/help-center/manage/affiliates/groups" arrow>
+    Organize affiliates and set default commissions by group.
+  </Card>
+</Columns>

@@ -1,6 +1,46 @@
 ---
 title: "Minimum payout amount"
-description: "Set a threshold before an affiliate is paid."
+description: "Set a minimum payout amount in Referly so affiliates are only paid once their cash earnings reach a threshold, reducing small-transfer fees."
+keywords: ["minimum payout amount", "minimum cash payout", "payout threshold", "minimum payout threshold", "affiliate payout minimum", "reduce payout fees"]
 ---
+The **minimum payout amount** is the smallest cash balance an affiliate has to reach before they're included in a payout. It keeps you from sending lots of tiny transfers, which can cost more in fees than the payout is worth. This page explains what it does and how to set it.
 
-{/* TODO: Write this article. */}
+You'll find it as **Minimum Cash Payout Amount** in the **Payout Schedule** section under **Program Settings → Program details → Payout settings**. It appears once automated payouts are turned on.
+
+{/* TODO screenshot: minimum-payout-field — upload it in the local Documentation Agent */}
+
+## How the minimum works
+
+When a payout batch is created, Referly only includes affiliates whose eligible cash earnings have reached the minimum. An affiliate below the threshold isn't dropped or paid a partial amount — their earnings stay put and keep adding up. As soon as they cross the minimum, they're picked up by the next batch.
+
+The amount is set in your program's currency. For example, with a minimum of 50, an affiliate who has earned 40 waits until they've earned at least 50 before they're paid.
+
+## What it applies to
+
+The minimum only applies to **cash** commissions. Non-cash rewards like coupons and credits are not affected by it — those are delivered on your schedule regardless of amount.
+
+## Choosing a good minimum
+
+Think of it as a trade-off between fees and how quickly affiliates get paid:
+
+- A **higher** minimum means fewer, larger payouts and lower fees, but affiliates wait longer to be paid.
+- A **lower** minimum pays affiliates sooner, but you'll send more transfers, each with its own processing cost.
+
+Set it near the point where a payout is clearly worth the transfer fee for your chosen [payout method](/help-center/manage/payouts/payout-methods). Remember to select **Save Changes** after adjusting it.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Holding period and frequency" icon="calendar-days" href="/help-center/manage/payouts/schedule" arrow>
+    Control when payout batches are created.
+  </Card>
+  <Card title="Payout methods" icon="wallet" href="/help-center/manage/payouts/payout-methods" arrow>
+    Compare the fees of each way to pay affiliates.
+  </Card>
+  <Card title="Payout batches" icon="layer-group" href="/help-center/manage/payouts/batches" arrow>
+    See which affiliates are included in each batch.
+  </Card>
+  <Card title="Payouts overview" icon="wallet" href="/help-center/manage/payouts/overview" arrow>
+    How the whole payout process fits together.
+  </Card>
+</Columns>

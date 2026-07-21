@@ -1,6 +1,67 @@
 ---
 title: "Payout batch statuses"
-description: "What each stage of a batch means."
+description: "What each Referly payout batch status means — Preparing, Ready, Charging, Sent to Wise, Sending to affiliate, Paid, Failed, and No transactions — and what to do next."
+keywords: ["payout batch status", "payout status meaning", "preparing", "ready to pay", "charging", "sending to affiliate", "failed payout", "sent to Wise", "payout processing"]
 ---
+Every payout batch carries a **status** that tells you where it is in the payout process — whether it's still gathering earnings, waiting on you, on its way to affiliates, or done. You'll see the status as a colored label in the batches table, and hovering it shows a short explanation. This page is the full reference for what each one means and what, if anything, you need to do.
 
-{/* TODO: Write this article. */}
+Statuses appear on the [payout batches](/help-center/manage/payouts/batches) list under **Payouts** in the left sidebar.
+
+{/* TODO screenshot: batch-status-labels — upload it in the local Documentation Agent */}
+
+## Preparing
+
+The batch is still open. Referly is collecting earnings, and transactions that become eligible will keep getting added to it. There's nothing to do yet — wait for the batch to close before paying.
+
+## Ready
+
+The batch is closed and ready to be paid. Open it and select **Pay Now** (or **Process Rewards** for a non-cash batch) to send the payout. This is the main status that's waiting on you.
+
+## Waiting for payment
+
+The batch is waiting for you to pay for it. Open the batch and complete the payment to move it forward.
+
+## Needs integration
+
+The batch is ready, but the payment method it uses isn't connected yet. Connect that method — for example Wise or PayPal — and then pay the batch. Until you do, it can't be sent.
+
+## Charging
+
+For a Referly Payouts batch this shows as **Processing**; for your own methods it shows as **Charging**. The payment has started and Referly is waiting for your bank or card payment to settle. Card payments clear immediately, while bank (ACH) payments can take up to four business days. No action is needed while it settles.
+
+## Sent to Wise
+
+For Wise batches, this is what **processing** looks like: the transfers have been sent to your Wise account. Log in to Wise to confirm and complete the payments there. You can also select **View on Wise** from inside the batch to jump straight to it.
+
+## Sending to affiliate
+
+Referly has received the funds and is now sending the payout to the affiliate's bank account. This is an in-progress state — no action is needed.
+
+## Paid
+
+The batch is fully paid and complete. Affiliates have received their money or rewards. Paid batches can't be deleted.
+
+## Failed
+
+Something went wrong and the batch didn't complete. Hover the status (or open the batch) to see the specific reason, fix the cause, and select **Retry Payout**. See [Failed payouts](/help-center/manage/payouts/failed-payouts) for the common reasons and how to resolve each one.
+
+## No transactions
+
+The batch was created but has no transactions to pay — usually because nothing was eligible when it ran. You can delete it; nothing is owed.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Payout batches" icon="layer-group" href="/help-center/manage/payouts/batches" arrow>
+    How batches are created, reviewed, and paid.
+  </Card>
+  <Card title="Failed payouts" icon="triangle-exclamation" href="/help-center/manage/payouts/failed-payouts" arrow>
+    Diagnose a failed batch and retry it.
+  </Card>
+  <Card title="Holding period and frequency" icon="calendar-days" href="/help-center/manage/payouts/schedule" arrow>
+    Control when a new batch starts preparing.
+  </Card>
+  <Card title="Payouts overview" icon="wallet" href="/help-center/manage/payouts/overview" arrow>
+    See how the whole payout process fits together.
+  </Card>
+</Columns>

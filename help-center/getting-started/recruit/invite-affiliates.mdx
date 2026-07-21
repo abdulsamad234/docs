@@ -1,6 +1,99 @@
 ---
 title: "Invite affiliates"
-description: "Send invitations to join your program."
+description: "Invite affiliates to your Referly program by email. Learn the invitation form fields, how to assign an invite to an affiliate group or a commission plan, the invitation email, the Invited status, and why no promo code or sales are tracked until the affiliate accepts."
+keywords: ["invite affiliates", "affiliate invitation", "send affiliate invitation", "invitation email", "invited status", "assign affiliate group", "invite to commission plan", "affiliate accept invitation", "auto-generated promo code", "recruit affiliates"]
 ---
+Inviting affiliates is the most direct way to bring people into your program: you send them an email invitation, and they join by accepting it. Use it when you already know who you want on board — existing customers, creators you've reached out to, or partners you've spoken with.
 
-{/* TODO: Write this article. */}
+An invitation does two things at once. It reserves a record for the affiliate in your program, and it emails them a link to finish setting up their account. Until they accept, they sit in an **Invited** state and aren't a working affiliate yet. This page walks through sending an invitation, choosing what the affiliate joins, and what changes when they accept.
+
+## Send an invitation
+
+You can invite an affiliate from anywhere in your dashboard using the quick actions button.
+
+{/* TODO screenshot: open-invite — upload it in the local Documentation Agent */}
+
+<Steps>
+  <Step title="Open the invite form">
+    Select the **plus (+)** button in the top bar, then choose **Invite Affiliate**.
+  </Step>
+  <Step title="Enter the affiliate's details">
+    Fill in the affiliate's **Email**. This is the only required field — it's the address the invitation is sent to. **First Name** and **Last Name** are optional, but adding them personalizes the invitation email and makes the affiliate easier to recognize in your list later.
+  </Step>
+  <Step title="Choose what they join">
+    In the **Assign to** box, pick whether the affiliate joins an affiliate group or a specific commission plan. This decides the terms they start on. See [Choose what the affiliate joins](#choose-what-the-affiliate-joins) below for the difference.
+  </Step>
+  <Step title="Send it">
+    Select **Send Invitation**. The affiliate is added to your program with an **Invited** status, and the invitation email goes out right away.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: invite-form — upload it in the local Documentation Agent */}
+
+## Choose what the affiliate joins
+
+Every affiliate needs a set of terms — how much they earn and under what rules. When you invite someone, the **Assign to** box decides those terms up front, so the affiliate lands on the right plan the moment they accept. You have two ways to set this, and they behave differently.
+
+{/* TODO screenshot: assign-to-modes — upload it in the local Documentation Agent */}
+
+### Invite to an affiliate group
+
+This is the default. You pick one of your [affiliate groups](/help-center/settings/program/affiliate-groups) (or leave them in your **Default group**), and the affiliate **inherits that group's default commission plan and tier**.
+
+Choose a group when you're recruiting people who belong together — a batch of creators, a region, a partner type — and you want them to share whatever terms that group is on. Because they follow the group, if the group later moves up a tier or you change the group's default plan, these affiliates move with it.
+
+### Invite to a specific commission plan
+
+Instead of a group, you can assign the affiliate straight to one [commission plan](/help-center/getting-started/commissions/overview). Search for the plan and select it.
+
+Choose a plan when this affiliate should be on exact terms you've decided for them, regardless of any group. An affiliate assigned this way is **directly assigned** — they stay on that plan and aren't affected by milestone or tier changes that would otherwise move a group's affiliates around. If the plan you pick already belongs to a group, the affiliate is placed in that group too, but the plan is what they're locked to.
+
+<Note>
+  The short version: **invite to a group** when you want the affiliate to follow shared, changeable terms, and **invite to a commission plan** when you want to pin them to a fixed set of terms that won't shift underneath them.
+</Note>
+
+## The invitation email
+
+When you send an invitation, Referly emails the affiliate on your behalf. The email invites them to join your program and includes the link they use to accept and set up their account. If you added a first name, the email greets them by it.
+
+You control how this email reads. You can rewrite its subject and wording, and match it to your brand, from your email settings — see [Emails your affiliates receive](/help-center/engage/emails/affiliate-emails) for how to edit the invitation email before you start sending invites.
+
+## What happens while the invitation is pending
+
+Sending an invitation does **not** make someone an active affiliate. It reserves their record and holds it in the **Invited** state until they act. While they're invited:
+
+- **They aren't active.** Their status shows as **Invited** in your affiliates list, separate from your approved, active affiliates. You can read more in [Affiliate statuses](/help-center/manage/affiliates/statuses).
+- **No sales or commissions are tracked for them.** An invited affiliate hasn't started promoting, so nothing is attributed or earned on their behalf yet.
+- **No promo code is created.** If your program hands out [auto-generated promo codes](/help-center/engage/coupons/auto-generated-codes), the affiliate's code isn't generated at invitation time. It's created only once they accept.
+
+In other words, an invitation is a reservation, not activation. Everything that lets an affiliate earn waits until they accept.
+
+{/* TODO screenshot: invited-status — upload it in the local Documentation Agent */}
+
+## When the affiliate accepts
+
+The affiliate accepts by opening the link in the invitation email and completing their account setup. At that point Referly turns their reserved record into a full affiliate:
+
+- Their status moves out of **Invited**. They become active straight away, unless your program requires you to approve new affiliates first — in which case they wait for your approval before going active.
+- Their **promo code is generated**, if your program uses auto-generated codes.
+- They're placed on the group or commission plan you chose when inviting them, so they start on the right terms.
+- From here on, their referrals, sales, and commissions are tracked normally.
+
+Until they take that step, you can keep an eye on who hasn't accepted yet by filtering your affiliates list for the **Invited** status, and send the invitation again if someone missed it.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Add affiliates manually" icon="user-plus" href="/help-center/getting-started/recruit/add-affiliates-manually" arrow>
+    Create an active affiliate account yourself instead of sending an invitation.
+  </Card>
+  <Card title="Let affiliates sign up" icon="door-open" href="/help-center/getting-started/recruit/let-affiliates-sign-up" arrow>
+    Open your portal so affiliates can apply on their own.
+  </Card>
+  <Card title="Affiliate groups" icon="users" href="/help-center/settings/program/affiliate-groups" arrow>
+    Group affiliates and give each group its own terms.
+  </Card>
+  <Card title="Commission plans overview" icon="money-bill" href="/help-center/getting-started/commissions/overview" arrow>
+    See how plans decide what each affiliate earns.
+  </Card>
+</Columns>

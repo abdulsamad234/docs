@@ -1,6 +1,76 @@
 ---
 title: "Review submissions"
-description: "Approve or reject what affiliates submit."
+description: "Review content reward submissions in Referly: check the post or proof, then approve or reject each entry. Learn the review panel, statuses, and bulk actions."
+keywords: ["review submissions", "approve content reward", "reject submission", "content reward review", "submission status", "pending review", "custom reward amount", "referly submissions"]
 ---
+When affiliates submit content, their entries wait for you to review them. Nothing is paid until you approve it, so this is where you check each post and decide. For the wider flow, see the [content rewards overview](/help-center/gamify/content-rewards/overview).
 
-{/* TODO: Write this article. */}
+## Finding submissions to review
+
+Open **Content Rewards** in the left sidebar and go to the **Submissions** tab. Its badge shows how many entries are waiting on you. The table lists every submission across your campaigns, with the creator, the platform, when the post went up, when it was submitted, the campaign, its views and likes, the payout, and its status. You can search and filter to narrow things down.
+
+{/* TODO screenshot: cr-submissions-table — upload it in the local Documentation Agent */}
+
+### What the statuses mean
+
+Each submission carries a status:
+
+- **Pending review** — waiting for you to approve or reject it. These are the ones that need action.
+- **Approved** — you've accepted it and its reward has been created.
+- **Rejected** — you've turned it down.
+- **Draft** — the affiliate started an entry but hasn't submitted it yet.
+
+The **Payout** column tells you where the money is: **Unpaid**, **Payout created** (the reward exists and is waiting to be paid out), or **Paid**.
+
+## Reviewing one submission
+
+<Steps>
+  <Step title="Open it">
+    Select a submission to open the **Review submission** panel. You can move through entries with the arrows at the top without closing the panel.
+  </Step>
+  <Step title="Check the details">
+    The panel shows who submitted it, the campaign's criteria, and the reward at stake. For a **social** post you'll see a preview with its views and likes; you can **Refresh** to pull the latest figures. For a **manual** submission you'll see the proof they attached — images, links, and any notes they added.
+  </Step>
+  <Step title="Approve or reject">
+    Use **Approve** to accept it or **Reject** to turn it down. These buttons appear while the submission is still pending review.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: cr-review-sheet — upload it in the local Documentation Agent */}
+
+### Approving
+
+Select **Approve** to accept the submission. Its reward is worked out and created right away in the affiliate's earnings.
+
+If the campaign uses a **custom amount** (a manual campaign where you set the figure yourself), a **Reward amount** field appears first — type what to pay, then approve. For social campaigns and flat-rate campaigns, the amount is already worked out for you.
+
+### Rejecting
+
+Select **Reject**, then choose a **Reason** — Invalid proof, Duplicate submission, Out of time window, Did not meet criteria, or Other — and add optional details for the affiliate. Choose **Confirm rejection** to finish. The affiliate is told their submission was rejected, along with your reason.
+
+{/* TODO screenshot: cr-reject-reason — upload it in the local Documentation Agent */}
+
+## Reviewing several at once
+
+When a batch is clearly good or bad, select the rows with their checkboxes and use the bar that appears to set them all to **Approved**, **Pending review**, or **Rejected** in one step — or delete them. You can also select every submission that matches your current filters.
+
+## Where the reward goes
+
+Approving a submission creates its reward in your [Rewards list](/help-center/manage/rewards/bonuses), labelled **Content rewards**, and from there it's paid out like any commission or bonus. On a social campaign with extra-performance rewards turned on, the amount can keep climbing after approval as the post gains views or likes. If you ever need to undo an approval, see [Revert a paid reward](/help-center/gamify/content-rewards/revert).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Revert a paid reward" icon="rotate-left" href="/help-center/gamify/content-rewards/revert" arrow>
+    Undo a reward after you've approved a submission.
+  </Card>
+  <Card title="Social metrics or manual review" icon="chart-line" href="/help-center/gamify/content-rewards/criteria" arrow>
+    How a submission qualifies and how its reward is priced.
+  </Card>
+  <Card title="Create a campaign" icon="plus" href="/help-center/gamify/content-rewards/campaigns" arrow>
+    Set up the campaigns these submissions come from.
+  </Card>
+  <Card title="Managing rewards" icon="gift" href="/help-center/manage/rewards/bonuses" arrow>
+    See approved content rewards alongside your other rewards.
+  </Card>
+</Columns>

@@ -1,6 +1,95 @@
 ---
 title: "Pop-ups and banners overview"
-description: "Show referred visitors a tailored message."
+description: "Show tailored pop-ups and banners to shoppers referred by your affiliates. Learn the pop-up vs banner types, the Setup and Design tabs, merge variables, statuses, and setup."
+keywords: ["referly pop-ups", "affiliate banners", "on-site referral message", "referred visitor pop-up", "discount pop-up", "affiliate discount banner", "pop-ups and banners"]
 ---
+Pop-ups and banners let you greet the shoppers your affiliates send to your website with a tailored on-site message — for example, a card that reads "Sarah sent you 20% off" with the discount code ready to use. They appear directly on your own site, only to visitors who arrived through an affiliate link, which makes them a simple way to turn referred traffic into more sales.
 
-{/* TODO: Write this article. */}
+This is different from [Affiliate announcements](/help-center/engage/announcements/overview), which show up inside the affiliate portal that your affiliates log in to. Pop-ups and banners face the other way: they show to the *customers* your affiliates refer, on the site those customers are shopping. This page is a tour of how the feature works and where each setting lives, with links to the deeper guides.
+
+{/* TODO screenshot: list-page — upload it in the local Documentation Agent */}
+
+## Pop-up or banner
+
+Every message you build is one of two types, and you pick which one first:
+
+- **Pop-up** — an overlay card that opens on top of the page. Best for a moment you want the visitor to notice right away, such as a welcome discount when they land.
+- **Banner** — a slim bar fixed to the top or bottom of the page. Best for a persistent reminder that stays visible without interrupting what the visitor is doing.
+
+Both can show the referring affiliate's name, their discount, a promo code, and a button that sends the visitor wherever you choose.
+
+## Open Pop-ups & Banners
+
+In the left sidebar of your campaign, select **Pop-ups & Banners**. The page lists everything you've built, each card showing its type, status, and how many views and clicks it has picked up. To start a new one, select **Create** in the top right.
+
+## Create one
+
+When you create a pop-up or banner, you first choose the type and give it a name, then select **Continue**. This opens the editor, which has two tabs and a live **Preview** beside them so you can see every change as you make it:
+
+- **Setup** — controls *when* the message appears, *where* on your site it shows, and *which* affiliates trigger it.
+- **Design** — the look and the words: layout, image, heading, body, promo code, button, colours, and corners.
+
+{/* TODO screenshot: editor-tabs — upload it in the local Documentation Agent */}
+
+## Choose when and where it shows
+
+The **Setup** tab decides the timing and placement:
+
+- **When** — show the message as soon as the page loads (with an optional delay), or the moment the visitor moves to leave. You also set how many times one visitor can see it.
+- **Where** — show it on every page, only on certain pages, or everywhere except certain pages, and choose its position on the screen.
+
+For the full set of options, see [Triggers and position](/help-center/engage/popups-banners/triggers).
+
+## Decide which affiliates trigger it
+
+By default, any visitor referred by any affiliate can see the message. You can also limit it so it only appears for visitors sent by specific affiliates or by whole affiliate groups — useful when you want a different offer for different partners. See [Target an audience](/help-center/engage/popups-banners/audience).
+
+## Design the message
+
+The **Design** tab is where you make it yours:
+
+- **Layout** — pick from a set of ready-made layout variants.
+- **Image** — show the affiliate's profile picture, an emoji, or nothing.
+- **Heading and body** — write the copy, and drop in details that fill themselves in for each visitor, like the affiliate's name, the discount value, or the promo code.
+- **Promo code** — show the referring affiliate's actual code so the visitor can use it.
+- **Button** — add a call-to-action button with your own label and link.
+- **Colours and corners** — set the background, text, and button colours, and choose rounded or fully rounded corners.
+
+The details that fill themselves in are written with double curly braces, such as `{{affiliateName}}`, `{{discountValue}}`, `{{promoCode}}`, `{{affiliateEmail}}`, and `{{programName}}`. When the pop-up shows, each one is swapped for the real value from the affiliate who referred that visitor.
+
+{/* TODO screenshot: design-preview — upload it in the local Documentation Agent */}
+
+## Publish, pause, and manage
+
+Each pop-up or banner has a status so you always know whether it's live:
+
+- **Draft** — still being built and not shown to anyone. Select **Publish** to make it go live.
+- **Active** — currently showing to referred visitors. Use the toggle to switch it off.
+- **Inactive** — switched off and not showing.
+
+From the list, the menu on each card lets you **Edit**, **Duplicate** (a fast way to spin up a variation), or **Delete**. Deleting is permanent and also removes that message's view and click history.
+
+## Install it on your site
+
+Pop-ups and banners are delivered by the same tracking script that powers your affiliate links. If you've already added that script to your website, they work automatically — there's nothing more to install. If you haven't, see [Install the embed](/help-center/engage/popups-banners/install).
+
+## Availability
+
+Pop-ups and banners are part of Referly's engagement features and are available on the Business plan (and equivalent tiers). If you don't see them in your sidebar, check your plan on the [Add-ons](/help-center/billing/add-ons) page.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Triggers and position" icon="clock" href="/help-center/engage/popups-banners/triggers" arrow>
+    Fire on page load or exit intent, choose which pages, and set the position.
+  </Card>
+  <Card title="Target an audience" icon="filter" href="/help-center/engage/popups-banners/audience" arrow>
+    Show a pop-up only to visitors referred by certain affiliates or groups.
+  </Card>
+  <Card title="Install the embed" icon="code" href="/help-center/engage/popups-banners/install" arrow>
+    Add the tracking script so pop-ups and banners appear on your site.
+  </Card>
+  <Card title="Affiliate announcements" icon="bullhorn" href="/help-center/engage/announcements/overview" arrow>
+    Broadcast messages to your affiliates inside their portal.
+  </Card>
+</Columns>

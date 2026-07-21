@@ -1,6 +1,118 @@
 ---
 title: "Install the widget"
-description: "Add the widget to your site."
+description: "Install the Referly referral widget on your site: add the tracking script and widget script, choose direct install or Google Tag Manager, turn on auto-register to identify logged-in users, and open the widget from your own button."
+keywords: ["install referral widget", "add widget to website", "referral widget script", "widget embed code", "affiliate widget install", "Google Tag Manager widget", "auto-register logged-in users", "referral widget snippet", "widget tracking script", "add referral widget"]
 ---
+Installing the widget takes two short snippets of code: one that tracks referrals across your site, and one that shows the widget itself. You copy each from your dashboard and paste it into your website. If you can edit your site's HTML — or you use a tag manager — you have everything you need. If a developer looks after your site, this is the page to hand them.
 
-{/* TODO: Write this article. */}
+<Info>
+  The referral widget is available on the Business plan and higher. Before you install, it's worth [customizing the widget](/help-center/engage/widget/customize) so it looks right the moment it goes live.
+</Info>
+
+## Open the installer
+
+From your campaign dashboard, open **Widget** in the left sidebar and stay on the **Edit Widget** tab. At the bottom of the settings, select **Add to My Website**.
+
+{/* TODO screenshot: add-to-website-button — upload it in the local Documentation Agent */}
+
+A window titled **Add Referral Widget to Your Website** opens. It walks you through three steps — **Tracking**, **Widget**, and **Custom Trigger** — with the code you need at each one. Every snippet already has your program's details filled in, so copy it straight from the window using the **Copy code** button rather than typing it out.
+
+{/* TODO screenshot: install-dialog-steps — upload it in the local Documentation Agent */}
+
+Each step offers two ways to add the code:
+
+- **Direct Script** — paste the code into your site's HTML yourself.
+- **Google Tag Manager** — add the code as a tag if you manage your site's scripts through Google Tag Manager.
+
+The steps below describe the Direct Script method. If you use Google Tag Manager, switch the toggle at the top of each step and follow the same order.
+
+## Step 1: Add the tracking script
+
+The tracking script is what lets Referly know when someone arrives through a referral link and credit the right affiliate. Copy the snippet from the **Tracking** step and paste it inside the `<head>` of your site, on **every page**.
+
+```html
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+The `YOUR_PROGRAM_ID` value is already filled in for you in the dashboard — that's why it's best to copy the code from there. When you're done, select **Continue to Widget Script**.
+
+## Step 2: Add the widget script
+
+The widget script is what actually shows the floating button and its panel. Copy the snippet from the **Widget** step and paste it just before the closing `</body>` tag, on the pages where your customers are signed in — for example, anywhere behind your login.
+
+```html
+<script
+  src="https://www.referly.so/affiliate-widget.js"
+  data-affiliate-program-id="YOUR_PROGRAM_ID"
+  data-affiliate-widget="true"
+  data-nscript="afterInteractive">
+</script>
+```
+
+### Identify your customers automatically
+
+Inside the Widget step there's a toggle called **Auto-register logged-in users**. It decides how a customer reaches their referral link and earnings:
+
+{/* TODO screenshot: auto-register-toggle — upload it in the local Documentation Agent */}
+
+- **On** — Referly identifies each signed-in customer by their email address, so they open the widget and see their referral link straight away, with nothing to type. When you turn this on, the snippet gains an extra `data-user-email` attribute:
+
+```html
+<script
+  src="https://www.referly.so/affiliate-widget.js"
+  data-affiliate-program-id="YOUR_PROGRAM_ID"
+  data-user-email="LOGGED_IN_USER_EMAIL"
+  data-affiliate-widget="true"
+  data-nscript="afterInteractive">
+</script>
+```
+
+  Replace `LOGGED_IN_USER_EMAIL` with whatever your website uses to output the signed-in person's email. The dashboard shows examples for common setups.
+
+- **Off** — customers enter their email in the widget and confirm it with a code before they see their dashboard. See [Email verification](/help-center/engage/widget/email-verification) for what that looks like.
+
+<Note>
+  Auto-register only removes the email step for people who are already logged in to your product. If your customers aren't signed in when they open the widget, leave it off and they'll verify by email instead.
+</Note>
+
+When you're done, select **Continue to Custom Trigger**.
+
+## Step 3: Add your own button (optional)
+
+By default the widget opens from its floating button. If you'd rather open it from a button of your own — a "Refer a friend" or "Earn rewards" link in your menu, say — the **Custom Trigger** step gives you a small snippet for that:
+
+```html
+<button onclick="AffiliateWidget.show()">Refer a Friend</button>
+```
+
+This works even if you've hidden the floating button in your widget settings, so you can place the entry point wherever it fits your product. This step is optional — skip it if the floating button is all you need.
+
+## Save your settings
+
+Close the window when you've added your snippets, then select **Save Changes** on the Edit Widget screen so your latest settings are live. Load a page where you added the widget script and you should see the floating button appear.
+
+<Check>
+  If the button doesn't show up, check that the widget script is on a page where your customer is signed in, that both scripts were pasted in the right place, and that the widget is turned on under **Show Referral Widget** in your settings.
+</Check>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Customize the widget" icon="palette" href="/help-center/engage/widget/customize" arrow>
+    Set the widget's colors, position, wording, and which pages it shows on.
+  </Card>
+  <Card title="Email verification" icon="envelope-circle-check" href="/help-center/engage/widget/email-verification" arrow>
+    What customers see when auto-register is off.
+  </Card>
+  <Card title="Referral widget overview" icon="puzzle-piece" href="/help-center/engage/widget/overview" arrow>
+    A tour of what the widget is and does.
+  </Card>
+  <Card title="Install the tracking snippet" icon="code" href="/developer-documentation/tracking/install-the-snippet" arrow>
+    Developer details on the tracking script.
+  </Card>
+</Columns>

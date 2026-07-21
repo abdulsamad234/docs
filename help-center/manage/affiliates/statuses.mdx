@@ -1,6 +1,78 @@
 ---
 title: "Affiliate statuses"
-description: "What approved, pending, invited, declined, deactivated, and banned mean."
+description: "What each affiliate status means in Referly — active, pending, invited, declined, deactivated, and banned — and how affiliates move between them."
+keywords: ["affiliate status", "pending affiliate", "active affiliate", "invited affiliate", "declined affiliate", "deactivated affiliate", "banned affiliate", "affiliate approval status", "referly affiliate statuses"]
 ---
+Every affiliate in your program carries a **status** — a quick label that tells you where they stand. It's how you tell an approved partner apart from someone still waiting to be reviewed, and it decides whether that person can actually promote you and earn.
 
-{/* TODO: Write this article. */}
+This page explains each status, what it means for the affiliate, and how they move from one to another.
+
+## Where you see an affiliate's status
+
+Status shows up as a colored badge in the **Status** column of your [affiliates list](/help-center/manage/affiliates/overview), and again at the top of each [affiliate's detail page](/help-center/manage/affiliates/affiliate-detail). To see everyone in one state at a time, open the **Filter** button and filter by status — each status shows a running count so you can tell at a glance how many people are, say, still pending.
+
+{/* TODO screenshot: status-badges — upload it in the local Documentation Agent */}
+
+## The statuses
+
+### Active
+
+The affiliate is fully approved and live. Their referral link and any promo codes work, every click, referral, and sale they drive is tracked, and they earn on your terms. This is the state you want your real partners in. Active shows as a green badge.
+
+### Pending
+
+The affiliate has applied but hasn't been approved yet. They can't promote or earn while they wait — nothing is tracked until you let them in. Affiliates land here when you've turned off automatic approval and are reviewing applications yourself. Approve them to make them active, or decline them to turn the application down. Pending shows as a yellow badge.
+
+<Note>
+  Affiliates only wait in **Pending** if you've switched off automatic approval. With auto-approval on — the default — new affiliates skip straight to **Active**. See [Manually approve or decline applications](/help-center/getting-started/recruit/approve-or-decline).
+</Note>
+
+### Invited
+
+You've sent this person an invitation to join your program, but they haven't accepted and finished signing up yet. They're on your list so you can keep track of who's been asked, but they aren't promoting or earning until they accept and their account becomes active. Invited shows as a blue badge. See [Invite affiliates](/help-center/getting-started/recruit/invite-affiliates).
+
+### Declined
+
+You reviewed this person's application and turned it down. They can't promote or earn, and they see a message letting them know their application wasn't accepted. An affiliate ends up here when you reject their pending application. Declined shows as an orange badge.
+
+### Deactivated
+
+The affiliate has been switched off. Their links stop working and they can no longer log in or earn, but their history stays intact — so this is the reversible option when you want to pause someone rather than remove them for good. You can reactivate a deactivated affiliate at any time to make them active again. Deactivated shows as a gray badge. See [Ban or deactivate an affiliate](/help-center/manage/affiliates/ban-or-deactivate).
+
+### Banned
+
+The affiliate has been removed from your program for a reason — usually something serious like fraud, spam, or a terms violation. Their links stop working and they can't earn. When you ban someone you record a reason, which you can see by hovering over the badge, so you always know why. Banned shows as a red badge. See [Ban or deactivate an affiliate](/help-center/manage/affiliates/ban-or-deactivate).
+
+## How an affiliate moves between statuses
+
+Statuses aren't fixed — they change as you manage your program:
+
+- **Invited → Active**: the person accepts your invitation and finishes signing up.
+- **Pending → Active**: you approve their application (or auto-approval does it for you).
+- **Pending → Declined**: you reject their application.
+- **Active → Deactivated**: you deactivate them to pause their account.
+- **Deactivated → Active**: you reactivate them.
+- **Active → Banned**: you ban them for a recorded reason.
+
+You can change most of these one affiliate at a time from their detail page, or for many affiliates at once — see [Bulk actions](/help-center/manage/affiliates/bulk-actions).
+
+## Only active affiliates promote and earn
+
+The simplest way to think about status: **only active affiliates can promote and earn.** Everyone else — pending, invited, declined, deactivated, or banned — has links that don't track and can't earn commissions, whether they're waiting to get in or have been removed. Keeping an eye on status is how you know exactly who's live in your program at any moment.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Approve or decline applications" icon="user-check" href="/help-center/getting-started/recruit/approve-or-decline" arrow>
+    Review pending affiliates before they go live.
+  </Card>
+  <Card title="Invite affiliates" icon="paper-plane" href="/help-center/getting-started/recruit/invite-affiliates" arrow>
+    Send invitations and track who's accepted.
+  </Card>
+  <Card title="Ban or deactivate an affiliate" icon="ban" href="/help-center/manage/affiliates/ban-or-deactivate" arrow>
+    Pause or remove someone from your program.
+  </Card>
+  <Card title="Filters and columns" icon="sliders" href="/help-center/manage/affiliates/filters-and-columns" arrow>
+    Filter your list by status and more.
+  </Card>
+</Columns>

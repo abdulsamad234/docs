@@ -1,6 +1,81 @@
 ---
 title: "Triggers and position"
-description: "Fire on page load or exit intent, and choose where it appears."
+description: "Set when a Referly pop-up or banner appears: page load with a delay or exit intent, how often a visitor sees it, which pages it shows on, and where it sits on the screen."
+keywords: ["pop-up trigger", "exit intent pop-up", "page load delay", "banner position", "pop-up frequency", "page targeting rules", "affiliate pop-up settings"]
 ---
+The **Setup** tab of any pop-up or banner is where you decide the timing and placement — when it appears, how often, which pages it shows on, and where on the screen it sits. This guide walks through the **When** and **Where** sections. To limit which affiliates trigger it, see [Target an audience](/help-center/engage/popups-banners/audience).
 
-{/* TODO: Write this article. */}
+Open a pop-up or banner from the [Pop-ups & Banners](/help-center/engage/popups-banners/overview) list, then stay on the **Setup** tab. The **Preview** on the right updates as you change these settings.
+
+## Choose when it appears
+
+In the **When** section, pick what triggers the message:
+
+- **When the page appears** — it shows as soon as the visitor lands. Set a **delay** in seconds if you'd rather wait a moment before it pops up, which gives the page time to load and feels less abrupt.
+- **When the visitor is about to leave** — often called exit intent. It appears the moment the visitor moves their cursor toward the browser bar or tries to close the tab. This is a good spot for a last-chance offer.
+
+{/* TODO screenshot: when-trigger — upload it in the local Documentation Agent */}
+
+A short delay on page load usually works best for a welcome discount, while exit intent is better for catching someone before they leave without buying.
+
+## Set how often a visitor sees it
+
+Under the trigger, choose **how many times a visitor can see this** pop-up or banner. Set it to 1 so each visitor sees it only once, or higher to bring it back on later visits.
+
+For a banner, remember it stays visible until the visitor dismisses it. Setting the count above 1 is what lets it come back after they close it.
+
+### Space out repeat views
+
+When you allow more than one view, a second field appears: the **delay before a visitor sees it again**. Enter a number and choose **minutes** or **hours**. This stops the same person from seeing the message over and over in one session — for example, wait 24 hours before showing it a second time.
+
+{/* TODO screenshot: max-views — upload it in the local Documentation Agent */}
+
+## Choose which pages it shows on
+
+The **Where** section controls which pages of your site the message can appear on. Pick one of:
+
+- **Show on all pages** — it can appear anywhere on your site.
+- **Show on these pages only** — it appears only on the pages you list.
+- **Show on all pages except these** — it appears everywhere apart from the pages you list.
+
+{/* TODO screenshot: page-rules — upload it in the local Documentation Agent */}
+
+### Add page paths
+
+If you chose to include or exclude specific pages, add one or more **page paths**. For each rule, pick how the visitor's page address should be matched:
+
+- **Is** — the address matches your path exactly.
+- **Is not** — the address is anything other than your path.
+- **Contains** — the address includes your path anywhere in it.
+- **Does not contain** — the address doesn't include your path.
+
+Type the path in the box, for example `/checkout` or `/products`. Select **Add path** to stack more rules, and use the **And** / **Or** selector between them to decide whether a page must match every rule or just one of them.
+
+## Choose where it sits on the screen
+
+At the bottom of **Where**, set the **Position**. The choices depend on the type:
+
+- **Pop-up** — place it in the centre of the screen, or tuck it into any corner: top left, top right, bottom left, or bottom right.
+- **Banner** — pin it to the **top** or the **bottom** of the page.
+
+{/* TODO screenshot: position — upload it in the local Documentation Agent */}
+
+Watch the **Preview** as you choose — it shows exactly where the message will land.
+
+## Save your changes
+
+Select **Save Changes** in the top right to keep your settings. If the pop-up or banner is still a draft, select **Publish** to make it live; if it's already active, your changes apply as soon as you save.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Pop-ups and banners overview" icon="window-maximize" href="/help-center/engage/popups-banners/overview" arrow>
+    See how the whole feature fits together, from create to publish.
+  </Card>
+  <Card title="Target an audience" icon="filter" href="/help-center/engage/popups-banners/audience" arrow>
+    Limit a pop-up to visitors referred by certain affiliates or groups.
+  </Card>
+  <Card title="Install the embed" icon="code" href="/help-center/engage/popups-banners/install" arrow>
+    Add the tracking script so pop-ups and banners appear on your site.
+  </Card>
+</Columns>

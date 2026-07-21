@@ -1,6 +1,52 @@
 ---
 title: "Install the embed"
-description: "Add the pop-up code to your site."
+description: "Install the Referly tracking script to enable pop-ups and banners on your site. Copy the embed snippet, add it before the closing body tag on every page, then publish."
+keywords: ["install pop-up script", "referly embed code", "affiliate tracker script", "how to embed pop-up", "add banner to website", "tracking script install"]
 ---
+Pop-ups and banners appear on your website through a small tracking script — the same one that powers your affiliate links and referral tracking. If that script is already on your site, pop-ups and banners work automatically and there's nothing more to do. If it isn't yet, adding it once switches everything on.
 
-{/* TODO: Write this article. */}
+## Check whether you already have it
+
+If you've set up affiliate link tracking for this program, the script is almost certainly already installed, and you can skip straight to [creating a pop-up or banner](/help-center/engage/popups-banners/overview). Pop-ups and banners reuse that same tracking, so no second snippet is needed.
+
+Not sure? Adding the script a second time does no harm, so when in doubt, follow the steps below.
+
+## Get your embed code
+
+On the [Pop-ups & Banners](/help-center/engage/popups-banners/overview) page, select **How to Embed** in the top right. The same button is available inside the editor. A window opens with a code snippet made specifically for your program.
+
+Select the copy icon to copy it. It looks like this, with your own program details already filled in:
+
+```html
+<script src="https://referly.so/affiliate-tracker.js" data-affiliate data-program-id="your-program-id"></script>
+```
+
+{/* TODO screenshot: embed-dialog — upload it in the local Documentation Agent */}
+
+## Add it to your website
+
+Paste the snippet just before the closing `</body>` tag on your site, and make sure it's on **every page** where you want pop-ups and banners to be able to appear. Most site builders and content platforms have a place to add custom code to the site footer or header — putting it there adds it to every page at once.
+
+Once the script is live, save and publish your site as you normally would.
+
+## Turn on a pop-up or banner
+
+With the script in place, create a pop-up or banner and select **Publish** so its status becomes **Active**. From then on it shows automatically to visitors who arrive through an affiliate link and match its settings. You don't need to touch your website code again — build, publish, and edit everything from the [Pop-ups & Banners](/help-center/engage/popups-banners/overview) page.
+
+<Note>
+Pop-ups and banners only appear for visitors who came to your site through an affiliate link, so they won't show up when you visit your own pages directly. To preview the design while you build, use the live **Preview** in the editor.
+</Note>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Pop-ups and banners overview" icon="window-maximize" href="/help-center/engage/popups-banners/overview" arrow>
+    See how the whole feature fits together, from create to publish.
+  </Card>
+  <Card title="Triggers and position" icon="clock" href="/help-center/engage/popups-banners/triggers" arrow>
+    Set when the message fires, which pages it shows on, and its position.
+  </Card>
+  <Card title="Target an audience" icon="filter" href="/help-center/engage/popups-banners/audience" arrow>
+    Show a pop-up only to visitors referred by certain affiliates or groups.
+  </Card>
+</Columns>

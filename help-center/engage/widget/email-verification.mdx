@@ -1,6 +1,73 @@
 ---
 title: "Email verification"
-description: "How affiliates verify their address in the widget."
+description: "How email verification works in the Referly referral widget: customers confirm their email with a six-digit code to reach their referral link and earnings, when it's required, and how to troubleshoot a missing code."
+keywords: ["widget email verification", "referral widget verification code", "six-digit code widget", "verify email affiliate widget", "widget OTP", "access earnings widget", "auto-register widget", "affiliate email confirmation", "widget verification not working", "referral widget login"]
 ---
+Email verification is how the widget makes sure the person using it really owns the email address they entered, before it hands over a referral link or shows any earnings. It's the same idea as a one-time code you get when signing in elsewhere: the customer types their email, Referly emails them a six-digit code, and they enter it to continue.
 
-{/* TODO: Write this article. */}
+This article explains when your customers run into verification, what they see, and what to do if a code doesn't arrive.
+
+## When customers need to verify
+
+Whether a customer verifies depends on how you installed the widget and which tab they're on.
+
+- **The Earnings tab always asks for verification.** Anyone who wants to see earnings, referrals, and clicks confirms their email first, so one person can't view another's numbers.
+- **The Invite tab depends on the auto-register option.** If you turned on **Auto-register logged-in users** when you [installed the widget](/help-center/engage/widget/install), signed-in customers are recognized automatically and go straight to their referral link — no code needed. If auto-register is off, customers type their email and verify it before they get their link.
+
+<Note>
+  There's no separate switch to turn verification on or off. It's built in: the Earnings tab always uses it, and the Invite tab uses it whenever a customer isn't already identified through auto-register.
+</Note>
+
+## What the customer sees
+
+The flow is the same wherever it appears — enter an email, get a code, enter the code.
+
+### Getting a referral link on the Invite tab
+
+When auto-register is off, a customer opening the **Invite** tab is asked for their email and selects **Get my link**. Referly emails them a code, and the widget shows a **Verify your email** screen where they enter it and select **Verify & Get Link**. Once verified, their personal referral link appears, and they're added to your program as an affiliate.
+
+{/* TODO screenshot: invite-verify-email — upload it in the local Documentation Agent */}
+
+### Viewing earnings on the Earnings tab
+
+On the **Earnings** tab, the customer sees an **Access Your Rewards** screen. They enter their email and select **Send Verification Code**.
+
+{/* TODO screenshot: earnings-verify-start — upload it in the local Documentation Agent */}
+
+Referly emails the code, and the widget shows a code screen where they type the six digits and select **Verify Code**. Their total earned, referrals, and clicks then appear.
+
+{/* TODO screenshot: verify-code-entry — upload it in the local Documentation Agent */}
+
+<Note>
+  To view earnings, a customer has to have joined your program already — for example by grabbing their link on the Invite tab. If they enter an email that isn't part of your program yet, the widget tells them no affiliate account was found for that email.
+</Note>
+
+## If a code doesn't arrive
+
+Codes are sent by email and are valid for ten minutes. If a customer says theirs didn't come through, suggest they:
+
+- Check their spam or junk folder.
+- Make sure they entered the same email they use with your product.
+- Request a new code if more than ten minutes have passed, since the old one will have expired.
+- Confirm they've already joined your program if they're trying to view earnings.
+
+<Tip>
+  Turning on **Auto-register logged-in users** removes the code step entirely for customers who are signed in to your product, since Referly already knows who they are. It's the smoothest option when the widget lives behind your login. See [Install the widget](/help-center/engage/widget/install).
+</Tip>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Install the widget" icon="code" href="/help-center/engage/widget/install" arrow>
+    Turn on auto-register to skip verification for logged-in customers.
+  </Card>
+  <Card title="Customize the widget" icon="palette" href="/help-center/engage/widget/customize" arrow>
+    Reword the verification screens under Advanced custom copy.
+  </Card>
+  <Card title="Referral widget overview" icon="puzzle-piece" href="/help-center/engage/widget/overview" arrow>
+    A tour of what the widget is and does.
+  </Card>
+  <Card title="Affiliate statuses" icon="circle-check" href="/help-center/manage/affiliates/statuses" arrow>
+    What happens to customers who join through the widget.
+  </Card>
+</Columns>
