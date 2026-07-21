@@ -1,6 +1,260 @@
 ---
 title: "Capture endpoints"
-description: "The public endpoints the tracking script calls."
+description: "Reference for Referly's public capture endpoints — add-click, capture-email, capture-sale, add-to-cart, and program config. Request fields, responses, and when to call them from your own code."
+keywords: ["add-click endpoint", "capture-sale API", "capture-email Referly", "add-to-cart tracking", "affiliate click API", "public tracking endpoints", "mobile app affiliate tracking", "program config endpoint"]
 ---
+The [tracking script](/developer-documentation/tracking/install-the-snippet) doesn't do attribution in the browser. It gathers what it can see — the referral code in the URL, the device, the referrer, the ad click IDs — and posts it to a small set of public endpoints that do the actual work. Those endpoints are documented here because you can call them yourself: from a mobile app, from a server that has no browser to run a script in, or from a platform where you can't inject JavaScript.
 
-{/* TODO: Write this article. */}
+All of them live under:
+
+```bash
+https://www.referly.so/api/affiliates
+```
+
+They take no API key. They're identified by your program ID, which is public by design — it sits in a script tag on every page of your site — and they answer cross-origin requests from any domain.
+
+<Warning>
+  No key means no proof of who is calling. Anyone who reads your program ID from your page source can post to these endpoints. They're fine for clicks, cart events, and email capture, where the worst case is noise. For anything that creates a commission, use the authenticated [sales endpoint](/developer-documentation/server-side/reporting-sales) instead, where the amount is asserted by your server with a secret key.
+</Warning>
+
+## Which one to use
+
+| Endpoint | Records | Authentication |
+| --- | --- | --- |
+| `POST /add-click` | A visit from an affiliate link | None |
+| `POST /capture-email` | A referred customer, with no revenue | None |
+| `POST /capture-sale` | A referred customer and a sale | None |
+| `POST /add-to-cart` | An add-to-cart event against a click | None |
+| `GET /affiliate-program-v2` | Nothing — returns your program's tracking config | None |
+| `POST /api/v1/sales` | A referred customer and a sale | API key |
+
+## Record a click
+
+```bash
+POST https://www.referly.so/api/affiliates/add-click
+```
+
+Creates a click for an affiliate and returns it. The click ID it hands back is the identifier everything downstream hangs off, so this is usually the first call in any custom integration.
+
+```bash
+curl -X POST https://www.referly.so/api/affiliates/add-click \
+  -H "Content-Type: application/json" \
+  -d '{
+    "programId": "YOUR_PROGRAM_ID",
+    "referralCode": "jane",
+    "fullLandingUrl": "https://example.com/pricing?ref=jane",
+    "utmSource": "newsletter",
+    "deviceType": "mobile"
+  }'
+```
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `programId` | string | Yes | Your program ID. |
+| `referralCode` | string | Yes | The affiliate's link code — the value carried in your program's referral parameter. |
+| `uniqueClick` | boolean | No | `false` marks this as a repeat visit from someone already attributed. The script sends `false` when it's recording a return visit and omits it on a first click. |
+
+Everything else is optional context, stored on the click and surfaced in your reporting: `fullLandingUrl`, `pathname`, `queryString`, the UTM fields (`utmSource`, `utmMedium`, `utmCampaign`, `utmTerm`, `utmContent`), the ad click IDs (`gclid`, `gbraid`, `wbraid`, `fbclid`, `msclkid`, `ttclid`, `twclid`, `liFatId`), your own `extClickId`, referrer fields (`documentReferrer`, `referrerDomain`, `referrerType`), device fields (`userAgent`, `browserName`, `browserVersion`, `osName`, `osVersion`, `deviceType`), screen fields (`screenWidth`, `screenHeight`, `colorDepth`, `pixelRatio`, `viewportWidth`, `viewportHeight`), and language (`language`, `languages`).
+
+IP address and geolocation are not accepted from the body. Referly reads them from the request itself, so a click recorded from your server carries your server's location rather than the visitor's — worth knowing before you move click recording off the browser.
+
+**Response**
+
+```json
+{ "click": { "id": 48219, "affiliateId": "usr_8f2b1c", "createdAt": "2026-03-04T11:22:33.000Z" } }
+```
+
+`click.id` is the click ID. Store it — as a string — against the visitor's session and then their user record.
+
+When the referral code doesn't belong to any affiliate in the program, the response is `{ "exists": false }` with a `200`. There is no error status: a bad code is treated as "nothing to track" rather than a failure. Check for the `click` key rather than the status code.
+
+<Note>
+  See [click data](/developer-documentation/tracking/click-data) for everything a click stores, and [external click IDs](/developer-documentation/tracking/external-click-ids) for how `extClickId` connects Referly to an ad network or partner.
+</Note>
+
+## Capture an email
+
+```bash
+POST https://www.referly.so/api/affiliates/capture-email
+```
+
+Records a referred customer with no revenue attached. Use it for sign-ups, trials, waitlists, and demo requests — anything where the person converts but hasn't paid yet.
+
+```bash
+curl -X POST https://www.referly.so/api/affiliates/capture-email \
+  -H "Content-Type: application/json" \
+  -d '{
+    "programId": "YOUR_PROGRAM_ID",
+    "affiliateId": "48219",
+    "email": "customer@example.com",
+    "name": "Jane Doe"
+  }'
+```
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `programId` | string | Yes | Your program ID. |
+| `affiliateId` | string | Yes | A click ID or an affiliate link code. A numeric value is looked up as a click first, which keeps the click and the customer joined together. |
+| `email` | string | Yes | The customer's email. |
+| `name` | string | No | Falls back to the email address if you leave it out. |
+
+**Response**
+
+```json
+{ "success": true, "referral": { "id": "ref_2c9a44" } }
+```
+
+`404` with `Affiliate not found` means the `affiliateId` matched neither a click nor a link in that program. `400` means a required field was missing.
+
+Calling this twice for the same person doesn't create two customers — the referral is matched on email within your program. What it will not do is move an existing customer to a different affiliate. First attribution wins.
+
+## Capture a sale
+
+```bash
+POST https://www.referly.so/api/affiliates/capture-sale
+```
+
+Records a customer and a sale in one call. This is what `createPushLapSale()` calls from the browser.
+
+```bash
+curl -X POST https://www.referly.so/api/affiliates/capture-sale \
+  -H "Content-Type: application/json" \
+  -d '{
+    "programId": "YOUR_PROGRAM_ID",
+    "affiliateId": "48219",
+    "email": "customer@example.com",
+    "name": "Jane Doe",
+    "amount": 99.00,
+    "userId": "user_8891"
+  }'
+```
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `programId` | string | Yes | Your program ID. |
+| `affiliateId` | string | Yes | A click ID or an affiliate link code, as above. |
+| `email` | string | Yes | The customer's email. |
+| `amount` | number or string | Yes | The sale amount. A number is taken as-is in your program's currency. A string like `"€49.00"` is parsed and converted at the current rate. |
+| `name` | string | No | The customer's name. |
+| `userId` | string | No | Your own identifier for the customer, stored on the referral. |
+| `tax` | number | No | Tax inside `amount`, deducted from the commission base when your program is set to deduct tax. |
+| `shipping` | number | No | Shipping inside `amount`, with the same condition. |
+| `url` | string | No | The page URL. Referly reads an `rsubID` parameter out of it to match an [external click ID](/developer-documentation/tracking/external-click-ids). |
+
+**Response**
+
+```json
+{ "success": true, "referral": { "id": "ref_2c9a44" } }
+```
+
+<Warning>
+  This endpoint accepts no external identifier, so it cannot deduplicate. Call it twice and you create two sales and two commissions. Anything that might retry — a webhook handler, a job queue, a payment callback — belongs on [the authenticated sales endpoint](/developer-documentation/server-side/reporting-sales), which deduplicates on `externalId`.
+</Warning>
+
+## Record an add-to-cart
+
+```bash
+POST https://www.referly.so/api/affiliates/add-to-cart
+```
+
+Attaches a cart event to a click, so your funnel reporting can show clicks, carts, and purchases against each affiliate.
+
+```bash
+curl -X POST https://www.referly.so/api/affiliates/add-to-cart \
+  -H "Content-Type: application/json" \
+  -d '{
+    "programId": "YOUR_PROGRAM_ID",
+    "clickId": 48219,
+    "productId": "prod_123",
+    "productTitle": "Standing desk",
+    "quantity": 1,
+    "unitPrice": 349.00,
+    "currency": "USD",
+    "externalEventId": "evt_9f21c"
+  }'
+```
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `programId` | string | Yes | Your program ID. |
+| `clickId` | string or number | Yes | Must be a real click in this program. Unlike the other endpoints, a link code is not accepted. |
+| `externalEventId` | string | No | Your own event ID, used to deduplicate. |
+| `source` | string | No | Where the event came from, uppercased. Defaults to `GENERIC`. |
+| `sessionId` | string | No | Your session identifier. |
+| `productId`, `variantId`, `productTitle` | string | No | What was added. |
+| `quantity` | number | No | Defaults to `1`. |
+| `unitPrice` | number | No | Price per unit. |
+| `currency` | string | No | Currency of `unitPrice`. |
+| `userAgent` | string | No | Falls back to the request's own user agent header. |
+
+**Response**
+
+```json
+{ "ok": true, "id": 5512 }
+```
+
+A repeat call carrying an `externalEventId` that Referly has already stored for that source returns `{ "ok": true, "id": 5512, "deduped": true }` instead of creating a second event. This is the one capture endpoint that is safe to retry — and only when you send `externalEventId`.
+
+`400` means `programId` or `clickId` was missing or malformed; `404` means the click doesn't exist in that program.
+
+## Read your program's tracking config
+
+```bash
+GET https://www.referly.so/api/affiliates/affiliate-program-v2?programId=YOUR_PROGRAM_ID
+```
+
+The script calls this on load to find out how your program is configured. Useful if you're writing your own tracker and need the same settings.
+
+```json
+{
+  "program": {
+    "id": "prg_1a2b3c",
+    "name": "Acme Partners",
+    "cookieDuration": 60,
+    "urlModifier": "ref",
+    "crossTrackingDomains": ["app.example.com"],
+    "enableDebugLogs": false
+  }
+}
+```
+
+| Field | Meaning |
+| --- | --- |
+| `urlModifier` | The referral parameter your program listens for. See [URL parameters](/developer-documentation/tracking/url-parameters). |
+| `cookieDuration` | Attribution window in days. |
+| `crossTrackingDomains` | Domains that participate in [cross-domain tracking](/developer-documentation/tracking/cross-domain-tracking). |
+| `enableDebugLogs` | Whether [debug mode](/developer-documentation/tracking/debug-mode) is on. |
+
+`{ "exists": false }` comes back for an unknown program ID, and also when the account behind it has no active subscription. Responses are cached for a day, so a settings change can take that long to reach a cached response.
+
+## Calling these from your own code
+
+Reasonable uses:
+
+- **A mobile app.** Record the click when someone opens a referral deep link, keep the click ID with the account, then report purchases through the API.
+- **A platform that won't let you inject scripts.** Post the click yourself from wherever you can run code.
+- **A redirect service of your own.** Record the click as you redirect, then hand the click ID on to your site.
+
+Things to get right:
+
+- **Recording a click server-side loses the visitor's context.** The IP and location come from whatever machine makes the request, and the browser and device fields are only as good as what you pass in.
+- **Store the click ID, not the referral code.** A click ID ties everything to one specific visit; a code only identifies the affiliate.
+- **Treat `200` with `{"exists": false}` as a failure.** It means the code matched no affiliate.
+- **Don't record money here if the call can repeat.** Only `add-to-cart` deduplicates, and only with `externalEventId`.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Report a sale" icon="cart-shopping" href="/developer-documentation/server-side/reporting-sales" arrow>
+    The authenticated way to record revenue.
+  </Card>
+  <Card title="JavaScript API" icon="code" href="/developer-documentation/tracking/javascript-api/reference" arrow>
+    The browser helpers that wrap these endpoints.
+  </Card>
+  <Card title="Click data" icon="chart-line" href="/developer-documentation/tracking/click-data" arrow>
+    Everything a click record holds.
+  </Card>
+  <Card title="Idempotency" icon="rotate" href="/developer-documentation/server-side/idempotency" arrow>
+    Why retries need an external identifier.
+  </Card>
+</Columns>

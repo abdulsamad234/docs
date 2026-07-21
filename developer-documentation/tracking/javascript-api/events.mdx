@@ -1,6 +1,138 @@
 ---
 title: "Events"
-description: "The events the script fires and when."
+description: "Reference for the Referly tracking script browser events: affiliate_id_ready and affiliate_referral_ready. When each fires, what detail they carry, their ordering, and how to listen without missing them."
+keywords: ["affiliate_id_ready", "affiliate_referral_ready", "Referly tracking events", "affiliate tracking javascript events", "window addEventListener affiliate", "click ID ready event", "affiliate attribution event", "Referly JavaScript API events"]
 ---
+Resolving a referral is not instant. When the [tracking script](/developer-documentation/tracking/install-the-snippet) loads it has to read the URL, check storage, and often record a click over the network before it knows who referred the visitor. Two events tell you when that work is done, so your code does not have to poll `window.affiliateId` or guess at a delay.
 
-{/* TODO: Write this article. */}
+| Event | Type | Fires |
+| --- | --- | --- |
+| `affiliate_id_ready` | `CustomEvent` | Only when a referral was resolved. Carries the referral code and click ID. |
+| `affiliate_referral_ready` | `Event` | On almost every path, referral or not. Carries nothing. |
+
+Use `affiliate_id_ready` when you need the attribution values. Use `affiliate_referral_ready` when you need to know that tracking has settled, whoever the visitor is.
+
+## Listen on window
+
+Both events are dispatched on `window`. They do not bubble to `document`, so a listener attached to `document` never fires.
+
+```js
+window.addEventListener("affiliate_referral_ready", function () {
+  // tracking has settled
+});
+```
+
+## affiliate_id_ready
+
+Fires as soon as the script has both a referral code and a click ID for the visitor. This is the moment `window.affiliateId` becomes trustworthy.
+
+```js
+window.addEventListener("affiliate_id_ready", function (event) {
+  const { ref, clickId } = event.detail;
+  console.log("referred by", ref, "click", clickId);
+});
+```
+
+<ResponseField name="detail.ref" type="string">
+  The referral code from the affiliate link — the value of `?ref=`, or whichever parameter your program uses.
+</ResponseField>
+
+<ResponseField name="detail.clickId" type="string">
+  The ID of the recorded click. This is the value you attach to a sale [reported from your server](/developer-documentation/server-side/reporting-sales).
+</ResponseField>
+
+It never fires for a visitor who arrived without a referral. If you have code that must run for every visitor, put it on `affiliate_referral_ready` instead and read the values there.
+
+## affiliate_referral_ready
+
+A plain `Event` that signals "the script has finished deciding". It carries no `detail` — read the state yourself once it arrives:
+
+```js
+window.addEventListener("affiliate_referral_ready", function () {
+  const info = window.getPushLapAffiliateInfo();
+
+  if (info.clickId) {
+    document.querySelector("#checkout-click-id").value = info.clickId;
+  }
+});
+```
+
+This is the event to hook when you want a single place to run your attribution wiring, because it fires on the no-referral path too, and even when recording the click failed.
+
+## When each event fires
+
+| Visitor scenario | `affiliate_id_ready` | `affiliate_referral_ready` |
+| --- | --- | --- |
+| No affiliate parameter in the URL and nothing in storage | No | Yes |
+| A parameter in the URL that is not your program's | No | Yes |
+| A referral already in storage, no new parameter in the URL | Yes | Yes |
+| A fresh click on an affiliate link | Yes | Yes |
+| The same affiliate link clicked again while already stored | Yes | **No** |
+| The click could not be recorded because the request failed | No | Yes |
+
+<Warning>
+  The repeat-click row is the one that catches people out. When a visitor who already has a stored referral lands on the same link again, the script records an extra click and fires `affiliate_id_ready`, but `affiliate_referral_ready` is skipped. Anything that must run on every page load belongs in a listener for `affiliate_id_ready` **and** a fallback, not in `affiliate_referral_ready` alone.
+</Warning>
+
+## Ordering and timing
+
+`affiliate_id_ready` always fires first, then `affiliate_referral_ready`.
+
+- On the paths that need no network call — no referral, or a referral already in storage — `affiliate_referral_ready` is delayed by roughly 100 ms. That gap exists so code loaded alongside an `async` snippet still has time to attach its listener.
+- On a fresh click, `affiliate_referral_ready` fires immediately after the click is recorded, which can be several hundred milliseconds into the page depending on the network.
+- If the click request fails, `affiliate_referral_ready` still fires, and the stored referral is cleared first. Your listener will see `null` values.
+
+Because the timing depends on the visitor, never assume the events have already fired, and never assume they have not.
+
+## Never miss the event
+
+The safe pattern is to handle both orderings: check the current state once, and attach a listener for the case where the script has not finished yet.
+
+```js
+function onReferralReady(callback) {
+  const info =
+    typeof window.getPushLapAffiliateInfo === "function"
+      ? window.getPushLapAffiliateInfo()
+      : null;
+
+  if (info && info.clickId) {
+    callback(info);
+    return;
+  }
+
+  window.addEventListener("affiliate_id_ready", function (event) {
+    callback({ ref: event.detail.ref, clickId: event.detail.clickId });
+  });
+
+  window.addEventListener("affiliate_referral_ready", function () {
+    callback(window.getPushLapAffiliateInfo());
+  });
+}
+```
+
+Guard the callback against running twice if the work it does is not idempotent.
+
+## Cases where neither event fires
+
+The script exits before dispatching anything when it cannot find a program to track against — that is, when the snippet has no `data-program-id` attribute and there is no `programId` query parameter on the URL. If your listeners never run, check the snippet first. Turning on [debug mode](/developer-documentation/tracking/debug-mode) prints the program ID the script resolved.
+
+## Names reserved by Referly
+
+The tracking script listens for `affiliate_referral_ready` itself: that is how it decides whether to load your program's [popups and banners](/help-center/engage/popups-banners/install) for a referred visitor. Do not dispatch either event yourself and do not reuse the names for your own events, or you will trigger Referly behaviour at the wrong moment.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="JavaScript API reference" icon="code" href="/developer-documentation/tracking/javascript-api/reference">
+    The functions the script exposes and how to call them.
+  </Card>
+  <Card title="Globals" icon="globe" href="/developer-documentation/tracking/javascript-api/globals">
+    The values the script puts on the window.
+  </Card>
+  <Card title="Attribution" icon="route" href="/developer-documentation/tracking/attribution">
+    How a click becomes a credited sale.
+  </Card>
+  <Card title="Debug mode" icon="bug" href="/developer-documentation/tracking/debug-mode">
+    Watch the script's decisions in the console.
+  </Card>
+</Columns>

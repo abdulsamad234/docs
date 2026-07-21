@@ -1,6 +1,190 @@
 ---
 title: "Integrations overview"
-description: "Connect Referly to the tools you already use."
+description: "Connect Referly to your payment provider and website. Overview of every Referly integration — Stripe, Shopify, WooCommerce, Paddle, Chargebee, Polar, Zapier, Make — and where to find them in your dashboard."
+keywords: ["referly integrations", "affiliate tracking integration", "connect payment provider", "stripe affiliate tracking", "shopify affiliate integration", "woocommerce affiliate tracking", "paddle integration", "chargebee integration", "polar integration", "zapier affiliate", "integration instructions", "affiliate program setup"]
 ---
+Referly can only reward the right affiliate if it knows when a referred visitor actually becomes a customer. Integrations are how that information reaches Referly: you connect the tool you take payment with, and you add a small piece of tracking to your checkout or your site. From then on, every referred sale shows up in your dashboard and turns into a commission on its own.
 
-{/* TODO: Write this article. */}
+This page is the map. It covers where integrations live, the two pieces every setup needs, and which guide to open for your platform.
+
+## Where to find your integrations
+
+In the left sidebar, select **Settings**, then **Integrations**. The page is headed **Integration Instructions**.
+
+{/* TODO screenshot: integrations-page — upload it in the local Documentation Agent */}
+
+There are two things on it, and you'll usually use both:
+
+- The **Connect Integration** button, at the top right, links Referly to your payment provider.
+- The grid of cards below is a library of setup guides, one for each platform and checkout style Referly supports.
+
+## The two pieces of an integration
+
+Most setups need both halves, and they do different jobs:
+
+1. **A connection to your payment provider.** This is what lets Referly read your sales and refunds, so it knows the real amount of every order and can work out the commission. For some providers it also lets Referly create the discount codes your affiliates hand out.
+2. **Tracking on your site or checkout.** This is what tells Referly *which* affiliate a given sale belongs to. Without it, Referly sees the sale but has no idea who sent the customer.
+
+The one common exception is a coupon-only program. If you track referrals purely through discount codes, each affiliate gets their own code and the code itself identifies them, so there's no script to add to your site.
+
+## Connect your payment provider
+
+Select **Connect Integration** at the top right to open the **Choose Integration** window, then pick your provider.
+
+{/* TODO screenshot: choose-integration — upload it in the local Documentation Agent */}
+
+You can connect **Stripe**, **Shopify**, **Chargebee**, **Paddle**, **WooCommerce**, and **Polar**. A few integrations, like **Zylvie**, are private and only appear once they've been enabled for your account — contact support if you need one of those.
+
+How you connect depends on the provider:
+
+- **Stripe** and **Shopify** connect by signing in and approving Referly. There's nothing to copy and paste. Stripe also offers a test mode connection if you want to try the flow before going live.
+- **Chargebee**, **Paddle**, **WooCommerce**, and **Polar** ask for credentials from that tool, such as an API key or access token. Referly tells you exactly which fields it needs and which permissions to switch on before you generate the key, so open that panel first and follow it in order.
+
+Once a provider is linked, it shows a green **Connected** badge along with the account or site it's connected to, so you can tell at a glance that it worked.
+
+{/* TODO screenshot: connected-provider — upload it in the local Documentation Agent */}
+
+To unlink a provider, open the same panel and select **Disconnect**.
+
+## Choose the right setup guide
+
+The cards on the Integrations page are step-by-step guides. Select **Instructions** on any card to open it — the steps come with your program's own tracking code already filled in, so there's nothing to assemble yourself.
+
+{/* TODO screenshot: guide-card-chips — upload it in the local Documentation Agent */}
+
+Each card tells you what you're in for before you open it:
+
+- The **name and one-line description** describe the exact situation the guide is for, usually phrased as "You use…".
+- A difficulty label: **Easy**, **Medium**, or **Hard**.
+- **No Developer Needed** or **Developer Needed**, so you know whether this is something you can finish yourself.
+- The payment processor the guide applies to.
+- A **Private** label on restricted integrations.
+
+{/* TODO screenshot: instructions-dialog — upload it in the local Documentation Agent */}
+
+Pick the card that matches **how you take payment**, not only which company processes it. Stripe alone has five guides, because a Stripe Payment Link and a Stripe Pricing Table are set up in completely different ways. If you're not sure, check your checkout page and see which one it resembles.
+
+<Note>
+  If an agency runs your program for you, you may see fewer cards than are listed here. Agencies can hide integrations they don't support, so your list reflects what your agency has made available.
+</Note>
+
+### Payments and ecommerce
+
+<Columns cols={2}>
+  <Card title="Stripe" icon="stripe" href="/help-center/integrations/stripe" arrow>
+    Connect Stripe and pick the setup that matches your checkout.
+  </Card>
+  <Card title="Shopify" icon="shopify" href="/help-center/integrations/shopify" arrow>
+    Track referred orders from your Shopify store.
+  </Card>
+  <Card title="WooCommerce" icon="wordpress" href="/help-center/integrations/woocommerce" arrow>
+    Track sales from a WooCommerce store on WordPress.
+  </Card>
+  <Card title="Paddle" icon="credit-card" href="/help-center/integrations/paddle" arrow>
+    Track referrals through Paddle overlay checkout.
+  </Card>
+  <Card title="Chargebee" icon="receipt" href="/help-center/integrations/chargebee" arrow>
+    Drop-in, payment links, or the Chargebee API.
+  </Card>
+  <Card title="Polar" icon="circle-dot" href="/help-center/integrations/polar" arrow>
+    Payment links, embedded checkout, or the Polar API.
+  </Card>
+  <Card title="Ecwid" icon="cart-shopping" href="/help-center/integrations/ecwid" arrow>
+    Track sales on your Ecwid order confirmation page.
+  </Card>
+  <Card title="Zylvie" icon="lock" href="/help-center/integrations/zylvie" arrow>
+    Track sales on your Zylvie order success page.
+  </Card>
+</Columns>
+
+### Stripe setups
+
+Five different ways to sell with Stripe, each with its own guide. Open the one that matches your checkout.
+
+<Columns cols={2}>
+  <Card title="Session API" icon="code" href="/help-center/integrations/stripe/session-api" arrow>
+    For Stripe Checkout or subscriptions created in code.
+  </Card>
+  <Card title="Payment Links" icon="link" href="/help-center/integrations/stripe/payment-links" arrow>
+    For Stripe payment links shared on your site.
+  </Card>
+  <Card title="Pricing Table" icon="table" href="/help-center/integrations/stripe/pricing-table" arrow>
+    For an embedded Stripe pricing table.
+  </Card>
+  <Card title="Buy Button" icon="square-plus" href="/help-center/integrations/stripe/buy-button" arrow>
+    For the Stripe buy button on your website.
+  </Card>
+  <Card title="Coupon Codes" icon="ticket" href="/help-center/integrations/stripe/coupon-codes" arrow>
+    Track affiliate sales through discount codes instead of links.
+  </Card>
+</Columns>
+
+### Other platforms
+
+<Columns cols={2}>
+  <Card title="Memberstack" icon="users" href="/help-center/integrations/memberstack" arrow>
+    Memberstack sites that take payment with Stripe.
+  </Card>
+  <Card title="WordPress" icon="wordpress" href="/help-center/integrations/wordpress" arrow>
+    Add Referly tracking to a WordPress site.
+  </Card>
+  <Card title="Calendly" icon="calendar" href="/help-center/integrations/calendly" arrow>
+    Track referrals and paid bookings from Calendly.
+  </Card>
+  <Card title="Cal.com" icon="calendar-check" href="/help-center/integrations/cal-com" arrow>
+    Track referrals and sales from Cal.com bookings.
+  </Card>
+  <Card title="Pickaxe" icon="hammer" href="/help-center/integrations/pickaxe" arrow>
+    Track sales from a Pickaxe store.
+  </Card>
+  <Card title="Skillplate" icon="graduation-cap" href="/help-center/integrations/skillplate" arrow>
+    Track sales from Skillplate products.
+  </Card>
+</Columns>
+
+## If your platform isn't on the list
+
+You don't need a named integration to run a program. Four options cover almost everything else:
+
+- **Universal Forms Integration** tracks referrals through any form on your website, with no payment processor involved. It's the simplest option if you only need to know who referred a sign-up.
+- **Zapier** connects Referly to more than 8,000 apps, and **Make** to more than 2,400, so you can pass sales in from a tool Referly doesn't talk to directly.
+- **The Referly API** gives a developer full control over how sales are reported. It's the most flexible route and the most involved.
+
+<Columns cols={2}>
+  <Card title="Universal integration" icon="wpforms" href="/help-center/integrations/universal" arrow>
+    Track referrals through any form on your site.
+  </Card>
+  <Card title="Zapier" icon="bolt" href="/help-center/integrations/zapier" arrow>
+    Connect Referly to 8,000+ apps without code.
+  </Card>
+  <Card title="Make" icon="diagram-project" href="/help-center/integrations/make" arrow>
+    Build automated scenarios with 2,400+ apps.
+  </Card>
+  <Card title="Developer documentation" icon="terminal" href="/developer-documentation/integrations/overview" arrow>
+    API, webhooks, and custom tracking for developers.
+  </Card>
+</Columns>
+
+## Integrations set up somewhere else
+
+Two kinds of connection don't live on the Integrations page, because they're part of a different job:
+
+- **Email marketing.** Klaviyo, Mailchimp, MailerLite, and Brevo sync your affiliates into a mailing list so you can send them campaigns. Connect these under **Settings**, then **Affiliate portal**, then **Email settings**. See [email marketing integrations](/help-center/engage/emails/integrations).
+- **Payout methods.** Wise, PayPal, and Referly Payouts are how you actually send affiliates their money. Set these up under **Settings**, then **Program details**, then **Payout settings**. See [payout methods](/help-center/manage/payouts/payout-methods).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Tracking methods" icon="crosshairs" href="/help-center/settings/program/tracking-methods" arrow>
+    Choose how referrals are matched to affiliates.
+  </Card>
+  <Card title="Set up your program" icon="rocket" href="/help-center/getting-started/set-up-program/affiliate-program-setup" arrow>
+    The full first-time setup, start to finish.
+  </Card>
+  <Card title="Commission plans" icon="percent" href="/help-center/getting-started/commissions/overview" arrow>
+    Decide what each affiliate earns on a referred sale.
+  </Card>
+  <Card title="Payment provider webhooks" icon="webhook" href="/developer-documentation/integrations/payment-provider-webhooks" arrow>
+    How Referly receives sale events from your provider.
+  </Card>
+</Columns>

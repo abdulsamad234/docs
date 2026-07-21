@@ -1,6 +1,185 @@
 ---
 title: "Introduction"
-description: "What you can build with Referly."
+description: "Start building with Referly: browser tracking, server-side conversion reporting, the REST API base URL and bearer-token authentication, rate limits, webhooks, and platform integrations."
+keywords: ["Referly developer docs", "affiliate tracking API", "affiliate API authentication", "conversion tracking", "affiliate webhooks", "referral tracking script", "REST API base URL"]
 ---
+[Referly](https://www.referly.so) is an affiliate platform: it records who referred a visitor, keeps
+that attribution when the visitor becomes a customer, calculates the commission on every payment
+they make, and settles it in a payout.
 
-{/* TODO: Write this article. */}
+These docs cover the parts you build against — the browser tracking script, server-side conversion
+reporting, the REST API, webhooks, and the platform integrations that replace all of the above.
+
+## What you can build
+
+<Columns cols={2}>
+  <Card title="Attribution in the browser" icon="code" href="/developer-documentation/tracking/install-the-snippet">
+    Drop in one script tag and Referly records clicks, stores the referral, and survives across
+    pages and subdomains.
+  </Card>
+  <Card title="Conversions from your server" icon="server" href="/developer-documentation/server-side/reporting-sales">
+    Report sales from your backend, where you already know the real amount charged.
+  </Card>
+  <Card title="Your own affiliate experience" icon="terminal" href="/api-reference/introduction">
+    Create affiliates, issue links and coupons, and read performance data from your own app.
+  </Card>
+  <Card title="Reactions to what happens" icon="webhook" href="/developer-documentation/webhooks/introduction">
+    Receive an HTTP callback whenever an affiliate, referral, sale, or coupon changes.
+  </Card>
+</Columns>
+
+## Who these docs are for
+
+You are writing code against Referly — installing tracking on a site you control, wiring your
+checkout to report conversions, or syncing affiliate data into another system. You are comfortable
+with HTTP requests, JSON, and a bit of JavaScript.
+
+If you manage the program itself — commission plans, approving affiliates, running payouts — the
+[Help Center](/help-center) covers that side, and none of it requires code.
+
+## How the pieces fit together
+
+Every integration is some combination of three moving parts.
+
+### 1. Attribution: who referred this person
+
+A visitor arrives through an affiliate's referral link (or uses their coupon code) and Referly
+records a **click**. The tracking script stores that attribution in the browser so it survives page
+navigation and return visits.
+
+```html
+<script
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  src="https://www.referly.so/affiliate-tracker.js"
+></script>
+```
+
+Once the script has resolved the referral it exposes it on the page, so your own code can read it
+and pass it along at checkout:
+
+```js
+window.addEventListener("affiliate_referral_ready", function () {
+  console.log(window.affiliateRef); // the affiliate's referral code
+  console.log(window.affiliateId); // the click this visit belongs to
+});
+```
+
+See [Install the snippet](/developer-documentation/tracking/install-the-snippet) and the
+[JavaScript API reference](/developer-documentation/tracking/javascript-api/reference).
+
+### 2. Conversion: this person became a customer
+
+When the visitor signs up or pays, you tell Referly. The click becomes a **referral** (a tracked
+customer), and each payment they make becomes a **sale** that produces a commission.
+
+You have three ways to do this, and most programs use exactly one:
+
+<Columns cols={1}>
+  <Card title="An integration" icon="plug" href="/developer-documentation/integrations/overview">
+    Stripe, Shopify, WooCommerce, Paddle, and others report payments to Referly for you. No
+    conversion code to write.
+  </Card>
+  <Card title="Your server" icon="server" href="/developer-documentation/server-side/reporting-sales">
+    Post the sale from your backend after the charge succeeds. The most reliable option when you
+    control the payment flow.
+  </Card>
+  <Card title="The browser" icon="browser" href="/developer-documentation/tracking/javascript-api/reference">
+    Call the tracking script's helpers on your confirmation page. Quickest to ship, but subject to
+    ad blockers and abandoned redirects.
+  </Card>
+</Columns>
+
+### 3. Reading and reacting
+
+Once data is flowing, the [REST API](/api-reference/introduction) reads and writes affiliates,
+referrals, sales, links, coupons, and promotional codes, and
+[webhooks](/developer-documentation/webhooks/introduction) push changes to you as they happen.
+
+## Base URL and environments
+
+The REST API lives under a single base URL:
+
+```bash
+https://www.referly.so/api/v1
+```
+
+The tracking script is served from `https://www.referly.so/affiliate-tracker.js`.
+
+Referly has one live environment — there is no separate sandbox, and API keys are not split into
+test and live modes. To try things end to end without touching real data, create a second program
+in your dashboard and point your staging site at that program's ID. Sales you create while testing
+can be deleted afterwards.
+
+<Note>
+  API access is included with the Business plan. If your key returns `403` with `User does not have
+  API access`, check your plan on the [pricing page](https://referly.so/pricing).
+</Note>
+
+## Authentication
+
+Every API request carries an API key as a bearer token. Keys are created in your dashboard and
+scoped to one program, so the key itself determines which program's data you are reading and
+writing — you never pass a program ID to the API.
+
+```bash
+curl https://www.referly.so/api/v1/affiliates \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+A missing or unrecognised key returns `401`. Full details, including how to generate and rotate a
+key, are in [Authentication](/developer-documentation/api/authentication).
+
+<Warning>
+  API keys grant full read and write access to your program. Keep them on your server and out of
+  browser code, mobile apps, and version control.
+</Warning>
+
+## Rate limits
+
+Requests are counted per API key, and the ceiling depends on what the endpoint does — reads are the
+most generous, sales the strictest, because each one triggers attribution and commission
+calculation. Exceeding a limit returns `429` with `Too many requests. Please slow down.`
+
+Retry after a short pause rather than immediately, and batch where you can. The exact windows are
+listed in [Rate limits](/developer-documentation/api/rate-limits).
+
+## Webhooks
+
+Referly can push events to an endpoint you own, so you do not have to poll. Events are emitted for
+affiliates, referrals, sales, coupons, and promotional codes, each in created, updated, and deleted
+form — for example `affiliate.created`, `sale.updated`, `referral.deleted`.
+
+Deliveries are signed, retried on failure, and logged, so you can replay anything you missed. See
+[Webhooks](/developer-documentation/webhooks/introduction).
+
+## Skip the code
+
+If you are on a platform Referly already integrates with, the fastest integration is no integration
+at all.
+
+<Columns cols={3}>
+  <Card title="Stripe" href="/developer-documentation/integrations/stripe-app" arrow />
+  <Card title="Shopify" href="/developer-documentation/integrations/shopify-app" arrow />
+  <Card title="WooCommerce" href="/developer-documentation/integrations/woocommerce" arrow />
+  <Card title="Zapier" href="/developer-documentation/integrations/zapier" arrow />
+  <Card title="Make" href="/developer-documentation/integrations/make" arrow />
+  <Card title="Everything else" href="/developer-documentation/integrations/overview" arrow />
+</Columns>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Quickstart" icon="bolt" href="/developer-documentation/getting-started/quickstart">
+    Install tracking and record your first sale, end to end.
+  </Card>
+  <Card title="Core concepts" icon="diagram-project" href="/developer-documentation/getting-started/core-concepts">
+    Programs, affiliates, clicks, referrals, sales, commissions, and payouts.
+  </Card>
+  <Card title="Glossary" icon="book" href="/developer-documentation/getting-started/glossary">
+    Every term Referly uses, defined once.
+  </Card>
+  <Card title="API reference" icon="terminal" href="/api-reference/introduction">
+    Endpoint-by-endpoint documentation for the REST API.
+  </Card>
+</Columns>

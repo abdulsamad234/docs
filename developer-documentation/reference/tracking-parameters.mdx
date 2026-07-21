@@ -1,6 +1,232 @@
 ---
 title: "Tracking parameters"
-description: "The URL parameters Referly recognises."
+description: "Reference for every Referly tracking parameter: referral parameters, rsubID external click ID, UTM parameters, gclid and other ad click IDs, cross-domain _plg_ref and _plg_cid, storage keys, and server-side attribution fields."
+keywords: ["Referly tracking parameters", "rsubID", "affiliate referral parameter", "utm_source click tracking", "gclid gbraid wbraid fbclid", "li_fat_id", "_plg_ref _plg_cid", "cross-domain affiliate tracking", "click ID attribution", "server-side attribution parameters"]
 ---
+Every parameter Referly reads, in one place, with the click field each one lands in. This is a
+lookup page — [URL parameters](/developer-documentation/tracking/url-parameters) explains the
+behaviour behind it.
 
-{/* TODO: Write this article. */}
+Parameters fall into three groups. One identifies the affiliate and decides attribution. One enriches
+the click but never changes who gets credit. One carries attribution across a boundary the browser
+would otherwise break.
+
+## Referral parameters
+
+The parameter carrying the affiliate's code. Your program uses exactly one, chosen from this fixed
+list, and `ref` is the default.
+
+```
+ref        via        partner    aff        id         r
+invite     plgid      a          stream     mhk        bt
+coupon     promo      with       envoy      plref      refcode
+share      s          go         partener   virtual    now
+vca        offer      am_id      vap        ooo        freshbook
+img        join       referral_code         fpr        inv
+cpn        trovabando fp_ref
+```
+
+| Read from | Stored as | Affects attribution |
+| --- | --- | --- |
+| `window.location.search` | The click's `affiliateId` and `affiliateLinkId`, resolved from the code | Yes |
+
+Names are case-sensitive, and the value must be in the query string — anything after a `#` is
+invisible to the tracker. A link using a name on this list that is not the one your program is
+configured for is recognised as a candidate but resolves to nobody.
+
+## Program identification
+
+The tracker needs to know which program it is running for before it reads anything else.
+
+| Source | Form | Notes |
+| --- | --- | --- |
+| Script attribute | `data-program-id` | The normal way. Set it on the script tag. |
+| Query parameter | `programId` | Fallback, read from the URL when the attribute is absent. Useful on pages where you cannot edit the tag. |
+
+Without one of these the tracker exits immediately and records nothing.
+
+## External click ID
+
+| Parameter | Click field | Sticky |
+| --- | --- | --- |
+| `rsubID` | `extClickId` | Yes |
+
+Your own identifier for the click, for reconciling Referly against an ad platform or a sub-affiliate
+network:
+
+```
+https://your-domain.com/?ref=jane&rsubID=newsletter-week-12
+```
+
+It is stored in the browser for the same duration as the referral, so later visits without the
+parameter still carry it. A value on the current URL takes precedence over the stored one; when
+neither is present, the field is null. It is replayed to postbacks as `{extClickid}`.
+
+See [External click IDs](/developer-documentation/tracking/external-click-ids).
+
+## UTM parameters
+
+Captured verbatim from the query string when a click is recorded. They never affect attribution.
+
+| Parameter | Click field |
+| --- | --- |
+| `utm_source` | `utmSource` |
+| `utm_medium` | `utmMedium` |
+| `utm_campaign` | `utmCampaign` |
+| `utm_term` | `utmTerm` |
+| `utm_content` | `utmContent` |
+
+Each is indexed, so all five work as breakdown dimensions in analytics.
+
+## Ad platform click IDs
+
+Also captured verbatim, and also irrelevant to attribution.
+
+| Parameter | Click field | Platform |
+| --- | --- | --- |
+| `gclid` | `gclid` | Google Ads |
+| `gbraid` | `gbraid` | Google Ads, iOS app-to-web |
+| `wbraid` | `wbraid` | Google Ads, web-to-app |
+| `fbclid` | `fbclid` | Meta |
+| `msclkid` | `msclkid` | Microsoft Ads |
+| `ttclid` | `ttclid` | TikTok |
+| `twclid` | `twclid` | X |
+| `li_fat_id` | `liFatId` | LinkedIn |
+
+`li_fat_id` is the only one whose stored field name differs from the parameter name.
+
+The presence of any of these classifies the click as paid traffic — `referrerType` is set to `paid`
+regardless of which domain referred the visit. See
+[UTMs and ad click IDs](/developer-documentation/tracking/utm-and-ad-click-ids).
+
+## Cross-domain handoff
+
+Written by Referly, not by you. Never add them by hand.
+
+| Parameter | Carries | Direction |
+| --- | --- | --- |
+| `_plg_ref` | The affiliate's referral code | Appended on the way out, read on the way in |
+| `_plg_cid` | The click ID | Appended on the way out, read on the way in |
+
+When a visitor with active attribution follows a link to a domain on your cross-tracking list, the
+tracker appends both. The receiving domain reads them, writes the attribution into its own storage,
+and strips them from the address bar with `history.replaceState`. They are also appended to form
+actions pointing at approved domains.
+
+See [Cross-domain tracking](/developer-documentation/tracking/cross-domain-tracking).
+
+## What the browser stores
+
+Three keys per program, each prefixed with your program ID. Cookies are used when available, with
+localStorage as the fallback when they are not.
+
+| Key | Holds |
+| --- | --- |
+| `PROGRAM_ID_affiliate_ref` | The affiliate's referral code |
+| `PROGRAM_ID_affiliate_referral` | The click ID |
+| `PROGRAM_ID_rsubID` | The external click ID |
+
+Cookies are written on the registrable domain, so attribution is shared across subdomains without
+any extra configuration. Details in
+[Cookies and storage](/developer-documentation/tracking/cookies-and-storage).
+
+## Values exposed on the page
+
+Once the tracker has resolved attribution it puts two values on `window` and fires an event. These
+are what you pass to your backend at checkout.
+
+| Global | Contains | Pass it as |
+| --- | --- | --- |
+| `window.affiliateRef` | The affiliate's referral code | `affiliateId` on a referral, or `referralId` on a sale |
+| `window.affiliateId` | The click ID, a number | `affiliateId` on a referral, for click-accurate attribution |
+
+```js
+window.addEventListener("affiliate_referral_ready", function () {
+  console.log(window.affiliateRef);
+  console.log(window.affiliateId);
+});
+```
+
+See the [JavaScript API reference](/developer-documentation/tracking/javascript-api/reference).
+
+## Server-side attribution parameters
+
+When you report a conversion from your backend there is no URL to read, so you name the affiliate
+explicitly. These fields do the work the query parameters do in the browser.
+
+Creating a referral:
+
+| Field | Accepts |
+| --- | --- |
+| `affiliateId` | An affiliate ID, a link slug, or a click ID |
+| `affiliateEmail` | The affiliate's email address |
+| `promoCode` | A promotional code, which resolves to the affiliate who owns it |
+
+One of the three is required. `affiliateId` is overloaded on purpose: a value made entirely of
+digits is looked up as a **click ID** first, which is why passing `window.affiliateId` straight
+through ties the conversion to the exact click that produced it. A non-numeric value is treated as an
+affiliate ID or a link slug.
+
+Creating a sale:
+
+| Field | Accepts |
+| --- | --- |
+| `referralId` | A referral ID, a link slug, or an affiliate ID |
+| `email` | The customer's email, matched against existing referrals |
+| `promoCode` | A promotional code, which credits its affiliate with no click required |
+
+One of the three is required here too. See
+[Reporting sales](/developer-documentation/server-side/reporting-sales).
+
+## Captured without a parameter
+
+Several click fields have no parameter behind them. They are derived from the request or the
+browser, so they are populated on every click whatever the URL looks like.
+
+| Click fields | Derived from |
+| --- | --- |
+| `documentReferrer`, `referrerDomain`, `referrerType` | `document.referrer`, then classified as `direct`, `search`, `social`, `email`, `paid`, or `unknown` |
+| `userAgent`, `browserName`, `browserVersion`, `osName`, `osVersion`, `deviceType` | The user agent string |
+| `screenWidth`, `screenHeight`, `colorDepth`, `pixelRatio`, `viewportWidth`, `viewportHeight` | `screen` and `window` |
+| `language`, `languages` | `navigator` |
+| `geoCountry`, `geoRegion`, `geoCity`, `geoIsp`, `isProxy`, `isVpn` | The IP address, enriched server-side |
+| `fullLandingUrl`, `pathname`, `queryString` | The landing URL, stored whole |
+
+`queryString` keeps the entire query string, so a parameter Referly does not read by name is still
+recoverable from the click.
+
+## Precedence
+
+| Situation | Outcome |
+| --- | --- |
+| A referral code in the URL, nothing stored | New click recorded and stored |
+| The same code in the URL and in storage | Additional click recorded, `uniqueClick` false |
+| A different code in the URL | New click recorded; the stored code is replaced. Last click wins |
+| No recognised code, something stored | Stored attribution reused and its expiry extended |
+| No recognised code, nothing stored | The tracker exits without a network request |
+| `rsubID` in the URL and in storage | The URL value wins and replaces what was stored |
+| A cross-domain handoff and local storage | The handoff wins |
+
+## Postbacks
+
+Postback URLs are the reverse direction — Referly filling parameters into a URL you own. The two
+that carry click identity are `{clickid}`, the Referly click ID, and `{extClickid}`, the value you
+sent as `rsubID`. The full macro list is in
+[Postback URL](/developer-documentation/integrations/postback-url).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="URL parameters" icon="link" href="/developer-documentation/tracking/url-parameters">
+    How the referral parameter is matched, and how to change it.
+  </Card>
+  <Card title="What gets captured" icon="database" href="/developer-documentation/tracking/click-data">
+    Every field stored on a click, with example values.
+  </Card>
+  <Card title="Data model" icon="diagram-project" href="/developer-documentation/reference/data-model">
+    The objects these fields belong to.
+  </Card>
+  <Card title="Debug mode" icon="bug" href="/developer-documentation/tracking/debug-mode">
+    Watch the tracker report which parameters it found.
+  </Card>
+</Columns>

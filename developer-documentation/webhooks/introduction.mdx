@@ -1,6 +1,286 @@
 ---
 title: "Webhooks introduction"
-description: "Receive events when things change in your program."
+description: "Referly webhooks push affiliate, referral, sale, coupon, and promo code events to your server in real time. Learn the delivery flow, payload envelope, endpoint requirements, and how to write a signed, idempotent handler."
+keywords: ["Referly webhooks", "affiliate webhooks", "webhook introduction", "real-time affiliate events", "sale.created webhook", "affiliate.created webhook", "Svix webhooks", "webhook endpoint requirements", "webhook signature verification", "idempotent webhook handler", "affiliate program events"]
 ---
+Referly webhooks push events to your server the moment they happen, so you never have to poll the
+API asking whether anything changed. An affiliate signs up, a referred customer converts, a sale is
+attributed — Referly builds a JSON payload, signs it, and `POST`s it to a URL you own, usually
+within a second or two of the event.
 
-{/* TODO: Write this article. */}
+Delivery is handled by [Svix](https://www.svix.com), which is why every message is signed, retried
+on failure, and kept in a searchable log you can replay from.
+
+## When to use a webhook
+
+Referly gives you three ways to move data, and they point in different directions:
+
+| You want to | Use |
+| --- | --- |
+| Tell Referly a visitor was referred | [The tracking script](/developer-documentation/tracking/install-the-snippet) |
+| Tell Referly about a payment | [Server-side reporting](/developer-documentation/server-side/reporting-sales) |
+| Ask Referly for data, on your schedule | [The REST API](/api-reference/introduction) |
+| Have Referly tell you the instant something changes | **Webhooks** |
+
+Reach for a webhook when latency matters or when polling would be wasteful — provisioning an account
+the second a referral is created, posting to Slack when an affiliate applies, or keeping your own
+database in step with Referly's without a nightly job.
+
+If you want events landing in another SaaS tool rather than your own code,
+[Zapier](/developer-documentation/integrations/zapier) and
+[Make](/developer-documentation/integrations/make) are webhooks with the handler already written.
+
+## How a delivery works
+
+<Steps>
+  <Step title="Something changes in your program">
+    A sale is recorded, an affiliate is approved, a promo code is issued — whether it came from the
+    dashboard, an integration, or the API.
+  </Step>
+  <Step title="Referly builds the payload">
+    The changed object is loaded with its useful relations attached — a sale arrives with its
+    affiliate, referral, and commission already expanded, so you rarely need a follow-up API call.
+  </Step>
+  <Step title="Referly signs and sends it">
+    The payload is `POST`ed to every enabled endpoint subscribed to that event type, with
+    `svix-id`, `svix-timestamp`, and `svix-signature` headers.
+  </Step>
+  <Step title="Your endpoint verifies and acknowledges">
+    You check the signature, return a `2xx` immediately, and do the real work afterwards.
+  </Step>
+  <Step title="Failures are retried and logged">
+    Anything that is not acknowledged is retried automatically on a backoff schedule over the
+    following hours, and every attempt — with your server's response body — is stored in the log.
+  </Step>
+</Steps>
+
+## What every payload looks like
+
+Each message is a JSON object with exactly two top-level keys: `event`, the event type that fired,
+and `body`, the object it happened to.
+
+```json
+{
+  "event": "sale.created",
+  "body": {
+    "id": 8241,
+    "affiliateId": "clx8k2p9q0000abcd1234efgh",
+    "referralId": "clx9m4r7t0001abcd5678ijkl",
+    "totalEarned": 149.0,
+    "commissionEarned": 29.8,
+    "commissionRate": 20,
+    "paymentTrigger": "stripe",
+    "payoutCreated": false,
+    "createdAt": "2026-03-11T09:24:18.442Z",
+    "affiliate": {
+      "id": "clx8k2p9q0000abcd1234efgh",
+      "firstName": "Dana",
+      "lastName": "Okoye",
+      "email": "dana@example.com",
+      "status": "ACTIVE"
+    },
+    "referral": {
+      "id": "clx9m4r7t0001abcd5678ijkl",
+      "referredUserExternalId": "cus_QhT2p0aBcDeF",
+      "email": "customer@example.com"
+    }
+  }
+}
+```
+
+Delete events are the exception — their `body` contains only the `id` of the object that was
+removed, because there is nothing left to expand. Field-by-field breakdowns for all five object
+families are in [Payload structure](/developer-documentation/webhooks/payload-structure).
+
+## What you can subscribe to
+
+There are fifteen event types, in five families. Each family fires on create, update, and delete:
+
+| Family | Event types |
+| --- | --- |
+| Affiliate | `affiliate.created`, `affiliate.updated`, `affiliate.deleted` |
+| Referral | `referral.created`, `referral.updated`, `referral.deleted` |
+| Sale | `sale.created`, `sale.updated`, `sale.deleted` |
+| Coupon | `coupon.created`, `coupon.updated`, `coupon.deleted` |
+| Promo code | `promocode.created`, `promocode.updated`, `promocode.deleted` |
+
+Subscribe only to what you will act on. Each endpoint filters on its own list, so a handler that
+only cares about revenue never has to skip past affiliate profile edits. See
+[Event types](/developer-documentation/webhooks/event-types) for what triggers each one.
+
+<Note>
+  There are no payout event types. Payout state reaches you through the commissions on a sale
+  instead — each entry in a sale's `commissions` array carries `payoutCreated` and `payoutId`, so a
+  `sale.updated` event tells you when a commission has been rolled into a payout.
+</Note>
+
+## Requirements for your endpoint
+
+Your receiving URL has to meet four conditions.
+
+### Publicly reachable over HTTPS
+
+The URL must resolve from the public internet. `localhost` and private network addresses receive
+nothing — while you are developing, use a tunnel such as ngrok or Cloudflare Tunnel and point the
+endpoint at the public hostname it gives you.
+
+### Acknowledges fast
+
+Return a `2xx` status as soon as you have verified the signature. Anything else, including a
+timeout, counts as a failure and starts the retry cycle. Do not call your database, your billing
+provider, or a third-party API before responding — push the event onto a queue and respond, then
+process it out of band.
+
+### Verifies the signature
+
+The URL is the only secret protecting the endpoint, and URLs leak. Without a signature check, anyone
+who learns yours can post a fake `sale.created` and mint commission. Every endpoint gets its own
+signing secret; see [Verify signatures](/developer-documentation/webhooks/verifying-signatures).
+
+### Handles duplicates
+
+Retries, manual resends, and network timeouts all mean the same event can arrive more than once.
+Treat the `svix-id` header as an idempotency key: record the IDs you have processed and drop
+repeats, or make the write itself idempotent by upserting on the object's `id`.
+
+## A minimal handler
+
+The `svix` libraries do the signature check for you. Note that verification runs against the **raw**
+request body — parsing to JSON first and re-serialising changes the bytes and the signature will not
+match.
+
+<CodeGroup>
+
+```ts Next.js
+import { Webhook } from "svix";
+import { headers } from "next/headers";
+
+export async function POST(req: Request) {
+  const payload = await req.text();
+  const h = await headers();
+
+  const wh = new Webhook(process.env.REFERLY_WEBHOOK_SECRET!);
+
+  let event: { event: string; body: Record<string, unknown> };
+  try {
+    event = wh.verify(payload, {
+      "svix-id": h.get("svix-id")!,
+      "svix-timestamp": h.get("svix-timestamp")!,
+      "svix-signature": h.get("svix-signature")!,
+    }) as typeof event;
+  } catch {
+    return new Response("Invalid signature", { status: 400 });
+  }
+
+  // Acknowledge first, process afterwards.
+  await queue.enqueue(event);
+  return new Response("ok", { status: 200 });
+}
+```
+
+```js Express
+import express from "express";
+import { Webhook } from "svix";
+
+const app = express();
+const wh = new Webhook(process.env.REFERLY_WEBHOOK_SECRET);
+
+app.post(
+  "/webhooks/referly",
+  express.raw({ type: "application/json" }),
+  (req, res) => {
+    let event;
+    try {
+      event = wh.verify(req.body, {
+        "svix-id": req.headers["svix-id"],
+        "svix-timestamp": req.headers["svix-timestamp"],
+        "svix-signature": req.headers["svix-signature"],
+      });
+    } catch {
+      return res.status(400).send("Invalid signature");
+    }
+
+    res.sendStatus(200);
+    queue.enqueue(event);
+  }
+);
+```
+
+```python Flask
+import os
+from flask import Flask, request
+from svix.webhooks import Webhook, WebhookVerificationError
+
+app = Flask(__name__)
+wh = Webhook(os.environ["REFERLY_WEBHOOK_SECRET"])
+
+@app.post("/webhooks/referly")
+def referly_webhook():
+    try:
+        event = wh.verify(request.data, dict(request.headers))
+    except WebhookVerificationError:
+        return "Invalid signature", 400
+
+    queue.enqueue(event)
+    return "ok", 200
+```
+
+</CodeGroup>
+
+Branch on `event.event` from there — the string is always `family.action`, so a `switch` on the
+event type is usually all the routing you need.
+
+## Where endpoints are configured
+
+Endpoints belong to a single affiliate program. Create them in your dashboard under **Settings**,
+then **Advanced**, then **Webhooks**, on the campaign whose events you want. Each endpoint has a
+URL, a description, its own signing secret, and its own list of subscribed event types, and can be
+disabled without losing its history.
+
+If you run several programs, each one needs its own endpoint — a program's events never reach
+another program's URL.
+
+<Info>
+  Creating endpoints requires a Business or Agency plan and is not available during a free trial.
+  See [plans and features](/help-center/billing/plans-and-features).
+</Info>
+
+Step-by-step setup is in [Manage endpoints](/developer-documentation/webhooks/managing-endpoints),
+and the non-technical version lives in the
+[Help Center](/help-center/settings/advanced/webhooks).
+
+## What people build with them
+
+- **Keep your own database in sync.** Mirror referrals and sales into your warehouse as they land,
+  instead of paging the API on a cron.
+- **React to signups.** Push a new `affiliate.created` into your CRM, start an onboarding email
+  sequence, or open a ticket for manual review.
+- **Trigger fulfilment.** Unlock a course, extend a licence, or grant account credit the moment a
+  sale is attributed to a partner.
+- **Alert on revenue.** Post large sales to Slack, or flag a `sale.deleted` so finance knows a
+  commission was reversed.
+- **Watch for payout readiness.** Use `sale.updated` and the `payoutCreated` flag on the sale's
+  commissions to know when a commission has moved into a payout run.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Manage endpoints" icon="link" href="/developer-documentation/webhooks/managing-endpoints">
+    Create, edit, disable, and delete the URLs Referly sends to.
+  </Card>
+  <Card title="Event types" icon="list" href="/developer-documentation/webhooks/event-types">
+    All fifteen events and exactly what triggers each one.
+  </Card>
+  <Card title="Payload structure" icon="brackets-curly" href="/developer-documentation/webhooks/payload-structure">
+    Field-by-field reference for every object you can receive.
+  </Card>
+  <Card title="Verify signatures" icon="shield-check" href="/developer-documentation/webhooks/verifying-signatures">
+    Prove a request came from Referly before you trust it.
+  </Card>
+  <Card title="Retries and logs" icon="clock-rotate-left" href="/developer-documentation/webhooks/retries-and-logs">
+    The retry schedule, the delivery log, and how to read a failure.
+  </Card>
+  <Card title="Test and replay" icon="flask" href="/developer-documentation/webhooks/testing">
+    Send sample events and resend real ones while you build.
+  </Card>
+</Columns>

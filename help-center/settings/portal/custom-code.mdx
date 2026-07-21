@@ -1,6 +1,123 @@
 ---
 title: "Custom code"
-description: "Add your own scripts or styles."
+description: "Add your own CSS and JavaScript to your Referly affiliate portal. Restyle the portal, add analytics or a chat widget, and learn which code is blocked for security."
+keywords: ["affiliate portal custom code", "custom CSS", "custom JavaScript", "portal styling", "add analytics script", "chat widget affiliate portal", "Referly custom code", "white label portal", "inject code"]
 ---
+Referly's portal settings cover most of what people want to change, but sometimes you need something specific — a font that matches your brand exactly, your analytics tool, or a support chat bubble. The **Custom Code** page lets you add your own CSS and JavaScript to your affiliate portal to do that.
 
-{/* TODO: Write this article. */}
+To find it, open **Settings** from the left sidebar, go to **Affiliate Portal**, then select **Custom Code**.
+
+{/* TODO screenshot: custom-code-page — upload it in the local Documentation Agent */}
+
+There are two boxes: **Custom CSS** for how things look, and **Custom JavaScript** for behavior. You can use one or both.
+
+<Info>
+  Saving custom code needs the **Business plan** or higher. See [plans and features](/help-center/billing/plans-and-features).
+</Info>
+
+<Note>
+  Anything you add here runs on your **affiliate portal only** — every page of it, including login and sign-up. It doesn't touch your own website, and it doesn't affect your Referly dashboard.
+</Note>
+
+## Add custom CSS
+
+The **Custom CSS** box changes how your portal looks. Use it for adjustments the [branding](/help-center/getting-started/set-up-program/branding) and [login page](/help-center/settings/portal/login-and-sign-up) settings don't cover.
+
+{/* TODO screenshot: custom-css-editor — upload it in the local Documentation Agent */}
+
+Write plain CSS, the same as you would for a website:
+
+```css
+/* Round the corners on buttons */
+button {
+  border-radius: 12px;
+}
+
+/* Hide an element you don't want affiliates to see */
+.some-element {
+  display: none;
+}
+```
+
+To target the right thing, open your portal in a browser, right-click the element you want to change, and choose **Inspect** to find its name. If you're not comfortable doing that, this is a good task to hand to whoever built your website.
+
+## Add custom JavaScript
+
+The **Custom JavaScript** box is for adding behavior — most often a tracking or analytics snippet, or a support chat widget.
+
+{/* TODO screenshot: custom-js-editor — upload it in the local Documentation Agent */}
+
+<Warning>
+  Paste the code **only**, without the surrounding `script` tags. Most snippets you're given start with `<script>` and end with `</script>` — delete those two lines and keep what's between them. Referly adds the wrapper for you.
+</Warning>
+
+For example, if a tool gives you this:
+
+```html
+<script>
+  myTool.init('abc123');
+</script>
+```
+
+you paste only this:
+
+```javascript
+myTool.init('abc123');
+```
+
+If you need your code to wait until the page has loaded, do it like this:
+
+```javascript
+document.addEventListener('DOMContentLoaded', function () {
+  // your code here
+});
+```
+
+## What isn't allowed
+
+To protect your affiliates' accounts, some risky JavaScript is stripped out before it runs. Code that runs text as code or rewrites the page wholesale won't work, including `eval`, `document.write`, `execScript`, and setting `innerHTML` or `outerHTML` directly. Timers written with quoted text instead of a function are also rewritten.
+
+If a snippet you paste relies on any of those, it stays silent instead of running. Ask the tool's support team for a version that doesn't use them, or load their official script through a tag manager on your own site instead.
+
+CSS is checked too, so anything that tries to pull in outside files or scripts through your stylesheet is removed.
+
+## Save and check your work
+
+As soon as you edit either box, a **Save Changes** button appears at the bottom right. Your code isn't live until you select it.
+
+{/* TODO screenshot: save-changes-custom-code — upload it in the local Documentation Agent */}
+
+<Check>
+  When the "Custom code saved successfully" message appears, your code is live.
+</Check>
+
+There's no preview on this page, so open your affiliate portal in a new tab and look at it there. Check the login page and a page or two inside the portal, on a phone as well as a computer, since a styling change that looks right on a wide screen can break a narrow one.
+
+## If something breaks
+
+Custom code runs on every page of your portal, so a mistake can hide a button your affiliates need or stop a page from working.
+
+If that happens, come back to this page, clear the box you changed, and select **Save Changes**. Your portal returns to normal right away. Nothing here can damage your program's data — the worst case is a portal that looks or behaves wrong until you undo it.
+
+A few habits that save trouble:
+
+- Add one change at a time and check the portal after each, so you know what caused a problem.
+- Keep a copy of your code somewhere outside Referly before you make a big edit.
+- Avoid hiding anything affiliates need, like the payout or referral link sections.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Set up your branding" icon="palette" href="/help-center/getting-started/set-up-program/branding" arrow>
+    Change logos and colors without writing any code.
+  </Card>
+  <Card title="Login and sign up" icon="window-maximize" href="/help-center/settings/portal/login-and-sign-up" arrow>
+    Pick a layout and customize your portal's first screens.
+  </Card>
+  <Card title="Contact widget" icon="comment" href="/help-center/settings/portal/contact-widget" arrow>
+    Add a built-in way for affiliates to reach you, no code needed.
+  </Card>
+  <Card title="Custom domain" icon="globe" href="/help-center/settings/portal/custom-domain" arrow>
+    Serve the portal from your own web address.
+  </Card>
+</Columns>

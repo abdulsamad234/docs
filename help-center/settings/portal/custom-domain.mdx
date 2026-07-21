@@ -1,6 +1,114 @@
 ---
 title: "Custom domain"
-description: "Serve the portal from your own domain."
+description: "Serve your Referly affiliate portal from your own domain. Add a custom domain, create the CNAME or A record at your DNS provider, verify it, and go live at partners.yourbrand.com."
+keywords: ["affiliate portal custom domain", "white label affiliate portal", "CNAME record", "A record", "DNS verification", "branded affiliate domain", "Referly custom domain", "portal URL", "domain setup"]
 ---
+By default your affiliate portal lives at a Referly address like `yourprogram.referly.so`. A custom domain puts it on your own web address instead — something like `partners.yourbrand.com` — so affiliates never see another company's name when they log in to check their earnings.
 
-{/* TODO: Write this article. */}
+To find it, open **Settings** from the left sidebar, go to **Affiliate Portal**, then select **Custom Domain**.
+
+{/* TODO screenshot: custom-domains-empty-state — upload it in the local Documentation Agent */}
+
+<Info>
+  Custom domains need a plan that includes them, and they aren't available during a free trial. If yours doesn't include it, the **Add Domain** button appears locked. See [plans and features](/help-center/billing/plans-and-features).
+</Info>
+
+<Note>
+  You'll need access to wherever your domain's DNS settings are managed — usually the company you bought the domain from, such as GoDaddy, Namecheap, or Cloudflare. If someone else manages that for you, send them the records from the table below.
+</Note>
+
+## Add your domain
+
+Select **Add Domain**. In the **Add Custom Domain** window, type the address you want your portal to live at in the **Domain Name** field, then select **Add Domain**.
+
+{/* TODO screenshot: add-domain-dialog — upload it in the local Documentation Agent */}
+
+Most people use a subdomain of their main site, like `partners.yourbrand.com` or `affiliates.yourbrand.com`. Pick something your affiliates will recognize.
+
+<Warning>
+  Use an address you aren't already using for something else. Pointing your main website address at your affiliate portal would take your website offline, so choose a subdomain unless you're certain.
+</Warning>
+
+The domain appears in the list right away with a status showing it isn't live yet. That's expected — you haven't pointed it at Referly yet.
+
+## Point your domain at Referly
+
+On the domain's card, select **Setup Instructions** to open the **DNS Configuration** window. It shows a table of the records you need to create, with a **Type**, a **Name**, and a **Value** for each.
+
+{/* TODO screenshot: dns-configuration-table — upload it in the local Documentation Agent */}
+
+What you'll see depends on the kind of address you added:
+
+- For a **subdomain** like `partners.yourbrand.com`, you get a **CNAME** record. The **Name** is the first part of your address, such as `partners`.
+- For a **root domain** like `yourbrand.com`, you get an **A** record with a **Name** of `@`.
+- You may also see an extra **TXT** record. That one proves you own the domain, and it's only needed sometimes.
+
+<Steps>
+  <Step title="Open your DNS settings">
+    Sign in to wherever your domain is managed and find the DNS records area. It's often called "DNS", "DNS Management", or "Advanced DNS".
+  </Step>
+  <Step title="Create each record from the table">
+    Add a new record for every row, copying the **Type**, **Name**, and **Value** exactly as shown on your screen. Copy the values from your own table rather than from any example — they're generated for your domain.
+  </Step>
+  <Step title="Save at your DNS provider">
+    Save the records. If your provider asks for a TTL and you have no preference, leave the default.
+  </Step>
+</Steps>
+
+<Warning>
+  Don't leave out the TXT record if one is listed. Without it the domain can stay stuck on "Verify Ownership" no matter how long you wait.
+</Warning>
+
+## Verify the domain
+
+Back in Referly, select **Verify Domain** in the DNS Configuration window, or use the refresh button on the domain's card to check again at any time.
+
+DNS changes usually take effect within a few minutes, but they can take up to 48 hours. If it doesn't work the first time, that's normal — wait a little and check again. You'll see a message telling you it isn't verified yet rather than an error.
+
+{/* TODO screenshot: domain-verified — upload it in the local Documentation Agent */}
+
+The status pill on the card tells you where things stand:
+
+| Status | What it means | What to do |
+| --- | --- | --- |
+| **Waiting for DNS** | Your records haven't been picked up yet | Wait and refresh, or check the records match the table |
+| **Verify Ownership** | The TXT record is missing or wrong | Add the TXT record from the table, then refresh |
+| **Not Registered** | The domain doesn't appear to exist | Check for a typo, and that the domain is registered and not expired |
+| **Verified** | The domain is live | Nothing, you're done |
+
+<Check>
+  Once you see the green **Verified** pill, your portal is reachable at your own address. The secure padlock is set up for you, so there's no certificate to buy or install.
+</Check>
+
+## What changes once it's live
+
+Your custom domain becomes the main address for your affiliate portal. Affiliates log in there, sign up there, and links to the portal use it.
+
+Your original Referly address keeps working, so anyone using an old bookmark isn't stranded.
+
+<Warning>
+  If you use [social login](/help-center/settings/portal/social-login), the redirect address changes when you add a custom domain. Go back to the Social Login page, copy the new **Authorized Redirect URL**, and update it in your Google Cloud Console, or affiliates will get an error when signing in with Google.
+</Warning>
+
+## Remove or change a domain
+
+The trash button on a domain's card removes it. Your portal falls back to your Referly address straight away, so do this outside of a busy period and let your affiliates know if they've bookmarked the old one.
+
+To move to a different address, add the new domain and verify it, then remove the old one. You can have more than one domain in the list, and the first one is the address your portal is served from.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Social login" icon="right-to-bracket" href="/help-center/settings/portal/social-login" arrow>
+    Update your Google redirect address after changing domains.
+  </Card>
+  <Card title="Login and sign up" icon="window-maximize" href="/help-center/settings/portal/login-and-sign-up" arrow>
+    Customize the pages affiliates land on at your new address.
+  </Card>
+  <Card title="Agency custom domain" icon="building" href="/help-center/agencies/custom-domain" arrow>
+    Agencies serving many client portals from one domain.
+  </Card>
+  <Card title="Plans and features" icon="tags" href="/help-center/billing/plans-and-features" arrow>
+    See which plan includes custom domains.
+  </Card>
+</Columns>

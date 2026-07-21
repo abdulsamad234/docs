@@ -1,6 +1,161 @@
 ---
 title: "Idempotency"
-description: "Retry safely without creating duplicate sales."
+description: "Retry Referly sale reporting without creating duplicate commissions. How externalId and externalInvoiceId deduplicate sales, what a duplicate request returns, and how to verify a sale landed."
+keywords: ["idempotency", "duplicate sales", "externalId", "externalInvoiceId", "retry safe API", "webhook redelivery", "affiliate double commission", "backfill sales API"]
 ---
+Anything that reports sales over a network will eventually report the same sale twice. A payment provider redelivers a webhook, a job queue replays a message, a deploy restarts a worker mid-batch, someone re-runs a backfill script. Without a way to recognise the repeat, each one becomes another sale and another commission on the same money.
 
-{/* TODO: Write this article. */}
+Referly has no `Idempotency-Key` header. Deduplication works off the identifiers you already have — the charge ID, the invoice ID, the order number from the system that owns the payment.
+
+## The two identifiers
+
+Both are optional fields on [the sales endpoint](/developer-documentation/server-side/reporting-sales), and both do the same job from different angles.
+
+| Field | Put this in it |
+| --- | --- |
+| `externalId` | Your own reference for the sale: a charge ID, an order number, your internal transaction ID. |
+| `externalInvoiceId` | The invoice or charge ID from the system that took the payment. |
+
+Send at least one. Sending both is better — a retry matches if *either* one has been seen before, so two identifiers means two chances to catch the duplicate.
+
+```bash
+curl -X POST https://www.referly.so/api/v1/sales \
+  -H "Authorization: Bearer $REFERLY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "referralId": "48219",
+    "email": "customer@example.com",
+    "name": "Jane Doe",
+    "totalEarned": 99.00,
+    "externalId": "ch_3Q8xVe2eZvKYlo2C",
+    "externalInvoiceId": "in_1PqRsT2eZvKYlo2C"
+  }'
+```
+
+<Warning>
+  Send neither and there is no deduplication at all. Referly skips the check entirely when both fields are absent, so every retry writes another sale. This is the single most common cause of affiliates being paid twice.
+</Warning>
+
+## What happens on a retry
+
+Referly looks for an existing sale in your program carrying either identifier before it writes anything. If it finds one, no sale is created, no commission is calculated, and no `sale.created` webhook fires.
+
+The response to that duplicate call is `200` with a body of `null`.
+
+```json
+null
+```
+
+That is the same response you get when no affiliate could be resolved, so `null` on its own doesn't tell you which happened. If you need to distinguish them, look the sale up by its external ID — the next section shows how.
+
+Underneath the application check, the database enforces uniqueness on `externalId` and on `externalInvoiceId` within a program. If two identical requests race each other closely enough that both pass the check, the second one is stopped at the database and comes back:
+
+```json
+{ "error": "Error occured while creating sale" }
+```
+
+with a `400`. Annoying, but safe — it means the duplicate was refused, not recorded. Verify before you retry that one.
+
+## Verify whether a sale landed
+
+Look it up by the identifier you sent:
+
+```bash
+curl "https://www.referly.so/api/v1/sales?saleExternalId=ch_3Q8xVe2eZvKYlo2C" \
+  -H "Authorization: Bearer $REFERLY_API_KEY"
+```
+
+`saleExternalInvoiceId` works the same way. An empty array means nothing was recorded and it's safe to send the sale. A result means it's already there, and the sale in the response tells you which affiliate got the credit and what the commission came out as.
+
+This is the check to run whenever a call comes back `null` or `400` and you can't tell whether it landed.
+
+## Choose identifiers that stay put
+
+The identifier has to be derived from the payment, not from the attempt to report it.
+
+**Good:** the charge ID, the invoice ID, the subscription invoice ID for that billing period, your own order number.
+
+**Bad:** a UUID generated inside the retry, a timestamp, a hash that includes the current time, an incrementing counter local to a worker. Each one changes between attempts, which is exactly what deduplication needs it not to do.
+
+Two more rules:
+
+- **Every renewal needs its own identifier.** Reuse the subscription ID across renewals and only the first payment is ever recorded. Use the invoice ID for that period instead.
+- **Identifiers are unique across the whole program.** The same reference cannot be used for two different affiliates. If you prefix your own IDs, prefix per sale, not per affiliate.
+
+## What deduplicates and what doesn't
+
+| Record | Deduplicated on | Notes |
+| --- | --- | --- |
+| Sales, via `POST /v1/sales` | `externalId`, `externalInvoiceId` | Only when you send at least one. |
+| Referred customers | Email address within the program | Naturally idempotent. Reporting the same customer twice never creates a second one. |
+| Cart events, via `add-to-cart` | `externalEventId` | Returns `deduped: true` on a repeat. |
+| Sales, via `capture-sale` | Nothing | The public [capture endpoint](/developer-documentation/server-side/capture-endpoints) takes no external identifier, so every call creates a sale. Don't use it anywhere a retry is possible. |
+
+Because customers deduplicate on email, a retried sale that also names a new customer is only half a problem — you'd get one customer and two sales. The external identifier is what closes the other half.
+
+## A retry-safe pattern
+
+Forwarding a payment webhook, with the payment provider's own IDs carried straight through:
+
+```js
+export async function handlePaymentSucceeded(event) {
+  const charge = event.data.object;
+  const user = await db.users.findByCustomerId(charge.customer);
+
+  // Nothing to attribute — this customer never came from an affiliate.
+  if (!user?.referlyClickId) return;
+
+  const res = await fetch("https://www.referly.so/api/v1/sales", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.REFERLY_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      referralId: user.referlyClickId, // stored at signup, never read from a cookie
+      email: user.email,
+      name: user.fullName,
+      totalEarned: charge.amount / 100, // program currency, not cents
+      externalId: charge.id, // stable across every redelivery
+      externalInvoiceId: charge.invoice,
+    }),
+  });
+
+  // A 400 here may be a duplicate the database refused. Check before retrying.
+  if (res.status === 400) {
+    const existing = await findSaleByExternalId(charge.id);
+    if (existing.length > 0) return; // already recorded, nothing to do
+  }
+
+  if (!res.ok) throw new Error("Referly rejected the sale"); // let the queue retry
+}
+```
+
+The shape that matters: identifiers come from the charge, the click ID comes from your database, and a failure throws so the queue can retry — safely, because the retry carries the same `externalId`.
+
+## Backfills and migrations
+
+The same rules make a backfill re-runnable. Give every historical sale the identifier it had in the system you're importing from, and you can run the script as many times as you need — the second pass records nothing.
+
+Send a small batch first and check it in the dashboard before running the rest. Sales imported without external identifiers can only be cleaned up one at a time.
+
+<Note>
+  Bulk imports also hit [rate limits](/developer-documentation/api/rate-limits). Space the requests out rather than firing them all at once, or you'll trade duplicate sales for `429`s.
+</Note>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Report a sale" icon="cart-shopping" href="/developer-documentation/server-side/reporting-sales" arrow>
+    Every field on the sales endpoint.
+  </Card>
+  <Card title="Capture endpoints" icon="satellite-dish" href="/developer-documentation/server-side/capture-endpoints" arrow>
+    Which public endpoints deduplicate, and which don't.
+  </Card>
+  <Card title="Errors" icon="triangle-exclamation" href="/developer-documentation/api/errors" arrow>
+    Status codes and what to do about each one.
+  </Card>
+  <Card title="Webhook retries" icon="rotate" href="/developer-documentation/webhooks/retries-and-logs" arrow>
+    How Referly retries the events it sends you.
+  </Card>
+</Columns>

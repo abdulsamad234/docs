@@ -1,6 +1,247 @@
 ---
 title: "Retries and logs"
-description: "What happens when delivery fails, and where to look."
+description: "How Referly retries failed webhook deliveries, how to read the delivery log and per-attempt responses, how to resend a message, and how to debug timeouts, signature failures, and unreachable endpoints."
+keywords: ["webhook retries", "webhook delivery log", "resend webhook", "failed webhook delivery", "webhook attempts", "exponential backoff", "webhook timeout", "webhook debugging", "svix-id idempotency", "webhook monitoring", "disabled webhook endpoint"]
 ---
+Once Referly sends a message, everything that happens next — the response your server gave, each
+retry, and the payload as it was sent — is recorded and kept. This page covers how deliveries
+succeed or fail, when they are retried, and how to use the log to fix a broken handler.
 
-{/* TODO: Write this article. */}
+## What counts as a delivery
+
+A delivery succeeds when your endpoint returns a **`2xx`** status within the request timeout.
+Everything else is a failure:
+
+| Outcome | Result |
+| --- | --- |
+| `200`, `201`, `204` | Succeeded |
+| `3xx` redirect | Failed — redirects are not followed |
+| `400`, `401`, `403`, `404`, `410` | Failed |
+| `429` | Failed |
+| `5xx` | Failed |
+| Timeout with no response | Failed |
+| Connection refused, DNS failure, TLS error | Failed |
+
+Two consequences catch people out.
+
+**A rejected signature is a failure.** When your handler returns `400` because verification did not
+pass, that is a failed delivery like any other and it enters the retry cycle. That is the behaviour
+you want — a legitimate message rejected by a bug is retried, giving you a window to fix it. See
+[Verify signatures](/developer-documentation/webhooks/verifying-signatures).
+
+**A slow success is a failure.** If your handler does the work before responding and that work takes
+longer than the timeout, the delivery fails even though your code ran to completion. You then get
+retried and run the work again. Acknowledge first, process afterwards.
+
+## Retries
+
+Failed deliveries are retried automatically on an exponential backoff, spread over roughly the
+following day:
+
+| Attempt | When |
+| --- | --- |
+| 1 | Immediately |
+| 2 | 5 seconds later |
+| 3 | 5 minutes later |
+| 4 | 30 minutes later |
+| 5 | 2 hours later |
+| 6 | 5 hours later |
+| 7 | 10 hours later |
+| 8 | 10 hours later |
+
+That spread is deliberate: a deploy, a restart, or a brief database outage resolves inside the first
+few attempts with no action from you.
+
+<Note>
+  The **Attempts** tab on a message is the authoritative record of what actually happened to that
+  message. Read it rather than inferring from the schedule above.
+</Note>
+
+When the attempts are exhausted the message stops being retried, but it is **not** discarded. It
+stays in the log with its payload intact, so you can fix your handler and resend it. Nothing is lost
+because your server was down longer than a day.
+
+## Read the delivery log
+
+Open your campaign, go to **Settings**, then **Advanced**, then **Webhooks**, and select the **Logs**
+tab. It lists every message for the program, newest first, with the event type, the message ID, the
+timestamp, and a status badge.
+
+{/* TODO screenshot: webhook-logs-tab — upload it in the local Documentation Agent */}
+
+Statuses you will see:
+
+| Status | Meaning |
+| --- | --- |
+| **Succeeded** | An endpoint returned `2xx` |
+| **Failed** | All attempts so far have failed |
+| **Pending** | Queued, waiting on the next scheduled attempt |
+| **Sending** | In flight right now |
+
+Use the **Filter** dropdown to narrow to **Succeeded** or **Failed**. Filtering to **Failed** is the
+fastest health check you have — a healthy integration shows an empty or near-empty list.
+
+The message ID shown here is the same value your handler received as the `svix-id` header, so you can
+paste an ID from your own logs and find the exact delivery.
+
+## Inspect a single message
+
+Select a row to open it. There are two tabs.
+
+**Message** shows **Message Content** — the JSON payload exactly as it was sent, in an expandable
+viewer — along with the **Event Type**. This is what your handler received, byte for byte, which
+makes it the place to confirm whether a field you expected was actually present.
+
+**Attempts** lists every delivery attempt for this message, with **Status**, the destination
+**URL**, the **Timestamp**, and the **HTTP Response** code.
+
+{/* TODO screenshot: webhook-attempt-detail — upload it in the local Documentation Agent */}
+
+Expand an attempt with the chevron and you get the detail that matters most:
+
+- **Webhook Headers** — the `message-id` and `svix-timestamp` that were sent, each with a copy
+  button.
+- **Response** — the status code *and the response body your server returned*.
+
+That response body is the single fastest way to diagnose a failure. Your stack trace, your framework's
+error page, your "Invalid signature" string — whatever your handler emitted is captured verbatim.
+Before you reach for logs on your own side, read it here.
+
+<Tip>
+  Because the response body is stored, return something useful in your error responses. A handler
+  that returns a bare `400` tells you nothing on a retry; one that returns
+  `Invalid signature: timestamp outside tolerance` tells you exactly what to fix.
+</Tip>
+
+## Resend a message
+
+**Resend** appears in two places: on a row in the **Logs** list, and on each individual attempt in the
+**Attempts** tab. Both send the same message to the endpoint again, immediately.
+
+Resend when you have fixed the cause of a failure — a bug in verification, a downstream service that
+was down, an endpoint that was pointing at the wrong host. Resending against a handler that is still
+broken produces another failed attempt and another log row.
+
+<Warning>
+  A resend delivers the same message with the same `svix-id`. If your handler is not idempotent, a
+  resend of an already-processed message will double-process it — a second commission, a second
+  fulfilment, a second email. See below.
+</Warning>
+
+## Recent Activity per endpoint
+
+The program-wide **Logs** tab covers every endpoint. To check one endpoint in isolation, open it from
+the **Endpoints** tab with **View Details** and look at **Recent Activity** on the **Overview** tab,
+which lists its last five deliveries with their status.
+
+Use it for a quick "is this endpoint healthy right now" check; use the **Logs** tab when you need
+history, filtering, or a specific message.
+
+## Retries deliver the original payload
+
+The payload is serialised once, when the event fires, and stored. A retry sends those stored bytes —
+it does not re-read the object.
+
+If a `sale.created` fails at 09:00 and succeeds on the fourth attempt at 11:30, you receive the sale
+**as it was at 09:00**. If the sale was edited or refunded in between, the payload will not show it,
+though the subsequent `sale.updated` or `sale.deleted` event will arrive separately.
+
+Where current state matters more than the state at event time, treat the payload as a notification
+and re-read the object through the [REST API](/api-reference/introduction) before acting. See
+[Payload structure](/developer-documentation/webhooks/payload-structure).
+
+## Be idempotent on svix-id
+
+Retries and manual resends mean the same message reaches you more than once. This is not an edge
+case; it is normal operation, and any handler that writes data must tolerate it.
+
+The `svix-id` header is stable across every attempt and every resend of a message, which makes it the
+natural idempotency key:
+
+```js
+const messageId = headers.get("svix-id");
+
+const inserted = await db.processedWebhooks.insertIfAbsent({ messageId });
+if (!inserted) {
+  // Already handled. Acknowledge so it leaves the retry cycle.
+  return new Response("ok", { status: 200 });
+}
+
+await handle(event);
+return new Response("ok", { status: 200 });
+```
+
+Return `200` for a duplicate. Returning anything else marks the delivery failed and schedules another
+retry of a message you have already processed.
+
+## Diagnose a failure
+
+Work from the response body in the **Attempts** tab, then match it against the usual causes:
+
+| Symptom | Likely cause |
+| --- | --- |
+| `400` with a signature error on every message | Body parsed before verification. Verify against the raw body — see [Verify signatures](/developer-documentation/webhooks/verifying-signatures). |
+| Signature failures only on some messages | Clock drift, or a rotated secret that is only deployed to some instances. |
+| Timeouts, no response captured | The handler does its work before responding. Acknowledge first, queue the work. |
+| Connection refused or DNS failure | The URL is not publicly reachable — a `localhost` address, a private network host, or a tunnel that has expired. |
+| TLS error | An expired, self-signed, or incomplete certificate chain on your host. |
+| `404` on every attempt | The route moved or the path is wrong. Check the URL on the endpoint detail screen. |
+| `500` intermittently | Your own downstream dependency — usually a database or a third-party API — failing under load. |
+| `502` or `503` in bursts | A deploy or a restart. These usually clear on their own within the retry window. |
+
+Once you have a fix deployed, resend from the log rather than waiting for the next natural event.
+While you are iterating, the **Testing** tab sends a fresh signed delivery on demand — see
+[Test and replay](/developer-documentation/webhooks/testing).
+
+## Disabled endpoints
+
+A disabled endpoint receives nothing. That applies whether you disabled it yourself from the **...**
+menu, or it was disabled after failing continuously for an extended period.
+
+<Warning>
+  Events that occur while an endpoint is disabled are not queued and delivered on re-enable. They are
+  simply not sent to it. After re-enabling, use the **Logs** tab to find and resend anything you
+  needed from the gap.
+</Warning>
+
+This is the reason to disable an endpoint only for as long as you actually need to, and to prefer
+fixing the handler over disabling it. See
+[Manage endpoints](/developer-documentation/webhooks/managing-endpoints).
+
+## Monitoring
+
+The dashboard log is for investigating, not for noticing. Nothing alerts you when deliveries start
+failing, so build the noticing on your side:
+
+- **Alert on your own handler.** Count verification failures, exceptions, and non-`2xx` responses you
+  return, and alert when the rate rises. You will see a problem there before it shows in the log.
+- **Watch for silence.** If your program normally records sales daily, an alert on "no
+  `sale.created` processed in 24 hours" catches an endpoint that is quietly disabled or unreachable —
+  a failure mode that produces no errors at all on your side.
+- **Check the Failed filter after every change** to your handler, your URL, your certificate, or
+  your infrastructure. That is when things break.
+- **Store the message ID with the record you write.** It turns "did we get this sale?" into a single
+  lookup in both your database and the delivery log.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Verify signatures" icon="shield-check" href="/developer-documentation/webhooks/verifying-signatures">
+    The most common cause of a log full of 400s.
+  </Card>
+  <Card title="Manage endpoints" icon="link" href="/developer-documentation/webhooks/managing-endpoints">
+    Disable, re-enable, or repoint an endpoint.
+  </Card>
+  <Card title="Payload structure" icon="brackets-curly" href="/developer-documentation/webhooks/payload-structure">
+    What the stored Message Content contains.
+  </Card>
+  <Card title="Test and replay" icon="flask" href="/developer-documentation/webhooks/testing">
+    Send a fresh delivery while you iterate on a fix.
+  </Card>
+  <Card title="Webhooks introduction" icon="webhook" href="/developer-documentation/webhooks/introduction">
+    How deliveries work end to end.
+  </Card>
+  <Card title="Webhooks in the Help Center" icon="circle-question" href="/help-center/settings/advanced/webhooks">
+    The same screens, explained without code.
+  </Card>
+</Columns>

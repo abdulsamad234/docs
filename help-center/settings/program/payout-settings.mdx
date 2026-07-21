@@ -1,6 +1,132 @@
 ---
 title: "Payout settings"
-description: "Methods, schedule, holding period, and minimums."
+description: "Configure how and when affiliates get paid in Referly: Wise, PayPal and bank payout methods, Referly-managed payouts, automated payout schedules, holding period, and minimum payout amount."
+keywords: ["payout settings", "affiliate payouts", "payout schedule", "holding period", "minimum payout amount", "Wise payouts", "PayPal payouts", "manual bank account", "Referly Payouts", "automated payouts", "payout frequency"]
 ---
+Affiliates forgive a lot, but not being paid late. Payout settings are where you decide who actually moves the money, how affiliates receive it, and on what rhythm — including the two numbers that quietly govern everything: how long you hold earnings before they're payable, and how much an affiliate has to accumulate before you send anything.
 
-{/* TODO: Write this article. */}
+To set this up, go to **Settings**, open **Program details**, and select **Payout settings**.
+
+{/* TODO screenshot: payout-settings-overview — upload it in the local Documentation Agent */}
+
+Most of this page waits for the **Save Changes** button at the bottom right. A few things save the instant you change them, and they're called out where they come up.
+
+## Decide who runs your payouts
+
+**Cash Payout Management** is the first and most consequential choice on the page. Everything below it changes depending on which card you pick.
+
+{/* TODO screenshot: cash-payout-management — upload it in the local Documentation Agent */}
+
+### Manage payouts yourself
+
+"Connect Wise, PayPal, or bank accounts. You perform payouts manually and handle tax reporting."
+
+You stay in control and you pay the processor's fees rather than Referly's. Referly works out who is owed what and hands you the batch; sending the money and handling tax reporting is yours. This is the default and it suits programs with a manageable number of affiliates, or teams who already run payouts through an existing account.
+
+### Allow Referly to handle your payouts
+
+"Tax-compliant payouts to affiliates in 178 countries. Add a payment method and we charge you when payouts are due."
+
+You add a card or bank account, and Referly pays your affiliates and charges you. It costs a percentage per payout, but it takes both the payment runs and the tax compliance off your desk — which is usually the better trade once you're paying affiliates in many countries.
+
+<Note>
+If your program is managed by an agency that hasn't enabled Referly Payouts, this option won't appear and your program runs self-managed.
+</Note>
+
+## Set up affiliate payout methods
+
+With **Manage payouts yourself** selected, **Cash Payout Methods** decides how affiliates can withdraw. Select a card to switch a method on or off; you can offer more than one, and at least one must stay on — removing your last leaves you with **At least one payout method is required**.
+
+{/* TODO screenshot: cash-payout-methods — upload it in the local Documentation Agent */}
+
+- **Wise Payouts** — "Send cash commissions directly via Wise. Affiliates can receive payouts in their Wise account or local bank account." The strongest option for paying internationally, with good rates on currency conversion.
+- **PayPal Payouts** — "Send cash commissions to affiliates' PayPal accounts". Familiar to almost every affiliate and quick to set up.
+- **Manual Bank Account** — collects bank details from affiliates, which you then pay outside Referly yourself.
+
+**Wise Payouts** and **PayPal Payouts** are on by default. Each shows its connection state: a green **Account connected** strip, or an amber **Not connected** with a **Connect account** button. Switching the method on doesn't connect it — do both, or affiliates will choose a method you can't actually pay through.
+
+**Manual Bank Account** can't be used at the same time as Wise, because Wise already handles direct bank transfers. It's greyed out while Wise is on, explaining that it isn't available when Wise is enabled. Choose it only if you intend to move the money by hand, since Referly won't send these payouts for you.
+
+Selecting **See all Payout Integrations** at the top right opens the full list of processors you can connect.
+
+### Collect extra bank details
+
+Turning on **Manual Bank Account** reveals **Custom Bank Account Fields**, for the details banks in some countries need that a standard form doesn't ask for — a branch name, a SWIFT code, an intermediary bank.
+
+Switch it on and add each field with a **Field Title** (what the affiliate sees), **Placeholder Text** (an example to guide them), and a **Required field** toggle. A live **Field Preview** shows how it will look before you add it, and **Add Field** stays disabled until you've filled in both the title and the placeholder. Existing fields can be edited or deleted from the **Current Fields** list.
+
+These fields save on their own, without the **Save Changes** button. Only ask for what your bank genuinely needs — every extra required field is another chance for an affiliate to abandon their payout details half-filled.
+
+## Add a payment method for Referly Payouts
+
+If you chose **Allow Referly to handle your payouts**, **Payment methods** is where you add the card or account Referly charges when payouts are due.
+
+{/* TODO screenshot: referly-payment-methods — upload it in the local Documentation Agent */}
+
+Select **Add payment method** and pick:
+
+- **Card** — a credit or debit card. Higher fee, but Referly receives the money immediately and pays affiliates straight away.
+- **Bank account** — connected by region (US, EU, or UK). Lower fee, but funds take up to four days to reach Referly before affiliates are paid.
+
+Each option shows its fee as a percentage badge so you can compare before connecting. If you're paying on a schedule rather than urgently, the bank account is usually the cheaper choice; the card is worth its premium when you want affiliates paid the day the batch runs.
+
+With more than one method stored, use **Set default** or the **Default payment method** dropdown to choose which one gets charged.
+
+**Automatically perform payouts** is the last switch here. On, batches are charged and sent without you opening the dashboard. Off, each batch waits for you to select **Pay**. Turning it on is a genuine time-saver once you trust the numbers — just make sure the default payment method can cover the batches.
+
+Payment methods save immediately as you add, remove, or change the default.
+
+## Set your payout schedule
+
+**Payout Schedule** applies whichever management type you chose, and covers both cash and non-cash rewards.
+
+{/* TODO screenshot: payout-schedule — upload it in the local Documentation Agent */}
+
+**Enable Automated Payouts** turns on scheduled batches: "Automatically create payout batches on a schedule. You'll still review and approve before anything is sent." Creating a batch isn't the same as sending money — unless you've also turned on automatic payouts under Referly Payouts, a batch waits for your approval.
+
+Leaving this off means creating every batch by hand. Turning it on is the setting that makes payouts predictable for affiliates, which is worth more to them than being paid slightly sooner.
+
+### Holding Period (Days)
+
+How long a commission waits before it can be paid, set to 30 days by default. A commission earned today isn't included in a batch until the holding period has passed.
+
+This is your protection against paying out on sales that don't stick. Refunds, chargebacks, and cancellations mostly happen soon after purchase, and a holding period lets them surface before the money leaves. Match it to your refund window — if you offer 30-day refunds, a 30-day hold means you rarely pay commission on a sale that later reverses. Set it far below your refund window and you'll be clawing money back; set it far above and affiliates will notice the wait.
+
+### Payout Frequency
+
+How often a batch is created:
+
+- **Every Month** — then choose a **Day of Month**.
+- **Every Week** — then choose a **Day of Week**. This is the default.
+- **Every Day** — then choose **Active Payout Days**, switching off any days you want skipped, such as weekends.
+
+Whatever you choose, tell your affiliates. A predictable payout day generates far fewer support messages than a fast but unpredictable one.
+
+### Minimum Cash Payout Amount
+
+How much an affiliate must accumulate before they're included in a batch, set to 50 by default in your program's currency.
+
+This exists because sending very small amounts costs more in fees than it's worth. An affiliate below the threshold isn't losing anything — their earnings roll forward until they cross it. Set it too high, though, and your long tail of small affiliates never gets paid at all, which is a quiet way to lose them. It applies only to cash; non-cash rewards like coupons and credits are delivered regardless.
+
+A yellow reminder near these settings notes to keep sufficient funds in your connected payment processor before the scheduled payout date — worth heeding, since a batch that fails for lack of funds costs you the goodwill the schedule was meant to build.
+
+## Save
+
+Select **Save Changes** at the bottom right and you'll see **Payout settings saved successfully**. If the button isn't there, nothing is pending — remember that custom bank fields and Referly Payouts payment methods have already saved themselves.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Tax management" icon="receipt" href="/help-center/settings/program/tax-management" arrow>
+    Set your tax details and invoicing for affiliate payouts.
+  </Card>
+  <Card title="General program settings" icon="sliders" href="/help-center/settings/program/general" arrow>
+    Set your program currency and whether rewards are auto-approved.
+  </Card>
+  <Card title="Fraud prevention" icon="shield" href="/help-center/settings/program/fraud-prevention" arrow>
+    Hold suspicious rewards before they reach a payout batch.
+  </Card>
+  <Card title="Commission plans" icon="percent" href="/help-center/getting-started/commissions/overview" arrow>
+    Decide what affiliates earn in the first place.
+  </Card>
+</Columns>

@@ -1,6 +1,336 @@
 ---
 title: "Polar"
-description: "Track Polar checkouts."
+description: "Connect Polar to Referly to track affiliate clicks, orders, subscriptions, discount code sales, and refunds. Step-by-step access token, webhook, and checkout setup for payment links, embedded checkout, and the Checkout API."
+keywords: ["polar affiliate tracking", "polar.sh affiliate program", "referly polar integration", "polar reference_id checkout", "polar checkout metadata affiliate", "polar webhook affiliate tracking", "polar organization access token scopes", "polar discount code affiliate", "polar subscription commission", "polar refund affiliate commission"]
 ---
+Referly connects to Polar with an access token and a webhook. Once it's set up, Referly watches the orders in your Polar organization and turns the ones that came from an affiliate into referred customers, sales, and commissions.
 
-{/* TODO: Write this article. */}
+Polar is one of the friendlier integrations to set up, because Polar supports a referral parameter on checkout links out of the box — for a payment-links setup, adding the referral is one small snippet with nothing to configure inside Polar itself.
+
+<Note>
+  Referly connects to **one payment processor at a time**. Connecting Polar means Stripe, Shopify, Paddle, Chargebee, WooCommerce, and Zylvie stay disconnected for this program.
+</Note>
+
+## What the Polar integration can and can't do
+
+| What you want to track | Does Polar cover it? |
+| --- | --- |
+| **Clicks on affiliate links** | Yes, once the tracking script is on your site ([Step 1](#step-1-install-the-tracking-script-on-your-site)). |
+| **Orders** | Yes — every paid order that carries a referral becomes a sale credited to the affiliate behind it. |
+| **Pending orders** | Yes, in a limited way. An order that hasn't been paid yet is recorded against the customer at a value of zero, and the real amount lands when Polar confirms the payment. |
+| **Product-level detail** | Yes — the products on the order come across with their names and prices, so [product-based commissions](/help-center/getting-started/commissions/product-based) work. |
+| **Orders in other currencies** | Yes — the amount is converted into your program's currency before commission is worked out. |
+| **Discount code sales** | Yes — an order that used an affiliate's discount code is credited to that affiliate, with no click and no link. Redemption counts sync back too. |
+| **Subscription renewals** | Usually. Polar copies the referral onto the subscription as well as the first order, so renewal orders normally carry it. Check your first renewal to confirm it in your setup — see [Checking that renewals are credited](#checking-that-renewals-are-credited). |
+| **Refunds** | Yes — see [Refunds](#refunds). |
+| **Orders with no referral and no discount code** | No — nothing is recorded, not even an unattributed sale. |
+| **Sign-ups with no order** | No — Polar only reports orders. Use the [Universal integration](/help-center/integrations/universal) for leads. |
+| **Tax and shipping as separate amounts** | No — the order total is what comes across for Polar. |
+| **Chargebacks** | No — a chargeback isn't reversed automatically. Adjust the sale or reward by hand. |
+| **Sandbox and production at the same time** | No — a connection uses one access token, so it's pointed at one environment. |
+| **Two Polar organizations** | No — a Polar organization can only be connected to one Referly program. |
+
+## Before you start
+
+You'll need:
+
+- **Admin access to your Polar organization**, so you can create an access token and a webhook.
+- **The ability to add code to your website**, or someone who can.
+- **Your Referly guide open.** In Referly, open your program, go to **Settings**, then **Integrations**, and pick the card matching how you sell: **Polar Payment Links**, **Polar Embedded Checkout**, or **Polar Checkout API**. Your webhook address is shown there, filled in with your program's details.
+
+{/* TODO screenshot: polar-guide-cards — upload it in the local Documentation Agent */}
+
+## Step 1: Install the tracking script on your site
+
+The tracking script recognises visitors who arrived from an affiliate link, records the click, and remembers who referred them until they buy.
+
+Copy the snippet from Step 1 of your Polar guide in Referly — it comes pre-filled with your program ID — and paste it inside the `head` section of your website, on every page.
+
+```html Tracking script
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+If you use Google Tag Manager, switch to the **Using Google Tag Manager** tab for that version instead.
+
+## Step 2: Create an access token in Polar
+
+<Steps>
+  <Step title="Open your token settings">
+    In your Polar dashboard, go to **Settings** and find the **Developers** section, then create a new organization access token.
+  </Step>
+  <Step title="Name it and set no expiration">
+    Give it a name you'll recognise, such as "Referly". Set the expiration to **No Expiration** — if the token expires, your tracking stops without warning.
+  </Step>
+  <Step title="Select the scopes">
+    Referly needs these permissions:
+
+    - `discounts:read`
+    - `discounts:write`
+    - `events:read`
+    - `subscriptions:read`
+    - `customers:read`
+    - `customers:write`
+    - `orders:read`
+    - `refunds:read`
+    - `webhooks:read`
+    - `webhooks:write`
+
+    If your dashboard offers a **Select all** option, using it covers everything.
+  </Step>
+  <Step title="Copy the token">
+    Copy it as soon as it's created — it starts with `polar_pat_`. Keep it somewhere safe; anyone with it can act on your Polar organization.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: polar-access-token — upload it in the local Documentation Agent */}
+
+<Warning>
+  Make sure you're in the right Polar environment before you create the token. Polar's sandbox and production are separate, and a token from one won't work against the other.
+</Warning>
+
+## Step 3: Connect Polar in Referly
+
+<Steps>
+  <Step title="Find your organization ID">
+    In your Polar dashboard, open your organization settings. Your organization ID is listed there — copy it.
+  </Step>
+  <Step title="Open the integrations dialog">
+    In Referly, open your program, go to **Settings**, then **Integrations**, select **Connect Integration** in the top right, and choose **Polar**.
+  </Step>
+  <Step title="Fill in both fields">
+    Paste your token into **Access token** and your organization ID into **Organization ID**.
+  </Step>
+  <Step title="Connect">
+    Select **Connect**. A green **Connected** badge appears with your organization ID when it's saved.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: polar-connect-form — upload it in the local Documentation Agent */}
+
+<Note>
+  These fields lock once saved. To use a different token or organization, select **Disconnect** and connect again. If Referly tells you the organization is already connected to another program, disconnect it there first.
+</Note>
+
+## Step 4: Send the referral into Polar
+
+Pick the tab that matches how your customers buy. In each case the snippet goes near the bottom of the page, just before the closing `body` tag, on the pages where checkout starts — and the tracking script from Step 1 has to be on the same page.
+
+<Tabs>
+  <Tab title="Payment links">
+    Use this if you link people to Polar checkout pages. The snippet adds a reference to every Polar link on the page. Polar treats that reference as a first-class parameter and attaches it to the checkout automatically, so there's nothing to configure on Polar's side.
+
+    ```html Polar payment links
+    <script>
+      function updatePolarLinks() {
+        if (window.affiliateId) {
+          document.querySelectorAll('a[href*="buy.polar.sh"]').forEach((link) => {
+            if (link.href.includes("reference_id=")) return;
+            const separator = link.href.includes("?") ? "&" : "?";
+            link.href = link.href + separator + "reference_id=" + window.affiliateId;
+          });
+        }
+      }
+
+      setTimeout(updatePolarLinks, 800);
+      setTimeout(updatePolarLinks, 1500);
+      setTimeout(updatePolarLinks, 2500);
+      window.addEventListener("affiliate_referral_ready", updatePolarLinks);
+    </script>
+    ```
+  </Tab>
+  <Tab title="Embedded checkout">
+    Use the same snippet if your checkout opens in an overlay on your own page. Polar's embedded checkout is built from the same links, so adding the reference to the link is what carries it through.
+
+    ```html Polar embedded checkout
+    <script>
+      function updatePolarLinks() {
+        if (window.affiliateId) {
+          document.querySelectorAll('a[href*="buy.polar.sh"]').forEach((link) => {
+            if (link.href.includes("reference_id=")) return;
+            const separator = link.href.includes("?") ? "&" : "?";
+            link.href = link.href + separator + "reference_id=" + window.affiliateId;
+          });
+        }
+      }
+
+      setTimeout(updatePolarLinks, 800);
+      setTimeout(updatePolarLinks, 1500);
+      setTimeout(updatePolarLinks, 2500);
+      window.addEventListener("affiliate_referral_ready", updatePolarLinks);
+    </script>
+    ```
+  </Tab>
+  <Tab title="Checkout API">
+    Use this if you create checkouts yourself in code. Pass the referral in the checkout's metadata under the key `referly_affiliate`.
+
+    ```javascript Creating a checkout
+    import { Polar } from "@polar-sh/sdk";
+
+    const polar = new Polar({
+      accessToken: process.env.POLAR_ACCESS_TOKEN ?? "",
+      ...(process.env.POLAR_SERVER === "sandbox" ? { server: "sandbox" } : {}),
+    });
+
+    const checkout = await polar.checkouts.create({
+      products: [productId],
+      successUrl,
+      metadata: {
+        referly_affiliate: referralId,
+      },
+    });
+
+    return checkout.url;
+    ```
+
+    The referral value comes from your front end, where the tracking script makes it available as `window.affiliateId`. Send it to your backend when the customer starts checkout, then pass it here.
+  </Tab>
+</Tabs>
+
+## Step 5: Add the Referly webhook in Polar
+
+This is how Polar tells Referly that an order was placed, paid, or refunded. Without it, nothing reaches Referly at all.
+
+<Steps>
+  <Step title="Open webhook settings">
+    In your Polar dashboard, go to **Settings**, then **Webhooks**, and select **Add Endpoint**.
+  </Step>
+  <Step title="Paste the webhook address">
+    Copy the webhook address from your Polar guide in Referly and paste it in. It already includes your program's details, so copy it rather than typing it out. Name it `Referly Integration`, or anything you'll recognise later.
+  </Step>
+  <Step title="Set the format to Raw">
+    Choose **Raw** as the format. Referly reads Polar's raw event format.
+  </Step>
+  <Step title="Choose the events">
+    Select these three:
+
+    - `order.created`
+    - `order.paid`
+    - `order.refunded`
+  </Step>
+  <Step title="Create it">
+    Select **Create**. The webhook is live straight away.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: polar-webhook-setup — upload it in the local Documentation Agent */}
+
+## How Referly decides who gets credit
+
+When an order arrives, Referly checks two things, in this order:
+
+<Steps>
+  <Step title="The discount code on the order">
+    If the order used a discount code belonging to one of your affiliates, that affiliate gets the credit, and the code's redemption count goes up. This check only runs if discount-code tracking is switched on for your program under [Tracking methods](/help-center/settings/program/tracking-methods).
+  </Step>
+  <Step title="The referral in the order's details">
+    Otherwise Referly looks for the reference added by the snippet in Step 4, whether that's the link parameter or the metadata key.
+  </Step>
+</Steps>
+
+Discount codes are checked first on purpose: if the customer typed an affiliate's code at checkout, that affiliate earned the sale.
+
+If neither is present, Referly records nothing for that order — not even an unattributed sale. Your Referly **Sales** page therefore shows only affiliate-driven revenue for Polar. Add anything missing with [Add a sale](/help-center/manage/customers/add-a-sale).
+
+### Letting affiliates use discount codes
+
+Referly can create and manage Polar discount codes for you, so affiliates can promote a code instead of a link. Set this up on the [Coupons](/help-center/engage/coupons/overview) page — see [Connect a coupon source](/help-center/engage/coupons/connect-a-source) and [Create coupons](/help-center/engage/coupons/create).
+
+## Step 6: Test it end to end
+
+<Tip>
+  Create a **100% discount code** in Polar and use it to place a free test order. That gets you a real order through the real flow without spending anything.
+</Tip>
+
+<Steps>
+  <Step title="Visit your site through an affiliate link">
+    Use a real affiliate's referral link from your **Affiliates** page, in a private window.
+  </Step>
+  <Step title="Check the click landed">
+    In Referly, open that affiliate's record and confirm the click count went up. If it didn't, the tracking script isn't running.
+  </Step>
+  <Step title="Start checkout and check the link">
+    Before completing checkout, look at the Polar link your page produced. It should have the reference on the end of it. If it doesn't, the Step 4 snippet isn't running on that page.
+  </Step>
+  <Step title="Complete the order">
+    Use your 100% discount code, or a Polar test payment if you're in sandbox.
+  </Step>
+  <Step title="Check the order in Polar">
+    Open the order in your Polar dashboard and look at its metadata. The reference should be there.
+  </Step>
+  <Step title="Check the result in Referly">
+    Open **Customers** to find the buyer attached to the affiliate, **Sales** to confirm the amount and products, and **Rewards** to see the commission.
+  </Step>
+  <Step title="Clean up">
+    Delete the test customer and sale from your **Customers** and **Sales** pages so they don't skew your reporting.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: polar-order-metadata — upload it in the local Documentation Agent */}
+
+{/* TODO screenshot: referly-polar-sale — upload it in the local Documentation Agent */}
+
+### Checking that renewals are credited
+
+Polar copies the referral onto the subscription as well as the first order, so renewals normally arrive carrying it. It's worth confirming once: after your first subscriber's first renewal, open that renewal order in Polar and check the metadata is still there, then check the renewal produced a second sale in Referly. If it didn't, you can set the metadata on the subscription in Polar so future renewals carry it.
+
+## Refunds
+
+When an order is refunded in Polar, Referly finds the matching sale and marks it as refunded, so no commission is owed on money you gave back.
+
+This only applies while the commission is still within your payout hold period. Once that has passed and the affiliate has been cleared for payout, the sale is left alone — adjust it by hand if you want it reversed. See [Refunds](/help-center/manage/rewards/refunds) and [Reward holds](/help-center/manage/rewards/holds).
+
+## Disconnecting
+
+There are two parts:
+
+- **To stop tracking**, delete the Referly endpoint in your Polar dashboard under **Settings**, then **Webhooks**. Nothing reaches Referly after that.
+- **To remove your token**, open **Connect Integration** in Referly, select **Polar**, and choose **Disconnect**. You can also revoke the token in Polar.
+
+Nothing already tracked is deleted. Orders placed while the webhook is gone are not recorded and won't be picked up later.
+
+{/* TODO screenshot: disconnect-polar — upload it in the local Documentation Agent */}
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Nothing is appearing in Referly">
+    Work backwards. Open a recent order in Polar and check its metadata for the reference. If it's missing, the problem is the Step 4 snippet. If it's there, check the webhook in Polar — that it exists, uses the **Raw** format, and has all three order events selected.
+  </Accordion>
+  <Accordion title="The reference isn't on my checkout links">
+    The snippet runs a moment after the page loads, so check the link's address after the page has settled rather than in your page source. Make sure both the tracking script and the checkout snippet are on the same page, and that you arrived through an affiliate link — the snippet does nothing for a visitor with no referral.
+  </Accordion>
+  <Accordion title="Orders are tracked but discount code sales aren't">
+    Two things to check: that discount-code tracking is switched on for your program, and that the code is one Referly knows about and has assigned to an affiliate. Codes created directly in Polar aren't linked to anyone until you connect them in Referly.
+  </Accordion>
+  <Accordion title="Connecting fails or the token is rejected">
+    Usually a scope is missing, the token was created in the wrong environment, or the organization ID doesn't belong to the same organization as the token. Recreate the token with all the scopes listed in Step 2.
+  </Accordion>
+  <Accordion title="Everything stopped working after a while">
+    Check whether your Polar access token expired. Set the expiration to **No Expiration** when you create it, and if it did expire, create a new one, disconnect in Referly, and connect again.
+  </Accordion>
+  <Accordion title="A sale is showing as zero">
+    The order reached Referly before it was paid. Once Polar confirms the payment, the real amount comes through. If it's still zero well after the payment cleared, check that `order.paid` is one of the selected events on your webhook.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Coupons and promo codes" icon="ticket" href="/help-center/engage/coupons/overview" arrow>
+    Let affiliates promote a Polar discount code instead of a link.
+  </Card>
+  <Card title="Product-based commissions" icon="tags" href="/help-center/getting-started/commissions/product-based" arrow>
+    Pay different rates on different Polar products.
+  </Card>
+  <Card title="Tracking methods" icon="crosshairs" href="/help-center/settings/program/tracking-methods" arrow>
+    Choose whether links, codes, or both credit your affiliates.
+  </Card>
+  <Card title="Add a sale" icon="plus" href="/help-center/manage/customers/add-a-sale" arrow>
+    Record a sale by hand when an order wasn't attributed.
+  </Card>
+</Columns>

@@ -1,6 +1,321 @@
 ---
 title: "Calendly"
-description: "Track bookings made through Calendly."
+description: "Connect Calendly to Referly so booked meetings are credited to the referring affiliate. Add the tracking script, redirect invitees to your own thank-you page with event details, and record bookings and Calendly payments as referrals."
+keywords: ["Calendly affiliate tracking", "Calendly Referly integration", "track Calendly bookings affiliates", "Calendly redirect to external site", "pass event details to your redirected page", "Calendly affiliate program", "Calendly Stripe payment affiliate commission", "affiliate tracking for booked calls"]
 ---
+If you sell through booked calls, [Calendly](https://calendly.com/) is usually where the deal starts. Connecting it to Referly means that when someone books a meeting after arriving from an affiliate link, that booking lands in Referly as a referred customer credited to the affiliate who sent them. If you also collect payment through Calendly, the amount comes across too and turns into commission.
 
-{/* TODO: Write this article. */}
+The way this works is worth understanding before you start, because it shapes every decision below. Referly never talks to Calendly directly. Instead, you tell Calendly to send invitees to a page on **your** website after they book, and Calendly passes the booking details along in the address. A small piece of code on that page reads those details and hands them to Referly, which matches them against the affiliate link the visitor arrived on.
+
+That means two things are non-negotiable: the visitor has to have landed on your website first, and the page they end up on after booking has to be your page, not Calendly's.
+
+{/* TODO screenshot: calendly-integration-card — upload it in the local Documentation Agent */}
+
+## What this integration can and can't track
+
+| What you want to track | Does it work? | Notes |
+| --- | --- | --- |
+| Link clicks and visits | Yes | From the Referly tracking script on your site |
+| Booked meetings as referred customers | Yes | Recorded with the invitee's name and email |
+| Paid bookings where Calendly collects the money | Yes | Calendly passes the amount, and it becomes a sale with commission |
+| Free consultation calls | Yes, as a referred customer with no revenue | Which is usually what you want, so you can see who books |
+| Repeat bookings by the same person | Partly | Only once per browsing session, to avoid double-counting one booking |
+| Cancellations | No | A cancelled meeting stays in Referly as a booking |
+| Reschedules | No | Rescheduling doesn't create or change anything in Referly |
+| No-shows | No | Referly has no way to know whether the meeting happened |
+| Deals you close after the call | No, not automatically | Add those yourself, or track them through your payment processor |
+| Bookings from a bare `calendly.com` link | No | Nothing on Calendly's own pages can be tracked |
+| Bookings made on a different device than the click | No | The referral is remembered in the browser it was clicked in |
+
+<Info>
+  A booking with no payment attached still counts. It arrives as a referred customer with no revenue, which is exactly what you want if you're paying affiliates per qualified call rather than per sale. You can [add the sale by hand](/help-center/manage/customers/add-a-sale) later when the deal closes.
+</Info>
+
+## Before you start
+
+You'll need:
+
+- A live Referly program with at least one affiliate to test with. If you haven't got that far, start with [setting up your program](/help-center/getting-started/set-up-program/affiliate-program-setup).
+- A **paid Calendly plan**. Redirecting invitees to your own page is a Standard, Teams, or Enterprise feature and isn't available on Calendly's free plan. Without it, none of this can work.
+- Access to edit your website's code, or someone who can paste two snippets for you.
+- If you want revenue tracked: payment collection already set up on your Calendly event type, through [Stripe](https://calendly.com/help/calendly-stripe) or [PayPal](https://calendly.com/help/calendly-paypal).
+
+Open the guide inside Referly before you start, because it has your program's own tracking script filled in and ready to copy. In your dashboard, open **Settings** from the left sidebar, select **Integrations**, find the **Calendly** card, and select **Instructions**.
+
+{/* TODO screenshot: calendly-instructions-dialog — upload it in the local Documentation Agent */}
+
+## Make sure affiliates link to your site, not to Calendly
+
+This is the step people get wrong, and it's the one that quietly breaks everything else.
+
+Referly can only recognise a referred visitor on pages that carry the Referly tracking script. You control your own website, so you can put the script there. You don't control `calendly.com`, so you can't put it there. An affiliate link that points straight at your Calendly page is invisible to Referly, and no amount of setup elsewhere will fix it.
+
+So the affiliate's link must land on your website. From there, the visitor can reach Calendly however you like.
+
+| How the visitor reaches Calendly | Tracked? | What to know |
+| --- | --- | --- |
+| Inline embed on your page | Yes | The scheduler sits inside your page. The visitor never leaves your site before booking, which is the most reliable setup. |
+| Popup widget on your page | Yes | The scheduler opens over your page. Works the same way as inline. |
+| Popup text link on your page | Yes | A text link on your page that opens the scheduler in a layer. Fine. |
+| A button on your page linking out to `calendly.com` | Yes | The visitor leaves your site, but the referral was already recorded when they landed on your page, and it's remembered in their browser. |
+| An affiliate link pointing directly at `calendly.com` | **No** | The visit never touches your site, so there's nothing to record. |
+
+<Warning>
+  Tell your affiliates to share their Referly link, which points to your own domain and looks like `https://your-site.com/?ref=their-code`. If an affiliate shares your Calendly address instead, their bookings won't be credited to them and there's no way to recover them afterwards.
+</Warning>
+
+Calendly's own [embed options overview](https://calendly.com/help/embed-options-overview) walks through adding the inline, popup widget, and popup text link versions to your site.
+
+## Add the Referly tracking script to your site
+
+This is what notices a visitor arriving on an affiliate link and remembers it in their browser for the length of your cookie window.
+
+Copy the script from **Step 1: Tracking clicks** in the instructions window. It has your program's own identifier already filled in where `YOUR_PROGRAM_ID` appears below:
+
+```html
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+{/* TODO screenshot: calendly-tracking-script — upload it in the local Documentation Agent */}
+
+Paste it into the `head` section of your site, ideally through a site-wide setting so it lands on every page at once. On Webflow that's **Site settings**, then the **Custom code** tab, then the **Head code** field, followed by publishing the site. On WordPress, most themes and plugins offer a "header scripts" box. If you use Google Tag Manager, create a **Custom HTML** tag set to fire on **All Pages**.
+
+<Warning>
+  It has to be on every page an affiliate might send someone to, **and** on the page invitees land on after booking. Missing it on either one breaks the chain.
+</Warning>
+
+## Create the page invitees land on after booking
+
+Calendly needs somewhere on your site to send people once they've booked. If you don't already have a thank-you page, make one now.
+
+Something like `https://your-site.com/booking-confirmed` is fine. Keep it simple: confirm the meeting is booked, say what happens next, and add anything useful like a calendar reminder or a short prep note. It's a real page your customers will see, so it's worth a minute of thought.
+
+The important part is that it lives on your own domain and carries the tracking script from the previous step. That's what allows Referly to connect the booking to the visit.
+
+## Turn on the redirect in Calendly
+
+Now tell Calendly to send invitees to that page and to pass the booking details along with them.
+
+<Steps>
+  <Step title="Open the event type">
+    In Calendly, go to your **Scheduling** page (called **Event Types** in some accounts) and find the event type you want to track. Select the three-dots menu on it and choose **Edit**.
+  </Step>
+  <Step title="Open More options">
+    Scroll to the bottom of the editor and select **More options**.
+  </Step>
+  <Step title="Expand the Confirmation page section">
+    Find and expand **Confirmation page**.
+  </Step>
+  <Step title="Choose the redirect">
+    Under **After booking**, select **Redirect to an external site**.
+  </Step>
+  <Step title="Enter your page address">
+    In the **Redirect URL** field, enter the full address of the thank-you page you made, for example `https://your-site.com/booking-confirmed`.
+  </Step>
+  <Step title="Turn on passing event details">
+    Turn on **Pass event details to your redirected page**. This is the step that actually carries the invitee's name, email, and payment amount across to your page. Without it, Referly has nothing to record and the whole setup does nothing.
+  </Step>
+  <Step title="Save">
+    Select **Save** to apply the change to that event type.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: calendly-confirmation-page-settings — upload it in the local Documentation Agent */}
+
+<Note>
+  This is set per event type, not once for your whole account. If affiliates can send people to three different meeting types, repeat these steps for each one. They can all point at the same thank-you page.
+</Note>
+
+Calendly's own article is [How to redirect invitees to another site after booking](https://calendly.com/help/how-to-redirect-invitees-to-another-site-after-booking), which also lists everything Calendly can pass across, including the invitee's name and email, the event name and time, any payment amount and currency, your UTM tags, and answers to your booking questions.
+
+## Add the booking script to your thank-you page
+
+The last piece. This code reads the booking details Calendly passed across and hands them to Referly.
+
+Copy it from **Step 3: Setting Up Sales Tracking Scripts** in the instructions window, and paste it into your thank-you page just before the closing `body` tag. On Webflow that's the **Before `</body>` tag** field in that page's own settings. It goes on the thank-you page only, not site-wide.
+
+```html
+<script>
+  (function () {
+    const params = new URLSearchParams(window.location.search);
+
+    const clean = (value) =>
+      value ? decodeURIComponent(value).replace(/\+/g, " ").trim() : "";
+
+    const fullName = clean(params.get("invitee_full_name"));
+    const firstName = clean(params.get("invitee_first_name"));
+    const lastName = clean(params.get("invitee_last_name"));
+    const email = clean(params.get("invitee_email"));
+
+    const amountRaw = params.get("invitee_payment_amount");
+    const currency = clean(params.get("invitee_payment_currency"));
+
+    let name = "";
+    if (fullName) {
+      name = fullName;
+    } else if (firstName || lastName) {
+      name = (firstName + " " + lastName).trim();
+    }
+
+    const amount = amountRaw !== null ? parseFloat(amountRaw) : null;
+
+    if (!email) {
+      console.warn("No email found in Calendly redirect");
+      return;
+    }
+
+    if (sessionStorage.getItem("calendly_tracked")) {
+      return;
+    }
+    sessionStorage.setItem("calendly_tracked", "true");
+
+    function waitForFunction(fnName, callback, timeout = 5000) {
+      const start = Date.now();
+
+      function check() {
+        if (typeof window[fnName] === "function") {
+          return callback();
+        }
+
+        if (Date.now() - start > timeout) {
+          return;
+        }
+
+        setTimeout(check, 100);
+      }
+
+      check();
+    }
+
+    waitForFunction("createPushLapEmail", () => {
+      window.createPushLapEmail(email, name || "");
+    });
+
+    if (amount !== null && !isNaN(amount)) {
+      waitForFunction("createPushLapSale", () => {
+        window.createPushLapSale({
+          amount,
+          name: name || "",
+          email,
+        });
+      });
+    } else {
+      console.log("Not running sale (invalid or missing amount)");
+    }
+  })();
+</script>
+```
+
+{/* TODO screenshot: calendly-sales-script — upload it in the local Documentation Agent */}
+
+A few things this handles for you, so you don't have to worry about them:
+
+- **Visitors who didn't come from an affiliate** are ignored. The script runs on every booking, but Referly records nothing when there's no referral in the browser. Your organic bookings won't be credited to anyone by mistake.
+- **Bookings with no payment** are recorded as a referred customer with no revenue. Only bookings where Calendly collected money get a sale attached.
+- **The same booking won't be counted twice** if the visitor refreshes the thank-you page.
+
+<Warning>
+  The amount is recorded in your program's currency. If your Calendly event charges in a different currency than your Referly program is set to, the number will come across but the currency won't be converted. Keep the two the same.
+</Warning>
+
+## Test it end to end
+
+Do this before you tell any affiliate the integration is live.
+
+<Steps>
+  <Step title="Grab a real affiliate link">
+    Open **Affiliates** in the left sidebar, pick any affiliate, and copy their referral link.
+  </Step>
+  <Step title="Open it in a private window">
+    Use a private or incognito window so no old tracking gets in the way. Visit the link and let the page finish loading. This is the moment the referral is recorded.
+  </Step>
+  <Step title="Book a meeting the way a customer would">
+    Go to your Calendly scheduler the same way a visitor would, whether that's the embed on your page or a button that opens Calendly, and book a real slot with an email address you haven't used before.
+  </Step>
+  <Step title="Watch where you land">
+    After booking you should end up on your own thank-you page, and the address bar should be full of booking details after the page name. If you land on Calendly's own confirmation screen instead, the redirect isn't saved on that event type. If you land on your page but the address is clean with no details after it, **Pass event details to your redirected page** is off.
+  </Step>
+  <Step title="Check Referly">
+    Open **Customers** in the left sidebar. Your test booking should show up within a minute, with the invitee's name and email, credited to the affiliate whose link you used. If you charged for the meeting, the amount and its commission appear alongside it.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: calendly-test-booking — upload it in the local Documentation Agent */}
+
+<Check>
+  When the test booking appears under **Customers** against the right affiliate, the integration is working end to end.
+</Check>
+
+Cancel the test meeting in Calendly and remove the test referral in Referly so your reports start clean. If you want to test again, open a fresh private window: the script deliberately records only one booking per browsing session.
+
+## How Referly decides who gets the credit
+
+Worth knowing when something looks off.
+
+When a visitor lands on your site through an affiliate link, Referly records the click and stores it in their browser for as long as your cookie window allows. When they book and arrive on your thank-you page, the script passes their email and any payment amount to Referly, which looks up the referral still sitting in that browser and credits the affiliate behind it.
+
+Everything hinges on that stored referral. If it isn't there, Referly correctly does nothing. That's why a booking made in a different browser, on a different device, or after the cookie window has expired won't be credited to anyone.
+
+Once someone is credited to an affiliate, that credit stays with them. Later visits from other affiliates don't take it over.
+
+## Limitations to be aware of
+
+- **Nothing after the booking is tracked.** Cancellations, reschedules, and no-shows never reach Referly. A meeting that was booked and then cancelled still shows as a referral, so if you pay per booked call, agree with your affiliates upfront how you'll handle no-shows.
+- **Revenue only exists if Calendly collects it.** If you take payment after the call instead, the booking arrives with no value. Record the sale yourself when it closes, or track it through your payment processor.
+- **The invitee has to book in the same browser they clicked in.** Someone who clicks on their phone and books on their laptop won't be matched.
+- **A bare `calendly.com` link can never be tracked.** There's no way around this, so it's worth repeating in your affiliate instructions.
+- **This is set up per event type.** A new meeting type you create later won't be tracked until you add the redirect to it.
+- **Ad blockers and strict privacy settings can block the tracking script** for a small share of visitors, as with any affiliate tool.
+- **The free Calendly plan can't do this**, because it has no redirect option.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="I land on Calendly's own confirmation screen after booking">
+    The redirect isn't turned on for that event type. Go back to that event type, open **More options**, expand **Confirmation page**, and check that **Redirect to an external site** is selected and saved. Remember that it applies to one event type at a time.
+  </Accordion>
+  <Accordion title="I land on my thank-you page but nothing appears in Referly">
+    Look at the address bar on that page. If there's nothing after the page name, **Pass event details to your redirected page** is switched off in Calendly, so the booking details never arrived. Turn it on and book another test.
+
+    If the details are there, check that both scripts are on that page: the tracking script in the `head`, and the booking script before the closing `body` tag. Also confirm you published the site after adding them.
+  </Accordion>
+  <Accordion title="Bookings are recorded but always with no revenue">
+    That's expected unless Calendly is collecting the payment. Open the event type, select **More options**, expand the **Payment** section, and check that **Require payment to book this meeting** is on with an amount set. If payment happens elsewhere, add those sales in Referly yourself.
+  </Accordion>
+  <Accordion title="Clicks are counted but bookings never are">
+    The tracking script is working and the booking script isn't reaching Referly. The most common causes are the booking script being on the wrong page, or the thank-you page missing the tracking script. Both scripts need to be on the thank-you page.
+  </Accordion>
+  <Accordion title="My second test booking wasn't recorded">
+    The script records one booking per browsing session on purpose, so a refresh of the thank-you page doesn't count twice. Open a new private window to test again.
+  </Accordion>
+  <Accordion title="A booking wasn't credited even though the customer says they used an affiliate link">
+    Check whether they clicked the link on one device and booked on another, whether the click was longer ago than your cookie window, or whether the affiliate shared your Calendly address rather than their referral link. You can attach the referral to the right affiliate by hand from the customer's page, described in [managing referred customers](/help-center/manage/customers/overview).
+  </Accordion>
+  <Accordion title="Bookings are credited to the wrong affiliate">
+    The customer most likely arrived on another affiliate's link first. The first affiliate to refer someone keeps the credit for the length of your cookie window.
+  </Accordion>
+</AccordionGroup>
+
+Still stuck? [Book an integration call](https://www.referly.so/book-integration-call) and we'll go through your setup with you.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Cal.com" icon="calendar" href="/help-center/integrations/cal-com" arrow>
+    The same idea for Cal.com bookings.
+  </Card>
+  <Card title="Universal integration" icon="code" href="/help-center/integrations/universal" arrow>
+    Track a platform that isn't listed.
+  </Card>
+  <Card title="Add a sale" icon="plus" href="/help-center/manage/customers/add-a-sale" arrow>
+    Record revenue that closes after the call.
+  </Card>
+  <Card title="All integrations" icon="puzzle-piece" href="/help-center/integrations/overview" arrow>
+    See every platform Referly connects to.
+  </Card>
+</Columns>

@@ -1,6 +1,298 @@
 ---
 title: "Statuses and enums"
-description: "Every status value an object can hold."
+description: "Every Referly status and enum value: affiliate status, referral status, sale status, commission approval and hold reasons, payout and payout batch status, payment methods, reward types, tracking method, and source enums."
+keywords: ["Referly status values", "affiliate status enum", "commission approval status", "payout status", "payout batch status", "sale status refunded", "referral status", "payment method enum", "reward type", "affiliate source enum"]
 ---
+Referly's objects carry a lot of state, and almost all of it is enumerated. This page lists every
+value you can receive, what each one means, and how a record moves between them.
 
-{/* TODO: Write this article. */}
+## How values are formatted
+
+Three rules cover almost every case.
+
+**Responses and webhooks send the value verbatim.** An affiliate's status arrives as `ACTIVE`, not
+`active`. Webhook bodies are the stored record spread into JSON, so what you see is exactly what is
+stored. Some example payloads shown in the webhook portal render values in lower case for
+readability — compare case-insensitively if you want to be safe against that.
+
+**A few request fields accept a friendlier form.** Where an endpoint takes a status on the way in, it
+takes lower-case `active` or `inactive` and maps it for you. Those are noted below, on the enums
+where they apply.
+
+**One enum is genuinely lower case.** A coupon's `duration` is stored as `once`, `forever`, or
+`repeating`. That is not a formatting quirk in the API — it is the stored value, and it mirrors
+Stripe's naming.
+
+Dashboard labels do not always match the stored value. Where they differ, the difference is listed.
+
+## Affiliate status
+
+On the `status` field of an affiliate, in `affiliate.*` webhooks, and on the affiliate objects
+embedded in sale and referral payloads.
+
+| Value | Dashboard label | Meaning |
+| --- | --- | --- |
+| `ACTIVE` | Active | Approved and earning. |
+| `INACTIVE` | Pending | Signed up but not yet approved. The name is kept for backward compatibility. |
+| `INVITED` | Invited | You invited them; they have not completed sign-up. |
+| `DECLINED` | Declined | Application rejected. |
+| `DEACTIVATED` | Deactivated | Switched off by you. Commissions still calculate but are held. |
+| `BANNED` | Banned | Removed for abuse. Commissions are held. |
+
+A new affiliate lands on `ACTIVE` if the program approves automatically, and `INACTIVE` if it does
+not. From `INACTIVE` you approve to `ACTIVE` or reject to `DECLINED`. `DEACTIVATED` and `BANNED` are
+reachable from `ACTIVE` and are the two states that suppress payouts without deleting history.
+
+<Note>
+  When creating or updating an affiliate through the API, the field is `affiliateStatus` on the way
+  in and accepts `active` or `inactive`. Anything else, including omitting it, falls back to your
+  program's auto-approval setting. The response comes back as `status` with the upper-case value.
+</Note>
+
+## Referral status
+
+Stored as `subscriptionStatus` and exposed as `status` on both the API and `referral.*` webhooks.
+
+| Value | Meaning |
+| --- | --- |
+| `ACTIVE` | The referred customer is live. |
+| `SUBMITTED` | Submitted for review and not yet counted. |
+| `DECLINED` | Rejected. |
+
+`submissionType` sits alongside it and records who created the referral:
+
+| Value | Meaning |
+| --- | --- |
+| `AUTOMATIC` | Referly created it from tracking, an integration, or the API. |
+| `MANUAL` | Someone entered it by hand. |
+
+<Warning>
+  The API cannot move a referral out of `ACTIVE`. Creating a referral always stores `ACTIVE`, and on
+  update both `active` and `inactive` resolve to `ACTIVE` — any other value leaves the field
+  untouched. Review and decline flows live in the dashboard.
+</Warning>
+
+## Sale status
+
+| Value | Meaning |
+| --- | --- |
+| `ACTIVE` | The payment stands and its commission counts. |
+| `REFUNDED` | Reversed. `refundedAt` carries the timestamp. |
+
+Sales start `ACTIVE` and move to `REFUNDED` through the refund endpoint or an integration reporting
+the refund upstream. There is no path back.
+
+## Commission approval status
+
+On every commission, and reflected in the commission amount reported with a sale.
+
+| Value | Meaning |
+| --- | --- |
+| `ACCEPTED` | Payable. The default. |
+| `ON_HOLD` | Calculated but withheld until someone approves it. |
+| `DECLINED` | Rejected. It never enters a payout. |
+
+When the status is `ON_HOLD` or `DECLINED`, `holdReason` says why.
+
+| Value | Meaning |
+| --- | --- |
+| `PROGRAM_SETTINGS` | The program or commission plan does not auto-approve rewards. |
+| `FRAUD_PREVENTION` | A fraud check matched. `fraudPreventionNotes` lists the signals. |
+| `AFFILIATE_DEACTIVATED` | The affiliate was deactivated when the commission was calculated. |
+| `AFFILIATE_BANNED` | The affiliate was banned when the commission was calculated. |
+
+The decision runs in a fixed order. A fraud match wins first, and the program's fraud action decides
+the outcome: `HOLD_FOR_REVIEW` produces `ON_HOLD`, `REJECT_AUTOMATICALLY` produces `DECLINED`. With
+no fraud match, the applicable plan's auto-approve setting decides between `ACCEPTED` and `ON_HOLD`.
+Either result is then overridden if the affiliate is deactivated or banned.
+
+## Payout status
+
+| Value | Meaning |
+| --- | --- |
+| `PENDING` | Created and waiting to be processed. |
+| `PROCESSING` | Sent to the payment provider. |
+| `PAID` | Settled. `paidAt` carries the timestamp. |
+| `FAILED` | Rejected or errored. `failedReason` carries the detail. |
+
+The path is `PENDING` to `PROCESSING` to either `PAID` or `FAILED`. Payouts settled outside Referly
+are marked `PAID` with `manuallyPaid` set.
+
+## Payout batch status
+
+Batches have their own lifecycle, longer than a single payout's because it covers funding as well as
+sending.
+
+| Value | Meaning |
+| --- | --- |
+| `PREPARING` | Still open. Payouts can be added. |
+| `READY` | Closed and ready to be paid. |
+| `PROCESSING` | Payouts are being sent. |
+| `WAITING_FOR_PAYOUT_INTEGRATION` | Blocked on the payout integration completing. |
+| `WAITING_FOR_PAYMENT` | Waiting for you to pay. |
+| `CHARGING` | Your payment is initiated and settling with the processor. |
+| `WAITING_FOR_FUNDS` | Charge succeeded, funds still clearing. Legacy state. |
+| `SENDING_TO_AFFILIATE` | Referly has the funds and is paying affiliates out. |
+| `PAID` | Every payout completed. |
+| `NO_TRANSACTIONS` | Nothing to pay for this method and period. |
+| `FAILED` | The batch could not be completed. |
+
+A batch can report `PAID` while an individual payout inside it reports `FAILED`. Reconcile against
+payouts, not batches.
+
+## Payment methods
+
+`paymentMethod` on affiliates and payouts, and `payoutMethod` on batches.
+
+| Value | Meaning |
+| --- | --- |
+| `WISE` | Wise, to an email address. |
+| `WISE_BANK` | Wise, to full bank details. |
+| `PAYPAL` | PayPal. |
+| `BANK` | Bank details you settle manually. |
+| `CREDITS` | Store or account credit instead of money. |
+| `COUPON` | A coupon issued to the affiliate as their reward. |
+| `REFERLY` | Referly Payouts, where Referly charges you and pays affiliates. |
+
+`paidMethod` on a batch records how it was settled: `INTEGRATION` when a provider sent it,
+`MANUAL` when you did.
+
+## Commission shape
+
+| Enum | Values | Meaning |
+| --- | --- | --- |
+| `commissionType` | `PERCENTAGE`, `FLAT` | Whether the rate is a percentage of the sale or a fixed amount. |
+| `commissionBasis` | `RECURRING`, `ONE_TIME` | Whether the commission repeats on renewals. |
+| `paymentTrigger` | `SIGNUP`, `PURCHASE`, `BONUS`, `CONTENT_REWARD` | What kind of event earned it. |
+| `payoutTerm` | `NET_0`, `NET_7`, `NET_15`, `NET_30`, `NET_45`, `NET_60` | Days between the commission being earned and becoming payable. |
+
+`paymentTrigger` appears on the program, the commission plan, and every sale. A sale with
+`BONUS` or `CONTENT_REWARD` has no customer payment behind it — it exists so a non-sale reward can
+travel through the same commission and payout pipeline.
+
+## Reward types
+
+Cash is the default. Everything below describes a program paying in something other than money.
+
+| Enum | Values | Meaning |
+| --- | --- | --- |
+| `rewardType` | `CASH`, `NON_CASH` | Which pipeline the reward settles through. |
+| `nonCashRewardType` | `COUPON`, `CUSTOM_CREDITS` | What the affiliate receives. |
+| `nonCashTrigger` | `SIGNUP`, `PURCHASE` | What earns the non-cash reward. |
+| `creditType` | `SHOPIFY_STORE_CREDITS`, `STRIPE_CREDITS`, `WOOCOMMERCE_CREDITS`, `CUSTOM` | Where the credit is issued. |
+| `creditCalculationMode` | `FLAT_PER_PURCHASE`, `PER_CURRENCY_UNIT` | Fixed credit per order, or credit scaled to the order value. |
+
+`rewardType` and `nonCashRewardType` are carried from the commission plan onto the commission, the
+payout, and the payout batch, so a non-cash reward is identifiable at every stage.
+
+## Tracking method
+
+`referralMedium` on a referral records how the affiliate was credited.
+
+| Value | Meaning |
+| --- | --- |
+| `LINK` | A referral link and a tracked click. The default. |
+| `COUPON` | A promotional code used at checkout, with no click required. |
+
+## Source enums
+
+Four separate enums record where a record came from. They are the fastest way to tell apart data you
+sent from data an integration reported.
+
+`source` on an affiliate:
+
+| Value | Meaning |
+| --- | --- |
+| `AFFILIATE_PORTAL` | Signed themselves up. |
+| `API` | Created through the REST API. |
+| `WIDGET` | Signed up through the referral widget. |
+| `MANUAL` | Added by hand in the dashboard. |
+| `IMPORTED` | Came in through an import. |
+| `REFERLY_MARKETPLACE` | Joined via the Referly marketplace. |
+| `INFLUENCER_DISCOVERY` | Recruited through Influencer Discovery. |
+| `UNKNOWN` | Predates source tracking. |
+
+`source` on a referral:
+
+| Value | Meaning |
+| --- | --- |
+| `API` | Reported through the REST API. |
+| `INTEGRATION` | Reported by a payment or ecommerce platform. |
+| `MANUAL` | Entered in the dashboard. |
+| `IMPORTED` | Came in through an import. |
+| `AFFILIATE_SUBMITTED` | The affiliate submitted it for review. |
+| `UNKNOWN` | Source not recorded. |
+
+`source` on a sale:
+
+| Value | Meaning |
+| --- | --- |
+| `API` | Reported through the REST API. |
+| `INTEGRATION` | Reported by a payment or ecommerce platform. |
+| `MANUAL` | Entered in the dashboard. |
+| `IMPORTED` | Came in through an import. |
+| `AUTOMATED` | Generated by Referly, such as a recurring commission. |
+| `UNKNOWN` | Source not recorded. |
+
+When `source` is `INTEGRATION`, a second field names the platform —
+`integrationSalesSource` on sales, `integrationReferralSource` on referrals:
+
+`JAVASCRIPT`, `MAKE`, `ZAPIER`, `STRIPE`, `SHOPIFY`, `WOOCOMMERCE`, `PADDLE`, `CHARGEBEE`,
+`MEMBERSTACK`, `POLAR`, `SKILLPLATE`, `ZYLVIE`.
+
+A related but distinct enum, `integrationType`, appears on coupons and payout batches and names the
+platform that owns the underlying object: `NONE`, `STRIPE`, `CHARGEBEE`, `PADDLE`, `SHOPIFY`,
+`WOOCOMMERCE`, `ZYLVIE`, `POLAR`.
+
+<Note>
+  Anything you create through the REST API is stamped `API`. That makes it straightforward to
+  reconcile your own writes against everything else in an export.
+</Note>
+
+## Coupon enums
+
+| Enum | Values | Meaning |
+| --- | --- | --- |
+| `duration` | `once`, `forever`, `repeating` | How long the discount applies. Lower case, matching Stripe. |
+| `couponType` | `PERCENTAGE`, `FLAT` | Percentage off, or a fixed amount off. |
+| `couponCategory` | `CUSTOMER`, `PAYOUT` | A discount for customers, or a coupon issued to an affiliate as payment. |
+
+`durationInMonths` is only meaningful when `duration` is `repeating`.
+
+## Commission rule enums
+
+These appear on commission plans and their rule groups. You read them; the API does not write them.
+
+| Enum | Values |
+| --- | --- |
+| `ruleCondition` | `ALL`, `SOME` |
+| `ruleType` | `ORDER_AMOUNT`, `PRODUCT`, `MEDIUM`, `LANDING_PAGE`, `STATEMENT_DESCRIPTION`, `COUPON_USED` |
+| `commissionCondition` | `ANY`, `NONE`, `IS`, `IS_NOT`, `GREATER_THAN`, `LESS_THAN`, `CONTAINS`, `DOES_NOT_CONTAIN` |
+
+`ruleCondition` decides whether every rule in a group must match or only one of them.
+
+## Invoicing enums
+
+Present on affiliates and payouts for programs whose affiliates invoice with VAT.
+
+| Enum | Values | Meaning |
+| --- | --- | --- |
+| `entityType` | `INDIVIDUAL`, `BUSINESS` | How the affiliate is registered. |
+| `vatZone` | `DOMESTIC`, `INTRA_EU`, `NON_EU` | Which VAT treatment applies to their payout. |
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Data model" icon="diagram-project" href="/developer-documentation/reference/data-model">
+    The objects these values live on, and how they relate.
+  </Card>
+  <Card title="Tracking parameters" icon="link" href="/developer-documentation/reference/tracking-parameters">
+    The URL parameters and click fields Referly reads and stores.
+  </Card>
+  <Card title="Webhook event types" icon="webhook" href="/developer-documentation/webhooks/event-types">
+    Every event Referly emits and what triggers it.
+  </Card>
+  <Card title="API reference" icon="terminal" href="/api-reference/introduction">
+    Endpoint-by-endpoint documentation, including which fields accept which values.
+  </Card>
+</Columns>

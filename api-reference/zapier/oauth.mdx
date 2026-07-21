@@ -1,142 +1,173 @@
 ---
 title: "Zapier OAuth Integration"
-description: "Complete guide to integrating with Referly via Zapier using OAuth 2.0 authentication flow"
+description: "The Referly Zapier OAuth flow: authorization URL and parameters, exchanging the code for an access token, testing a connection, token lifetime, the Zapier resource endpoints, and error responses."
+keywords: ["Zapier OAuth", "Referly Zapier integration", "access token", "authorization code", "zapier/token", "Referly API"]
 ---
+Referly's Zapier integration uses an OAuth-style authorization flow. The user picks which affiliate program to connect, and Zapier receives an access token scoped to that one program.
 
-# Zapier OAuth Integration
+This page documents the flow from Zapier's side. If you are setting the integration up as a Referly customer rather than building against it, start with the [Zapier help center article](/help-center/integrations/zapier).
 
-Referly provides OAuth 2.0 authentication for Zapier integrations, allowing users to securely connect their affiliate programs to Zapier workflows.
+## How the flow works
 
-## Overview
+```mermaid
+sequenceDiagram
+  participant Z as Zapier
+  participant U as User's browser
+  participant R as Referly
+  Z->>U: Redirect to the authorization page
+  U->>R: Sign in and choose an affiliate program
+  R->>U: Redirect to redirect_uri with code and state
+  U->>Z: Deliver code
+  Z->>R: POST /api/zapier/token with the code
+  R->>Z: access_token
+  Z->>R: GET /api/zapier/test to confirm the connection
+```
 
-The OAuth flow enables Zapier to authenticate with Referly and perform actions on behalf of users within their selected affiliate programs. This integration allows for automated workflows based on affiliate events such as new sales, referrals, and affiliate sign-ups.
+## Send the user to the authorization page
 
-## Authentication Flow
-
-### Step 1: Authorization Request
-
-Users are redirected to the Referly authorization endpoint to begin the OAuth flow:
+Redirect the user's browser to:
 
 ```
 https://referly.so/connect/zapier/choose-affiliate-program
 ```
 
-**Query Parameters:**
+<ParamField query="redirect_uri" type="string" required>
+  Where Referly sends the user once they authorize. Referly appends the result with `?`, so this URL
+  must not already contain a query string.
+</ParamField>
 
-- `state` (required) - A unique state parameter provided by Zapier for security
-- `redirect_uri` (required) - The callback URL where users will be redirected after authorization
+<ParamField query="state" type="string" required>
+  An opaque value that is echoed back unchanged on the redirect. Generate it per attempt and verify
+  it on return to protect against CSRF.
+</ParamField>
 
-### Step 2: User Authorization
+The page requires a signed-in Referly account and prompts the user to sign in first if needed. It lists every affiliate program on the account, and the user picks one and confirms.
 
-On the authorization page, users will:
-
-1. Log in to their Referly account (if not already authenticated)
-2. Select which affiliate program they want to connect to Zapier
-3. Confirm the connection by clicking "Connect"
-
-The authorization page displays:
-
-- Available affiliate programs associated with the user's account
-- Program details including name, domain, and logo
-- A confirmation dialog explaining the permissions Zapier will receive
-
-### Step 3: Authorization Code Exchange
-
-After the user authorizes the connection, they are redirected back to Zapier with an authorization code:
+On confirmation, Referly issues an access token for that program and redirects the browser to:
 
 ```
-{redirect_uri}?code={authorization_code}&state={state}
+https://your-app.example.com/callback?code=ACCESS_TOKEN&state=YOUR_STATE
 ```
 
-### Step 4: Access Token Request
+<Note>
+  A program gets one Zapier token, created on first connection and reused afterwards. Reconnecting
+  the same program returns the same token rather than issuing a new one.
+</Note>
 
-Zapier exchanges the authorization code for an access token by making a POST request to:
+## Exchange the code for an access token
 
 ```
 POST https://referly.so/api/zapier/token
 ```
 
-**Request Headers:**
+Send the code as form data, not JSON.
 
+<ParamField header="Content-Type" type="string" required>
+  `application/x-www-form-urlencoded`
+</ParamField>
+
+<ParamField body="code" type="string" required>
+  The authorization code from the redirect.
+</ParamField>
+
+```bash cURL
+curl -X POST https://referly.so/api/zapier/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "code=AUTHORIZATION_CODE"
 ```
-Content-Type: application/x-www-form-urlencoded
-```
 
-**Request Body:**
-
-```
-code={authorization_code}
-```
-
-**Response:**
-
-```json
+```json 200 response
 {
-  "access_token": "auth_token_value"
+  "access_token": "5f2a8c31-9b04-4e6d-a7f1-c8203d5e6b90"
 }
 ```
 
-## Token Management
+<ResponseField name="access_token" type="string">
+  The bearer token for every subsequent request. It is scoped to the single affiliate program the
+  user selected.
+</ResponseField>
 
-### Access Token
+The endpoint does not take a `client_id`, a `client_secret`, or a `grant_type`. It validates the code and returns the token, so treat the authorization code with the same care as the token itself and exchange it server-side.
 
-- **Lifetime**: Access tokens do not expire
-- **Refresh**: No refresh token is provided or required
-- **Storage**: Zapier securely stores the access token for ongoing API requests
+### Token lifetime
 
-### Token Usage
+- Access tokens do not expire.
+- No refresh token is issued, and there is no refresh endpoint.
+- The token is not listed on the **API Keys** page in the Referly dashboard, which shows only keys created there. To end a connection, disconnect the app from the Zapier side.
 
-All API requests to Referly endpoints must include the access token in the Authorization header:
+## Test a connection
+
+Zapier calls this endpoint to confirm a token still works and to label the connection.
 
 ```
-Authorization: Bearer {access_token}
+GET https://referly.so/api/zapier/test
 ```
 
-## Security Considerations
+```bash cURL
+curl https://referly.so/api/zapier/test \
+  -H "Authorization: Bearer ACCESS_TOKEN"
+```
 
-- The `state` parameter should be validated to prevent CSRF attacks
-- Access tokens should be stored securely by Zapier
-- Users can revoke access through their Referly dashboard
-
-## Error Handling
-
-### Common Error Responses
-
-**Invalid Authorization Code:**
-
-```json
+```json 200 response
 {
-  "error": "Invalid code"
+  "program_name": "Acme Partner Program"
 }
 ```
 
-**Missing Authorization Code:**
+<ResponseField name="program_name" type="string">
+  The name of the connected affiliate program. On failure the response carries the auth error status
+  and sets `program_name` to `Program not found`.
+</ResponseField>
 
-```json
-{
-  "error": "Code is required"
-}
+## Use the access token
+
+Send the token as a bearer token on every request:
+
+```
+Authorization: Bearer ACCESS_TOKEN
 ```
 
-## Permissions
+The token unlocks a set of Zapier-specific endpoints that back the integration's triggers and actions, all scoped to the connected program:
 
-Once connected, Zapier can:
+| Path | Methods | Purpose |
+| --- | --- | --- |
+| `/api/zapier/affiliates` | `GET`, `POST`, `PUT`, `DELETE` | Read and manage affiliates |
+| `/api/zapier/referrals` | `GET`, `POST`, `PUT`, `DELETE` | Read and manage referrals |
+| `/api/zapier/sales` | `GET`, `POST`, `PUT`, `DELETE` | Read and manage sales |
+| `/api/zapier/webhooks` | `POST` | Subscribe to events. Requires `url` and an `eventTypes` array |
+| `/api/zapier/webhooks/{id}` | `DELETE` | Unsubscribe, using the ID returned when the subscription was created |
 
-- Trigger actions based on affiliate program events (new sales, referrals, affiliates)
-- Perform actions within the connected affiliate program
-- Access affiliate, sales, and referral data for the connected program
+Triggers work by subscription: Zapier creates a webhook endpoint with the event types it cares about, then deletes it when the Zap is turned off. See [Event types](/developer-documentation/webhooks/event-types) for what you can subscribe to and [Payload structure](/developer-documentation/webhooks/payload-structure) for what Zapier receives.
 
-## Integration Example
+The token also works against the [main API](/api-reference/introduction) at `https://www.referly.so/api/v1`, so the same connection can read affiliates, links, coupons, and sales.
 
-Here's a typical flow for a Zapier integration:
+## Errors
 
-1. User initiates connection in Zapier
-2. Zapier redirects to `https://referly.so/connect/zapier/choose-affiliate-program?state=abc123&redirect_uri=https://zapier.com/callback`
-3. User logs in and selects an affiliate program
-4. User is redirected to `https://zapier.com/callback?code=auth_code_xyz&state=abc123`
-5. Zapier exchanges the code for an access token
-6. Zapier can now make authenticated API requests to Referly
+Failures return a JSON object with an `error` message.
 
-## Support
+| Status | Message | When it happens |
+| --- | --- | --- |
+| `400` | `Code is required` | The token request had no `code` field. |
+| `400` | `Invalid code` | The code does not match a token. It was mistyped, or the connection was already removed. |
+| `401` | `Unauthorized` | The `Authorization` header is missing or is not a bearer token. |
+| `401` | `Invalid auth token` | The token is not recognized. |
+| `403` | `User does not have API access` | The account's plan does not include API access. |
+| `404` | `Affiliate program not found` | The connected program no longer exists. |
+| `429` | `Too many requests. Please slow down.` | You exceeded the rate limit. Back off and retry. |
 
-For technical support with the Zapier OAuth integration, please contact our support team or refer to the main API documentation for endpoint details.
+## Related
+
+<Columns cols={2}>
+  <Card title="Zapier integration guide" icon="bolt" href="/help-center/integrations/zapier">
+    Set up the integration as a Referly customer.
+  </Card>
+  <Card title="Authentication" icon="key" href="/api-reference/authentication">
+    Generate a standard API key instead of connecting through Zapier.
+  </Card>
+  <Card title="API introduction" icon="book" href="/api-reference/introduction">
+    The endpoints your token can reach.
+  </Card>
+  <Card title="Affiliates and referral links" icon="users" href="/api-reference/affiliate-links">
+    How affiliates and their tracking links fit together.
+  </Card>
+</Columns>

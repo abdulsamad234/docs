@@ -1,6 +1,111 @@
 ---
 title: "Tax management"
-description: "Tax zones and invoicing for affiliates."
+description: "Set the legal entity, address, and EU VAT number Referly uses on affiliate self-billing invoices, require invoice details from affiliates, and download Netherlands ICP and BTW tax reports."
+keywords: ["tax management", "affiliate self-billing invoice", "VAT number", "VIES verification", "EU VAT affiliate payouts", "reverse charge VAT", "ICP export", "BTW summary", "invoice details affiliates", "legal entity on invoices"]
 ---
+Paying affiliates creates paperwork. Each payout needs an invoice, and in the EU it needs the right VAT treatment — which depends on where your business sits and where your affiliate sits. Referly handles that for you by generating self-billing invoices, where you raise the invoice on the affiliate's behalf rather than waiting for them to send you one.
 
-{/* TODO: Write this article. */}
+For any of it to be correct, Referly needs to know who you are and where you're established. That's what this page is for.
+
+To find it, go to **Settings**, open **Program details**, and select **Tax management**.
+
+{/* TODO screenshot: tax-management-overview — upload it in the local Documentation Agent */}
+
+The page explains its own scope: set your legal entity country and billing details for self-billing PDFs, plus optional Netherlands tax exports. EU payouts use your country to work out VAT zones and domestic standard rates.
+
+Tax management is available from the Starter plan.
+
+## Fill in your legal entity
+
+**Legal entity on invoices** is the business Referly names as the customer — the payer — on every affiliate self-billing invoice. Use your registered legal entity, not a trading name or brand, since these documents may end up in front of a tax authority.
+
+{/* TODO screenshot: legal-entity-fields — upload it in the local Documentation Agent */}
+
+- **Country** — where your legal entity is established. Do this one first: it drives the VAT applied to payouts, decides whether the EU VAT field appears, and unlocks the Netherlands exports.
+- **Invoice email** — your billing address for invoice correspondence.
+- **Company name** — your registered company name. Referly derives your self-billing invoice number prefix from it, and shows you the prefix under the field as you type, so you can see what your invoice numbers will look like.
+- **Address**, **City**, **State / province**, and **ZIP / postal code** — your registered address as it should appear on invoices.
+
+Fill in all of it. A self-billing invoice missing an address or a company name is likely to be rejected as a valid document.
+
+### Add your EU VAT number
+
+If you selected a country in the EU, a **VAT number (EU)** field appears.
+
+{/* TODO screenshot: vat-verification — upload it in the local Documentation Agent */}
+
+Enter your VAT number and Referly checks it against VIES, the EU's official VAT Information Exchange System, while you type:
+
+- A spinner means the check is running.
+- A **green check** means the number was verified against the VIES registry.
+- An **amber warning** means it couldn't be verified. Hover the icon to see why, and select the refresh icon beside it to try again.
+
+An amber warning isn't always your mistake. VIES is a live service that queries each member state's own database, and national systems go offline for maintenance fairly often, so a number that's perfectly valid can fail to verify temporarily. Check for a typo first — the country prefix is the usual culprit — then retry later. If it verifies once, you're set.
+
+Getting this right matters because your VAT number and country together determine the VAT treatment on cross-border payouts, including whether the reverse charge applies.
+
+## Require invoice details from affiliates
+
+**Require invoice information from affiliates** decides whether affiliates must supply their own invoice and tax details before they can be paid: "Affiliates provide invoice and tax details before they can receive payouts when this is on."
+
+{/* TODO screenshot: require-invoice-info — upload it in the local Documentation Agent */}
+
+Turn it on and affiliates can't receive a payout until they've completed those details. That's what makes your records complete — an affiliate's own VAT number is what lets Referly treat an EU business-to-business payout correctly and what makes your intra-EU reporting add up.
+
+The trade-off is friction: an affiliate who ignores the request doesn't get paid, and you'll field the questions. On-screen guidance says as much, asking you to make sure the setting matches your compliance needs. If you pay affiliates in the EU, requiring it is usually the right call. If you pay a handful of affiliates domestically, you may not need it.
+
+## Download your Netherlands tax reports
+
+If you set your country to the Netherlands, an **NL reporting exports** section appears with reports built from payouts you've actually paid in a chosen period, using the VAT zones and amounts stored at the time.
+
+{/* TODO screenshot: nl-reporting-exports — upload it in the local Documentation Agent */}
+
+Pick a date range first. Until you do, you'll see a note that choosing a range and applying it loads a preview, and that the CSV downloads unlock once the preview has loaded. Selecting a download without a range gives you **Select a date range**.
+
+Once the preview loads you get two reports:
+
+### ICP lines
+
+Your intra-EU paid payouts for the period, listing **Country**, **Affiliate VAT**, and **Commission** — the figures behind an ICP declaration. If there's nothing to report you'll see "No intra-EU lines for this period." Select **Download ICP (CSV)** to export it, confirmed with **ICP export downloaded**.
+
+### BTW summary
+
+Rubric totals for the same period, laid out the way a Dutch VAT return expects:
+
+| Rubric | What it covers |
+| --- | --- |
+| 1a – Omzet | Revenue from sales linked to paid commissions |
+| 1a – BTW (21%) | Output VAT on those sales |
+| 2a – Intra-EU supplies | Sales to VAT-registered EU businesses at 0% VAT |
+| 4a – Non-EU reverse charge VAT | 21% self-assessed on non-EU affiliate commissions |
+| 4b – Intra-EU reverse charge VAT | 21% self-assessed on EU affiliate commissions |
+| 5b – Input VAT (voorbelasting) | Total reclaimable: domestic BTW plus reverse charge VAT |
+
+Select **Download BTW summary (CSV)** to export it, confirmed with **BTW summary downloaded**.
+
+Both files are a starting point for your accountant rather than a filed return. Preview the numbers on screen before downloading, and check them against your own books — the reports only cover payouts marked as paid within the range you chose.
+
+## Save
+
+A **Save changes** button appears at the bottom right once you've edited anything. Select it and you'll see **Tax settings saved**. Report downloads don't need saving.
+
+<Note>
+Your details are applied to invoices generated from the moment you save. Fill this page in before you run your first payout — invoices already issued with incomplete details won't retroactively correct themselves.
+</Note>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Payout settings" icon="wallet" href="/help-center/settings/program/payout-settings" arrow>
+    Choose how and when affiliates are paid.
+  </Card>
+  <Card title="General program settings" icon="sliders" href="/help-center/settings/program/general" arrow>
+    Set your currency and whether tax is deducted before commission.
+  </Card>
+  <Card title="Affiliate groups" icon="users" href="/help-center/settings/program/affiliate-groups" arrow>
+    Segment affiliates and give each group its own terms.
+  </Card>
+  <Card title="Fraud prevention" icon="shield" href="/help-center/settings/program/fraud-prevention" arrow>
+    Hold suspicious rewards before they reach a payout.
+  </Card>
+</Columns>

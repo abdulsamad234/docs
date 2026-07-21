@@ -1,6 +1,104 @@
 ---
 title: "API keys"
-description: "Create a key to use the Referly API."
+description: "Create and manage Referly API keys from Settings, Advanced, API Keys: generate a key, copy it safely, understand program scope and request limits, and delete a key when an integration changes."
+keywords: ["Referly API key", "generate API key", "affiliate program API key", "API authentication", "bearer token", "delete API key", "revoke API key", "API rate limits", "Referly API access", "affiliate API integration"]
 ---
+An API key is a long secret string that lets another tool act on your affiliate program without logging in as you. If you're building a custom integration, connecting an automation platform, or asking a developer to send sales data to Referly from your own system, this is what they'll need.
 
-{/* TODO: Write this article. */}
+To find your keys, open **Settings** from the left sidebar, go to **Advanced**, then select **API Keys**. The screen lists every key you've created for the program you're currently in, and has a **Generate New Key** button at the bottom right.
+
+{/* TODO screenshot: api-keys-screen — upload it in the local Documentation Agent */}
+
+<Info>
+  API access is part of the **Business** and **Agency** plans, and it isn't included during a free trial. On other plans the **Generate New Key** button is locked and selecting it opens an upgrade prompt. See [API access](/help-center/billing/api-access) and [plans and features](/help-center/billing/plans-and-features).
+</Info>
+
+## What a key gives access to
+
+A key gives full read and write access to one affiliate program. Whoever holds it can list and create affiliates, record sales and referrals, manage links, and create coupons and promo codes — everything you can do on those screens in the dashboard.
+
+There are no partial permissions. A key is either valid for the whole program or it doesn't work at all, so treat it like a password to that program.
+
+## Generate a key
+
+Select **Generate New Key** at the bottom right. The new key appears in the list straight away, with the date you created it underneath.
+
+{/* TODO screenshot: generate-key — upload it in the local Documentation Agent */}
+
+You can create as many keys as you like. It's worth creating a separate one for each tool or integration, so that if you ever need to turn one off you don't break everything else at the same time.
+
+<Check>
+  When the "API key created successfully" message appears, the key is live and ready to use.
+</Check>
+
+## Copy your key
+
+Select **Copy** on the key's card to put it on your clipboard, then paste it wherever it's needed — usually a field labelled "API key" or "token" in the other tool.
+
+Unlike some services, Referly keeps your key visible on this screen, so you can come back and copy it again later. That also means anyone who can open your dashboard can read it.
+
+<Warning>
+  Keep your key on a server or in a password manager. Never put it in a public repository, a browser script, a support ticket, or anywhere your website visitors could see it. Anyone with the key can change data in your program.
+</Warning>
+
+## Each key belongs to one program
+
+A key is tied to the affiliate program it was created in. If you run several programs, switch to each one and generate its own key — a key from one program won't return or change anything in another.
+
+The same applies the other way round: deleting a program's key has no effect on your other programs.
+
+<Note>
+  Keys created automatically when you connect [Zapier](/help-center/integrations/zapier) or [Make](/help-center/integrations/make) are managed by those connections and don't appear in this list. Disconnect the app from its own settings screen rather than looking for its key here.
+</Note>
+
+## Hand the key to a developer or tool
+
+Requests go to `https://www.referly.so/api/v1`, and the key travels with every request as a bearer token:
+
+```bash
+curl https://www.referly.so/api/v1/affiliates \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+That's usually all a developer needs from you. The full list of what can be read and written is in the [API reference](/api-reference/introduction), and there's a longer walkthrough in [authentication](/api-reference/authentication).
+
+## Know the request limits
+
+To keep things fast for everyone, each key can only make so many requests in a given period. The limits apply per key and per type of request:
+
+| Type of request | Limit |
+| --- | --- |
+| Reading data | 100 per minute |
+| Creating, updating, or deleting | 30 per minute |
+| Anything to do with sales | 20 per 15 minutes |
+
+Going over a limit doesn't disable your key. The request is refused with a "too many requests" response and a note of how long to wait, and normal requests resume once the period is over. If you're importing a lot of history at once, spread it out or use the [import tools](/help-center/manage/customers/import) instead.
+
+## Delete a key
+
+Select the red trash icon on a key's card. The key is removed immediately — there's no confirmation step and no way to restore it.
+
+{/* TODO screenshot: delete-key — upload it in the local Documentation Agent */}
+
+<Warning>
+  Any integration still using that key stops working the moment you delete it, and starts getting rejected as unauthorised. Before deleting a key, check which tool is using it and give that tool a new key first.
+</Warning>
+
+Delete a key whenever it may have been exposed — a developer leaves, a key ends up in a shared document, or you stop using a tool. Generate a replacement, update the tool, then delete the old one.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="API access" icon="lock-open" href="/help-center/billing/api-access" arrow>
+    Check whether your plan includes API access.
+  </Card>
+  <Card title="Webhooks" icon="bell" href="/help-center/settings/advanced/webhooks" arrow>
+    Get notified in your own system when something changes.
+  </Card>
+  <Card title="API reference" icon="code" href="/api-reference/introduction" arrow>
+    Everything your developer can read and write.
+  </Card>
+  <Card title="Zapier" icon="bolt" href="/help-center/integrations/zapier" arrow>
+    Connect Referly to thousands of apps without code.
+  </Card>
+</Columns>

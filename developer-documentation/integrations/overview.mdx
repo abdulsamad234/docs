@@ -1,6 +1,267 @@
 ---
 title: "Integrations overview"
-description: "How Referly connects to other platforms."
+description: "Every way to connect Referly to your stack: Stripe, Shopify, WooCommerce, Paddle, Chargebee and Polar connections, Zapier and Make, the REST API, the Universal integration, and postback URLs — with how attribution flows through each."
+keywords: ["referly integrations", "affiliate tracking integration", "click id attribution", "client_reference_id stripe", "affiliate api", "conversion tracking", "payment provider webhooks", "zapier affiliate", "make affiliate", "universal integration", "postback url", "server-side conversion reporting"]
 ---
+Referly needs two facts to pay an affiliate: **who** sent the visitor, and **what** that visitor eventually bought. An integration is whatever supplies those two facts. Every integration in this section is a different answer to the same question, chosen to fit a different stack.
 
-{/* TODO: Write this article. */}
+This page maps the whole surface — what each category does, how attribution actually travels through it, and which one to reach for.
+
+## The two halves of an integration
+
+Almost every setup is a pair, and the halves are independent. You can mix a JavaScript front end with an API back end, or a Shopify front end with a Shopify back end.
+
+<Steps>
+  <Step title="Attribution — identify the affiliate">
+    The browser-side tracker records the click and hands you a **click ID**. That ID is what you attach to the eventual purchase.
+  </Step>
+  <Step title="Conversion — report the sale">
+    A payment webhook, a plugin, an automation platform, or a direct API call tells Referly that a purchase happened and which click ID it belongs to.
+  </Step>
+</Steps>
+
+The one setup that skips the first half is **coupon-based attribution**. Each affiliate gets a unique discount code, so the code itself carries the identity and no browser tracking is required. Referly reads the code off the order at conversion time.
+
+### How the click ID is produced
+
+The tracker script goes in the `head` of every page you want attributed:
+
+```html
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+When a visitor lands with a referral parameter (`?ref=CODE` by default), the tracker registers a click and exposes two globals:
+
+```js
+window.affiliateRef  // the affiliate's referral code, e.g. "AFFILIATE123"
+window.affiliateId   // the Referly click ID — this is what you attach to the sale
+```
+
+Because click registration is a network round trip, read those values from the events rather than at parse time:
+
+```js
+window.addEventListener("affiliate_id_ready", function (event) {
+  // event.detail === { ref: "AFFILIATE123", clickId: "12345" }
+});
+
+window.addEventListener("affiliate_referral_ready", function () {
+  // tracking is fully initialised; window.affiliateId is stable
+});
+```
+
+The value persists in a cookie scoped to your root domain, with a `localStorage` fallback when cookies are unavailable, so it survives navigation and subdomain hops. See [install the snippet](/developer-documentation/tracking/install-the-snippet) and [attribution](/developer-documentation/tracking/attribution) for the full behaviour.
+
+## Payment provider connections
+
+You authorise Referly against your payment provider once. From then on Referly consumes that provider's events directly, reads the real charged amount, and reverses commissions on refunds without you writing any reporting code.
+
+| Provider | Connect by | Conversion events consumed |
+| --- | --- | --- |
+| Stripe | OAuth (live and test) | `checkout.session.completed`, `charge.succeeded`, `customer.subscription.created`, `charge.refunded`, `customer.subscription.deleted` |
+| Paddle | API credentials | `transaction.completed`, `subscription.canceled`, `adjustment.created` and `adjustment.updated` for refunds |
+| Chargebee | API key + site | `payment_succeeded`, `payment_refunded` |
+| Polar | Access token | `order.paid`, `order.created`, `order.refunded` |
+| Shopify | OAuth app install | `orders/paid`, `refunds/create` |
+| WooCommerce | Plugin + API credentials | Order paid and refunded, sent by the plugin |
+
+Attribution reaches the provider through whichever identifier that provider carries end to end. For Stripe that is `client_reference_id` on the Checkout Session, set to `window.affiliateId`:
+
+```js
+// Server-side Checkout Session creation
+const session = await stripe.checkout.sessions.create({
+  line_items: [{ price: "price_123", quantity: 1 }],
+  mode: "subscription",
+  client_reference_id: clickId, // window.affiliateId from the browser
+  success_url: "https://your-domain.com/thanks",
+});
+```
+
+For hosted Stripe surfaces — payment links, pricing tables, buy buttons — the tracker appends `client_reference_id` to the link or embed for you, so there is nothing to wire up manually.
+
+<Note>
+  PayPal is a **payout** method in Referly, not a conversion source. Its webhook reports the status of money you send to affiliates, not sales you receive. See [payout methods](/help-center/manage/payouts/payout-methods).
+</Note>
+
+<Columns cols={2}>
+  <Card title="Stripe app" icon="stripe" href="/developer-documentation/integrations/stripe-app" arrow>
+    OAuth connection, click ID plumbing, and coupon sync.
+  </Card>
+  <Card title="Shopify app" icon="shopify" href="/developer-documentation/integrations/shopify-app" arrow>
+    App install, order webhooks, and theme tracking.
+  </Card>
+  <Card title="WooCommerce plugin" icon="wordpress" href="/developer-documentation/integrations/woocommerce" arrow>
+    Plugin setup and the endpoints it calls.
+  </Card>
+  <Card title="Payment provider webhooks" icon="webhook" href="/developer-documentation/integrations/payment-provider-webhooks" arrow>
+    Event coverage, verification, and replay behaviour.
+  </Card>
+</Columns>
+
+## Automation platforms
+
+Zapier and Make are the escape hatch for tools Referly has no native connector for. Both authenticate with a Referly API key exchanged for an access token, then work in two directions:
+
+- **Triggers** subscribe to Referly events. The platform registers a webhook endpoint against your program and receives new affiliates, referrals, and sales as they happen.
+- **Actions** write into Referly. The same create-affiliate, create-referral, and create-sale operations the REST API exposes, wrapped as no-code steps.
+
+Use them when your billing system can already fire a Zap or a Make scenario on payment, and you would rather not deploy server code. The trade-off is latency and a third-party dependency in the conversion path.
+
+<Columns cols={2}>
+  <Card title="Zapier" icon="bolt" href="/developer-documentation/integrations/zapier" arrow>
+    Triggers, actions, and authentication.
+  </Card>
+  <Card title="Make" icon="diagram-project" href="/developer-documentation/integrations/make" arrow>
+    Modules, scenarios, and connection setup.
+  </Card>
+</Columns>
+
+## Custom and server-side
+
+When nothing off the shelf fits, report conversions yourself. The REST API is the most flexible route and the one with the fewest moving parts between your billing logic and Referly.
+
+Sign-ups go to `/api/v1/referrals`:
+
+<CodeGroup>
+
+```bash cURL
+curl https://www.referly.so/api/v1/referrals \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "affiliateId": "12345",
+    "name": "John Smith",
+    "email": "jsmith@example.com",
+    "referredUserExternalId": "usr_9f2",
+    "plan": "pro"
+  }'
+```
+
+```js Node
+const res = await fetch("https://www.referly.so/api/v1/referrals", {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${process.env.REFERLY_API_KEY}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    affiliateId: clickId, // or the affiliate's email address
+    name: "John Smith",
+    email: "jsmith@example.com",
+    referredUserExternalId: "usr_9f2",
+    plan: "pro",
+  }),
+});
+```
+
+</CodeGroup>
+
+Purchases go to `/api/v1/sales`, keyed to the referral you already created:
+
+<CodeGroup>
+
+```bash cURL
+curl https://www.referly.so/api/v1/sales \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "referralId": "jsmith@example.com",
+    "externalInvoiceId": "in_1P9xYz",
+    "totalEarned": 4900
+  }'
+```
+
+```js Node
+const res = await fetch("https://www.referly.so/api/v1/sales", {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${process.env.REFERLY_API_KEY}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    referralId: "jsmith@example.com", // referral ID or the referred user's email
+    externalInvoiceId: "in_1P9xYz",
+    totalEarned: 4900,
+    commissionRate: 25, // optional per-sale override
+  }),
+});
+```
+
+</CodeGroup>
+
+Always send `externalInvoiceId` so retries are safely deduplicated — see [idempotency](/developer-documentation/server-side/idempotency).
+
+The **Universal integration** sits one level below the API: the tracker plus a form-binding snippet that calls `window.createPushLapEmail(email, name)` on any form submit, turning sign-ups into referrals with no backend. It deliberately does not report sales, so pair it with the API or a payment connection when money is involved.
+
+<Columns cols={2}>
+  <Card title="Universal integration" icon="wpforms" href="/developer-documentation/integrations/universal" arrow>
+    Form-based referral capture for any stack.
+  </Card>
+  <Card title="Postback URLs" icon="arrow-right-arrow-left" href="/developer-documentation/integrations/postback-url" arrow>
+    Server-to-server callbacks for affiliates and networks.
+  </Card>
+</Columns>
+
+## Which direction the data flows
+
+Two of the pages in this section are outbound rather than inbound, which is easy to miss:
+
+- **Webhooks** push Referly events to *your* endpoints. Program-level, signed, retried, and logged. See [webhooks](/developer-documentation/webhooks/introduction).
+- **Postback URLs** push events to *an affiliate's* endpoint. Each affiliate sets their own URL in the affiliate portal under **Settings**, then **Advanced**. Referly fires a `GET` to it on `referral.created` and `sale.created`, substituting macros such as `{clickid}`, `{extClickid}`, `{sale_amount}`, and `{commission_amount}` into the URL. This is how media buyers and networks close the loop back into their own ad platforms.
+
+Everything else on this page flows inbound, toward Referly.
+
+## Choosing an integration
+
+Work down this list and stop at the first match:
+
+1. **Your provider has a native connection** (Stripe, Shopify, Paddle, Chargebee, Polar, WooCommerce) — use it. Refunds, real charged amounts, and subscription lifecycle come free.
+2. **You bill through something else but can fire an automation** — use Zapier or Make.
+3. **You have a backend and want control** — use the REST API. Report referrals and sales yourself, with your own retry and idempotency semantics.
+4. **You only need to know who referred a sign-up** — the Universal integration is enough on its own.
+
+The choice is not exclusive. A common shape is Stripe for money plus the API for sign-ups, so referrals appear the moment someone registers rather than when they first pay.
+
+Referly stamps every referral and sale with the integration that produced it, which makes mixed setups easy to audit later. See [statuses and enums](/developer-documentation/reference/statuses-and-enums) for the recorded values.
+
+## The common setup flow
+
+Whichever route you take, the shape is the same:
+
+<Steps>
+  <Step title="Install the tracker">
+    Add the script to your `head` on every page in the funnel, including the landing pages affiliates link to. Skip this only for a coupon-only program.
+  </Step>
+  <Step title="Connect or authenticate">
+    Authorise the payment provider, install the plugin or app, or create an API key under **Settings**, then **API keys**. API keys require a Business plan.
+  </Step>
+  <Step title="Carry the click ID to checkout">
+    Attach `window.affiliateId` to whatever your provider carries end to end — `client_reference_id` for Stripe, metadata or cart attributes elsewhere. Hosted Stripe surfaces are handled automatically.
+  </Step>
+  <Step title="Verify with a test conversion">
+    Visit your site with `?ref=` and a real affiliate code, complete a purchase in test mode, and confirm the sale appears against the right affiliate. Turn on [debug mode](/developer-documentation/tracking/debug-mode) to watch the tracker's decisions in the console.
+  </Step>
+</Steps>
+
+If the click registers but the sale lands unattributed, the break is almost always step three — the click ID never reached the payment provider.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/developer-documentation/getting-started/quickstart" arrow>
+    Get a first attributed sale end to end.
+  </Card>
+  <Card title="Server-side tracking" icon="server" href="/developer-documentation/server-side/overview" arrow>
+    Report conversions from your backend.
+  </Card>
+  <Card title="Attribution" icon="crosshairs" href="/developer-documentation/tracking/attribution" arrow>
+    Windows, precedence, and how clicks resolve.
+  </Card>
+  <Card title="API authentication" icon="key" href="/developer-documentation/api/authentication" arrow>
+    Keys, bearer tokens, and scopes.
+  </Card>
+</Columns>

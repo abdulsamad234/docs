@@ -1,6 +1,261 @@
 ---
 title: "JavaScript API reference"
-description: "The functions the tracking script exposes."
+description: "Reference for the Referly tracking script JavaScript API: load the snippet, then call createPushLapEmail, createPushLapSale, pushLapTrackAddToCart, and getPushLapAffiliateInfo from the browser to record referrals, sales, and cart events."
+keywords: ["Referly JavaScript API", "affiliate tracking script API", "createPushLapSale", "createPushLapEmail", "pushLapTrackAddToCart", "getPushLapAffiliateInfo", "affiliate tracker snippet", "browser affiliate tracking", "data-program-id", "client-side sale tracking"]
 ---
+The Referly tracking script is a single JavaScript file you load on your site. There is no npm package and no initialisation call. Once the script runs it attaches a small set of functions and values directly to `window`, works out whether the current visitor arrived from an affiliate link, and fires an event when it has finished.
 
-{/* TODO: Write this article. */}
+Everything on this page is available in any browser context that can see `window`. If you render pages on a server, call these from client-side code only, or use the [server-side capture endpoints](/developer-documentation/server-side/overview) instead.
+
+## Load the script
+
+Add the snippet to the `head` of every page an affiliate might send someone to, including your checkout and thank-you pages. You can copy it with your program ID already filled in from **Settings** then **Integrations** in your Referly dashboard.
+
+<CodeGroup>
+
+```html Script tag
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+```html Google Tag Manager
+<script>
+  var pushLap = document.createElement('script');
+  pushLap.src = "https://referly.so/affiliate-tracker.js";
+  pushLap.setAttribute('data-affiliate', '');
+  pushLap.setAttribute('data-program-id', 'YOUR_PROGRAM_ID');
+  document.head.appendChild(pushLap);
+</script>
+```
+
+</CodeGroup>
+
+| Attribute | Required | Purpose |
+| --- | --- | --- |
+| `src` | Yes | Always `https://referly.so/affiliate-tracker.js`. Do not self-host a copy — you would not get fixes. |
+| `data-affiliate` | Yes | Marks this tag as the Referly tag. The script finds its own tag with this attribute to read the program ID, so it must be present even though it has no value. |
+| `data-program-id` | Yes | Your program's ID. Every call below is attributed to this program. |
+| `async` | No | Recommended. The script never blocks rendering when set. |
+
+If the tag is missing `data-program-id`, the script falls back to a `programId` query parameter on the current URL. That fallback exists for embedded and hosted checkout pages you cannot edit; on your own site, always set the attribute.
+
+See [Install the snippet](/developer-documentation/tracking/install-the-snippet) for platform-specific placement.
+
+## What the script exposes
+
+| Name | Type | Covered in |
+| --- | --- | --- |
+| `window.createPushLapEmail` | Function | This page |
+| `window.createPushLapSale` | Function | This page |
+| `window.pushLapTrackAddToCart` | Function | This page |
+| `window.getPushLapAffiliateInfo` | Function | This page |
+| `window.affiliateRef` | String or null | [Globals](/developer-documentation/tracking/javascript-api/globals) |
+| `window.affiliateId` | String or null | [Globals](/developer-documentation/tracking/javascript-api/globals) |
+| `affiliate_id_ready` | Event | [Events](/developer-documentation/tracking/javascript-api/events) |
+| `affiliate_referral_ready` | Event | [Events](/developer-documentation/tracking/javascript-api/events) |
+
+Nothing is namespaced. The names are global, so treat them as reserved on any page carrying the snippet.
+
+## Wait until tracking is ready
+
+Because the snippet loads asynchronously and resolves the referral over the network, the functions may not exist yet when your own code runs, and `window.affiliateId` may not hold the final click ID for a few hundred milliseconds after page load.
+
+Two rules keep you safe:
+
+<Steps>
+  <Step title="Guard the function before calling it">
+    Check `typeof` first, so an ad blocker or a slow network never throws inside your checkout code.
+
+    ```js
+    if (typeof window.createPushLapSale === "function") {
+      window.createPushLapSale({ email, amount });
+    }
+    ```
+  </Step>
+  <Step title="Listen for affiliate_referral_ready before reading globals">
+    The script fires this event once it has finished, whether or not it found a referral. It always fires, so it is a safe place to hang setup code.
+
+    ```js
+    window.addEventListener("affiliate_referral_ready", function () {
+      const info = window.getPushLapAffiliateInfo();
+      console.log(info.ref, info.clickId);
+    });
+    ```
+  </Step>
+</Steps>
+
+If you need the click ID the moment it is created, listen for `affiliate_id_ready` instead — it carries the referral code and click ID on its `detail`. Both events are documented on the [Events](/developer-documentation/tracking/javascript-api/events) page.
+
+## createPushLapEmail
+
+Records a referred customer: someone who signed up, joined a waitlist, or submitted a form after arriving from an affiliate link. Use it for lead and sign-up conversions where no money changes hands yet.
+
+```js
+await window.createPushLapEmail("customer@example.com", "Ada Lovelace");
+```
+
+<ParamField path="email" type="string" required>
+  The customer's email address. This is how Referly matches the person to a later sale, so use the same address your billing system will use.
+</ParamField>
+
+<ParamField path="name" type="string" default="the email address">
+  The customer's name. When you leave it out, the email address is stored as the name.
+</ParamField>
+
+Returns a `Promise`. It resolves to the created referral record on success, or to `null` when there is no referral to credit or the request fails.
+
+<Warning>
+  This is the one function that throws. Calling it without an email raises `Email is required` before any network request. Everything else fails quietly and returns `null`.
+</Warning>
+
+A typical form handler:
+
+```js
+form.addEventListener("submit", function (event) {
+  const email = form.querySelector('input[type="email"]').value.trim();
+  if (email && typeof window.createPushLapEmail === "function") {
+    window.createPushLapEmail(email);
+  }
+});
+```
+
+Do not block your form submission on the promise. If the visitor was not referred, the call returns `null` immediately and costs nothing.
+
+## createPushLapSale
+
+Records a sale against the affiliate who referred the visitor. Call it on your confirmation or thank-you page, after payment has actually succeeded.
+
+```js
+window.createPushLapSale({
+  email: "customer@example.com",
+  amount: 4900,
+  name: "Ada Lovelace",
+  userId: "usr_12345",
+});
+```
+
+<ParamField path="email" type="string" required>
+  The buyer's email address. Used to tie this sale to any earlier sign-up from the same person.
+</ParamField>
+
+<ParamField path="amount" type="number" required>
+  The sale value. Send it in the smallest currency unit — `4900` for 49.00 — and stay consistent across every call.
+</ParamField>
+
+<ParamField path="name" type="string" default="empty string">
+  The buyer's name.
+</ParamField>
+
+<ParamField path="userId" type="string" default="empty string">
+  Your own identifier for the customer. Useful for reconciling Referly records against your database later.
+</ParamField>
+
+Returns a `Promise` resolving to the created sale, or `null` when the visitor was not referred, when `email` or `amount` is missing, or when the request fails. The page URL at the time of the call is recorded alongside the sale.
+
+<Warning>
+  Browser-side sale tracking depends on the buyer reaching your confirmation page with their referral still stored. It will miss anyone who closes the tab at the payment step, pays on a different device, or blocks scripts. If revenue accuracy matters, report sales from your server with the [server-side endpoints](/developer-documentation/server-side/reporting-sales), or use a [payment integration](/developer-documentation/integrations/overview) that does it for you.
+</Warning>
+
+## pushLapTrackAddToCart
+
+Records an add-to-cart event. This is a funnel signal — it shows affiliates that their traffic is engaging even before it converts — and it does not create a commission.
+
+```js
+window.pushLapTrackAddToCart({
+  productId: "prod_123",
+  productTitle: "Annual plan",
+  quantity: 1,
+  unitPrice: 4900,
+  currency: "USD",
+});
+```
+
+<ParamField path="productId" type="string">
+  Your identifier for the product.
+</ParamField>
+
+<ParamField path="variantId" type="string">
+  Your identifier for the specific variant, where the product has more than one.
+</ParamField>
+
+<ParamField path="productTitle" type="string">
+  A human-readable product name, shown in reporting.
+</ParamField>
+
+<ParamField path="quantity" type="number" default="1">
+  How many units were added. Non-numeric values fall back to `1`.
+</ParamField>
+
+<ParamField path="unitPrice" type="number">
+  Price per unit, in the same smallest-currency-unit convention you use for sales.
+</ParamField>
+
+<ParamField path="currency" type="string">
+  Three-letter currency code, such as `USD`.
+</ParamField>
+
+<ParamField path="source" type="string" default="GENERIC">
+  Where the event came from. Platform integrations set their own value; leave it alone on a custom site.
+</ParamField>
+
+<ParamField path="sessionId" type="string">
+  Your own session identifier, if you want to group cart events from one visit.
+</ParamField>
+
+<ParamField path="externalEventId" type="string">
+  A stable ID of your own. Send the same value if you might retry the call, so the event is not counted twice. See [idempotency](/developer-documentation/server-side/idempotency).
+</ParamField>
+
+Returns a `Promise` resolving to the recorded event, or `null`. Unlike the other two functions, this one needs a resolved click ID rather than just a referral code, so calling it before `affiliate_id_ready` has fired may be skipped. Wait for the event if you fire it early in the page lifecycle.
+
+## getPushLapAffiliateInfo
+
+Reads the current referral state without touching the network. Useful for debugging, and for passing attribution data into your own checkout or analytics.
+
+```js
+const info = window.getPushLapAffiliateInfo();
+// { ref: "ada", clickId: "clk_7Yx…", storageType: "cookies" }
+```
+
+<ResponseField name="ref" type="string | null">
+  The referral code from the affiliate link, such as the value of `?ref=`. `null` when the visitor was not referred.
+</ResponseField>
+
+<ResponseField name="clickId" type="string | null">
+  The ID of the recorded click. This is what you attach to a sale reported from your server.
+</ResponseField>
+
+<ResponseField name="storageType" type="string">
+  Either `cookies` or `localStorage`. The script prefers cookies and falls back to local storage when cookies are unavailable. See [Cookies and storage](/developer-documentation/tracking/cookies-and-storage).
+</ResponseField>
+
+Read this inside an `affiliate_referral_ready` listener rather than at the top of your script, or you may read it before the click ID exists.
+
+## Behaviour to expect
+
+- **No referral, no work.** When the visitor did not arrive from an affiliate link, every function returns `null` straight away without a network request. You can call them unconditionally.
+- **Failures are quiet.** Network errors and non-2xx responses resolve to `null` rather than rejecting, so a Referly outage cannot break your checkout. The only exception is a missing email on `createPushLapEmail`.
+- **`window.affiliateId` changes value.** On a fresh click it is briefly set to the referral code before being replaced with the real click ID. Anything that persists the click ID should read it after `affiliate_id_ready`.
+- **Nothing is queued.** Calls made before the script has loaded are lost, not replayed. Guard with `typeof` and, where timing is tight, wait for the ready event.
+- **Debug logging is off by default.** Turn it on for your program to see the script's decisions in the console. See [Debug mode](/developer-documentation/tracking/debug-mode).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Events" icon="bolt" href="/developer-documentation/tracking/javascript-api/events">
+    The events the script fires, when they fire, and what they carry.
+  </Card>
+  <Card title="Globals" icon="globe" href="/developer-documentation/tracking/javascript-api/globals">
+    The values the script puts on the window and how to read them safely.
+  </Card>
+  <Card title="Install the snippet" icon="code" href="/developer-documentation/tracking/install-the-snippet">
+    Where to place the tag on each platform.
+  </Card>
+  <Card title="Report sales server-side" icon="server" href="/developer-documentation/server-side/reporting-sales">
+    The more reliable way to record revenue.
+  </Card>
+</Columns>

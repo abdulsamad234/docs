@@ -1,6 +1,345 @@
 ---
 title: "Stripe Payment Links"
-description: "Attribute sales from Payment Links."
+description: "Track affiliate referrals through Stripe Payment Links in Referly. Install the tracking script and the payment links snippet, connect Stripe, and pass client_reference_id on every buy.stripe.com link."
+keywords: ["Stripe Payment Links affiliate tracking", "buy.stripe.com client_reference_id", "Referly Stripe Payment Links", "track payment link referrals", "Stripe payment link URL parameters", "no-code affiliate tracking Stripe", "affiliate tracking without backend code", "Stripe payment link commission tracking", "client_reference_id payment link", "Stripe payment link test mode"]
 ---
+Stripe Payment Links are the shareable checkout URLs that look like `buy.stripe.com/...`. You create them in the Stripe Dashboard, drop them on your site as buttons or links, and Stripe handles the rest. No backend code, which is exactly why so many people use them.
 
-{/* TODO: Write this article. */}
+Referly tracks them by adding the referral identifier onto the end of the link before the visitor clicks it. There's a snippet that does this for you automatically, so you never have to touch the links themselves.
+
+<Info>
+  If you create your checkout from your own backend code instead, use the [Stripe Session API](/help-center/integrations/stripe/session-api) method — it's more precise. Using a pricing table or a buy button? See [Stripe Pricing Table](/help-center/integrations/stripe/pricing-table) and [Stripe Buy Button](/help-center/integrations/stripe/buy-button).
+</Info>
+
+## What this method tracks
+
+| What happens | Tracked | Notes |
+| --- | --- | --- |
+| Someone clicks a referral link | Yes | Recorded by the tracking script, before Stripe is involved |
+| A visitor becomes a referral at checkout | Yes | Created when the payment link checkout completes |
+| A free trial started from a Payment Link | Yes | The referral appears with the plan name. No reward until the first real payment |
+| The first payment | Yes | Sale, amount, products and commission all arrive together |
+| Subscription renewals | Yes | Matched to the original referral by the customer's email |
+| One-off payments | Yes | Same as a first payment |
+| Multiple currencies | Yes | Converted into your program's currency |
+| Products bought | Yes | Used for [product-based commissions](/help-center/getting-started/commissions/product-based) |
+| Tax and shipping | Yes | Captured separately, and excluded from the commission if you've turned that on in **Settings** then **Program Details** |
+| Refunds | Yes | The matching reward is voided — see [refunds](/help-center/manage/rewards/refunds) |
+| A purchase made with an affiliate's promo code | Yes | Promo codes take priority over the link |
+
+### What it can't track
+
+Payment Links are less precise than the [Session API](/help-center/integrations/stripe/session-api) method, and the gaps are worth knowing before you launch.
+
+- **A link the snippet can't see.** The snippet rewrites `buy.stripe.com` links that are on the page as ordinary links. A link built by a button's click handler, opened inside a pop-up widget, or living in an iframe won't be rewritten. See [when the snippet won't reach your links](#when-the-snippet-wont-reach-your-links).
+- **A link shared outside your site.** If an affiliate posts your raw Payment Link in a newsletter or a Discord message, there's no page for the snippet to run on and no referral is recorded. Affiliates should always share their Referly link, which points at your site.
+- **A referral identifier Stripe rejects.** Stripe only accepts letters, numbers, dashes and underscores here, and silently drops anything else. If your affiliates' codes contain spaces, dots or accented characters, attribution fails quietly. Keep codes plain — see [referral links](/help-center/affiliates/referral-links).
+- **A buyer who switches devices** between clicking the referral link and paying.
+- **A buyer whose browser blocked the script,** or who cleared their cookies in between.
+- **A purchase after the cookie window closed.** See [tracking methods](/help-center/settings/program/tracking-methods).
+- **Sign-ups before payment.** Unlike the Session API method, there's no way to record a referral at sign-up. The referral only exists once someone reaches checkout.
+- **Live payments while you're connected in test mode,** and the reverse. Referly deliberately ignores the mismatched ones.
+
+## Before you start
+
+<Steps>
+  <Step title="A Stripe account you can log into as an administrator">
+    You'll authorize Referly from inside Stripe, so you need permission to connect apps.
+  </Step>
+  <Step title="Somewhere to paste two snippets">
+    You need to be able to add code to the `head` section of your pages — through your site builder's custom code area, your theme settings, or Google Tag Manager.
+  </Step>
+  <Step title="Your commission plan set up">
+    Have it ready before the first sale arrives so rewards calculate correctly. See [affiliate program setup](/help-center/getting-started/set-up-program/affiliate-program-setup).
+  </Step>
+</Steps>
+
+## Step 1: Create your Payment Link in Stripe
+
+Skip this if your links already exist.
+
+<Steps>
+  <Step title="Open Payment Links in Stripe">
+    In the [Stripe Dashboard](https://dashboard.stripe.com/payment-links), open **Payment Links** from the left menu.
+  </Step>
+  <Step title="Create the link">
+    Select **New**, choose an existing product or select **Add a new product** and fill in its name and price, then select **Create link**. Stripe's own walkthrough is in their [create a payment link guide](https://docs.stripe.com/payment-links/create).
+  </Step>
+  <Step title="Turn on promotion codes if your affiliates use them">
+    In the link's settings, enable the option that lets customers enter a promotion code at checkout. Without it, an affiliate's promo code can't be used on that link. See [coupons and promo codes](/help-center/engage/coupons/overview).
+  </Step>
+  <Step title="Copy the link">
+    Copy the `buy.stripe.com` address and put it on your site as a normal link or button.
+  </Step>
+</Steps>
+
+<Note>
+  You don't need to change anything about the link itself for Referly. The identifier is added at the moment a visitor is about to click it.
+</Note>
+
+## Step 2: Install the tracking script
+
+The tracking script records clicks and remembers which affiliate sent each visitor. Nothing works without it.
+
+Open **Integrations** from the left sidebar, find the **Stripe Payment Links** card, and select it. The guide that opens has your script already filled in with your program's ID.
+
+{/* TODO screenshot: integrations-payment-links-card — upload it in the local Documentation Agent */}
+
+Copy that snippet and paste it into the `head` section of every page on your site — especially any page with a payment link on it. It looks like this:
+
+```html
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+<Warning>
+  Copy the snippet from your dashboard rather than from this page. Your program ID is unique, and programs run by an agency load the script from a different address.
+</Warning>
+
+If you use Google Tag Manager, the same guide has a Tag Manager version. Add it as a Custom HTML tag firing on all pages.
+
+## Step 3: Connect your Stripe account
+
+Connecting Stripe is what lets Referly hear about payments. You don't create API keys and you don't set up anything by hand — you authorize Referly's app from inside Stripe.
+
+<Steps>
+  <Step title="Open the connect dialog">
+    On the **Integrations** page, select **Connect Integration** at the top right, then choose **Stripe**.
+
+    {/* TODO screenshot: connect-integration-stripe — upload it in the local Documentation Agent */}
+  </Step>
+  <Step title="Choose live or test">
+    Select **Connect Stripe Account** for your real account, or **Connect Test Mode** to connect a sandbox first. Testing first is the safer order.
+  </Step>
+  <Step title="Authorize Referly in Stripe">
+    A Stripe page opens in a new tab. Sign in, pick the account from the account picker at the top, and confirm. If you're connecting test mode, make sure a sandbox is selected — Stripe explains sandboxes in their [test mode guide](https://docs.stripe.com/test-mode).
+  </Step>
+  <Step title="Confirm the connection">
+    Back in Referly, the Stripe panel shows a green **Connected** badge with your account name, or a yellow **Test Mode** badge for a sandbox.
+
+    {/* TODO screenshot: stripe-connection-badges — upload it in the local Documentation Agent */}
+  </Step>
+</Steps>
+
+<Warning>
+  The badge colour decides which payments count. Yellow **Test Mode** means real payments are ignored. Green **Connected** means test payments are ignored. This is the most common reason a correct setup appears to record nothing.
+</Warning>
+
+## Step 4: Add the Payment Links snippet
+
+This is the piece that does the actual work. It watches for the referral identifier, then adds it to every `buy.stripe.com` link on the page so the information travels with the customer into Stripe's checkout.
+
+Copy it from the **Stripe Payment Links** guide on the **Integrations** page and paste it into the `head` section, **after** the tracking script from Step 2. Order matters — the snippet needs the tracking script to have loaded first.
+
+{/* TODO screenshot: payment-links-snippet-step — upload it in the local Documentation Agent */}
+
+```html
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+(function () {
+  let linksUpdated = false;
+  let updateAttempts = 0;
+  const MAX_ATTEMPTS = 5;
+
+  function updateStripeLinks() {
+    updateAttempts++;
+    if (updateAttempts > MAX_ATTEMPTS) return;
+    if (linksUpdated) return;
+
+    const affiliateId = window.affiliateId;
+    if (!affiliateId) return;
+
+    let updatedCount = 0;
+
+    $('a[href^="https://buy.stripe.com/"]').each(function () {
+      const $link = $(this);
+      const oldUrl = $link.attr("href");
+      if (!oldUrl.includes("client_reference_id")) {
+        const separator = oldUrl.includes("?") ? "&" : "?";
+        $link.attr("href", oldUrl + separator + "client_reference_id=" + affiliateId);
+        updatedCount++;
+      }
+    });
+
+    $("[pricing-table-id]").each(function () {
+      $(this).attr("client-reference-id", affiliateId);
+      updatedCount++;
+    });
+
+    $("[buy-button-id]").each(function () {
+      $(this).attr("client-reference-id", affiliateId);
+      updatedCount++;
+    });
+
+    if (updatedCount > 0) linksUpdated = true;
+  }
+
+  if (typeof jQuery === "undefined") {
+    console.error("[Referly Stripe] jQuery is required but not loaded");
+    return;
+  }
+
+  $(document).ready(function () {
+    window.addEventListener("affiliate_id_ready", function () {
+      setTimeout(updateStripeLinks, 150);
+    });
+    window.addEventListener("affiliate_referral_ready", function () {
+      setTimeout(updateStripeLinks, 150);
+    });
+
+    const checkInterval = setInterval(function () {
+      if (window.affiliateId && !linksUpdated) updateStripeLinks();
+      if (linksUpdated || updateAttempts >= MAX_ATTEMPTS) clearInterval(checkInterval);
+    }, 500);
+
+    setTimeout(function () {
+      clearInterval(checkInterval);
+      if (!linksUpdated && window.affiliateId) updateStripeLinks();
+    }, 3000);
+  });
+})();
+</script>
+```
+
+<Note>
+  The snippet needs jQuery, which is why the first line loads it. If your site already loads jQuery, delete that first line — loading it twice can break other scripts on your page.
+</Note>
+
+The same snippet also handles [pricing tables](/help-center/integrations/stripe/pricing-table) and [buy buttons](/help-center/integrations/stripe/buy-button), so you only need it once even if you use all three.
+
+### Check that it's working
+
+Open your site with a referral link, for example `your-domain.com?ref=THEIRCODE`, using a real affiliate's code. Hover over your payment link button, or right-click and copy the link address. It should now end with `client_reference_id=` followed by a value:
+
+```
+https://buy.stripe.com/aBC123?client_reference_id=48219
+```
+
+If it doesn't, jump to [troubleshooting](#troubleshooting).
+
+## Adding the identifier by hand
+
+If you'd rather not use the snippet — or your links live somewhere the snippet can't reach — you can append the parameter yourself. This is what Stripe calls a [payment link URL parameter](https://docs.stripe.com/payment-links/url-parameters).
+
+```js
+const link = "https://buy.stripe.com/aBC123";
+const url = window.affiliateId
+  ? link + "?client_reference_id=" + window.affiliateId
+  : link;
+
+window.location.href = url;
+```
+
+Two rules to respect:
+
+- If the link already has a `?` in it, use `&` instead of `?` to add the parameter.
+- Only add the parameter when `window.affiliateId` actually has a value. Sending it empty is worse than not sending it.
+
+## When the snippet won't reach your links
+
+The snippet finds links that are on the page as ordinary links when it runs. These situations need the manual approach above:
+
+- **Buttons that redirect with code** rather than being a real link. Read `window.affiliateId` inside your click handler and build the URL there.
+- **Links added to the page after it loads** — by a pop-up, an accordion, a modal, or a single-page app moving between views. The snippet stops looking a few seconds after the page loads.
+- **Links inside an iframe or an embedded widget.** Code on your page can't reach inside those.
+- **Links in emails or PDFs.** There's no page running, so nothing can be added. Send affiliates to a page on your site instead.
+
+<Note>
+  If you're on a site builder like Webflow, Framer or Squarespace and your buttons are set up as normal links, the snippet works without any changes. It's custom-coded buttons that need attention.
+</Note>
+
+## Step 5: Test the whole flow
+
+Test before you send a single affiliate link out, with your Stripe connection showing the yellow **Test Mode** badge.
+
+<Steps>
+  <Step title="Switch Stripe to a sandbox and make a test link">
+    In the Stripe Dashboard, use the account picker at the top to switch into a sandbox, then create a Payment Link there. Test links and live links are different URLs, so put the test one on a test page.
+  </Step>
+  <Step title="Visit your site through a referral link">
+    Open your site with a real affiliate's link in a private window, for example `your-domain.com?ref=THEIRCODE`.
+  </Step>
+  <Step title="Check the link was rewritten">
+    Right-click your payment button and copy the link address. It should carry `client_reference_id=` and a value. If it doesn't, the problem is on your page, not in Stripe or Referly.
+  </Step>
+  <Step title="Buy something with a test card">
+    Go through checkout with Stripe's test card `4242 4242 4242 4242`, any future expiry, and any three-digit security code. The full list is in Stripe's [testing guide](https://docs.stripe.com/testing).
+  </Step>
+  <Step title="Confirm it in Stripe">
+    Open the payment in the Stripe Dashboard and check the Checkout Session shows your value in **Client reference ID**.
+  </Step>
+  <Step title="Confirm it in Referly">
+    Open **Referrals** in the left sidebar — the customer should be listed against the right affiliate. Then open **Rewards** to see the commission.
+
+    {/* TODO screenshot: referral-from-payment-link — upload it in the local Documentation Agent */}
+  </Step>
+</Steps>
+
+<Check>
+  When the referral shows the right affiliate and the reward shows the right amount, you're done. Repeat once in live mode with a small real payment you refund afterwards — the refund should void the reward.
+</Check>
+
+## Go live
+
+1. On the **Integrations** page, open the Stripe panel and select **Disconnect**.
+2. Select **Connect Stripe Account** and authorize your live account.
+3. Confirm the badge is green and reads **Connected**.
+4. Swap your test payment links on the site for the live ones.
+
+<Warning>
+  Referrals created during testing stay in your dashboard. Delete them before you launch if you don't want test data in your reports.
+</Warning>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The link isn't getting the identifier added">
+    Work through these in order:
+
+    1. **Is the tracking script loading?** Open your browser's developer console and type `window.affiliateId`. If it's empty, go back to Step 2 — the tracking script isn't running, or you didn't arrive through a referral link.
+    2. **Is jQuery loaded?** The console shows an error mentioning jQuery if it's missing. The snippet does nothing without it.
+    3. **Is the snippet after the tracking script?** If the order is reversed, the snippet runs too early.
+    4. **Is your link a real link?** If your button redirects using code, the snippet can't see it. Use the [manual approach](#adding-the-identifier-by-hand).
+  </Accordion>
+  <Accordion title="The link has the identifier but the sale isn't attributed">
+    Open the Checkout Session in the Stripe Dashboard and look at **Client reference ID**. If it's empty there but was present in your URL, Stripe rejected the value — it only accepts letters, numbers, dashes and underscores, and drops anything else without warning. Check the affiliate's code for spaces or punctuation.
+  </Accordion>
+  <Accordion title="Nothing appears in Referly at all">
+    Almost always the test-mode mismatch. A yellow **Test Mode** badge means live payments are ignored, a green **Connected** badge means test payments are ignored. Reconnect in the mode you're actually testing in.
+
+    If the badge is right, confirm the payment actually succeeded in Stripe.
+  </Accordion>
+  <Accordion title="The referral appeared but there's no reward">
+    Normal for a free trial or any checkout that hasn't taken money yet — the reward is created when a payment succeeds. If a payment did go through, check the affiliate is on a [commission plan](/help-center/getting-started/commissions/overview) that covers the product they sold.
+  </Accordion>
+  <Accordion title="The wrong affiliate got the sale">
+    Check whether a promo code was used at checkout. An affiliate's promo code takes priority over the link, so someone who clicked one affiliate's link but typed another's code is credited to the code owner. You can move the sale by [changing the referral's affiliate](/help-center/manage/customers/overview).
+  </Accordion>
+  <Accordion title="Renewals aren't paying commission">
+    Renewals are matched by the customer's email address. Compare the email on the Stripe customer with the email on the referral in Referly — if they differ, the connection is broken.
+  </Accordion>
+  <Accordion title="The sale showed up late">
+    If a payment arrives before Referly has finished creating the referral, it's held and retried a few minutes later rather than dropped. Wait about ten minutes before assuming a sale is missing.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Stripe integration overview" icon="stripe" href="/help-center/integrations/stripe" arrow>
+    Every way to connect Stripe, and which one fits you.
+  </Card>
+  <Card title="Stripe Session API" icon="code" href="/help-center/integrations/stripe/session-api" arrow>
+    The more precise method, if you have a developer.
+  </Card>
+  <Card title="Stripe Pricing Table" icon="table" href="/help-center/integrations/stripe/pricing-table" arrow>
+    Track referrals through an embedded pricing table.
+  </Card>
+  <Card title="Tracking methods" icon="crosshairs" href="/help-center/settings/program/tracking-methods" arrow>
+    Set your cookie duration and how clicks are attributed.
+  </Card>
+</Columns>

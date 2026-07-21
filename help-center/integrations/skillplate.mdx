@@ -1,6 +1,301 @@
 ---
 title: "SkillPlate"
-description: "Track SkillPlate sales."
+description: "Connect SkillPlate to Referly so course and product sales are credited to the referring affiliate. Add the tracking script to your Checkout, Landing Page and Portal scripts, pass the referral into the checkout, and create the Payment Succeeded and Subscription Started webhooks."
+keywords: ["SkillPlate affiliate program", "SkillPlate Referly integration", "SkillPlate affiliate tracking", "SkillPlate webhook Payment Succeeded", "SkillPlate additional scripts checkout", "track SkillPlate course sales affiliates", "SkillPlate subscription started webhook", "course platform affiliate tracking"]
 ---
+[SkillPlate](https://skillplate.com/) hosts courses, communities, and digital products, with its own landing pages, checkout, and member portal. Connecting it to Referly means a purchase made by someone who arrived on an affiliate link gets credited to that affiliate and turns into commission.
 
-{/* TODO: Write this article. */}
+Because SkillPlate hosts the whole journey, the setup is a little different from most integrations. You add the Referly tracking script inside SkillPlate itself rather than on a website of your own, in three separate places, and one of them gets an extra piece of code that carries the referral into the checkout. Then SkillPlate tells Referly about the sale.
+
+Plan about 20 minutes.
+
+{/* TODO screenshot: skillplate-integration-card — upload it in the local Documentation Agent */}
+
+## SkillPlate is a private integration
+
+Before anything else: this one has to be switched on for your program. Open **Settings** from the left sidebar in Referly, go to **Integrations**, and find the **Skillplate** card. Select **Instructions**.
+
+If you see the setup steps, you're good to go. If instead you see **This is a private integration**, your program doesn't have access yet. Get in touch with our team and we'll enable it, then come back to this guide.
+
+{/* TODO screenshot: skillplate-private-message — upload it in the local Documentation Agent */}
+
+Keep the instructions window open while you work. It has your program's own tracking script and webhook address already filled in, which saves you copying things by hand.
+
+## What this integration can and can't track
+
+| What you want to track | Does it work? | Notes |
+| --- | --- | --- |
+| Link clicks and visits | Yes | From the tracking script on your SkillPlate pages |
+| One-time product and course purchases | Yes, with the amount | Recorded as a sale with commission |
+| What was bought | Yes | Product names and quantities come across |
+| Discounts applied at checkout | Yes | The commission is based on what the customer actually paid |
+| A new subscription starting | Yes, but with no revenue | It's recorded as a referred customer; the payment is what carries the money |
+| Subscription renewals | Depends on SkillPlate | Referly records revenue whenever SkillPlate reports a successful payment. Check your first renewal to see whether yours does. |
+| Free sign-ups with no purchase | No | Nothing is sent until money moves |
+| Refunds | No | A refunded order stays in Referly as a sale |
+| Chargebacks | No | Same as refunds |
+| Cancelled subscriptions | No | Cancelling doesn't change anything in Referly |
+| Automatic currency conversion | No | The amount is recorded exactly as SkillPlate reports it |
+
+<Warning>
+  Referly doesn't convert currencies for this integration. If SkillPlate charges in a different currency than your Referly program is set to, the number comes across but isn't converted, so your commission figures will be wrong. Set both to the same currency before you start.
+</Warning>
+
+## Before you start
+
+You'll need:
+
+- A live Referly program with at least one affiliate to test with. See [setting up your program](/help-center/getting-started/set-up-program/affiliate-program-setup) if you haven't got that far.
+- Access to the SkillPlate integration in Referly, as described above.
+- An admin account in SkillPlate, with permission to change settings.
+- Your Referly program's currency matching your SkillPlate currency.
+
+<Note>
+  SkillPlate's public documentation is thin at the time of writing, and their [help centre](https://skillplate.com/help) doesn't cover the tracking and webhook screens in detail. The navigation below comes from Referly's own tested setup instructions. If a menu has moved since, the labels are still the ones to look for, and SkillPlate's support can point you at the right screen.
+</Note>
+
+## Add the tracking script to your checkout
+
+SkillPlate has one place where you add code to your pages, and it's split by page type. The checkout gets two pieces of code, so start there.
+
+<Steps>
+  <Step title="Open your tracking settings">
+    In SkillPlate, open your **Settings** page, then go to **Tracking**.
+  </Step>
+  <Step title="Find the checkout script box">
+    Under **Additional Scripts**, find the box labelled **Checkout**.
+  </Step>
+  <Step title="Paste the tracking script">
+    Copy the script from **Step 1** in the Referly instructions window and paste it in. Your program's own identifier is already filled in where `YOUR_PROGRAM_ID` appears here:
+
+    ```html
+    <script
+      src="https://referly.so/affiliate-tracker.js"
+      data-affiliate
+      data-program-id="YOUR_PROGRAM_ID"
+      async>
+    </script>
+    ```
+  </Step>
+  <Step title="Paste the second snippet underneath it">
+    Directly below the first one, in the same **Checkout** box, add this:
+
+    ```html
+    <script>
+      (function () {
+        function setAffLink() {
+          const affiliateId = window.affiliateId;
+          const affiliateRef = window.affiliateRef;
+          let url = new URL(window.location.href);
+          const urlParams = new URLSearchParams(window.location.search);
+
+          if (affiliateId || affiliateRef) {
+            const hasAffParams = urlParams.has("affiliate_id");
+
+            if (hasAffParams) {
+              return;
+            }
+
+            url.searchParams.set("affiliate_id", affiliateId);
+            document.location.href = url;
+          }
+        }
+
+        setTimeout(() => {
+          setAffLink();
+        }, 1000);
+      })();
+    </script>
+    ```
+  </Step>
+  <Step title="Save">
+    Select **Save Changes**.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: skillplate-checkout-scripts — upload it in the local Documentation Agent */}
+
+That second snippet is the heart of the whole integration. When a referred visitor reaches your checkout, it quietly adds the referral to the page address and reloads once, which is how SkillPlate ends up storing it against the order. Without it, SkillPlate has nothing to tell Referly and no sale is ever credited.
+
+It's careful about not getting in the way: it waits a second so Referly has worked out the referral first, it only acts when there's actually a referral to pass along, and it won't reload a second time if the referral is already there.
+
+<Note>
+  Visitors who didn't come from an affiliate link see no reload at all, and nothing is recorded for them. Your organic sales aren't affected.
+</Note>
+
+## Add the tracking script to your landing pages and portal
+
+The checkout is where the sale happens, but the visit usually starts somewhere else. These two slots are what let Referly see the click in the first place.
+
+<Steps>
+  <Step title="Go back to Tracking">
+    Still in SkillPlate, open **Settings**, then **Tracking**.
+  </Step>
+  <Step title="Paste the tracking script into Landing Page">
+    Under **Additional Scripts**, find the box labelled **Landing Page** and paste in the same tracking script from Step 1 of the Referly instructions:
+
+    ```html
+    <script
+      src="https://referly.so/affiliate-tracker.js"
+      data-affiliate
+      data-program-id="YOUR_PROGRAM_ID"
+      async>
+    </script>
+    ```
+  </Step>
+  <Step title="Paste it into Portal too">
+    Do the same in the **Portal** box. This is your members area, and having the script there keeps tracking consistent for people who come back.
+  </Step>
+  <Step title="Save">
+    Select **Save Changes**.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: skillplate-landing-portal-scripts — upload it in the local Documentation Agent */}
+
+Only the checkout box gets the second snippet. Landing Page and Portal get the tracking script on its own.
+
+## Set up the webhooks in SkillPlate
+
+Now tell SkillPlate to notify Referly when something is bought. You create **two separate webhooks** here, one per event, both pointing at the same address.
+
+<Steps>
+  <Step title="Open your webhook settings">
+    In SkillPlate, go to **Settings**, then **Webhooks**, and select **Create Webhook**.
+  </Step>
+  <Step title="Paste the Referly address">
+    Copy the address from **Step 4** in the Referly instructions window and paste it in. It's unique to your program and looks like this:
+
+    ```text
+    https://www.referly.so/api/webhooks/skillplate?program_id=YOUR_PROGRAM_ID
+    ```
+
+    Copy it from Referly rather than typing it. The part after `program_id=` is what tells Referly which program the sales belong to.
+  </Step>
+  <Step title="Choose the first event">
+    Select **Payment Succeeded** as the event.
+  </Step>
+  <Step title="Save it">
+    Select **Save**.
+  </Step>
+  <Step title="Create a second webhook for the other event">
+    Repeat all of the above, using the same address, but choose **Subscription Started** as the event this time. SkillPlate wants one webhook per event, so you end up with two.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: skillplate-webhook-setup — upload it in the local Documentation Agent */}
+
+Those are the only two events Referly listens to. Anything else you point at that address is ignored, so there's no benefit to adding more.
+
+Here's what each one does, which is worth knowing because they behave differently:
+
+- **Payment Succeeded** is the one that carries money. Referly records the sale, the products bought, and the amount after any discount, then works out the commission.
+- **Subscription Started** records the customer as a referral but with no revenue attached. The money for a subscription arrives through the payment event, not this one.
+
+<Warning>
+  If you sell subscriptions, you need both webhooks. With only Subscription Started, you'd see referred customers appear with no commission. With only Payment Succeeded, you'd miss subscribers whose first payment lands differently.
+</Warning>
+
+## Test it end to end
+
+Run a real purchase through before you tell affiliates the integration is live.
+
+<Steps>
+  <Step title="Grab a real affiliate link">
+    Open **Affiliates** in the left sidebar of Referly, pick an affiliate, and copy their referral link.
+  </Step>
+  <Step title="Open it in a private window">
+    Use a private or incognito window so no old tracking interferes. Land on your SkillPlate landing page and let it finish loading.
+  </Step>
+  <Step title="Go to the checkout">
+    Move through to the checkout as a customer would. You should see the page reload itself once, about a second after it appears, and `affiliate_id` should now be in the address bar. That's the referral being handed to SkillPlate. If it doesn't appear, stop here and check the checkout scripts.
+  </Step>
+  <Step title="Complete a purchase">
+    Buy something with an email address you haven't used before. If you can, use a low-priced product or a full-discount code rather than a live card charge.
+  </Step>
+  <Step title="Check Referly">
+    Open **Customers** in the left sidebar. The buyer should appear within a minute, credited to the affiliate whose link you used, with the product name and the amount paid.
+  </Step>
+  <Step title="Check the amount matches">
+    Compare the figure in Referly against what the customer actually paid in SkillPlate. They should be identical. If the number looks out by a factor of a hundred, or the currency is wrong, see the troubleshooting section below before going live.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: skillplate-test-sale — upload it in the local Documentation Agent */}
+
+<Check>
+  When the test purchase appears under **Customers** against the right affiliate, with the right product and the right amount, you're done.
+</Check>
+
+Refund the test purchase in SkillPlate and remove the test referral in Referly so your reports start clean. Remember that refunding in SkillPlate won't remove it from Referly on its own.
+
+## How Referly decides who gets the credit
+
+When a visitor lands on one of your SkillPlate pages through an affiliate link, Referly records the click and stores it in their browser for the length of your cookie window. When they reach the checkout, the extra snippet writes that referral into the page address, and SkillPlate keeps it with the order. When the payment goes through, SkillPlate passes it back to Referly, which looks up the click and credits the affiliate behind it.
+
+If the exact click can't be found, Referly falls back to matching against your affiliates' referral codes, which keeps things working when someone clears their cookies partway through.
+
+The credit sticks once it's given. Later clicks from other affiliates don't take over an existing customer.
+
+## Limitations to be aware of
+
+- **Nothing after the sale is tracked.** Refunds, chargebacks, and cancelled subscriptions never reach Referly. You'll need to remove or adjust those commissions yourself, which is covered in [managing refunds](/help-center/manage/rewards/refunds).
+- **No currency conversion.** The amount is recorded exactly as SkillPlate reports it. Keep your SkillPlate and Referly currencies the same.
+- **Free sign-ups aren't recorded.** Only purchases and subscription starts are sent, so you can't pay affiliates per lead through this integration.
+- **A subscription start on its own carries no revenue.** The payment event is what produces commission.
+- **The customer has to buy in the browser they clicked in.** Clicking on a phone and buying on a laptop won't match.
+- **Affiliates must share their Referly link**, which points at your own SkillPlate pages. A link to a SkillPlate page without the referral on it can't be credited.
+- **The checkout reloads once** for referred visitors. It's quick and most people won't notice, but it's worth knowing it's deliberate rather than a fault.
+- **Ad blockers and strict privacy settings** stop the tracking script for a small share of visitors, as with any affiliate tool.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="I see This is a private integration instead of the setup steps">
+    SkillPlate hasn't been enabled for your program. Contact our team to have it switched on, then reopen the card.
+  </Accordion>
+  <Accordion title="The checkout never reloads and affiliate_id never appears">
+    This is the most common problem, and it always comes back to the **Checkout** box under **Additional Scripts**. Check that both snippets are in there, in the right order, with the tracking script first. Then check you selected **Save Changes** afterwards.
+
+    Also make sure you actually arrived through an affiliate link in that browser session. Without one, the snippet correctly does nothing at all.
+  </Accordion>
+  <Accordion title="The checkout reloads but no sale appears in Referly">
+    The referral is reaching SkillPlate and the notification isn't reaching Referly. Open **Settings**, then **Webhooks** in SkillPlate and check that both webhooks exist, that both point at the address from your Referly instructions window, and that one is set to **Payment Succeeded** and the other to **Subscription Started**.
+
+    Confirm the address matches exactly, including everything after `program_id=`.
+  </Accordion>
+  <Accordion title="Subscribers appear but with no commission">
+    That's the Subscription Started event doing its job. Commission comes from the payment. Check that you also created the **Payment Succeeded** webhook.
+  </Accordion>
+  <Accordion title="The amount is wrong by a factor of a hundred">
+    Contact our team with an example order before you go live. Amounts are recorded exactly as SkillPlate sends them, and it's worth confirming against a real transaction rather than guessing, especially if you sell in a currency without decimal places.
+  </Accordion>
+  <Accordion title="The amount is right but the currency is wrong">
+    Your SkillPlate currency and your Referly program currency don't match, and nothing is converted between them. Change one so they line up. Sales already recorded won't be corrected retroactively.
+  </Accordion>
+  <Accordion title="Clicks are counted but sales never are">
+    The landing page script works and the checkout side doesn't. Check the **Checkout** box specifically, since the landing page and checkout are configured separately in SkillPlate.
+  </Accordion>
+  <Accordion title="A sale wasn't credited even though the customer used an affiliate link">
+    Check whether they clicked on one device and bought on another, or whether the click was older than your cookie window. You can attach the sale to the right affiliate by hand from the customer's page, described in [managing referred customers](/help-center/manage/customers/overview).
+  </Accordion>
+</AccordionGroup>
+
+Still stuck? [Book an integration call](https://www.referly.so/book-integration-call) and we'll go through your setup with you.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Universal integration" icon="code" href="/help-center/integrations/universal" arrow>
+    Track a platform that isn't listed.
+  </Card>
+  <Card title="Refunds" icon="rotate-left" href="/help-center/manage/rewards/refunds" arrow>
+    Handle commission on money you've given back.
+  </Card>
+  <Card title="Managing referred customers" icon="users" href="/help-center/manage/customers/overview" arrow>
+    Review, edit, and reassign the sales that come in.
+  </Card>
+  <Card title="All integrations" icon="puzzle-piece" href="/help-center/integrations/overview" arrow>
+    See every platform Referly connects to.
+  </Card>
+</Columns>

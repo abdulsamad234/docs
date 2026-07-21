@@ -1,6 +1,210 @@
 ---
 title: "Click data"
-description: "The data recorded with every tracked click."
+description: "Every field Referly records on a tracked click - click ID, affiliate and link IDs, landing URL, UTMs, ad click IDs, referrer type, device, browser, OS, IP address and geolocation - plus when clicks are created, deduplicated, and tied to conversions."
+keywords: ["Referly click data", "affiliate click tracking fields", "click ID affiliate tracking", "unique clicks vs total clicks", "referrer type classification", "click geolocation IP tracking", "affiliate click attribution", "tracking script data collected"]
 ---
+Every time the Referly tracking script resolves a referral on one of your pages, it records a click. A click is the atomic unit of tracking in Referly: it holds the affiliate who sent the visitor, the link they used, the campaign parameters on the URL, and a snapshot of the visitor's browser and location at that moment. Everything downstream — attribution, the analytics breakdowns, the `clickId` you pass to server-side endpoints — hangs off that record.
 
-{/* TODO: Write this article. */}
+This page is the reference for what a click contains, when one is created, and how it later gets tied to a conversion.
+
+## When a click is recorded
+
+The tracking script decides this on every page load, after it has read your program's `urlModifier` (the referral parameter name, `ref` by default). There are three outcomes:
+
+| Situation | Result |
+| --- | --- |
+| The URL carries a referral parameter and there is no stored referral yet | A new click is recorded, marked as unique |
+| The URL carries the same referral parameter as the one already stored | A new click is recorded, marked as **not** unique |
+| No referral parameter on the URL, but a referral is already stored | No click is recorded; the stored one is reused |
+| No referral parameter and nothing stored | Nothing happens |
+
+So a click is written only when a referral parameter is actually present in the URL. Ordinary navigation around your site after the first landing does not create additional clicks. See [attribution](/developer-documentation/tracking/attribution) for how the stored referral is chosen when several are in play.
+
+<Note>
+  Only referral codes that resolve to a real affiliate link in your program produce a click. If the code does not match any link, the request is rejected and nothing is stored.
+</Note>
+
+## The click ID
+
+Each click gets an incrementing numeric ID. As soon as the click is written, the script:
+
+- sets `window.affiliateId` to the click ID as a string (before the click resolves, this briefly holds the referral code instead),
+- stores it in the `PROGRAM_ID_affiliate_referral` cookie or localStorage key for the length of your cookie window,
+- fires the `affiliate_id_ready` event with both values.
+
+```js
+window.addEventListener("affiliate_id_ready", (event) => {
+  console.log(event.detail.ref);      // "jane-doe"
+  console.log(event.detail.clickId);  // "918342"
+});
+```
+
+That click ID is what you pass back to Referly when you report a sign-up or a sale from your own server. See [reporting sales](/developer-documentation/server-side/reporting-sales) and the [JavaScript API reference](/developer-documentation/tracking/javascript-api/reference).
+
+## Associations stored on the click
+
+Every click is written against the identifiers that were resolved at the time:
+
+| Field | What it holds |
+| --- | --- |
+| `affiliateId` | The affiliate whose referral code was used |
+| `affiliateProgramId` | The program the click belongs to |
+| `affiliateLinkId` | The specific affiliate link the code matched |
+| `referralId` | Empty at first; filled in when the click converts |
+| `createdAt` | Server timestamp, stored with a time zone |
+
+Because the link is recorded separately from the affiliate, an affiliate with several links keeps per-link click counts. If a link is later deleted, the click survives with an empty `affiliateLinkId` rather than disappearing from your totals.
+
+## Landing page and URL
+
+The full landing URL is captured, plus two parsed pieces of it so you can group without string surgery:
+
+| Field | Source | Example |
+| --- | --- | --- |
+| `fullLandingUrl` | `window.location.href` | `https://example.com/pricing?ref=jane` |
+| `pathname` | `window.location.pathname` | `/pricing` |
+| `queryString` | `window.location.search` | `?ref=jane&utm_source=newsletter` |
+
+## Campaign and ad click IDs
+
+The five standard UTM parameters are read off the landing URL and stored in their own fields: `utmSource`, `utmMedium`, `utmCampaign`, `utmTerm`, and `utmContent`.
+
+Alongside them, Referly captures the click identifiers the major ad platforms append to their destination URLs — `gclid`, `gbraid`, `wbraid`, `fbclid`, `msclkid`, `ttclid`, `twclid`, and `liFatId` — plus `extClickId` for affiliate networks that pass their own tracking ID. Each has its own column and its own index, so they are all filterable in analytics.
+
+These two families get their own pages: [UTMs and ad click IDs](/developer-documentation/tracking/utm-and-ad-click-ids) and [external click IDs](/developer-documentation/tracking/external-click-ids).
+
+## Referrer
+
+Three fields describe where the visitor came from before landing:
+
+| Field | What it holds |
+| --- | --- |
+| `documentReferrer` | The raw `document.referrer` string, untouched |
+| `referrerDomain` | The hostname parsed out of it |
+| `referrerType` | A classification, described below |
+
+`referrerType` is derived in the browser and is one of:
+
+- `direct` — no referrer at all (a typed URL, an app, a stripped referrer).
+- `paid` — any of the ad platform click IDs above was present on the URL. This wins over every other classification.
+- `search` — the referrer domain matches a known search engine: Google, Bing, Yahoo, DuckDuckGo, Baidu, Yandex, Ecosia, Ask, AOL, Startpage, Qwant, or Brave.
+- `social` — the referrer domain matches a known social platform: Facebook, Instagram, X, LinkedIn, Pinterest, TikTok, Reddit, YouTube, Snapchat, WhatsApp, Telegram, Discord, Tumblr, Threads, or Mastodon.
+- `email` — the referrer domain matches a common mail host or email platform, including Outlook, Yahoo, Gmail, Proton Mail, Zoho, Mailchimp, SendGrid, Constant Contact, HubSpot, Klaviyo, ConvertKit, and Drip.
+- `unknown` — there was a referrer, but it matched none of the lists.
+
+Matching is a case-insensitive substring test against the hostname, so `www.google.co.uk` and `news.google.com` both classify as `search`.
+
+## Device, browser, and operating system
+
+The raw user agent is stored in full, and the script also derives a normalised breakdown from it so you are not parsing user agent strings in your own reporting:
+
+| Field | Values |
+| --- | --- |
+| `userAgent` | The complete `navigator.userAgent` string |
+| `browserName` | `Chrome`, `Firefox`, `Safari`, `Edge`, `Opera`, or `Internet Explorer` |
+| `browserVersion` | The version number pulled from the user agent |
+| `osName` | `Windows`, `macOS`, `iOS`, `Android`, `Linux`, or `Chrome OS` |
+| `osVersion` | The version, where the user agent exposes one |
+| `deviceType` | `mobile`, `tablet`, or `desktop` |
+
+Anything the script cannot confidently identify is left empty rather than guessed — a browser that does not match one of the known patterns stores its user agent with no `browserName`. `deviceType` is the exception: it falls back to `desktop` when nothing matches.
+
+## Screen, viewport, and language
+
+Useful for spotting whether affiliate traffic is landing on layouts you have not designed for:
+
+| Field | Source |
+| --- | --- |
+| `screenWidth`, `screenHeight` | `screen.width` and `screen.height` |
+| `colorDepth` | `screen.colorDepth` |
+| `pixelRatio` | `window.devicePixelRatio` |
+| `viewportWidth`, `viewportHeight` | `window.innerWidth` and `window.innerHeight` |
+| `language` | `navigator.language` |
+| `languages` | `navigator.languages`, stored as a JSON array string |
+
+## IP address and location
+
+These are the only fields the browser does not supply. Referly resolves them server-side, from the request itself, when the click is written.
+
+The IP address is read from the first of these request headers that is present: `x-forwarded-for` (the first address in the list), `x-real-ip`, `cf-connecting-ip`, `x-vercel-forwarded-for`. If none are set, `ipAddress` is left empty.
+
+Location comes from the CDN's own geolocation headers rather than a lookup service, so it adds no latency to the click:
+
+| Field | Header source |
+| --- | --- |
+| `geoCountry` | `x-vercel-ip-country`, falling back to `cf-ipcountry` |
+| `geoRegion` | `x-vercel-ip-country-region`, falling back to `cf-region` |
+| `geoCity` | `x-vercel-ip-city`, falling back to `cf-ipcity` |
+
+`geoCountry` is a two-letter ISO country code. City names arrive URL-encoded and are decoded before storage. When neither provider supplies the headers, all three fields are left empty — the click is still recorded.
+
+## Unique and repeat clicks
+
+Every click carries a `uniqueClick` flag. It is `true` for the first click that established the referral in a given browser, and `false` for any later click where the visitor arrives on a referral URL for a code that is already stored.
+
+Analytics uses this flag directly: the clicks breakdown in your dashboard has an **all** mode that counts every row and a **unique** mode that counts only the rows where `uniqueClick` is `true`. Both are real click totals for the same period — they differ only in whether repeat arrivals from the same browser are included.
+
+<Warning>
+  `uniqueClick` is per browser, not per person. Someone who clicks the same affiliate link on their phone and again on their laptop produces two unique clicks, because the flag is decided from the referral stored in that browser. Clearing cookies has the same effect.
+</Warning>
+
+## How a click becomes a conversion
+
+A click starts life with no `referralId`. It gets one when a conversion is reported and carries a click ID with it:
+
+<Steps>
+  <Step title="You report the conversion">
+    Your integration, snippet, or server call sends the conversion along with the click ID it read from `window.affiliateId`.
+  </Step>
+  <Step title="Referly looks up the click">
+    The click ID is parsed as a number and the matching click is loaded. A missing or non-numeric ID is skipped silently — the conversion still records, it just will not be joined to a click.
+  </Step>
+  <Step title="The referral is created">
+    A referral is created for the customer, credited to the affiliate and the affiliate link.
+  </Step>
+  <Step title="The click is stamped">
+    The click's `referralId` is set to the new referral. From that point the click, the referral, and any sales on it form one chain.
+  </Step>
+</Steps>
+
+Only the click whose ID was reported gets stamped. Earlier repeat clicks from the same browser stay unattributed, which is what keeps click counts and conversion counts independent of each other.
+
+The click ID is also included in [postback URL](/developer-documentation/integrations/postback-url) fires, so an affiliate network can reconcile against the same identifier you used.
+
+## Where click data comes from
+
+Splitting it by origin is the quickest way to reason about what can go missing:
+
+| Collected by | Fields |
+| --- | --- |
+| The browser, sent with the click | Landing URL, pathname, query string, UTMs, ad click IDs, external click ID, referrer, user agent and everything derived from it, screen, viewport, language |
+| The server, from the request | IP address, country, region, city, timestamp |
+| Referly, from the lookup | Affiliate, program, affiliate link, unique flag |
+| Written later | Referral, once the click converts |
+
+Anything in the first row depends on the tracking script running to completion in the visitor's browser. A blocked script means no click at all, not a partial one. [Debug mode](/developer-documentation/tracking/debug-mode) prints exactly what was collected and what came back.
+
+## Retention
+
+Clicks are kept for as long as the program exists. There is no expiry job and no rolling window — a click from two years ago is still queryable in analytics.
+
+Deletion is by cascade. Removing an affiliate removes their clicks; removing a program removes all of its clicks. Deleting an affiliate link is the exception: the clicks remain and their `affiliateLinkId` is cleared.
+
+Do not confuse this with your cookie window, which defaults to 60 days and is configurable per program. That window controls how long a referral stays attributable in the visitor's browser, not how long the click record is stored. See [cookies and storage](/developer-documentation/tracking/cookies-and-storage).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="UTMs and ad click IDs" icon="bullseye" href="/developer-documentation/tracking/utm-and-ad-click-ids">
+    Every campaign and ad platform parameter Referly reads off the landing URL.
+  </Card>
+  <Card title="External click IDs" icon="link" href="/developer-documentation/tracking/external-click-ids">
+    Passing a network's own tracking ID through Referly and back out again.
+  </Card>
+  <Card title="Attribution" icon="route" href="/developer-documentation/tracking/attribution">
+    How Referly decides which affiliate gets credit for a conversion.
+  </Card>
+  <Card title="Cookies and storage" icon="cookie-bite" href="/developer-documentation/tracking/cookies-and-storage">
+    What the tracking script stores in the browser, and for how long.
+  </Card>
+</Columns>

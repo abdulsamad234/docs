@@ -1,6 +1,290 @@
 ---
 title: "Stripe coupon codes"
-description: "Track affiliates by the coupon a customer used."
+description: "Track affiliate referrals with Stripe coupon and promotion codes in Referly. Connect Stripe, auto-generate or sync codes, assign them to affiliates, and pay commission when customers redeem them."
+keywords: ["Stripe coupon code affiliate tracking", "Stripe promotion code affiliate", "Referly coupon tracking", "affiliate discount code Stripe", "influencer promo code tracking", "track sales without referral link", "Stripe coupon sync Referly", "auto-generated affiliate coupon codes", "promo code commission tracking", "coupon duration forever renewals"]
 ---
+Every other Stripe method in Referly identifies the affiliate from a click on their referral link. This one identifies them from the discount code the customer types at checkout.
 
-{/* TODO: Write this article. */}
+That makes it the only method that works when there was never a link to click — a podcast read, a YouTube mention, a printed card, a conference talk, a creator saying "use code SARAH20 at checkout". The customer discovers you anywhere, arrives however they like, and the code tells you who sent them.
+
+<Info>
+  You can run this alongside link tracking. Most programs do — affiliates get a link *and* a code, and whichever the customer uses, the affiliate gets paid.
+</Info>
+
+## What this method tracks
+
+| What happens | Tracked | Notes |
+| --- | --- | --- |
+| A customer uses an affiliate's code at checkout | Yes | This is the whole point of the method |
+| A customer who never clicked a referral link | Yes | No cookie, no link, no script needed on your site |
+| A customer who bought on a different device to the one they heard about you on | Yes | The code travels with the person, not the browser |
+| The first payment | Yes | Sale, amount, product and commission arrive together |
+| Free trials started with a code | Yes | The referral appears. No reward until the first real payment |
+| Subscription renewals | Yes | The discount stays on the subscription, so renewals keep paying commission |
+| Refunds | Yes | The matching reward is voided — see [refunds](/help-center/manage/rewards/refunds) |
+| How many times a code has been used | Yes | Redemption counts update in Referly as they change in Stripe |
+| A code being turned off or deleted in Stripe | Yes | The change is reflected in Referly automatically |
+| Clicks on referral links | Only if you also install the tracking script | Optional, and covered in [track clicks as well](#track-clicks-as-well) |
+
+### What it can't track
+
+This method trades precision at the top of the funnel for reach at the bottom. Know what you're giving up.
+
+- **Anything before checkout.** No clicks, no visits, no click-to-sale conversion rate for the code itself. If an affiliate mentions you to 50,000 listeners and two buy, all you'll ever see is the two.
+- **A customer who forgets the code.** This is the real cost of the method, and it's larger than people expect. If they don't type it, the sale is unattributed and the affiliate isn't paid.
+- **A checkout where the code can't be entered.** Your checkout has to actually offer a promotion code field — see [Step 3](#step-3-let-customers-enter-a-code-at-checkout).
+- **Sign-ups before payment.** The referral only exists once a discounted payment goes through.
+- **Which specific piece of content drove the sale,** unless you give each affiliate several codes.
+- **Live payments while you're connected in test mode,** and the reverse. Referly deliberately ignores the mismatched ones.
+
+<Note>
+  Because a code can't be forced, treat coupon tracking as a floor rather than a ceiling. Affiliates who can share a link should share a link too.
+</Note>
+
+## Before you start
+
+<Steps>
+  <Step title="A Stripe account you can log into as an administrator">
+    You'll authorize Referly from inside Stripe, so you need permission to connect apps.
+  </Step>
+  <Step title="A decision on the customer discount">
+    Codes have to be worth using. Decide what the customer gets — 20% off, 10 dollars off — before you start, because it's what the code will be built from.
+  </Step>
+  <Step title="Your commission plan set up">
+    The discount the customer gets and the commission the affiliate earns are two separate numbers. See [commissions overview](/help-center/getting-started/commissions/overview).
+  </Step>
+</Steps>
+
+## Step 1: Connect your Stripe account
+
+Nothing about coupons works until Stripe is connected, because Referly creates and reads the codes inside your Stripe account. You don't create API keys — you authorize Referly's app from inside Stripe.
+
+<Steps>
+  <Step title="Open the connect dialog">
+    Open **Integrations** from the left sidebar, select **Connect Integration** at the top right, then choose **Stripe**.
+
+    {/* TODO screenshot: coupons-connect-stripe — upload it in the local Documentation Agent */}
+  </Step>
+  <Step title="Choose live or test">
+    Select **Connect Stripe Account** for your real account, or **Connect Test Mode** to connect a sandbox first.
+  </Step>
+  <Step title="Authorize Referly in Stripe">
+    A Stripe page opens in a new tab. Sign in, pick the account from the account picker at the top, and confirm. Stripe explains sandboxes in their [test mode guide](https://docs.stripe.com/test-mode).
+  </Step>
+  <Step title="Confirm the connection">
+    Back in Referly, the Stripe panel shows a green **Connected** badge with your account name, or a yellow **Test Mode** badge for a sandbox.
+
+    {/* TODO screenshot: coupons-stripe-badges — upload it in the local Documentation Agent */}
+  </Step>
+</Steps>
+
+<Warning>
+  The badge colour decides which payments count. Yellow **Test Mode** means real payments are ignored. Green **Connected** means test payments are ignored.
+</Warning>
+
+## Step 2: Give your affiliates codes
+
+There are two routes. Pick one, or mix them.
+
+### Option A: let Referly create a code for every affiliate
+
+This is the hands-off route. You set the customer discount once in your program details — the amount and whether it's a percentage or a fixed sum — and from then on every affiliate who joins gets their own code created for them.
+
+Referly builds each one in your connected Stripe account as a coupon plus a matching customer-facing code, so the codes are real Stripe codes that work at your checkout with no extra setup.
+
+{/* TODO screenshot: auto-generated-code-on-affiliate — upload it in the local Documentation Agent */}
+
+The discount is set to apply to every invoice, not only the first — so a customer who subscribes with a code keeps their discount on every renewal, and the affiliate keeps earning on every renewal too.
+
+For the full walkthrough of this option, see [auto-generated codes](/help-center/engage/coupons/auto-generated-codes).
+
+<Warning>
+  The customer discount and the affiliate commission are independent. A 20% customer discount plus a 20% commission means you keep 60% of the sale. Check both numbers together before you switch this on.
+</Warning>
+
+### Option B: create codes in Stripe and bring them in
+
+Use this when you want different discounts for different affiliates, or when you already have codes running in Stripe.
+
+<Steps>
+  <Step title="Create the coupon in Stripe">
+    In the [Stripe Dashboard](https://dashboard.stripe.com/coupons), open **Products**, then **Coupons**, then select **New**. Set the discount amount and the duration. Stripe's own guide is their [coupons and promotion codes documentation](https://docs.stripe.com/billing/subscriptions/coupons).
+  </Step>
+  <Step title="Add a customer-facing code">
+    In the same dialog, select **Use customer-facing coupon codes** and type the code you want customers to enter, such as `SARAH20`. This is the part the customer actually types — a coupon on its own has no code attached to it.
+  </Step>
+  <Step title="Choose the duration deliberately">
+    **Forever** discounts every invoice including renewals. **Once** applies to the first invoice only. **Repeating** lasts a set number of months. For a subscription business, forever keeps renewals attributed most reliably.
+  </Step>
+  <Step title="Bring the codes into Referly">
+    Open **Coupons** from the left sidebar and select **Sync Coupons**, then choose **Stripe**. Your codes are pulled in with their discounts and redemption counts.
+
+    {/* TODO screenshot: sync-coupons-from-stripe — upload it in the local Documentation Agent */}
+  </Step>
+  <Step title="Assign a code to an affiliate">
+    Open the code in Referly and attach it to the affiliate who'll promote it. This is what tells Referly who to pay. See [creating coupons](/help-center/engage/coupons/create) and [promotional codes](/help-center/engage/coupons/promotional-codes).
+  </Step>
+</Steps>
+
+<Note>
+  You can also create codes from inside Referly and have them pushed to Stripe, using **Manage Integrations** on the **Coupons** page to pick Stripe as the source. See [connect a source](/help-center/engage/coupons/connect-a-source).
+</Note>
+
+### Changes in Stripe flow back automatically
+
+Once codes are connected, you don't have to keep the two systems in step by hand:
+
+- Renaming a coupon in Stripe updates it in Referly.
+- Redemption counts update as customers use the codes.
+- Turning a code off in Stripe marks it inactive in Referly.
+- Deleting a coupon in Stripe removes it from Referly.
+
+## Step 3: Let customers enter a code at checkout
+
+A code nobody can type is worth nothing, and this is the step people miss.
+
+Stripe checkout only shows a promotion code field if you've turned it on. Where you turn it on depends on how customers pay:
+
+| How customers pay | Where to enable it |
+| --- | --- |
+| [Payment Links](/help-center/integrations/stripe/payment-links) | In the payment link's settings in the Stripe Dashboard |
+| [Pricing Table](/help-center/integrations/stripe/pricing-table) | In the pricing table's payment settings |
+| [Buy Button](/help-center/integrations/stripe/buy-button) | In the settings of the payment link the button was made from |
+| Your own checkout, built with the [Session API](/help-center/integrations/stripe/session-api) | Turn on promotion codes when you create the Checkout Session |
+
+<Check>
+  Test it as a customer would: open your checkout and confirm you can see somewhere to add a promotion code before paying.
+</Check>
+
+## Track clicks as well
+
+This step is optional. Coupon tracking works with nothing installed on your site at all — but without the tracking script you'll have no click data anywhere in Referly, and affiliates who do share links won't have their clicks counted.
+
+If you want both, open **Integrations**, find the **Stripe Coupon Codes** card, and copy the script from the guide into the `head` section of your pages:
+
+{/* TODO screenshot: integrations-coupon-codes-card — upload it in the local Documentation Agent */}
+
+```html
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+<Warning>
+  Copy the snippet from your dashboard rather than from this page. Your program ID is unique, and programs run by an agency load the script from a different address.
+</Warning>
+
+## What wins when a customer has both
+
+A customer can arrive through one affiliate's link and type a different affiliate's code. Referly resolves it in this order:
+
+1. **The promo code used at checkout.** The code owner gets the sale, even when the click came from someone else.
+2. **The referral identifier from a link click,** if no affiliate's code was used.
+3. **The customer's email matching an existing referral,** which is what keeps renewals attached to the original affiliate.
+
+The code winning is deliberate. Typing a code is a stronger signal of who influenced the purchase than a cookie that might be weeks old.
+
+<Note>
+  If you disagree with a particular outcome, you can move a sale to a different affiliate — see [managing referred customers](/help-center/manage/customers/overview).
+</Note>
+
+## How renewals behave
+
+Renewals are where coupon tracking is unusually strong.
+
+When the discount is set to apply forever, it stays attached to the subscription. Every renewal invoice carries the same code, so Referly can see the affiliate on the renewal itself. On top of that, the renewal is matched to the original referral by the customer's email. Two independent routes to the same answer means renewals rarely fall through.
+
+If you set a code to apply **once**, the discount disappears after the first invoice. Renewals then rely on the email match alone — still usually fine, but with one less safety net.
+
+## Step 4: Test the whole flow
+
+Test before you hand a code to a single affiliate, with your Stripe connection showing the yellow **Test Mode** badge.
+
+<Steps>
+  <Step title="Switch Stripe to a sandbox">
+    In the Stripe Dashboard, use the account picker at the top to switch into a sandbox. Codes created in a sandbox only work on sandbox checkouts.
+  </Step>
+  <Step title="Make sure a test affiliate has a code">
+    Either let Referly generate one, or create a code in the sandbox and sync it in, then assign it to a test affiliate.
+  </Step>
+  <Step title="Check the code exists in Stripe">
+    In the Stripe Dashboard, open **Products** then **Coupons** and confirm the code is there and active. If Referly generated it, this is where it will have appeared.
+  </Step>
+  <Step title="Buy something using the code">
+    Go through your own checkout, enter the code, and confirm the price drops. Pay with Stripe's test card `4242 4242 4242 4242`, any future expiry, and any three-digit security code. The full list is in Stripe's [testing guide](https://docs.stripe.com/testing).
+  </Step>
+  <Step title="Confirm it in Referly">
+    Open **Referrals** in the left sidebar — the customer should be listed against the affiliate who owns the code. Then open **Rewards** to see the commission.
+
+    {/* TODO screenshot: referral-attributed-by-coupon — upload it in the local Documentation Agent */}
+  </Step>
+  <Step title="Check the redemption count moved">
+    Back on the **Coupons** page, the code's usage count should have gone up.
+  </Step>
+</Steps>
+
+<Check>
+  When the referral shows the code's owner and the reward shows the right amount, coupon tracking is working. Repeat once in live mode with a small real payment you refund afterwards.
+</Check>
+
+## Go live
+
+1. On the **Integrations** page, open the Stripe panel and select **Disconnect**.
+2. Select **Connect Stripe Account** and authorize your live account.
+3. Confirm the badge is green and reads **Connected**.
+4. Generate or sync your codes again — sandbox codes do not exist in your live account.
+
+<Warning>
+  Codes are per Stripe account. A code that worked in your sandbox will not work on live checkouts, and vice versa. This catches people out on launch day.
+</Warning>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Customers say the code doesn't work">
+    Check three things in Stripe: the code exists in the account you're actually taking payments in, it's still active, and it hasn't hit a redemption limit or expiry date you set. Also confirm you're not looking at a sandbox code while the customer is on live checkout.
+  </Accordion>
+  <Accordion title="There's no place to enter a code at checkout">
+    Promotion codes are off by default. Go back to [Step 3](#step-3-let-customers-enter-a-code-at-checkout) and turn them on wherever your customers pay.
+  </Accordion>
+  <Accordion title="The code worked but no commission was created">
+    The code isn't connected to an affiliate in Referly. Open the **Coupons** page, find the code, and check an affiliate is assigned to it. A code that exists in Stripe but isn't attached to anyone in Referly discounts the sale without paying anyone.
+  </Accordion>
+  <Accordion title="Nothing appears in Referly at all">
+    Almost always the test-mode mismatch. A yellow **Test Mode** badge means live payments are ignored, a green **Connected** badge means test payments are ignored. Reconnect in the mode you're actually testing in.
+
+    If the badge is right, confirm the payment actually succeeded in Stripe.
+  </Accordion>
+  <Accordion title="Affiliates don't have codes">
+    If you're relying on automatic generation, check the customer discount is set in your program details — with no discount amount there's nothing to build a code from. Check too that Stripe was connected *before* those affiliates joined, since the code is created against your Stripe account. See [auto-generated codes](/help-center/engage/coupons/auto-generated-codes).
+  </Accordion>
+  <Accordion title="The wrong affiliate got the sale">
+    A promo code beats a link click. If the customer clicked one affiliate's link but typed another's code, the code owner is credited. You can move the sale by [changing the referral's affiliate](/help-center/manage/customers/overview).
+  </Accordion>
+  <Accordion title="Renewals stopped paying commission">
+    Check the coupon's duration in Stripe. A code set to apply **once** falls off after the first invoice, leaving renewals to be matched by the customer's email alone. If that email has since changed in Stripe, the connection breaks. Codes set to apply forever are more robust.
+  </Accordion>
+  <Accordion title="Redemption counts look wrong in Referly">
+    Counts update as Stripe reports them, so a very recent purchase may take a moment. Open the **Coupons** page and select **Sync Coupons** to pull the latest figures from Stripe.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Coupons and promo codes" icon="ticket" href="/help-center/engage/coupons/overview" arrow>
+    The full picture of how coupons work in Referly.
+  </Card>
+  <Card title="Auto-generated codes" icon="wand-magic-sparkles" href="/help-center/engage/coupons/auto-generated-codes" arrow>
+    Give every affiliate a code without lifting a finger.
+  </Card>
+  <Card title="Stripe integration overview" icon="stripe" href="/help-center/integrations/stripe" arrow>
+    Every way to connect Stripe, and which one fits you.
+  </Card>
+  <Card title="Coupon restrictions" icon="lock" href="/help-center/engage/coupons/restrictions" arrow>
+    Limit who can use a code, how often, and until when.
+  </Card>
+</Columns>

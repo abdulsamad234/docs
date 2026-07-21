@@ -1,6 +1,195 @@
 ---
 title: "Manage endpoints"
-description: "Create, disable, and rotate the secret on an endpoint."
+description: "Create, edit, disable, and delete Referly webhook endpoints. Covers the signing secret and rotation, subscribing to event types, Active vs Disabled, and how to structure endpoints per system, environment, and program."
+keywords: ["Referly webhook endpoint", "create webhook endpoint", "webhook signing secret", "rotate signing secret", "disable webhook endpoint", "delete webhook endpoint", "webhook event subscription", "affiliate program webhooks", "webhook URL setup", "webhook endpoint management"]
 ---
+An endpoint is one URL that Referly delivers to, plus the list of event types it is subscribed to and
+its own signing secret. Endpoints belong to a single affiliate program, and you manage them in your
+dashboard rather than through the API.
 
-{/* TODO: Write this article. */}
+Open your campaign, go to **Settings**, then **Advanced**, then **Webhooks**. The screen has three
+tabs: **Endpoints** (the URLs you deliver to), **Event Catalog** (what each event type contains), and
+**Logs** (every delivery across the program).
+
+{/* TODO screenshot: webhooks-endpoints-tab — upload it in the local Documentation Agent */}
+
+<Info>
+  Creating endpoints requires a Business or Agency plan and is not available during a free trial. On
+  other plans the **New Endpoint** button is locked and opens an upgrade prompt instead. See
+  [plans and features](/help-center/billing/plans-and-features).
+</Info>
+
+## Before you create one
+
+Have three things ready:
+
+- **A public HTTPS URL.** It has to resolve from the public internet. `localhost` and private
+  network addresses never receive anything — during development, expose your machine with a tunnel
+  such as ngrok or Cloudflare Tunnel and register the public hostname it hands you.
+- **A handler that returns a `2xx` fast.** Referly treats anything else, including a timeout, as a
+  failed delivery. See [Webhooks introduction](/developer-documentation/webhooks/introduction) for a
+  minimal handler.
+- **A decision about which events you need.** You must subscribe to at least one, and you should
+  subscribe to no more than you will act on.
+
+## Create an endpoint
+
+On the **Endpoints** tab, select **New Endpoint** at the top right. If you have not created one yet
+the tab is empty and offers a **Create Endpoint** button in the middle of the screen instead — same
+dialog either way.
+
+{/* TODO screenshot: create-endpoint-dialog — upload it in the local Documentation Agent */}
+
+<Steps>
+  <Step title="URL">
+    The address that receives the `POST`, for example `https://api.example.com/webhooks/referly`.
+  </Step>
+  <Step title="Description">
+    A label for the endpoint. This is what identifies it in the list, so name it after the system it
+    feeds — `Production order sync`, `Staging`, `Slack alerts`. If you leave it blank, the list falls
+    back to the last path segment of the URL, which gets ambiguous quickly once you have more than
+    one endpoint.
+  </Step>
+  <Step title="Events">
+    A scrollable checklist of all fifteen event types, grouped by family — affiliate, referral, sale,
+    coupon, promocode. Tick the ones this endpoint should receive.
+  </Step>
+  <Step title="Create">
+    **Create** stays disabled until you have entered a URL and ticked at least one event. Once you
+    select it the endpoint appears in the list marked **Active** and starts receiving matching
+    events immediately — there is no confirmation ping or activation step.
+  </Step>
+</Steps>
+
+Each card in the list shows the description, the URL in monospace, an **Active** or **Disabled**
+badge, and the date it was created.
+
+## Open an endpoint's details
+
+Select the **...** button on a card and choose **View Details**.
+
+{/* TODO screenshot: endpoint-details — upload it in the local Documentation Agent */}
+
+The detail screen gives you:
+
+- **Endpoint URL** — read-only, with a copy button.
+- **Signing Secret** — masked until you select the eye icon, with buttons to copy it and to rotate
+  it. This is the secret your handler verifies against; see
+  [Verify signatures](/developer-documentation/webhooks/verifying-signatures).
+- **Registered Events** — the subscribed event types as tags.
+- An **Active** or **Disabled** badge and a **...** menu with **Disable**, **Edit**, and **Delete**.
+
+Below that are two tabs. **Overview** holds **Recent Activity**, the last five deliveries to this
+endpoint with their status — enough to answer "is it working right now" without opening the
+program-wide log. **Testing** sends sample events, covered in
+[Test and replay](/developer-documentation/webhooks/testing).
+
+<Note>
+  **Edit** lives only on the detail screen. The **...** menu on a card in the list offers **View
+  Details**, **Disable** or **Enable**, and **Delete**.
+</Note>
+
+## Edit an endpoint
+
+From the detail screen's **...** menu, choose **Edit**. You can change the URL, the description, and
+the subscribed events. The dialog opens pre-filled with the current values.
+
+Changes apply to deliveries from that point on. Messages already queued or mid-retry keep going to
+the old URL, so when you are moving an endpoint to a new host, leave the old one serving until the
+log stops showing traffic for it.
+
+Editing does not touch the signing secret. Point a new URL at the same endpoint and your existing
+verification code keeps working.
+
+## Rotate the signing secret
+
+Select the rotate icon next to **Signing Secret**. Referly issues a new secret and shows it in place
+of the old one.
+
+<Warning>
+  Treat rotation as an immediate cutover. Anything still verifying against the old secret will start
+  rejecting deliveries as invalid, and rejected deliveries count as failures and enter the retry
+  cycle. Deploy the new secret to your handler in the same window that you rotate it.
+</Warning>
+
+The safest sequence is to deploy a handler that accepts either secret, rotate, confirm the log is
+clean, then remove the old one. Rotate whenever a secret may have leaked — a committed `.env`, a
+former contractor, a compromised logging pipeline.
+
+## Disable an endpoint
+
+Choose **Disable** from the **...** menu on the card or the detail screen. The endpoint stops
+receiving events but keeps its URL, description, subscribed events, signing secret, and full
+delivery history. **Enable** on the same menu turns it back on.
+
+This is what you want during a planned outage, a migration, or a noisy debugging session — far
+better than deleting and recreating, which loses the secret and the history.
+
+<Note>
+  Events that occur while an endpoint is disabled are not queued up and delivered on re-enable. If
+  you need them afterwards, resend them from the **Logs** tab — see
+  [Retries and logs](/developer-documentation/webhooks/retries-and-logs).
+</Note>
+
+## Delete an endpoint
+
+Choose **Delete** from the **...** menu and confirm in the **Delete Webhook Endpoint** dialog.
+
+<Warning>
+  Deletion is permanent. The signing secret and the endpoint's delivery history go with it. If you
+  later recreate the same URL you get a new endpoint with a new secret, and your handler has to be
+  updated. When in doubt, disable instead.
+</Warning>
+
+## How to structure your endpoints
+
+A few patterns worth following.
+
+### One endpoint per consuming system
+
+Resist the single catch-all URL that fans out internally. Separate endpoints mean separate secrets,
+separate subscriptions, and separate delivery logs — so when your CRM sync breaks you can disable it
+without also stopping order fulfilment, and the log shows you exactly which consumer is failing.
+
+### One endpoint per environment
+
+Give staging its own endpoint pointing at your staging host. Because endpoints are scoped to a
+program, the cleanest setup is a second program for testing with its own endpoint, so test traffic
+never touches production data.
+
+### Subscribe narrowly
+
+Filtering happens at the endpoint, before delivery. An endpoint subscribed to `sale.created` alone
+never has to receive, verify, and discard affiliate profile edits. This keeps your log readable and
+your handler cheap.
+
+### One endpoint per program
+
+Endpoints never cross programs — a program's events only reach endpoints registered on that program.
+If you run several campaigns and want them all in one place, register the same URL on each program.
+Each registration is a separate endpoint with its own secret, so your handler needs to pick the right
+secret per request, usually by giving each program its own path such as
+`/webhooks/referly/program-a`.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Event types" icon="list" href="/developer-documentation/webhooks/event-types">
+    All fifteen events and exactly what triggers each one.
+  </Card>
+  <Card title="Payload structure" icon="brackets-curly" href="/developer-documentation/webhooks/payload-structure">
+    Field-by-field reference for every object you can receive.
+  </Card>
+  <Card title="Verify signatures" icon="shield-check" href="/developer-documentation/webhooks/verifying-signatures">
+    Use the signing secret to prove a request came from Referly.
+  </Card>
+  <Card title="Retries and logs" icon="clock-rotate-left" href="/developer-documentation/webhooks/retries-and-logs">
+    Read a failed delivery and resend it.
+  </Card>
+  <Card title="Test and replay" icon="flask" href="/developer-documentation/webhooks/testing">
+    Send sample events from the Testing tab while you build.
+  </Card>
+  <Card title="Webhooks in the Help Center" icon="circle-question" href="/help-center/settings/advanced/webhooks">
+    The same screens, explained without code.
+  </Card>
+</Columns>

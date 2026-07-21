@@ -1,6 +1,248 @@
 ---
 title: "Report a sale"
-description: "Record a sale from your server."
+description: "Record an affiliate sale from your server with the Referly API. Covers the POST /v1/sales fields, attribution identifiers, commission overrides, tax and shipping deductions, refunds, and error handling."
+keywords: ["report a sale API", "create sale Referly", "affiliate commission API", "POST v1 sales", "server-side conversion", "recurring commission API", "refund affiliate sale", "externalId sale"]
 ---
+One call records a conversion end to end. You send the amount and something that identifies the affiliate; Referly finds or creates the referred customer, applies the commission plan, writes the sale, and emits a `sale.created` webhook.
 
-{/* TODO: Write this article. */}
+```bash
+POST https://www.referly.so/api/v1/sales
+```
+
+This is the endpoint behind every server-side setup — a payment webhook you forward yourself, a renewal your biller charges overnight, a deal your sales team closes by invoice.
+
+## Before you start
+
+- An [API key](/developer-documentation/api/authentication) for the program you're reporting into. The key is what tells Referly which program the sale belongs to, so there's no program ID in the body.
+- API access, which is included with the Business plan.
+- Something that identifies the affiliate. Usually that's the click ID you [captured in the browser and stored on your user](/developer-documentation/server-side/overview).
+
+## Report a sale
+
+The smallest useful request: who converted, how much they paid, and which click brought them in.
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://www.referly.so/api/v1/sales \
+  -H "Authorization: Bearer $REFERLY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "referralId": "48219",
+    "email": "customer@example.com",
+    "name": "Jane Doe",
+    "totalEarned": 99.00,
+    "externalId": "ch_3Q8xVe2eZvKYlo2C"
+  }'
+```
+
+```js Node.js
+const res = await fetch("https://www.referly.so/api/v1/sales", {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${process.env.REFERLY_API_KEY}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    referralId: user.referlyClickId,
+    email: user.email,
+    name: user.fullName,
+    totalEarned: 99.0,
+    externalId: charge.id,
+  }),
+});
+
+const sale = await res.json();
+```
+
+```python Python
+import os
+import requests
+
+res = requests.post(
+    "https://www.referly.so/api/v1/sales",
+    headers={"Authorization": f"Bearer {os.environ['REFERLY_API_KEY']}"},
+    json={
+        "referralId": user.referly_click_id,
+        "email": user.email,
+        "name": user.full_name,
+        "totalEarned": 99.00,
+        "externalId": charge.id,
+    },
+)
+
+sale = res.json()
+```
+
+</CodeGroup>
+
+Amounts are plain numbers in your program's currency. Send `99.00`, not `9900` and not `"$99.00"` — there's no currency conversion on this endpoint, so a value in the wrong unit becomes a commission in the wrong unit.
+
+## Identify who to credit
+
+Every request has to name the affiliate one way or another. Send one of the following.
+
+### referralId
+
+The workhorse, and the one to use if you captured a click. Despite the name it accepts four different things, and Referly tries them in this order:
+
+<Steps>
+  <Step title="An existing referred customer's ID">
+    The `id` of a referral already in your program. Direct hit, no ambiguity.
+  </Step>
+  <Step title="A click ID">
+    A numeric value is looked up as a click. The affiliate behind that click gets the credit, and the click, the customer, and the sale stay joined up in your reports. This is what `window.affiliateId` holds.
+  </Step>
+  <Step title="An affiliate's ID">
+    Credits that affiliate directly, with no click attached.
+  </Step>
+  <Step title="An affiliate link code">
+    The code from the affiliate's referral link — the value that travels in the `ref` parameter.
+  </Step>
+</Steps>
+
+### email
+
+```json
+{ "email": "customer@example.com", "name": "Jane Doe", "totalEarned": 49.0 }
+```
+
+Referly looks for an existing referred customer with that email in your program and credits the affiliate they already belong to. Convenient when you don't want to store an ID, but it only works for customers who are already recorded as referrals — a brand new email matches nothing, and no commission is created.
+
+### promoCode
+
+```json
+{ "promoCode": "JANE20", "email": "customer@example.com", "name": "Jane Doe", "totalEarned": 49.0 }
+```
+
+For affiliates who promote a discount code instead of a link, so there's no click to point at. Referly resolves the code to its affiliate and increments the redemption counters on both the promotional code and its coupon.
+
+The code has to be active, unexpired, and under its redemption limits. If it isn't, the request is rejected rather than recorded without a commission. See [coupons and promotional codes](/api-reference/coupons-and-promotional-codes).
+
+<Note>
+  `promoCode` takes priority. If you send it alongside `referralId`, the promo code decides the affiliate and the other identifier is ignored.
+</Note>
+
+## Request fields
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `totalEarned` | number | Yes | The sale amount in your program's currency, before any tax or shipping deduction. |
+| `email` | string | Yes | The customer's email. Optional only when you send a `referralId` that resolves to an existing referral that already has one. |
+| `name` | string | Yes | The customer's name, with the same exception as `email`. |
+| `referralId` | string | One identifier required | Click ID, referral ID, affiliate ID, or affiliate link code. |
+| `promoCode` | string | One identifier required | A promotional code in your program. |
+| `externalId` | string | Strongly recommended | Your own reference for this sale — a charge, order, or transaction ID. Used for [deduplication](/developer-documentation/server-side/idempotency). |
+| `externalInvoiceId` | string | Strongly recommended | The invoice or charge ID from your payment provider. Also used for deduplication. |
+| `commissionRate` | number | No | Overrides the commission plan for this sale. Read as a percentage (0–100) on percentage plans, or as a flat amount on flat plans. |
+| `tax` | number | No | Tax included in `totalEarned`. Subtracted from the commission base when your program has tax deduction enabled. |
+| `shipping` | number | No | Shipping included in `totalEarned`. Subtracted from the commission base when your program has shipping deduction enabled. |
+| `product` | object | No | A single item: `productId`, `quantity`, `price`, and `name`. Recorded on the sale and matched against product-based commission rules. |
+
+A few behaviours worth knowing before you rely on them:
+
+- **`tax` and `shipping` are never subtracted automatically.** They only reduce the commission base if the matching setting is turned on in your program. Sending them on a program without those settings records the amounts but changes nothing.
+- **`commissionRate` bypasses the plan entirely.** A percentage outside 0–100 is rejected, and a negative flat amount is rejected. Leave it out and the affiliate's commission plan decides.
+- **Product rules don't block API sales.** If you send a `product` that doesn't satisfy a product-based rule, the requirement is bypassed rather than the sale being refused.
+
+## What happens when the sale lands
+
+In order:
+
+1. **The affiliate is resolved** from your identifier. If nothing resolves, no commission is created.
+2. **The referred customer is found or created.** A new email under a known affiliate becomes a new referral, and the click you referenced is attached to it, so the click, customer, and sale all line up in your reports.
+3. **Duplicates are filtered out.** If a sale already carries the `externalId` or `externalInvoiceId` you sent, nothing new is written.
+4. **The commission base is calculated** — `totalEarned`, minus tax and shipping where your program deducts them.
+5. **The commission plan runs.** Rules, conditions, holding periods, and recurring-payment limits are all evaluated, unless you overrode the rate.
+6. **Fraud prevention runs** if it's enabled, which can put the commission on hold instead of approving it.
+7. **The sale and commission are written**, along with any multi-level commissions for the affiliate's own referrer.
+8. **Notifications go out** — the `sale.created` [webhook](/developer-documentation/webhooks/event-types), any [postback URL](/developer-documentation/integrations/postback-url), and the new-sale emails to the affiliate and to you.
+
+<Warning>
+  A sale is only recorded for a customer whose subscription status is active. If a referral has been marked cancelled or churned in Referly, reporting a payment for them does not create a sale. Reactivate the customer first if the payment is genuine.
+</Warning>
+
+## The response
+
+A successful call returns the sale that was written:
+
+```json
+{
+  "id": 90210,
+  "affiliateId": "usr_8f2b1c",
+  "referralId": "ref_2c9a44",
+  "email": "customer@example.com",
+  "name": "Jane Doe",
+  "totalEarned": 99,
+  "commissionRate": 20,
+  "taxAmount": 0,
+  "shippingAmount": 0,
+  "externalId": "ch_3Q8xVe2eZvKYlo2C",
+  "externalInvoiceId": null,
+  "status": "ACTIVE",
+  "source": "API",
+  "paymentTrigger": "PURCHASE",
+  "createdAt": "2026-03-04T11:22:33.000Z"
+}
+```
+
+Keep `id` if you plan to refund or update the sale later.
+
+<Warning>
+  A `200` response does not always mean a sale was created. When no affiliate could be resolved, when the sale was a duplicate, or when the customer isn't active, the body comes back as `null`. Check for a body with an `id` before you treat the call as successful.
+</Warning>
+
+## Recurring payments
+
+Report every renewal as its own sale, with the invoice or charge ID of that particular payment in `externalId` or `externalInvoiceId`. Referly counts payments per customer, so recurring commission plans — "pay for the first 12 months", "pay on the first 3 payments" — depend on each renewal arriving as a separate call.
+
+Use the click ID you stored at sign-up for every one of them. The visitor's cookie is long gone by the second renewal; your database is the only thing that still knows who referred them.
+
+## Refunds, corrections, and removals
+
+| Action | Method | Body | Effect |
+| --- | --- | --- | --- |
+| Mark a sale refunded | `PATCH` | `{ "saleId": 90210 }` | Zeroes the commission and marks the sale refunded. Refunding twice is safe — the second call returns `alreadyRefunded: true`. |
+| Correct a sale | `PUT` | `{ "saleId": 90210, ... }` | Updates the fields you send. Passing `commissionEarned` sets the affiliate's commission directly. |
+| Delete a sale | `DELETE` | `{ "saleId": 90210 }` | Removes it entirely. Prefer refunding, which keeps the history. |
+
+A sale can't be refunded once it has been paid out, marked as manually paid, pulled into a payout batch, or once its refund window has closed. Those come back `400` with a `reason` telling you which of those it was.
+
+## Errors
+
+| Status | Error | Fix |
+| --- | --- | --- |
+| `400` | `Either Referral ID, email, or Promo Code is required` | Send an identifier. |
+| `400` | `Total Amount Earned is required` | `totalEarned` is missing or zero. |
+| `400` | `Email is required` / `Name is required` | The identifier resolved to no existing referral, so Referly has nothing to name the customer with. Send both. |
+| `400` | `Promo code not found` / `is not active` / `has expired` / `has reached its redemption limit` | The code can't be used. Check it in the dashboard. |
+| `400` | `Error occured while creating sale` | Something in the commission logic rejected the request — most often a `commissionRate` outside its allowed range, a monthly plan limit reached, or a duplicate external identifier colliding with an existing sale. |
+| `401` | `Unauthorized` / `Invalid auth token` | Check the `Authorization` header. |
+| `403` | `User does not have API access` | The account isn't on a plan that includes the API. |
+| `429` | `Too many requests. Please slow down.` | Back off. See [rate limits](/developer-documentation/api/rate-limits). |
+
+Full reference in [Errors](/developer-documentation/api/errors).
+
+## Before you go live
+
+- Send `externalId` on every call, without exception. It's the difference between a safe retry and a double payout.
+- Store the click ID at sign-up rather than reading a cookie at payment time.
+- Test with a real affiliate link in a private window, then report a small sale and confirm it appears against the right affiliate with the commission you expect.
+- If a payment integration already covers this checkout, don't report it from your server as well.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Idempotency" icon="rotate" href="/developer-documentation/server-side/idempotency" arrow>
+    Retry safely without creating duplicate sales.
+  </Card>
+  <Card title="Server-side tracking overview" icon="server" href="/developer-documentation/server-side/overview" arrow>
+    Where the identifier you send comes from.
+  </Card>
+  <Card title="Create a sale" icon="cart-shopping" href="/api-reference/sales/create" arrow>
+    The endpoint reference, with a request builder.
+  </Card>
+  <Card title="Webhook event types" icon="webhook" href="/developer-documentation/webhooks/event-types" arrow>
+    What Referly sends back once the sale is recorded.
+  </Card>
+</Columns>

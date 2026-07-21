@@ -1,6 +1,168 @@
 ---
 title: "Cross-domain tracking"
-description: "Carry attribution across several domains."
+description: "Carry affiliate attribution across multiple domains with Referly. Approve your domains, install the snippet on each, and links are decorated automatically so referrals survive the move between sites."
+keywords: ["cross-domain tracking", "affiliate attribution across domains", "multi-domain affiliate tracking", "link decoration", "_plg_ref", "_plg_cid", "approved domains Referly", "subdomain affiliate tracking", "cross domain cookie affiliate", "preserve attribution between domains"]
 ---
+Browsers isolate storage per domain. An affiliate referral recorded on `your-marketing-site.com` is invisible to `your-app.com`, even though both are yours — so a visitor who lands on one and converts on the other arrives at checkout with no attribution at all.
 
-{/* TODO: Write this article. */}
+Cross-domain tracking closes that gap. You tell Referly which domains belong to you, and the tracker hands attribution across whenever a visitor moves between them.
+
+## Subdomains already work
+
+Before configuring anything, check whether you actually need this.
+
+Referly writes its cookies on your **registrable domain** with a leading dot — `.your-domain.com`, not `www.your-domain.com` — which it works out from the public suffix list. Every subdomain therefore reads the same cookie automatically:
+
+```
+www.your-domain.com   ─┐
+app.your-domain.com   ─┼─ share attribution, no setup required
+shop.your-domain.com  ─┘
+```
+
+You need cross-domain tracking only when separate **registrable domains** are involved:
+
+```
+your-domain.com   ✕  your-app.io      ← different domains, needs setup
+your-domain.com   ✕  your-domain.co.uk
+```
+
+Common cases: a marketing site and an app on different domains, a country-specific storefront, a separate checkout or booking domain, a white-labelled portal.
+
+## Approve your domains
+
+In your dashboard go to **Settings → Program details → Cross-domain tracking** and add each domain under **Approved Domains**.
+
+{/* TODO screenshot: cross-domain-approved-domains — upload it in the local Documentation Agent */}
+
+Enter the bare domain — no protocol, no `www`, no path. Referly normalises what you type (stripping `https://`, a leading `www.`, and anything after the first slash) and rejects anything that isn't a valid domain, but entering it cleanly avoids surprises:
+
+```
+example.com        ✓
+https://example.com/pricing   → stored as example.com
+shop.example.com   ✓  (only needed if example.com isn't already listed)
+```
+
+Subdomains of an approved entry are covered automatically. Adding `example.com` also approves `shop.example.com` and `blog.example.com`. Matching is an exact hostname match or a suffix match on a dot boundary, so `example.com` never accidentally matches `notexample.com`.
+
+<Warning>
+  Add only domains you own or control. Any domain on this list will receive your visitors' referral codes and click IDs on outbound links.
+</Warning>
+
+### Install the snippet on every domain
+
+This is the step people miss. Each domain in the group needs [the tracking snippet](/developer-documentation/tracking/install-the-snippet) installed, with the **same program ID**. The handoff is a conversation between two copies of the tracker — if the receiving domain has no tracker, the parameters arrive and nothing reads them.
+
+Both domains must also be served over HTTPS, since attribution is stored in `Secure` cookies.
+
+## How the handoff works
+
+Nothing about your links changes. You don't rewrite URLs, add parameters, or call an API.
+
+### On the sending domain
+
+Once attribution is resolved for the current visitor, the tracker attaches a click listener to the document in the capture phase. When a click happens it walks up from the clicked element to the nearest anchor and checks its hostname. If that hostname is on your approved list **and** its registrable domain differs from the current page's, the tracker rewrites the link's `href` at that instant, appending two parameters:
+
+| Parameter | Carries |
+| --- | --- |
+| `_plg_ref` | The affiliate's referral code |
+| `_plg_cid` | The click ID for this visit, when one exists |
+
+```
+https://your-app.io/signup
+  → https://your-app.io/signup?_plg_ref=jane&_plg_cid=84213
+```
+
+Because the rewrite happens on the click rather than at page load, links injected later by your own JavaScript are covered too — there's nothing to re-run after a re-render.
+
+Form submissions get the same treatment: a capture-phase submit listener checks the form's `action`, and if it points at an approved domain other than the current one, appends the two parameters to it.
+
+### On the receiving domain
+
+The tracker checks for `_plg_ref` before anything else it does. When it finds one, it:
+
+1. Adopts the referral code and click ID as this visitor's attribution.
+2. Writes them into the receiving domain's own storage, so the handoff only has to happen once.
+3. Removes both parameters from the address bar with `history.replaceState`, preserving the path, the hash, and every other query parameter.
+
+Step three matters more than it looks. Without it the parameters would show up in your analytics, in shared links, and in anything a customer copies out of the address bar.
+
+From that point the visitor is attributed on the new domain exactly as if they'd clicked the affiliate link there — conversions reported by [the JavaScript API](/developer-documentation/tracking/javascript-api/reference) carry the right click ID, and the [cookie window](/developer-documentation/tracking/attribution) applies as normal.
+
+<Note>
+  A handoff restores an existing referral rather than creating a new one, so no additional click is recorded and the affiliate's click count doesn't inflate when a visitor moves between your domains.
+</Note>
+
+## Testing it
+
+<Steps>
+  <Step title="Land on the first domain with a referral">
+    Open `https://domain-a.com/?ref=TESTCODE` in a fresh browser profile and confirm `window.affiliateRef` returns the code.
+  </Step>
+  <Step title="Inspect a link before clicking">
+    Hover a link pointing at your second domain. Its `href` is still clean — decoration happens on click, not before.
+  </Step>
+  <Step title="Click through">
+    Watch the address bar on arrival. You may briefly see `_plg_ref` and `_plg_cid` before they're stripped.
+  </Step>
+  <Step title="Confirm on the second domain">
+    Run `window.affiliateRef` and `window.affiliateId` there. Both should match what you saw on the first domain. Check **Application → Cookies** for the two program-scoped entries.
+  </Step>
+  <Step title="Reload with a clean URL">
+    Navigate around the second domain with no parameters. Attribution should persist — the handoff has been written into local storage.
+  </Step>
+</Steps>
+
+Turn on [debug mode](/developer-documentation/tracking/debug-mode) on both domains to see the decoration and the restore logged as they happen.
+
+## Limitations
+
+<AccordionGroup>
+  <Accordion title="Only real links and form actions are decorated">
+    Navigation driven from JavaScript — `window.open(...)`, `window.location.href = ...`, a router push — never touches an anchor's `href`, so nothing is decorated. If you navigate cross-domain programmatically, append `_plg_ref` and `_plg_cid` yourself from `window.getPushLapAffiliateInfo()`.
+  </Accordion>
+  <Accordion title="Middle-click, right-click, and copied links">
+    Decoration happens when the click event fires. Opening a link in a new tab with the middle mouse button, or copying the link address from the context menu, can bypass it and yield the undecorated URL.
+  </Accordion>
+  <Accordion title="Clicks before the tracker has resolved">
+    The listeners are attached only after attribution has been worked out, which takes a network round trip on a first visit. A click in the first moments of a page load can land undecorated. Rare in practice, but real on slow connections.
+  </Accordion>
+  <Accordion title="Iframes and embedded checkouts">
+    A tracker in the parent page cannot reach inside a cross-origin iframe to decorate links there. Embedded checkout widgets need the platform's own integration instead.
+  </Accordion>
+  <Accordion title="No attribution means no decoration">
+    Links are left alone for visitors who didn't arrive from an affiliate link. That's deliberate — ordinary visitors never see tracking parameters on your URLs.
+  </Accordion>
+  <Accordion title="Redirects that drop query parameters">
+    If the receiving domain redirects the landing URL through something that strips unknown parameters, the handoff is lost before the tracker sees it. Preserve the query string across redirects on your entry points.
+  </Accordion>
+  <Accordion title="Same-domain links are never touched">
+    Links between subdomains of one registrable domain aren't decorated, because the cookie is already shared. Nothing to fix.
+  </Accordion>
+</AccordionGroup>
+
+## Removing a domain
+
+Delete a domain from **Approved Domains** and decoration to it stops on the next page load. Attribution already written into that domain's storage stays there until its window expires — removal is not retroactive.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Cookies and storage" icon="cookie" href="/developer-documentation/tracking/cookies-and-storage">
+    Why subdomains share a cookie and separate domains don't.
+  </Card>
+  <Card title="URL parameters" icon="link" href="/developer-documentation/tracking/url-parameters">
+    Where _plg_ref and _plg_cid sit among the other parameters.
+  </Card>
+  <Card title="Install the snippet" icon="code" href="/developer-documentation/tracking/install-the-snippet">
+    Every domain in the group needs the same snippet.
+  </Card>
+  <Card title="Attribution and the cookie window" icon="clock" href="/developer-documentation/tracking/attribution">
+    What happens to attribution after the handoff.
+  </Card>
+  <Card title="JavaScript API" icon="code" href="/developer-documentation/tracking/javascript-api/reference">
+    Read attribution yourself for programmatic navigation.
+  </Card>
+  <Card title="Debug mode" icon="bug" href="/developer-documentation/tracking/debug-mode">
+    Log decoration and restore on both sides.
+  </Card>
+</Columns>

@@ -1,6 +1,270 @@
 ---
-title: "Universal integration"
-description: "Connect a platform Referly doesn't list."
+title: "Universal forms integration"
+description: "Track affiliate referrals from any form on any website with Referlys universal forms integration. Add the tracking script and form capture script to record sign-ups as referred customers, and pair it with a payment integration or the API to track sales."
+keywords: ["universal affiliate tracking", "Referly universal integration", "track form submissions affiliate", "affiliate tracking custom website", "form signup affiliate attribution", "track leads affiliate program", "unsupported platform affiliate tracking", "affiliate tracking script any site"]
 ---
+Most of Referly's integrations are built for one specific platform. The universal forms integration is the fallback for everything else: a custom-built site, a form builder nobody's heard of, a no-code tool, a landing page from a page builder. If someone can fill in a form on it, this can track it.
 
-{/* TODO: Write this article. */}
+It does one job well. When a visitor who arrived from an affiliate link submits a form, that person is recorded in Referly as a referred customer, credited to the affiliate who sent them. It works with any form, on any page, without you telling it anything about your form's structure.
+
+<Warning>
+  This integration tracks **referrals and sign-ups only**. It never records revenue. If you need affiliates paid on sales, you'll pair this with an integration that handles payments, or use one of the developer options at the end of this article. The section on tracking sales explains how to choose.
+</Warning>
+
+{/* TODO screenshot: universal-integration-card — upload it in the local Documentation Agent */}
+
+## When this is the right choice
+
+Use it when:
+
+- Your site is custom-built and isn't on the list of supported platforms.
+- Your form builder or page builder isn't supported directly.
+- You want to pay affiliates for leads, sign-ups, waitlist entries, demo requests, or trial registrations.
+- You're using a supported platform for payments but want to track form sign-ups as well.
+
+Look elsewhere when:
+
+- You need revenue tracked and your checkout is on a supported platform. Check [the integrations list](/help-center/integrations/overview) first, since a purpose-built setup is always better.
+- The conversion happens on a server rather than in someone's browser, in which case see the developer options below.
+
+## What this integration can and can't track
+
+| What you want to track | Does it work? | Notes |
+| --- | --- | --- |
+| Link clicks and visits | Yes | From the tracking script |
+| Form sign-ups as referred customers | Yes | The person's email, and their name when the form asks for one |
+| Leads, demo requests, waitlist entries | Yes | Any form submission counts |
+| Forms added to the page after it loads | Yes | Pop-ups and multi-step forms are picked up automatically |
+| Sales and revenue | **No** | Pair it with a payment integration |
+| Free trials that don't involve a form | No | There has to be a form submission |
+| Forms inside an embed hosted on someone else's domain | No | The script can't reach inside those |
+| Sign-ups created by you in an admin panel | No | No browser visit means nothing to credit |
+| Conversions recorded by your server | No | Use the developer options instead |
+| Someone who signs up on a different device than they clicked on | No | The referral lives in the browser it was clicked in |
+
+## Before you start
+
+You'll need:
+
+- A live Referly program with at least one affiliate to test with. See [setting up your program](/help-center/getting-started/set-up-program/affiliate-program-setup) if you haven't got that far.
+- Access to add code to your website's pages, or someone who can paste two snippets for you.
+- To know which page holds the form you care about.
+
+Open the guide in Referly first, because both snippets come with your program's own details filled in. In your dashboard, open **Settings** from the left sidebar, select **Integrations**, find the **Universal Forms Integration** card, and select **Instructions**.
+
+{/* TODO screenshot: universal-instructions-dialog — upload it in the local Documentation Agent */}
+
+## Add the Referly tracking script
+
+This is what recognises a visitor arriving from an affiliate link and remembers it in their browser for the length of your cookie window. Nothing else works without it.
+
+Copy it from **Step 1: Tracking clicks**. Your program's own identifier is already filled in where `YOUR_PROGRAM_ID` appears:
+
+```html
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+There's a **Using Google Tag Manager** tab too, if you'd rather load it that way:
+
+```html
+<script>
+  var pushLap = document.createElement('script');
+  pushLap.src = "https://referly.so/affiliate-tracker.js";
+  pushLap.setAttribute('data-affiliate', '');
+  pushLap.setAttribute('data-program-id', 'YOUR_PROGRAM_ID');
+  document.head.appendChild(pushLap);
+</script>
+```
+
+{/* TODO screenshot: universal-tracking-script — upload it in the local Documentation Agent */}
+
+Paste it into the `head` section of your site, site-wide if you can, so it's there wherever an affiliate sends someone. Where that setting lives depends on your platform: look for "custom code", "header scripts", "head code", or "tracking code" in your site settings. On WordPress, see [the WordPress guide](/help-center/integrations/wordpress) for four different ways to do it.
+
+<Warning>
+  It has to be on the page holding your form **and** on every page an affiliate might link to. If the visitor isn't recognised when they arrive, there's nothing to credit when they later submit a form.
+</Warning>
+
+## Add the form tracking script
+
+This is the piece that does the actual work. Copy it from **Step 2: Track Referrals/Sign ups from forms** and paste it into the pages that have forms on them, near the bottom, before the closing `body` tag.
+
+```html
+<script>
+  (function () {
+    function findEmailAndName(form) {
+      const emailInput = form.querySelector(
+        'input[type="email"], input[name*="email" i]'
+      );
+      const nameInput = form.querySelector('input[name*="name" i]');
+
+      const email = emailInput ? emailInput.value.trim() : null;
+      const name = nameInput ? nameInput.value.trim() : null;
+
+      return { email, name };
+    }
+
+    function handleFormSubmit(event) {
+      const form = event.target;
+      const { email, name } = findEmailAndName(form);
+
+      if (email && typeof createPushLapEmail === "function") {
+        window.createPushLapEmail(email, name || undefined);
+      }
+    }
+
+    function attachListeners() {
+      const forms = document.querySelectorAll('form');
+
+      forms.forEach((form) => {
+        if (!form.dataset.pushlapBound) {
+          form.addEventListener('submit', handleFormSubmit);
+          form.dataset.pushlapBound = 'true';
+        }
+      });
+    }
+
+    attachListeners();
+
+    const observer = new MutationObserver(() => attachListeners());
+    observer.observe(document.body, { childList: true, subtree: true });
+  })();
+</script>
+```
+
+{/* TODO screenshot: universal-form-script — upload it in the local Documentation Agent */}
+
+You don't have to configure it, name your fields a particular way, or point it at a specific form. It looks at every form on the page and finds the email field on its own, matching any field marked as an email field or with "email" anywhere in its name. It does the same for a name field, and passes the name along when it finds one.
+
+Three things it handles quietly, which are worth knowing:
+
+- **Forms that appear later are picked up.** Pop-ups, forms that load after the page, and multi-step forms that swap their fields all get tracked, because it keeps watching the page rather than checking once at load.
+- **No form is counted twice**, even though it re-checks the page as things change.
+- **Visitors who didn't come from an affiliate link are ignored.** The script runs on every submission, but Referly records nothing when there's no referral in the browser, so your organic sign-ups are untouched.
+
+<Note>
+  Putting this on every page of your site is fine, and usually the simpler choice. Be aware it then applies to every form you have, including contact and newsletter forms. Put it only on specific pages if you want a narrower definition of a referral.
+</Note>
+
+## Tracking sales as well
+
+This integration on its own will never record revenue. That's a deliberate boundary, not a gap: recording money reliably means hearing it from whatever took the payment, and a form submission can't tell you a payment succeeded.
+
+You have three options, depending on your setup.
+
+### Pair it with a payment integration
+
+The most common answer. Keep this integration for sign-ups, and add the one that matches your checkout for the money. The two work together on the same visitor: the referral is established once, and both the sign-up and the later sale are credited to the same affiliate.
+
+| How you take payment | What to add |
+| --- | --- |
+| Stripe | [The Stripe integration](/help-center/integrations/stripe) |
+| Stripe payment links, pricing table, or buy button | [The matching Stripe setup](/help-center/integrations/stripe/payment-links) |
+| Shopify, WooCommerce, Paddle, Chargebee, Polar, and others | [Find yours in the integrations list](/help-center/integrations/overview) |
+
+### Send conversions from your own server
+
+If your payments run somewhere Referly doesn't connect to, or your conversion is confirmed on a server rather than in the browser, record it directly instead. See [creating a referral through the API](/api-reference/referrals/create), and [the universal developer guide](/developer-documentation/integrations/universal) for the wider picture.
+
+This is the right choice when the customer's browser isn't involved at the moment the sale is confirmed, which the form script can never cover.
+
+### Use a postback URL
+
+If you work with an ad network or partner platform that reports conversions back to you, a postback URL is the usual mechanism. See [postback URLs](/developer-documentation/integrations/postback-url).
+
+## Test it end to end
+
+<Steps>
+  <Step title="Grab a real affiliate link">
+    Open **Affiliates** in the left sidebar of Referly, pick an affiliate, and copy their referral link.
+  </Step>
+  <Step title="Open it in a private window">
+    Use a private or incognito window so old tracking doesn't interfere. Land on your site and let the page finish loading.
+  </Step>
+  <Step title="Check the click landed">
+    In Referly, check that affiliate's clicks. A new one should appear within a moment. If nothing shows, the tracking script isn't running, so fix that before going further.
+  </Step>
+  <Step title="Submit the form">
+    In the same window, go to your form and submit it with an email address you haven't used before. Fill in the name field too, if there is one, so you can confirm it comes across.
+  </Step>
+  <Step title="Check Referly">
+    Open **Customers** in the left sidebar. The person should appear within a minute, with the email you used and the name if the form collected one, credited to the affiliate whose link you used, and no revenue attached.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: universal-test-referral — upload it in the local Documentation Agent */}
+
+<Check>
+  When the click appears **and** the form submission shows up under **Customers** against the right affiliate, the integration is working.
+</Check>
+
+Remove the test referral in Referly so your reports start clean. If you want to test again, use a fresh private window and a different email address.
+
+## How Referly decides who gets the credit
+
+When a visitor lands on your site through an affiliate link, Referly records the click and keeps it in their browser for as long as your cookie window allows. When they submit a form, the script reads their email out of it and hands it to Referly along with the referral already stored in that browser. Referly matches the two and credits the affiliate behind the click.
+
+That stored referral is the whole mechanism. If it isn't there, Referly correctly does nothing at all. That's why a submission from a different browser, a different device, or after the cookie window has expired won't be credited to anyone.
+
+Once someone is credited to an affiliate, that credit stays with them. Later clicks from other affiliates don't take it over.
+
+## Limitations to be aware of
+
+- **No revenue, ever.** This integration records people, not payments. Pair it with something else for sales.
+- **There has to be a real form.** A sign-up flow built entirely from buttons and custom controls, with no form behind it, won't be picked up.
+- **There has to be an email field.** If your form doesn't collect an email address, there's nothing for Referly to identify the person by.
+- **Embedded forms hosted elsewhere can't be reached.** If your form is inside an embed served from another company's domain, the script on your page can't see into it. Check whether that provider has its own Referly integration.
+- **Anything without a browser is invisible.** Sign-ups you create yourself, imports, and server-side registrations aren't tracked.
+- **The visitor must submit in the browser they clicked in.** Clicking on a phone and signing up on a laptop won't match.
+- **Ad blockers, strict privacy settings, and consent banners** can stop the tracking script for a share of visitors, as with any affiliate tool.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="No clicks are recorded at all">
+    The tracking script isn't running. Confirm it's in the `head` section of the page, that you saved and published, and that any caching has been cleared. Then load your site with an affiliate link on the end, in a private window, and check again.
+  </Accordion>
+  <Accordion title="Clicks work but form submissions aren't recorded">
+    Check the form script is on the same page as the form, and that the tracking script is there too. Both are needed, and the form script goes near the bottom of the page rather than in the head.
+
+    If both are in place, look at the form itself. It needs a field that's either marked as an email field or has "email" in its name. Forms that collect an email in an unusually named field won't be matched.
+  </Accordion>
+  <Accordion title="My form is inside an embed from another service">
+    The script can't see inside an embed served from a different domain, so nothing will be captured. Check whether that service has its own Referly integration in [the integrations list](/help-center/integrations/overview), or whether it can send conversions to you, in which case [the API](/api-reference/referrals/create) is the route.
+  </Accordion>
+  <Accordion title="Referrals appear but with no revenue">
+    That's expected. This integration only records people. Add the integration matching your payment method, as described in the section on tracking sales.
+  </Accordion>
+  <Accordion title="The name is missing on referrals">
+    Your form either doesn't collect a name or uses a field name without "name" in it. The email is what matters for matching, so the referral is still recorded correctly. You can edit the customer's details from their page in Referly.
+  </Accordion>
+  <Accordion title="A pop-up form isn't being tracked">
+    Forms that appear after the page loads should be picked up automatically. If yours isn't, the pop-up may be inside an embed from another domain, or built without a real form behind it. Both are covered above.
+  </Accordion>
+  <Accordion title="A referral wasn't credited even though the person used an affiliate link">
+    Check whether they clicked on one device and signed up on another, whether the click was older than your cookie window, or whether a consent banner blocked the script on their visit. You can attach the referral to the right affiliate by hand from the customer's page, described in [managing referred customers](/help-center/manage/customers/overview).
+  </Accordion>
+</AccordionGroup>
+
+Still stuck? [Book an integration call](https://www.referly.so/book-integration-call) and we'll go through your setup with you.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="All integrations" icon="puzzle-piece" href="/help-center/integrations/overview" arrow>
+    Check whether your platform has a purpose-built setup first.
+  </Card>
+  <Card title="WordPress" icon="wordpress" href="/help-center/integrations/wordpress" arrow>
+    Four ways to add the tracking script on WordPress.
+  </Card>
+  <Card title="Create a referral via API" icon="code" href="/api-reference/referrals/create" arrow>
+    Record conversions from your own server.
+  </Card>
+  <Card title="Postback URLs" icon="arrow-right-arrow-left" href="/developer-documentation/integrations/postback-url" arrow>
+    Take conversions back from an ad network or partner.
+  </Card>
+</Columns>

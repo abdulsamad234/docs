@@ -1,6 +1,320 @@
 ---
 title: "Referly Payouts"
-description: "Let Referly handle paying your affiliates."
+description: "Let Referly pay your affiliates for you in 178 countries. Setup, adding a card or bank account, automatic payouts, what affiliates connect, fees, invoices, and troubleshooting."
+keywords: ["Referly Payouts", "managed affiliate payouts", "pay affiliates in 178 countries", "affiliate payout service", "tax compliant affiliate payouts", "automatic affiliate payouts", "affiliate payout invoices", "ACH payout fee", "card payout fee", "affiliate bank account payouts"]
 ---
+Referly Payouts is the option where Referly pays your affiliates for you. You don't connect a Wise or PayPal account, you don't top up a balance, and you don't send transfers. You attach a card or a bank account, and when a batch is due Referly charges it and distributes the money to your affiliates in 178 countries, with an invoice generated for your records.
 
-{/* TODO: Write this article. */}
+It's the shortest path from "I owe my affiliates money" to "my affiliates have been paid". This guide covers the trade-offs, the setup on your side, what your affiliates have to do, and what happens on payout day.
+
+## How this differs from managing payouts yourself
+
+| | Referly Payouts | Manage payouts yourself |
+| --- | --- | --- |
+| You connect | A card or bank account Referly charges | Your own Wise or PayPal account |
+| You fund | Nothing in advance — you're charged per batch | Your own Wise or PayPal balance, in advance |
+| Who sends the money | Referly | You |
+| Approval step | Optional — you can automate it away | Wise needs it; PayPal doesn't |
+| Affiliates provide | A bank account, connected through Referly | An email, or bank details, depending on method |
+| Country coverage | 178 countries | Whatever Wise or PayPal supports |
+| Invoices | Generated for you | Your responsibility |
+| Cost | A service fee per payout, shown before you pay | Wise or PayPal's own fees |
+
+You pick between the two under **Program Settings → Program details → Payout settings**, at the top under **Cash Payout Management**. See [Manage payouts yourself or let Referly handle them](/help-center/manage/payouts/self-managed-vs-referly).
+
+## What Referly Payouts can and can't do
+
+**What it does:**
+
+- Pays affiliates in **178 countries** without you holding accounts in any of them.
+- Removes the setup entirely — no API keys, no business verification with a third party, no balance to keep topped up.
+- Generates a downloadable invoice for every batch you pay.
+- Shows you the exact amount you'll be charged, broken down, before you commit.
+- Can run completely hands-free if you turn on automatic payouts.
+- Pays affiliates in their **local currency**, straight into their own bank account.
+
+**What it can't do:**
+
+- **It isn't free.** There's a Referly service fee on each payout, plus processing costs, and the percentage differs between card and bank. You see the exact figures before paying.
+- **It can't pay an affiliate who hasn't connected a bank account.** They have to do this themselves in the affiliate portal, and their account has to meet Referly's requirements.
+- **It isn't instant.** Bank charges take up to four days to reach Referly before affiliates are paid. Affiliates are told to expect 7 to 10 business days depending on their country.
+- **It can't be combined with Wise or PayPal on the same program.** Choosing Referly Payouts replaces the self-managed methods, and your affiliates' options change accordingly.
+- **It may not be available to you.** If an agency manages your program, they can turn Referly Payouts off, leaving only the self-managed option.
+
+<Note>
+  This choice only affects **cash** payouts. Coupons and credits are always delivered by Referly automatically either way. See [Non-cash rewards](/help-center/affiliates/non-cash-payouts).
+</Note>
+
+## Before you start
+
+<Steps>
+  <Step title="Admin access to your program">
+    You need to be able to open Program Settings.
+  </Step>
+  <Step title="A card or business bank account">
+    Whichever you'd rather be charged on. You can add both and switch between them.
+  </Step>
+  <Step title="Referly Payouts available on your program">
+    If the option doesn't appear, an agency has turned it off for your program — contact them.
+  </Step>
+  <Step title="Affiliates who can connect a bank account">
+    They'll need a checking account in their local currency, in their own name.
+  </Step>
+</Steps>
+
+## Step 1: Switch your program to Referly Payouts
+
+<Steps>
+  <Step title="Open your payout settings">
+    Go to **Program Settings → Program details → Payout settings**. More on this page in [Payout settings](/help-center/settings/program/payout-settings).
+  </Step>
+  <Step title="Find Cash Payout Management">
+    It's at the top of the page, with two cards.
+  </Step>
+  <Step title="Select Allow Referly to handle your payouts">
+    The card describes it as "Tax-compliant payouts to affiliates in 178 countries. Add a payment method and we charge you when payouts are due."
+  </Step>
+  <Step title="Save">
+    The page changes — the Wise, PayPal, and bank cards are replaced by a **Payment methods** section.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: cash-payout-management-cards — upload it in the local Documentation Agent */}
+
+## Step 2: Add a payment method
+
+Until you add one, you'll see "No payment methods yet" with a prompt to add a card or bank account Referly can charge when payouts are due.
+
+Select **Add payment method**. You get two choices, each showing its fee percentage on a badge.
+
+{/* TODO screenshot: add-payment-method-options — upload it in the local Documentation Agent */}
+
+### Add a card
+
+<Steps>
+  <Step title="Select Connect on the Card option">
+    Described as "Add a credit or debit card".
+  </Step>
+  <Step title="Enter your card details on the secure page">
+    Referly sends you to a hosted payment page to collect them. Your card number never touches Referly.
+  </Step>
+  <Step title="You're returned to your payout settings">
+    The card appears under **Your payment methods** with a green **Connected** badge and its fee percentage.
+  </Step>
+</Steps>
+
+Cards cost more than bank accounts, but the payment reaches Referly immediately, so affiliates are paid sooner.
+
+### Connect a bank account
+
+<Steps>
+  <Step title="Select Connect on the Bank account option">
+    Described as "Connect your bank account".
+  </Step>
+  <Step title="Choose where your bank is">
+    A dialog titled **Connect your bank account** asks you to "Select your bank's location". There are three options: **US** (ACH), **EU** (SEPA Debit), and **UK** (Bacs Debit).
+  </Step>
+  <Step title="Complete the hosted bank setup">
+    You're taken to a secure page to link the account. Depending on your bank and country, this is either an instant login to your online banking, or entering your account details and confirming them.
+  </Step>
+  <Step title="Verify the account if asked">
+    Some banks are verified with small test deposits that take a day or two to appear on your statement. You then enter the amounts to confirm. Until that's done, the account can't be charged. You can carry on setting everything else up while you wait.
+  </Step>
+  <Step title="You're returned to your payout settings">
+    The account appears under **Your payment methods**, marked **Connected**.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: connect-bank-account-dialog — upload it in the local Documentation Agent */}
+
+<Note>
+  Your choice of Referly Payouts is saved before you're sent off to connect a payment method, so you won't come back to find the program reset to self-managed.
+</Note>
+
+## Step 3: Pick your default payment method
+
+If you've added more than one, choose which gets charged under **Default payment method**. You can also select **Set default** next to any method in the list.
+
+Remove one with the bin icon — Referly asks you to confirm.
+
+{/* TODO screenshot: your-payment-methods-list — upload it in the local Documentation Agent */}
+
+<Warning>
+  Don't remove your only payment method while batches are outstanding. Referly has nothing to charge, and payouts won't go out.
+</Warning>
+
+## Step 4: Decide whether payouts run automatically
+
+By default, a batch waits for you to review and pay it. Turn on **Automatically perform payouts** and new batches are charged and sent to affiliates without anyone clicking Pay.
+
+Combined with a [payout schedule](/help-center/manage/payouts/schedule), this makes affiliate payments completely hands-off.
+
+{/* TODO screenshot: automatically-perform-payouts — upload it in the local Documentation Agent */}
+
+<Warning>
+  Before turning this on, make sure your commission approval process and your [minimum payout amount](/help-center/manage/payouts/minimum-amount) are set the way you want. Anything that reaches a payable batch will be charged to your payment method.
+</Warning>
+
+## What your affiliates do
+
+Affiliates can't be paid until they've connected a bank account. This happens in the affiliate portal under **Settings → Payouts → Cash payouts**, in a section called **Payout Account**.
+
+### Connect a bank account
+
+<Steps>
+  <Step title="They select Connect">
+    A dialog opens titled **Connect your bank account**, asking them to "Enter your country and account type to get started."
+  </Step>
+  <Step title="They choose their country and profile type">
+    **Individual** or **Company**. Companies also enter a **Legal company name**.
+  </Step>
+  <Step title="They review the terms">
+    A **Terms and conditions** step spells out that they're authorising Referly to collect their bank details, that payouts are made in their local currency with a 1% fee if their bank isn't in the US, EU, or UK, and that payouts typically arrive within 7 to 10 business days. They tick **I accept the terms and conditions**.
+  </Step>
+  <Step title="They confirm their account meets the requirements">
+    A **Bank account requirements** step, covered below.
+  </Step>
+  <Step title="They enter their bank details on a secure page">
+    Referly sends them to a hosted page. When they come back, their payout account shows as **Connected** and **Ready to receive payouts**.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: affiliate-connect-payout-account — upload it in the local Documentation Agent */}
+
+### The requirements their account has to meet
+
+This step exists because a wrong account is the single biggest cause of delayed payouts. Affiliates are asked to confirm all four:
+
+- The account is in **their local currency**. Someone in Germany needs a Euro account, not a US Dollar one.
+- It's a **checking account** — not a savings account and not a debit card.
+- The **account holder name matches** their affiliate account name.
+- The details are **completely accurate**, with no typos or missing digits.
+
+Referly warns them that payouts may be delayed or rejected if the account doesn't meet these. It's worth repeating in your own onboarding emails.
+
+### What affiliates pay
+
+Affiliates see an estimate of the fees deducted from their payout, with a breakdown they can hover over:
+
+| Fee | When it applies |
+| --- | --- |
+| Standard payout fee | A base fee on every local bank transfer, regardless of amount |
+| Foreign exchange fee | When their payout is converted into their local currency |
+| Cross-border fee | When money is sent to a bank in another country |
+| Wire transfer fee | Where their country only supports wires, not local transfers |
+| Instant payout fee | If they take instant delivery instead of the standard wait |
+
+The portal states a 1% fee applies where the affiliate's bank isn't in the US, EU, or UK.
+
+{/* TODO screenshot: affiliate-fee-breakdown — upload it in the local Documentation Agent */}
+
+## Pay a batch
+
+### Review the charge breakdown
+
+Open the batch and select **Pay Now**. The **Pay for Referly payout** dialog asks you to "Charge your payment method to fund this batch", and breaks down what you're paying:
+
+| Line | What it is |
+| --- | --- |
+| Total payouts | The commissions owed to your affiliates |
+| Stripe fees | Processing and currency costs, when they apply on this payout |
+| Referly service fee | Referly's fee, with the percentage shown |
+| You pay | The total charged to your payment method |
+
+Pick which payment method to charge from the selector, then check the total.
+
+{/* TODO screenshot: pay-for-referly-payout-dialog — upload it in the local Documentation Agent */}
+
+<Info>
+  You won't always see a **Stripe fees** line. Where Referly's service fee already covers the processing costs on that payout, Referly absorbs them instead of billing them separately. Hovering over the line explains which applies to your payout.
+</Info>
+
+### Pay
+
+Select **Pay**. Referly charges your payment method and starts distributing the money.
+
+You'll see **Payment Successful**, with the total charged, the number of affiliates, and a **Download Invoice** button. The confirmation notes that payouts are being processed and estimates arrival within 1 to 5 business days.
+
+{/* TODO screenshot: referly-payment-successful — upload it in the local Documentation Agent */}
+
+<Note>
+  Your affiliates are told to expect 7 to 10 business days depending on their country. When someone asks, quote the longer figure — it accounts for slower destinations and bank processing at the other end.
+</Note>
+
+### Follow the payout through
+
+Each payout has a timeline showing exactly where it is:
+
+| Stage | What's happened |
+| --- | --- |
+| Create payout | The payout was created from approved commissions |
+| Collect payment | Your payment method is being charged |
+| Receive funds | The money has reached Referly. Bank payments take up to 4 days here; cards clear immediately |
+| Send transfer to affiliate | On its way to their bank |
+| Deliver to recipient | Landed in their account |
+
+If a stage fails, the timeline shows where and gives you a retry option. See [Batch statuses](/help-center/manage/payouts/batch-statuses) and [Failed payouts](/help-center/manage/payouts/failed-payouts).
+
+{/* TODO screenshot: referly-payout-timeline — upload it in the local Documentation Agent */}
+
+## Fees
+
+- **What you're charged.** A Referly service fee on each payout, plus processing costs where they apply. The percentage is different for card and bank, and it's shown on a badge next to each method when you add it, and again in your list of payment methods.
+- **Card versus bank.** Card carries the higher percentage but clears immediately. Bank is cheaper but takes up to four days to reach Referly before affiliates are paid.
+- **Where to check.** The exact percentages for your account are shown in the dashboard — Referly displays them next to each payment method rather than in a fixed price list, because they can differ by account. Always read the **You pay** total before confirming.
+- **What affiliates pay.** Separate from your fee. Deducted from their payout, broken down in their portal, as described above.
+
+## Invoices, tax, and compliance
+
+Every batch you pay through Referly Payouts generates an invoice you can download from the payment confirmation, and again later from the batch.
+
+This is the main practical reason programs move to Referly Payouts: paying dozens of affiliates across different countries yourself means collecting the right paperwork from each of them. Referly Payouts produces compliant documentation as part of the payout.
+
+You still set your own legal entity details, which is what appears on those documents. See [Tax and invoices](/help-center/manage/payouts/tax-and-invoices).
+
+## Switching between Referly Payouts and self-managed
+
+You can change your mind at any time under **Cash Payout Management**. Two things to know:
+
+- **Your affiliates' options change.** On self-managed they choose between the methods you've enabled — Wise, local bank, PayPal, or manual bank details. On Referly Payouts they connect a bank account through Referly instead. Anyone who hasn't connected one won't be payable until they do.
+- **Deal with outstanding batches first.** Pay or clear anything in flight before switching, so no batch is left half-processed under a method the program no longer uses.
+
+If you're moving *to* self-managed, your next step is connecting a method — see [Wise](/help-center/integrations/wise), [Local bank account payouts](/help-center/integrations/wise-local-bank), or [PayPal](/help-center/integrations/paypal).
+
+## Troubleshooting
+
+| What you see | What's wrong | What to do |
+| --- | --- | --- |
+| The Referly Payouts card isn't shown | An agency has turned it off for your program | Contact your agency. Only **Manage payouts yourself** is available |
+| "No payment methods yet" and you can't pay | Nothing has been added, or it was removed | Add a card or bank account under **Payment methods** |
+| A bank account shows as added but can't be charged | Verification isn't finished | Look for the test deposits on your statement and confirm the amounts. Use a card in the meantime |
+| "Payment could not be processed due to a negative balance. You have not been charged." | Something is wrong with your account balance on Referly's side | You haven't been charged. Email support@referly.so — this one can't be fixed from the dashboard |
+| The charge was declined | Card limit, expiry, insufficient funds, or your bank blocked it | Check with your bank, update or add a payment method, then pay again |
+| An affiliate is skipped when you pay | They haven't connected a payout account | Ask them to complete **Settings → Payouts → Cash payouts** in the affiliate portal |
+| An affiliate's payout fails after you've paid | Their bank rejected it — wrong currency, savings account, or a name mismatch | Have them reconnect an account meeting all four requirements, then re-run the payout |
+| Affiliates say the money hasn't arrived | Still in transit | Check the timeline on the payout. Affiliates should allow 7 to 10 business days |
+| It's taking longer than expected with a bank payment | Bank charges take up to 4 days to reach Referly before anything goes out | Switch your default to a card for faster batches |
+| You can't find the invoice | It's on the payment confirmation and on the batch afterwards | Open the batch and download it from there |
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Self-managed vs Referly Payouts" icon="scale-balanced" href="/help-center/manage/payouts/self-managed-vs-referly" arrow>
+    Compare the two approaches before you commit.
+  </Card>
+  <Card title="Payout methods" icon="wallet" href="/help-center/manage/payouts/payout-methods" arrow>
+    Every way you can pay affiliates in Referly.
+  </Card>
+  <Card title="Tax and invoices" icon="file-invoice" href="/help-center/manage/payouts/tax-and-invoices" arrow>
+    Legal entity details and the paperwork Referly generates.
+  </Card>
+  <Card title="Payout schedule" icon="calendar" href="/help-center/manage/payouts/schedule" arrow>
+    Control when payout batches are created.
+  </Card>
+  <Card title="Payout batches" icon="layer-group" href="/help-center/manage/payouts/batches" arrow>
+    How batches are built, reviewed, and paid.
+  </Card>
+  <Card title="Failed payouts" icon="triangle-exclamation" href="/help-center/manage/payouts/failed-payouts" arrow>
+    What to do when a payout doesn't reach an affiliate.
+  </Card>
+</Columns>

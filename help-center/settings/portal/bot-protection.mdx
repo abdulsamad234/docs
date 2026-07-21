@@ -1,6 +1,81 @@
 ---
 title: "Bot protection"
-description: "Stop automated sign-ups."
+description: "Stop fake and automated affiliate sign-ups in Referly. Turn on reCAPTCHA bot protection to add an 'I'm not a robot' check to your affiliate portal login and sign-up pages."
+keywords: ["bot protection", "reCAPTCHA affiliate portal", "stop fake sign-ups", "I'm not a robot", "spam affiliate applications", "affiliate portal security", "Referly bot protection", "automated sign-ups"]
 ---
+Open sign-up pages attract bots. If your portal lets anyone apply, you can end up with a list full of fake accounts made by automated scripts — junk to sort through, and sometimes an attempt to game your program. Bot protection adds an "I'm not a robot" check to your affiliate portal's login and sign-up pages to filter those out.
 
-{/* TODO: Write this article. */}
+To find it, open **Settings** from the left sidebar, go to **Affiliate Portal**, then select **Security**.
+
+{/* TODO screenshot: security-settings-page — upload it in the local Documentation Agent */}
+
+## Turn on bot protection
+
+The **reCAPTCHA protection** card has one switch: **Enable reCAPTCHA verification**. Turn it on and it takes effect immediately — there's no separate save button.
+
+{/* TODO screenshot: recaptcha-toggle-on — upload it in the local Documentation Agent */}
+
+<Check>
+  When the "reCAPTCHA settings updated successfully" message appears and the bottom of the card reads **reCAPTCHA protection is active** in green, your portal is protected.
+</Check>
+
+There's nothing to sign up for and no keys to copy in. Referly provides the bot protection, and it covers both your Referly address and any [custom domain](/help-center/settings/portal/custom-domain) you've added.
+
+To switch it off later, turn the same switch off. The card then reads **reCAPTCHA protection is disabled**, and affiliates sign in and sign up without any check.
+
+## What your affiliates see
+
+With bot protection on, an **I'm not a robot** checkbox appears on your portal's sign-up page and login page, above the button that submits the form. The button stays greyed out until the box is ticked.
+
+{/* TODO screenshot: affiliate-recaptcha-checkbox — upload it in the local Documentation Agent */}
+
+For a real person this is one click and usually nothing more. Occasionally it shows a short picture puzzle when something looks unusual, such as an affiliate on a shared network.
+
+The check applies whenever an affiliate signs in, not only when they first join.
+
+<Note>
+  Affiliates who use [social login](/help-center/settings/portal/social-login) go through their Google account instead, which already confirms they're a real person.
+</Note>
+
+## Should you turn it on?
+
+Bot protection costs your genuine affiliates one extra click, so it's a trade-off worth thinking about.
+
+Turn it on when:
+
+- Your sign-up page is open to anyone and you've started seeing accounts that don't look real.
+- You're getting sign-ups in bursts, or with addresses that follow an obvious pattern.
+- You promote your program publicly, where the page is easy for automated tools to find.
+
+You may not need it when:
+
+- You [invite affiliates directly](/help-center/getting-started/recruit/invite-affiliates) rather than letting people apply.
+- You review every application by hand before approving it.
+
+Since it's a single switch, turning it on for a while and seeing whether the fake sign-ups stop is a reasonable way to decide.
+
+## If fake sign-ups still get through
+
+Bot protection stops automated tools, not people who sign up in bad faith by hand. If unwanted accounts keep appearing, combine it with your other controls:
+
+- Review applications yourself instead of approving automatically, so nobody becomes active without your say-so. See [approve or decline affiliates](/help-center/getting-started/recruit/approve-or-decline).
+- Ask [custom questions](/help-center/settings/portal/onboarding) during onboarding. Fake applicants rarely bother answering them properly, which makes them easy to spot.
+- [Ban or deactivate](/help-center/manage/affiliates/ban-or-deactivate) accounts you don't want.
+- Check your [fraud prevention](/help-center/settings/program/fraud-prevention) settings for self-referrals and suspicious activity.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Fraud prevention" icon="shield" href="/help-center/settings/program/fraud-prevention" arrow>
+    Catch self-referrals and suspicious conversions.
+  </Card>
+  <Card title="Approve or decline affiliates" icon="user-check" href="/help-center/getting-started/recruit/approve-or-decline" arrow>
+    Review every application before anyone becomes active.
+  </Card>
+  <Card title="Login and sign up" icon="right-to-bracket" href="/help-center/settings/portal/login-and-sign-up" arrow>
+    Customize the pages where the check appears.
+  </Card>
+  <Card title="Ban or deactivate affiliates" icon="ban" href="/help-center/manage/affiliates/ban-or-deactivate" arrow>
+    Remove accounts you don't want in your program.
+  </Card>
+</Columns>

@@ -1,6 +1,159 @@
 ---
 title: "Cookies and storage"
-description: "Where referral data is kept in the browser."
+description: "What the Referly affiliate tracker stores in the browser: cookie names, attributes, domain scoping across subdomains, the localStorage fallback, cookie window duration, and how to inspect or clear tracking data when debugging."
+keywords: ["Referly cookies", "affiliate tracking cookie", "affiliate_ref cookie", "localStorage fallback affiliate tracking", "SameSite None Secure cookie", "cookie window duration", "subdomain cookie attribution", "Safari ITP affiliate tracking", "clear affiliate tracking cookie", "first-party affiliate tracking storage"]
 ---
+Once the tracker has matched a referral code, it has to remember it — the visitor who clicks an affiliate link today may not buy until next week. Referly keeps that memory in the visitor's own browser, in first-party storage on your domain. Nothing is stored on a third-party domain, and there is no server-side session.
 
-{/* TODO: Write this article. */}
+This page documents exactly what gets written, where, for how long, and what to do when it isn't there.
+
+## What gets stored
+
+Referly writes at most three entries, all named after your program ID so that several programs can coexist on one domain without colliding:
+
+| Key | Holds | Written when |
+| --- | --- | --- |
+| `PROGRAM_ID_affiliate_ref` | The affiliate's referral code, exactly as it appeared in the URL | A referral is matched, or restored from an earlier visit |
+| `PROGRAM_ID_affiliate_referral` | The click ID Referly assigned to this visit, as a string | A click is successfully recorded |
+| `PROGRAM_ID_rsubID` | Your own external click identifier, if the link carried one | An `rsubID` parameter is present, or one was stored earlier |
+
+So for a program with ID `abc123`, you're looking for `abc123_affiliate_ref` and `abc123_affiliate_referral`.
+
+These two are the whole of Referly's client-side state. The referral code answers "who gets credit", the click ID answers "which visit was it", and everything else — commission rates, cookie windows, affiliate details — lives on Referly's side and is never written to the browser.
+
+<Note>
+  On a Shopify store the tracker additionally sets a cart attribute named `pushlap_affiliate_id` on the visitor's cart, so the click ID travels with the order through checkout. That's a Shopify cart property, not browser storage, and it isn't set anywhere else.
+</Note>
+
+## Cookies first, localStorage as a fallback
+
+At load, before anything else, the tracker checks what the browser will actually let it use.
+
+It writes a throwaway cookie called `plg_test`, reads it back, and deletes it. If that round trip succeeds, cookies are used for everything. If it fails, the tracker tries `localStorage` with a `plg_ls_test` key and falls back to that instead. Both probes are cleaned up immediately, so you'll never see them in DevTools unless you're paused mid-execution.
+
+The decision is made once per page load and applies to every read and write after it. If neither cookies nor `localStorage` are available — a locked-down browser, a strict privacy extension, an incognito context that blocks both — nothing persists, and every page view looks like a brand-new visitor.
+
+### Cookie attributes
+
+When cookies are used, each entry is written like this:
+
+```
+PROGRAM_ID_affiliate_ref=jane;
+  expires=<cookie window from now>;
+  path=/;
+  domain=.your-domain.com;
+  samesite=none;
+  secure
+```
+
+Three of those attributes have consequences worth understanding:
+
+<ParamField path="domain" type=".registrable-domain">
+  The tracker resolves your hostname down to its registrable domain using the public suffix list, then sets the cookie on a leading dot. `shop.your-domain.com` and `app.your-domain.com` therefore share one attribution — a visitor who lands on your marketing subdomain and converts on your app subdomain is still credited correctly. Separate registrable domains do **not** share; that needs [cross-domain tracking](/developer-documentation/tracking/cross-domain-tracking).
+</ParamField>
+
+<ParamField path="secure" type="required">
+  Browsers reject `Secure` cookies on plain HTTP. Your site must be served over HTTPS or nothing persists — the tracker will run, record the click, and then lose it on the next navigation. This is the usual reason tracking "works in production but not on `http://localhost`".
+</ParamField>
+
+<ParamField path="path" type="/">
+  Storage is shared across your whole site, not scoped to the landing page.
+</ParamField>
+
+<Warning>
+  The registrable-domain lookup depends on a small public-suffix helper the tracker loads from `cdn.jsdelivr.net` at startup. If your Content Security Policy blocks that host, the lookup falls back to the full hostname, and cookies get scoped to the exact subdomain the visitor landed on. Attribution then stops crossing subdomains. Allow `cdn.jsdelivr.net` in `script-src`.
+</Warning>
+
+### The localStorage envelope
+
+`localStorage` has no concept of expiry, so the tracker adds one. Each value is stored as JSON:
+
+```json
+{
+  "value": "jane",
+  "expires": 1782374400000
+}
+```
+
+`expires` is a Unix timestamp in milliseconds. On every read the tracker compares it against the current time, and if it has passed, removes the entry and reports no attribution — the same outcome an expired cookie would produce. Reads that fail to parse are treated as no attribution rather than throwing.
+
+Because this path is per-origin, `localStorage` attribution does **not** cross subdomains the way a cookie does. Visitors who end up on the fallback lose subdomain sharing.
+
+## How long it lasts
+
+The duration comes from your program's cookie window, fetched alongside the rest of your program configuration when a click is recorded. If that fetch fails — network error, ad blocker, Referly unreachable — the tracker falls back to **60 days** so a failure degrades rather than breaks.
+
+Expiry is a sliding window, not a fixed one. Every time the tracker sees a returning visitor with stored attribution, it writes the entries again with a fresh expiry, so an actively engaged visitor doesn't age out mid-consideration.
+
+One nuance worth knowing when you're reasoning about exact dates: on the fast return-visit path — the visitor comes back with no referral parameter in the URL — the tracker refreshes storage before it fetches your program configuration, so that refresh uses the 60-day default rather than your configured window. Paths that do fetch your configuration use your configured window. If your window is shorter than 60 days, returning visitors get the longer one. [Attribution and the cookie window](/developer-documentation/tracking/attribution) covers the practical effect.
+
+## When storage is cleared
+
+| Trigger | What happens |
+| --- | --- |
+| The window expires | Entries are gone (cookies) or removed on next read (localStorage). The visitor is unattributed |
+| A different affiliate's link is clicked | Both entries are overwritten with the new affiliate's code and a new click ID |
+| The click request fails | The tracker deletes both entries and the stored `rsubID`, and resets `window.affiliateRef` and `window.affiliateId` to `null`. It does not leave half-written state behind |
+| The visitor clears site data | Everything goes, as with any first-party storage |
+
+Referly never clears storage on its own outside of those cases. In particular, a normal page view with no referral parameter leaves existing attribution alone.
+
+## Browser privacy limits
+
+First-party storage written by JavaScript is not permanent, whatever expiry you set:
+
+- **Safari (ITP)** caps cookies written through `document.cookie` at **7 days**, and clears `localStorage` after 7 days without interaction with your site. A 60-day window is effectively 7 days for those visitors.
+- **Firefox** in strict mode applies similar limits to storage it classifies as tracking-related.
+- **Chrome** currently honours the full expiry for first-party cookies.
+
+There's no client-side workaround, and Referly doesn't attempt one. If long attribution windows matter to your business, move the conversion signal server-side: capture the click ID at the point of sign-up and send it from your backend when the sale happens. See [server-side tracking](/developer-documentation/server-side/overview).
+
+## Inspecting and clearing while debugging
+
+To see what's there, open DevTools → **Application**, then **Cookies** (or **Local Storage** if the fallback is active) and filter on your program ID.
+
+From the console:
+
+```js
+// What the tracker resolved on this page load
+console.log(window.affiliateRef, window.affiliateId);
+
+// The raw cookies
+document.cookie
+  .split("; ")
+  .filter((c) => c.includes("_affiliate_"));
+
+// The localStorage fallback, if it's in use
+Object.keys(localStorage).filter((k) => k.includes("_affiliate_"));
+```
+
+To reset to a clean slate before a test, clear site data for your domain in DevTools, or delete the two entries by hand. Remember that a cookie set on `.your-domain.com` is not removed by deleting a same-named cookie scoped to `www.your-domain.com` — delete the one whose domain has the leading dot.
+
+<Tip>
+  Testing in a fresh incognito window per scenario is faster and less error-prone than clearing entries individually. Confirm cookies are permitted in that window first, otherwise you're testing the `localStorage` fallback without realising it.
+</Tip>
+
+[Debug mode](/developer-documentation/tracking/debug-mode) logs which storage mechanism was chosen and every value read or written, which is usually quicker than reading storage by hand.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Attribution and the cookie window" icon="clock" href="/developer-documentation/tracking/attribution">
+    How long attribution lasts and who wins a conflict.
+  </Card>
+  <Card title="Install the snippet" icon="code" href="/developer-documentation/tracking/install-the-snippet">
+    The HTTPS and CSP requirements that make storage work.
+  </Card>
+  <Card title="Cross-domain tracking" icon="arrow-right-arrow-left" href="/developer-documentation/tracking/cross-domain-tracking">
+    Carrying attribution between separate registrable domains.
+  </Card>
+  <Card title="External click IDs" icon="tag" href="/developer-documentation/tracking/external-click-ids">
+    What the stored rsubID value is for.
+  </Card>
+  <Card title="Debug mode" icon="bug" href="/developer-documentation/tracking/debug-mode">
+    Watch every storage read and write in the console.
+  </Card>
+  <Card title="Server-side tracking" icon="server" href="/developer-documentation/server-side/overview">
+    Report conversions from your backend when browser storage isn't enough.
+  </Card>
+</Columns>

@@ -1,6 +1,81 @@
 ---
 title: "Invitations"
-description: "Track who you've invited."
+description: "Track pending Referly team invitations under Settings, Team, Invitations: see who you have invited, the role they will get, resend an invitation with a fresh 7-day link, revoke an invite before it is accepted, and see what happens when someone joins."
+keywords: ["Referly invitations", "pending team invitation", "resend invitation", "revoke invitation", "cancel team invite", "invitation expired", "invite team member", "team invitation status", "affiliate program team invite"]
 ---
+When you invite someone to your Referly account, they don't appear on your team right away — they first have to accept the invitation from their email. The **Invitations** screen is the waiting room for those people. It shows everyone who has been invited but hasn't joined yet, so you can chase a teammate who missed the email or cancel an invite you sent by mistake.
 
-{/* TODO: Write this article. */}
+To find it, open **Settings** from the left sidebar, go to **Team**, then select **Invitations**.
+
+{/* TODO screenshot: invitations-overview — upload it in the local Documentation Agent */}
+
+<Info>
+  This screen only lists invitations that are still waiting. As soon as someone accepts, their invitation disappears from here and they show up on the [Members](/help-center/settings/team/members) screen instead. If nobody is waiting, you'll see "No pending invitations".
+</Info>
+
+## Read a pending invitation
+
+Each row stands for one person you've invited and shows you three things:
+
+- **The email address** you sent the invitation to.
+- **The role** they'll get when they accept, shown as a badge: **ADMIN** or **MEMBER**. An admin can open every affiliate program and manage the team, while a member is limited to the programs you picked for them. See [team members](/help-center/settings/team/members) for what each role can do.
+- **The date you invited them**, shown as "Invited" followed by the date.
+
+<Note>
+  Invitations are good for 7 days. After that the link in the email stops working, and the person will get an "Invitation has expired" message if they try to use it. Resend the invitation to give them a fresh link.
+</Note>
+
+## Send a new invitation
+
+Select **Invite Team Member** at the bottom of the list to open the invite window. Type or paste the email addresses, choose whether they should be an **Admin** or a **Member**, and — for members — tick the affiliate programs they should be able to open. Select **Send Invitation** to send it.
+
+The new invitation appears in the list straight away. For a full walkthrough of the roles and the program access list, see [team members](/help-center/settings/team/members).
+
+<Note>
+  The **Invite Team Member** button is hidden when every seat on your plan is taken. The [Members](/help-center/settings/team/members) screen shows how many seats you've used and lets you free one up by removing someone.
+</Note>
+
+## Resend an invitation
+
+If someone can't find the email or their link has expired, select the **...** button on the right of their row and choose **Resend Invitation**.
+
+{/* TODO screenshot: invitation-actions-menu — upload it in the local Documentation Agent */}
+
+This sends the email again with a brand new link and gives them another 7 days to accept. Their role and program access stay exactly as you set them, so there's nothing to choose again. Any older link for that person stops working once you resend.
+
+<Check>
+  When the "Invitation has been resent" message appears, the new email is on its way.
+</Check>
+
+## Cancel an invitation
+
+To take back an invitation before it's accepted, select the **...** button on their row and choose **Revoke Invitation**.
+
+The invitation is removed from the list and the link in their email stops working, so they can no longer join your account with it.
+
+<Warning>
+  Revoking can't be undone. If you change your mind, send the person a fresh invitation and pick their role and program access again.
+</Warning>
+
+## What happens when someone accepts
+
+The person selects the link in their email and signs in or creates their Referly account. They're added to your team with the role and program access you chose, their invitation disappears from this screen, and they take up one of the seats included with your plan.
+
+From that point on you manage them from the [Members](/help-center/settings/team/members) screen, where you can change their role, adjust which affiliate programs they can open, or remove them.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Team members" icon="users" href="/help-center/settings/team/members" arrow>
+    Manage roles, program access, and who's on your team.
+  </Card>
+  <Card title="Plans and features" icon="tags" href="/help-center/billing/plans-and-features" arrow>
+    Check how many team members your plan includes.
+  </Card>
+  <Card title="Affiliate managers" icon="user-tie" href="/help-center/grow/affiliate-managers/overview" arrow>
+    Give a manager their own view of the affiliates they look after.
+  </Card>
+  <Card title="API keys" icon="key" href="/help-center/settings/advanced/api-keys" arrow>
+    Connect other tools to your account without adding a person.
+  </Card>
+</Columns>

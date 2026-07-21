@@ -1,6 +1,342 @@
 ---
 title: "WordPress"
-description: "Track sales on a WordPress site."
+description: "Track affiliate referrals and sales on WordPress with Referly. Install the tracking script via WPCode, your theme, a child theme, or Google Tag Manager, avoid caching and consent issues, and point WooCommerce or Stripe checkouts at the right setup."
+keywords: ["WordPress affiliate tracking", "Referly WordPress integration", "add tracking script WordPress header", "WPCode insert headers and footers", "WordPress affiliate program script", "Cloudflare Rocket Loader affiliate script", "WordPress caching breaks tracking script", "WooCommerce affiliate tracking"]
 ---
+WordPress runs the site, but it doesn't take the money. That one fact shapes this whole guide.
 
-{/* TODO: Write this article. */}
+Tracking affiliate referrals on WordPress comes in two halves. The first half is the same for everyone: put the Referly tracking script on your site so visitors arriving from an affiliate link are recognised. The second half depends entirely on how you sell, because the sale is recorded by whatever handles your checkout, not by WordPress.
+
+This article covers the first half in detail, with four different ways to add the script, and then points you at the right setup for the second half.
+
+<Note>
+  There's no **WordPress** card in **Settings**, then **Integrations** in your Referly dashboard. That's expected. WordPress is where your site lives, so you'll be using the card that matches your checkout instead: one of the Stripe guides, or **Woocommerce**. This article tells you which.
+</Note>
+
+## What you can and can't track
+
+| What you want to track | Does it work? | How |
+| --- | --- | --- |
+| Link clicks and visits | Yes | The tracking script |
+| Sign-ups and email captures from forms | Yes | The extra form script covered below |
+| Sales through Stripe payment links, pricing tables, or buy buttons | Yes | The matching Stripe setup |
+| WooCommerce orders | Yes | The WooCommerce setup |
+| Sales through another payment plugin | Sometimes | Depends on the plugin; the universal setup often covers it |
+| Contact form submissions as leads | Yes | Same form script as sign-ups |
+| Comments, logins, or page views as conversions | No | Only sign-ups and sales are recorded |
+| Sales made over the phone or by invoice | No, not automatically | [Add those by hand](/help-center/manage/customers/add-a-sale) |
+| Visitors who buy on a different device than they clicked on | No | The referral is remembered in the browser it was clicked in |
+
+## Before you start
+
+You'll need:
+
+- A live Referly program with at least one affiliate to test with. See [setting up your program](/help-center/getting-started/set-up-program/affiliate-program-setup) if you haven't got that far.
+- An administrator account on your WordPress site.
+- To know how you take payment, because that decides the second half of the setup.
+
+## Get your tracking script
+
+Your script is inside Referly with your program's own identifier already filled in. Open **Settings** from the left sidebar, select **Integrations**, and open **Instructions** on whichever card matches your checkout. Every one of them shows the same tracking script under **Step 1**.
+
+It looks like this, with your own identifier in place of `YOUR_PROGRAM_ID`:
+
+```html
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+{/* TODO screenshot: wordpress-tracking-script — upload it in the local Documentation Agent */}
+
+Copy it now. The next section covers where to put it.
+
+## Add the script to WordPress
+
+The script belongs in the `head` section of every page on your site. Pick one of the four methods below, whichever fits your setup. You only need one.
+
+<Warning>
+  Don't paste this into your parent theme's files. WordPress overwrites theme files when the theme updates, so your tracking would vanish silently at the worst possible moment. Use one of the methods below instead.
+</Warning>
+
+<Tabs>
+  <Tab title="Plugin (recommended)">
+    A header-and-footer plugin is the safest option for most people. It survives theme changes and theme updates, and it needs no code knowledge. Referly recommends [WPCode](https://wordpress.org/plugins/insert-headers-and-footers/), which used to be called Insert Headers and Footers, but any similar plugin works.
+
+    <Steps>
+      <Step title="Install the plugin">
+        In your WordPress admin, go to **Plugins**, then **Add New Plugin**. Search for **WPCode**, select **Install Now** on **WPCode - Insert Headers and Footers + Custom Code Snippets**, then select **Activate**.
+      </Step>
+      <Step title="Open the header and footer settings">
+        A new **Code Snippets** item appears in your left admin menu. Go to **Code Snippets**, then **Header & Footer**.
+      </Step>
+      <Step title="Paste into the Header box">
+        You'll see three boxes: **Header**, **Body**, and **Footer**. Paste the tracking script into the **Header** box. It has to be the Header one, so tracking starts before the rest of the page loads.
+      </Step>
+      <Step title="Save">
+        Select **Save Changes**. The script is now on every page of your site.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Your theme's own setting">
+    Many popular themes include a place for header scripts, which saves installing anything. Themes like Astra, GeneratePress, Kadence, and Blocksy all have one, though they name it differently.
+
+    <Steps>
+      <Step title="Look in your theme settings">
+        Check your theme's own menu item in the left admin sidebar, or go to **Appearance**, then **Customize**. Look for a section named something like **Custom Code**, **Header Scripts**, **Code Insertion**, or **Hooks**.
+      </Step>
+      <Step title="Find the header field">
+        Inside it, find the field for code that goes in the `head` section, sometimes labelled **Header** or **Inside head tag**.
+      </Step>
+      <Step title="Paste and save">
+        Paste the tracking script there and save, then publish if your theme asks you to.
+      </Step>
+    </Steps>
+
+    If you can't find anything like this, your theme doesn't offer it. Use the plugin method instead.
+
+    <Warning>
+      This ties your tracking to your theme. If you switch themes later, the script goes with the old one and you'll need to add it again. The plugin method avoids that.
+    </Warning>
+  </Tab>
+  <Tab title="Child theme (advanced)">
+    Only worth doing if you already run a child theme and are comfortable editing template files.
+
+    <Steps>
+      <Step title="Make sure you have a child theme">
+        This must be a child theme, never the parent. WordPress's own guide to [child themes](https://developer.wordpress.org/themes/advanced-topics/child-themes/) covers creating one if you haven't.
+      </Step>
+      <Step title="Edit the header template">
+        In your child theme, open its `header.php` file, or add a small function to `functions.php` that outputs the script into the head section.
+      </Step>
+      <Step title="Place the script correctly">
+        The script must appear inside the `head` section, before the closing `head` tag.
+      </Step>
+      <Step title="Test on a staging site first">
+        A mistake in a template file can take the whole site down. Try it somewhere safe before touching your live site.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Google Tag Manager">
+    Sensible if you already run Google Tag Manager on the site.
+
+    <Steps>
+      <Step title="Create a new tag">
+        In Google Tag Manager, create a new tag and choose **Custom HTML** as the type.
+      </Step>
+      <Step title="Paste the Tag Manager version">
+        Use the **Using Google Tag Manager** tab in the Referly instructions window, which gives you this version:
+
+        ```html
+        <script>
+          var pushLap = document.createElement('script');
+          pushLap.src = "https://referly.so/affiliate-tracker.js";
+          pushLap.setAttribute('data-affiliate', '');
+          pushLap.setAttribute('data-program-id', 'YOUR_PROGRAM_ID');
+          document.head.appendChild(pushLap);
+        </script>
+        ```
+      </Step>
+      <Step title="Set the trigger">
+        Set the trigger to **All Pages**, or **Initialization - All Pages** so it runs as early as possible.
+      </Step>
+      <Step title="Publish the container">
+        Preview it first, then publish. Nothing is live until you publish.
+      </Step>
+    </Steps>
+
+    <Warning>
+      If a consent banner controls your Tag Manager tags, this tag may not run until a visitor accepts cookies, so some referrals will go uncounted. The section below covers this.
+    </Warning>
+  </Tab>
+</Tabs>
+
+{/* TODO screenshot: wordpress-wpcode-header-footer — upload it in the local Documentation Agent */}
+
+## Check that caching and consent plugins aren't blocking it
+
+This is the part that catches WordPress users out, and it's worth ten minutes before you go any further. Your script can be perfectly installed and still never run.
+
+### Caching plugins
+
+After adding the script, **clear your cache**. Every caching plugin serves visitors a saved copy of your pages, and until you clear it, they'll keep getting the old version without your script. In WP Rocket, W3 Total Cache, LiteSpeed Cache, WP Super Cache, or whatever you use, find the option to clear or purge all caches and run it.
+
+Then check your plugin's **minification** and **JavaScript optimisation** settings. Options named things like "Combine JavaScript", "Defer JavaScript", "Delay JavaScript execution", or "Load JavaScript deferred" can stop the tracking script working properly, usually by making it run too late to catch the visit. If tracking doesn't work after everything else checks out, add the Referly script to your plugin's exclusion list, which most of them offer.
+
+### Cookie and consent banners
+
+If you use a consent plugin like Complianz, CookieYes, or Borlabs, check whether it's set to block scripts until a visitor accepts. If it is, and your visitor declines or ignores the banner, no click is recorded and that affiliate loses the referral.
+
+This is a real trade-off rather than a bug, and where you land on it depends on your legal obligations and where your visitors are. Decide deliberately rather than discovering it later.
+
+### Cloudflare Rocket Loader
+
+If your site sits behind Cloudflare with **Rocket Loader** turned on, it changes how scripts load and can break tracking. The fix is to tell Rocket Loader to leave the script alone by adding one attribute, which must come **before** `src`:
+
+```html
+<script
+  data-cfasync="false"
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+Cloudflare's own reference is [ignoring JavaScripts in Rocket Loader](https://developers.cloudflare.com/speed/optimization/content/rocket-loader/ignore-javascripts/).
+
+### Security and firewall plugins
+
+Some security plugins strip script tags from admin fields as a precaution. If you paste the script, save, and it's gone when you come back, that's what happened. Use the plugin method instead, since dedicated code plugins are designed to hold scripts safely.
+
+## Choose how your sales get recorded
+
+The tracking script recognises the visitor. Something else has to tell Referly a sale happened. Find your situation below.
+
+| How you sell on WordPress | What to set up |
+| --- | --- |
+| Stripe Payment Links | [Stripe payment links](/help-center/integrations/stripe/payment-links) |
+| A Stripe pricing table embedded on a page | [Stripe pricing table](/help-center/integrations/stripe/pricing-table) |
+| A Stripe buy button | [Stripe buy button](/help-center/integrations/stripe/buy-button) |
+| Your own Stripe checkout built by a developer | [Stripe session API](/help-center/integrations/stripe/session-api) |
+| WooCommerce | [The WooCommerce setup](/help-center/integrations/woocommerce) |
+| Another payment plugin or platform | [The universal setup](/help-center/integrations/universal) |
+| Free sign-ups, leads, or a mailing list | The form script in the next section |
+
+<Note>
+  Running WooCommerce? Everything above about installing the script still applies, then follow [the WooCommerce article](/help-center/integrations/woocommerce) for the order side. Don't set up both WooCommerce and a Stripe payment link setup for the same products, or you'll record each sale twice.
+</Note>
+
+If you take payment through Stripe in a way that isn't listed, connecting Stripe to Referly is usually enough on its own. See [the Stripe integration](/help-center/integrations/stripe).
+
+## Track sign-ups and form submissions
+
+If you want affiliates credited for leads and registrations rather than only sales, add this second script. It watches the forms on a page and records the email address when someone submits one.
+
+Add it to the page where people sign up or enter their email, near the bottom, before the closing `body` tag. Using a header-and-footer plugin, that's the **Footer** box under **Code Snippets**, then **Header & Footer**.
+
+```html
+<script>
+  function handleFormSubmit(event) {
+    const form = event.target;
+    const emailInput =
+      form.querySelector('input[type="email"]') ||
+      form.querySelector('input[name="email"]');
+    if (emailInput && emailInput.value) {
+      window.createPushLapEmail(emailInput.value);
+    }
+  }
+
+  function attachListeners() {
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+      form.addEventListener('submit', handleFormSubmit);
+    });
+  }
+
+  window.addEventListener('affiliate_referral_ready', attachListeners);
+</script>
+```
+
+{/* TODO screenshot: wordpress-form-script-footer — upload it in the local Documentation Agent */}
+
+The tracking script has to be on that same page for this to do anything. It picks up the standard WordPress registration form and most popular form plugins, because it looks for the email field rather than expecting a particular form.
+
+Two things worth knowing. Visitors who didn't arrive from an affiliate link are ignored, so your organic sign-ups aren't affected. And this records the person as a referred customer with no revenue attached, which is what you want when paying per lead.
+
+<Warning>
+  If you put this in your site-wide Footer box, it applies to every form on the site, including your contact form and comment forms with an email field. Put it only on the pages you want counted if that's not what you're after.
+</Warning>
+
+## Test it end to end
+
+<Steps>
+  <Step title="Grab a real affiliate link">
+    Open **Affiliates** in the left sidebar of Referly, pick an affiliate, and copy their referral link.
+  </Step>
+  <Step title="Clear your cache first">
+    Purge your caching plugin, and Cloudflare's cache too if you use it. Testing against a cached page is the most common way to waste an afternoon here.
+  </Step>
+  <Step title="Open the link in a private window">
+    Use a private or incognito window. Visit the link and let the page finish loading. If a cookie banner appears, accept it, so you're testing the path most visitors take.
+  </Step>
+  <Step title="Check the click was recorded">
+    In Referly, look at your affiliate's clicks. A new one should appear within a moment. If it doesn't, the script isn't running, so stop here and work through the troubleshooting below before going further.
+  </Step>
+  <Step title="Complete a sign-up or purchase">
+    In the same window, sign up or buy something using details you haven't used before.
+  </Step>
+  <Step title="Check Referly">
+    Open **Customers** in the left sidebar. The referral should appear within a minute, credited to the affiliate whose link you used, with the amount if it was a purchase.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: wordpress-test-referral — upload it in the local Documentation Agent */}
+
+<Check>
+  When the click appears **and** the sign-up or sale appears against the right affiliate, both halves are working.
+</Check>
+
+Remove the test referral in Referly so your reports start clean.
+
+## Limitations to be aware of
+
+- **WordPress itself never records a sale.** It's the site, not the checkout. Something else always has to report the money.
+- **Caching can hide changes for hours.** Always clear your cache after any change, and again before testing.
+- **Consent banners can cost you referrals.** If scripts are blocked until a visitor accepts, declined banners mean uncounted clicks.
+- **Theme-based installation doesn't survive a theme change.** Use a plugin if you expect to redesign.
+- **Never edit parent theme files.** Updates overwrite them and tracking disappears without warning.
+- **The form script captures leads, not revenue.** Sign-ups arrive with no value attached.
+- **The visitor must convert in the browser they clicked in.** Clicking on a phone and buying on a laptop won't match.
+- **Ad blockers and strict privacy settings** stop the tracking script for a small share of visitors, as with any affiliate tool.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="No clicks are recorded at all">
+    Work through this in order. Clear every cache, including your caching plugin and Cloudflare. Confirm the script is still saved where you put it, since some security plugins strip script tags on save. Confirm it's in the **Header** box rather than Body or Footer. Then load your site with an affiliate link on the end, in a private window, and check again.
+  </Accordion>
+  <Accordion title="The script disappears after I save it">
+    A security or firewall plugin is stripping it. Use a dedicated header-and-footer plugin like WPCode, which is built to store scripts safely, rather than pasting into a general-purpose settings field.
+  </Accordion>
+  <Accordion title="It worked, then stopped after a site update">
+    If the script was in your theme's files or settings, a theme update or theme change removed it. Move it into a header-and-footer plugin so it's independent of your theme.
+  </Accordion>
+  <Accordion title="Tracking is unreliable, working sometimes but not always">
+    This pattern points at JavaScript optimisation. In your caching plugin, look for settings named "Combine JavaScript", "Defer JavaScript", "Delay JavaScript execution", or similar, and add the Referly script to the exclusion list. If you use Cloudflare, check whether Rocket Loader is on and add the `data-cfasync="false"` attribute shown above.
+  </Accordion>
+  <Accordion title="Clicks are recorded but sales never are">
+    The first half works and the second half isn't set up. Find how you sell in the table above and follow the setup it points to. The tracking script on its own never records a sale.
+  </Accordion>
+  <Accordion title="Sign-ups aren't being captured">
+    Check that both scripts are on the sign-up page: the tracking script in the header, and the form script in the footer. If your form plugin submits without a normal form submission, this script won't catch it, and [the universal setup](/help-center/integrations/universal) is the better route.
+  </Accordion>
+  <Accordion title="Every sale is recorded twice">
+    You have two setups running for the same products, most often WooCommerce alongside a Stripe payment link setup. Pick one and remove the other.
+  </Accordion>
+  <Accordion title="A referral wasn't credited even though the customer used an affiliate link">
+    Check whether they clicked on one device and converted on another, whether the click was older than your cookie window, or whether a cookie banner blocked the script on their visit. You can attach the referral to the right affiliate by hand from the customer's page, described in [managing referred customers](/help-center/manage/customers/overview).
+  </Accordion>
+</AccordionGroup>
+
+Still stuck? [Book an integration call](https://www.referly.so/book-integration-call) and we'll go through your setup with you.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="WooCommerce" icon="cart-shopping" href="/help-center/integrations/woocommerce" arrow>
+    Record orders from a WooCommerce store.
+  </Card>
+  <Card title="Stripe payment links" icon="link" href="/help-center/integrations/stripe/payment-links" arrow>
+    The most common way to sell from a WordPress page.
+  </Card>
+  <Card title="Universal integration" icon="code" href="/help-center/integrations/universal" arrow>
+    Track a checkout that isn't listed.
+  </Card>
+  <Card title="All integrations" icon="puzzle-piece" href="/help-center/integrations/overview" arrow>
+    See every platform Referly connects to.
+  </Card>
+</Columns>

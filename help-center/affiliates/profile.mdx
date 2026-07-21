@@ -1,6 +1,210 @@
 ---
 title: "Your profile"
-description: "Keep your details up to date."
+description: "Manage your Referly affiliate profile and settings: photo and name, change your email, payout method, invoice and VAT details, notifications, categories, and applying a change to all your programs."
+keywords: ["affiliate profile", "affiliate settings", "change email address", "payout details", "invoice details", "VAT number", "notification preferences", "affiliate categories", "influencer dashboard settings", "postback URL"]
 ---
+Your profile is more than a name and a photo. It's what a brand reads when deciding whether to approve you, what decides whether your money arrives, and — in your Influencer dashboard — what decides which programs get recommended to you.
 
-{/* TODO: Write this article. */}
+Everything lives in one place. In the left sidebar of any portal, select **Settings**.
+
+{/* TODO screenshot: settings-tabs — upload it in the local Documentation Agent */}
+
+Settings is split into four tabs: **Personal Information**, **Payouts**, **Preferences**, and **Advanced**. You have a separate set of these in every program you've joined, plus one in your Influencer dashboard at `influencers.referly.so` that can push changes to all of them at once.
+
+## Personal Information
+
+### Profile
+
+The **Profile** page holds who you are.
+
+**Profile Photo** — select **Upload** to add a picture, or **Remove** to clear it. It needs to be a PNG, JPEG, or WebP under 1MB, and 256x256 pixels works best.
+
+**Contact Details** — your first name, last name, and email address. The name here is what the brand sees in their affiliate list and what goes on your payouts, so use your real one.
+
+Select **Save Changes** when you're done.
+
+{/* TODO screenshot: profile-settings — upload it in the local Documentation Agent */}
+
+### Changing your email address
+
+Your email is how you sign in, and it's the thread that ties all your programs together — so changing it takes an extra step.
+
+<Steps>
+  <Step title="Select Change next to your email">
+    A field appears for your new address.
+  </Step>
+  <Step title="Enter the new email and send the code">
+    Select **Send Verification Code**. A six-digit code is sent to the new address.
+  </Step>
+  <Step title="Enter the code">
+    Type the code in and select **Verify and Change**. Your email is updated.
+  </Step>
+</Steps>
+
+If the code doesn't arrive, check your spam folder and use **Resend Code**.
+
+<Warning>
+  Your email is what links your programs together in your Influencer dashboard. Use the same address everywhere — different emails means separate accounts that can't see each other.
+</Warning>
+
+### Website and socials
+
+**Website and Socials** is where your website and social accounts live: YouTube, X (Twitter), Instagram, TikTok, and LinkedIn.
+
+Each account can be verified, which proves it's yours and shows the brand your real follower or subscriber count. Verified accounts make a real difference to whether you're accepted into programs. See [Connect and verify your social accounts](/help-center/affiliates/social-accounts).
+
+This page only appears in programs that ask for social accounts.
+
+### Affiliate links
+
+**Affiliate Links** shows the links you promote with for this program. Depending on what the brand allows, you may be able to create your own named links, edit them, and delete them.
+
+See [Your referral links](/help-center/affiliates/referral-links) for how links are built and tracked.
+
+### Promo codes
+
+**Promo Codes** shows the discount codes tied to your account, and lets you create new ones when the brand allows it. Codes are the alternative to links — a customer types your code at checkout and the sale is credited to you.
+
+See [Promo codes](/help-center/affiliates/promo-codes).
+
+### Program questions
+
+If the brand asked you questions when you applied, your answers live under **Program Questions** (or under the name the brand gave their step).
+
+You can update an answer if the brand marked that question editable. Some are locked once submitted — usually anything the brand has already reviewed, like an uploaded document.
+
+## Payouts
+
+This tab is the one to get right. Everything else affects how you look; this affects whether you get paid.
+
+### Cash payouts
+
+**Cash Payouts** is your payment method and its details. The methods available depend on what the brand supports — PayPal, Wise, a local bank transfer, a direct bank deposit, or credits applied to your balance.
+
+For email-based methods, the **Payout Email** is where the money goes. Read it twice. A wrong address is the single most common cause of a failed payout.
+
+For a local bank transfer you pick the currency you want to be paid in first, then fill in the bank fields, which differ by country.
+
+See [Cash payouts](/help-center/affiliates/cash-payouts).
+
+{/* TODO screenshot: cash-payouts-settings — upload it in the local Documentation Agent */}
+
+### Non-cash payouts
+
+Some programs reward you with coupons, store credits, gift cards, or products instead of cash. **Non-Cash Payouts** holds the email address those are sent to.
+
+It can be different from your cash payout email, which is useful if your rewards should go to a personal address while payments go to a business one.
+
+See [Non-cash payouts](/help-center/affiliates/non-cash-payouts).
+
+### Invoice details
+
+**Invoice Details** is the billing information that appears on the paperwork for your payouts.
+
+Start with **Entity Type**:
+
+- **Individual** — you're paid as a person, with your full name and an optional **Tax ID**.
+- **Business** — you're paid as a company, with a company name and a **VAT Number** or tax ID.
+
+Then fill in **Billing Information**: your invoice email and full address.
+
+EU VAT numbers are checked against the official EU VAT registry as you type, and show a verified badge when they clear. EU businesses have to provide a valid one. If validation fails, it's almost always a wrong two-letter country prefix or a mistyped digit — and if the registry is temporarily unavailable, you can save and retry later.
+
+See [Invoice details](/help-center/affiliates/invoice-details).
+
+{/* TODO screenshot: invoice-details-settings — upload it in the local Documentation Agent */}
+
+## Preferences
+
+### Email notifications
+
+**Email Notifications** lets you turn individual emails on and off:
+
+- **New Referral** — someone signed up through your link.
+- **Commission Earned** — you earned a commission from a sale.
+- **Bonus Earned** — you earned a bonus.
+- **Performance Bonus Announcements** — a new bonus is available to go after.
+- **New Chat Message** — a digest when you miss messages from the brand.
+
+If a program hasn't enabled any emails, this page tells you there's nothing to configure.
+
+### In-app notifications
+
+**In-App Notifications** controls the small pop-ups that slide in while you're using the portal. There are more of these than there are emails:
+
+- **New Referral** and **Commission Earned**.
+- **Bonus Earned** and **New Bonus Available**.
+- **Payout Created** — a payout has been created for you.
+- **Commission Plan Changed** and **Tier Upgraded** — your earning terms changed.
+- **New Chat Message** and **Added to Group Chat**.
+
+See [Notifications](/help-center/affiliates/notifications).
+
+{/* TODO screenshot: notification-preferences — upload it in the local Documentation Agent */}
+
+## Advanced
+
+**Postback URL** is for affiliates who run their own tracking. You give Referly a web address, and it's called whenever you get a referral or a sale, so your own tools learn about the conversion.
+
+Most affiliates never touch this. If you run paid traffic and need conversions reported back to your ad platform or tracker, see [Postback URL](/help-center/affiliates/postback-url).
+
+## Extras in your Influencer dashboard
+
+The Settings in your Influencer dashboard has the same four tabs, plus a few things that only make sense across programs.
+
+### Your categories
+
+**Categories** are the niches you create content in. Pick up to three.
+
+They're the biggest lever you have on the marketplace. Your categories feed the match score on every listing, decide what shows in **Recommended for you**, and count toward the "proven affinity" part of your match. Changes save as soon as you make them.
+
+See [Join a program](/help-center/affiliates/join-a-program) for how matching works.
+
+{/* TODO screenshot: master-categories — upload it in the local Documentation Agent */}
+
+### Apply changes to all your programs
+
+Under **Apply changes to all programs** you choose what happens when you change something that could apply everywhere — your name, photo, payout details, invoice details, categories, or social accounts:
+
+- **Ask me every time** — after each change you're asked whether to apply it everywhere. This is the default.
+- **Always apply to all my programs** — changes go everywhere automatically, no prompt.
+- **Never apply to other programs** — changes only affect this account.
+
+When you're asked, the prompt tells you how many other programs it would affect, and you pick **Apply to all** or **Just this account**. There's also a **Don't ask me again** option if you'd rather stop being prompted.
+
+<Tip>
+  Set this to **Always apply to all my programs** once your details are stable. Changing a payout email in one place instead of fifteen is the main reason the Influencer dashboard exists.
+</Tip>
+
+{/* TODO screenshot: propagation-preference — upload it in the local Documentation Agent */}
+
+### Links and promo codes across every program
+
+In your Influencer dashboard, **Affiliate Links** and **Promo Codes** don't show one program's — they show all of them, grouped by program. Expand a program to see your link or code for it, without opening that portal.
+
+It's the fastest way to grab the right link when you're about to post.
+
+## What the brand can see
+
+Brands see the profile you keep in their program: your name, photo, email, connected social accounts and their follower counts, your answers to their questions, and your performance. They use it to decide whether to approve you and how to work with you.
+
+They do not see your notification preferences. Your payout and invoice details are used to pay you and to generate your invoices.
+
+Keeping this complete is the cheapest thing you can do to get accepted into more programs — a filled-in profile with verified socials gets approved far more often than a blank one.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Complete onboarding" icon="list-check" href="/help-center/affiliates/onboarding" arrow>
+    Where most of these details get filled in the first time.
+  </Card>
+  <Card title="Connect your social accounts" icon="share-nodes" href="/help-center/affiliates/social-accounts" arrow>
+    Verify your channels to get accepted into more programs.
+  </Card>
+  <Card title="Getting paid" icon="money-bill-transfer" href="/help-center/affiliates/payouts" arrow>
+    How your payout details turn into money.
+  </Card>
+  <Card title="Notifications" icon="bell" href="/help-center/affiliates/notifications" arrow>
+    Everything Referly can tell you, and how to control it.
+  </Card>
+</Columns>

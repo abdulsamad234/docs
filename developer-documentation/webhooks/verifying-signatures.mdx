@@ -1,6 +1,405 @@
 ---
 title: "Verify signatures"
-description: "Confirm a webhook genuinely came from Referly."
+description: "Verify Referly webhook signatures with the svix libraries or a manual HMAC-SHA256 check. Covers the signing secret, svix headers, raw body handling, replay protection, and secret rotation."
+keywords: ["verify webhook signature", "Referly webhook security", "svix-signature", "svix-id", "svix-timestamp", "HMAC SHA256 webhook", "webhook signing secret", "whsec", "raw body verification", "webhook replay protection", "constant time comparison", "webhook idempotency key"]
 ---
+Every Referly webhook delivery is signed. Verifying that signature is what tells you a request came
+from Referly and not from someone who found your URL.
 
-{/* TODO: Write this article. */}
+Referly signs using the Svix scheme, so the shortest correct answer is: install the official `svix`
+library for your language and call `verify()`. The rest of this page covers where the secret comes
+from, the headers involved, and the details that make verification fail in practice.
+
+## Why this is not optional
+
+Your endpoint is a public URL that accepts JSON and does something valuable with it — records a
+sale, credits an account, pays a commission. The URL is the only other thing standing between an
+attacker and that behaviour, and URLs leak constantly: browser history, proxy logs, error trackers,
+screenshots, a pasted stack trace, an ex-employee's laptop.
+
+Without a signature check, anyone holding your URL can `POST` this:
+
+```json
+{
+  "event": "sale.created",
+  "body": { "id": 1, "affiliateId": "their-own-id", "totalEarned": 50000 }
+}
+```
+
+Your handler cannot tell that apart from a real delivery. With a signature check, it can — the
+attacker cannot produce a valid signature without the secret.
+
+<Warning>
+  Checking that the payload "looks right", that the affiliate ID exists, or that the request came
+  from a particular IP is not a substitute. Referly does not publish fixed egress IPs, and every
+  field in the body is attacker-controlled. The signature is the only proof.
+</Warning>
+
+## Get your signing secret
+
+Each endpoint has its own secret. Open your campaign, go to **Settings**, then **Advanced**, then
+**Webhooks**, open the endpoint from its **...** menu with **View Details**, and find **Signing
+Secret**. It is masked until you select the eye icon, and there is a button to copy it.
+
+The value looks like `whsec_` followed by a base64 string. The official libraries accept it exactly
+as shown — you do not need to strip the prefix yourself.
+
+Store it the way you store a database password:
+
+```bash .env
+REFERLY_WEBHOOK_SECRET=whsec_MfKQ9r8Xz2vLpN4tYbGw7Hs1JdQe0RcA
+```
+
+<Warning>
+  Never put the secret in client-side code, a mobile app, or version control. Anyone with it can
+  forge deliveries that pass your verification. If it leaks, rotate it — see
+  [Manage endpoints](/developer-documentation/webhooks/managing-endpoints).
+</Warning>
+
+Because the secret is per endpoint, a handler serving several endpoints — one per program, say —
+needs to select the right secret for the request, usually by giving each endpoint its own path.
+
+## The signature headers
+
+Three headers travel with every delivery.
+
+| Header | Example | Purpose |
+| --- | --- | --- |
+| `svix-id` | `msg_2gT4kQxZ9pLmNvBc` | Unique message ID. Identical across every retry of the same event, which makes it your idempotency key. |
+| `svix-timestamp` | `1773487458` | Unix seconds at send time. Signed, so it cannot be altered, and used to reject replays. |
+| `svix-signature` | `v1,K5oZfzN95Z9UVu1EsfQmfVNQhnkZ2pj9o9NDN2/H1eE=` | One or more space-separated signatures, each prefixed with its scheme version. |
+
+`svix-signature` can carry several values separated by spaces. A delivery is authentic if **any one**
+of them matches — this is what lets an endpoint keep working through a secret rotation. Never
+compare the header as a whole string; parse it into parts.
+
+## Verify with the official library
+
+The libraries handle header parsing, multiple signatures, timestamp tolerance, and constant-time
+comparison. Use them unless your language has none.
+
+<CodeGroup>
+
+```ts Next.js
+import { Webhook } from "svix";
+import { headers } from "next/headers";
+
+export async function POST(req: Request) {
+  const payload = await req.text(); // raw body, not req.json()
+  const h = await headers();
+
+  const wh = new Webhook(process.env.REFERLY_WEBHOOK_SECRET!);
+
+  let event: { event: string; body: Record<string, unknown> };
+  try {
+    event = wh.verify(payload, {
+      "svix-id": h.get("svix-id")!,
+      "svix-timestamp": h.get("svix-timestamp")!,
+      "svix-signature": h.get("svix-signature")!,
+    }) as typeof event;
+  } catch {
+    return new Response("Invalid signature", { status: 400 });
+  }
+
+  await handle(event);
+  return new Response("ok", { status: 200 });
+}
+```
+
+```js Express
+import express from "express";
+import { Webhook } from "svix";
+
+const app = express();
+const wh = new Webhook(process.env.REFERLY_WEBHOOK_SECRET);
+
+// express.raw for THIS route only — see "Use the raw body" below.
+app.post(
+  "/webhooks/referly",
+  express.raw({ type: "application/json" }),
+  (req, res) => {
+    let event;
+    try {
+      event = wh.verify(req.body, {
+        "svix-id": req.headers["svix-id"],
+        "svix-timestamp": req.headers["svix-timestamp"],
+        "svix-signature": req.headers["svix-signature"],
+      });
+    } catch {
+      return res.status(400).send("Invalid signature");
+    }
+
+    res.sendStatus(200);
+    handle(event);
+  }
+);
+```
+
+```python Python
+import os
+from flask import Flask, request
+from svix.webhooks import Webhook, WebhookVerificationError
+
+app = Flask(__name__)
+wh = Webhook(os.environ["REFERLY_WEBHOOK_SECRET"])
+
+@app.post("/webhooks/referly")
+def referly_webhook():
+    try:
+        # request.data is the raw body; request.json is not.
+        event = wh.verify(request.data, dict(request.headers))
+    except WebhookVerificationError:
+        return "Invalid signature", 400
+
+    handle(event)
+    return "ok", 200
+```
+
+```go Go
+package main
+
+import (
+	"io"
+	"net/http"
+	"os"
+
+	svix "github.com/svix/svix-webhooks/go"
+)
+
+func referlyWebhook(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "bad request", http.StatusBadRequest)
+		return
+	}
+
+	wh, err := svix.NewWebhook(os.Getenv("REFERLY_WEBHOOK_SECRET"))
+	if err != nil {
+		http.Error(w, "server error", http.StatusInternalServerError)
+		return
+	}
+
+	if err := wh.Verify(body, r.Header); err != nil {
+		http.Error(w, "invalid signature", http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	go handle(body)
+}
+```
+
+</CodeGroup>
+
+Official libraries also exist for Ruby, PHP, Java, Kotlin, C#, and Rust, all with the same
+`verify(payload, headers)` shape.
+
+## Use the raw body
+
+This is the single most common reason verification fails on a correct implementation.
+
+The signature is computed over the **exact bytes** Referly sent. If your framework parses the JSON
+and you re-serialise it before verifying, the bytes change — key order, whitespace, number
+formatting, unicode escaping — and the signature will never match, no matter how correct everything
+else is.
+
+| Framework | Use | Not |
+| --- | --- | --- |
+| Next.js route handler | `await req.text()` | `await req.json()` |
+| Express | `express.raw({ type: "application/json" })` | `express.json()` |
+| Flask | `request.data` | `request.json` |
+| FastAPI | `await request.body()` | a Pydantic model parameter |
+| Go | `io.ReadAll(r.Body)` | `json.NewDecoder(r.Body).Decode(...)` |
+| Rails | `request.body.read` | `params` |
+
+<Warning>
+  If a global body-parsing middleware runs before your route, it consumes the stream and you cannot
+  recover the original bytes. In Express, mount `express.json()` after the webhook route, or exclude
+  the webhook path from it. Verify first, parse second — parse the string you already verified.
+</Warning>
+
+## Verify manually
+
+If your language has no official library, the scheme is short enough to implement. Concatenate the
+message ID, the timestamp, and the raw body with dots, HMAC-SHA256 it with the decoded secret, and
+base64 the result.
+
+```js Manual verification (Node)
+import crypto from "node:crypto";
+
+function verifyReferlySignature(rawBody, headers, secret) {
+  const id = headers["svix-id"];
+  const timestamp = headers["svix-timestamp"];
+  const signatureHeader = headers["svix-signature"];
+
+  if (!id || !timestamp || !signatureHeader) return false;
+
+  // 1. Reject anything outside a 5 minute window, to stop replays.
+  const now = Math.floor(Date.now() / 1000);
+  if (Math.abs(now - Number(timestamp)) > 300) return false;
+
+  // 2. Build the signed content: id.timestamp.body
+  const signedContent = `${id}.${timestamp}.${rawBody}`;
+
+  // 3. The key is the base64 payload after the whsec_ prefix, decoded.
+  const key = Buffer.from(secret.replace(/^whsec_/, ""), "base64");
+
+  const expected = crypto
+    .createHmac("sha256", key)
+    .update(signedContent)
+    .digest("base64");
+
+  // 4. The header may hold several signatures. Any match is a pass.
+  const expectedBuf = Buffer.from(expected);
+  return signatureHeader.split(" ").some((entry) => {
+    const [version, signature] = entry.split(",");
+    if (version !== "v1" || !signature) return false;
+    const candidate = Buffer.from(signature);
+    return (
+      candidate.length === expectedBuf.length &&
+      crypto.timingSafeEqual(candidate, expectedBuf)
+    );
+  });
+}
+```
+
+Four details that matter:
+
+- **`rawBody` is a string or byte buffer of the original request**, not a re-serialised object.
+- **The key is decoded from base64** after stripping `whsec_`. Using the literal secret string as the
+  HMAC key produces a signature that never matches.
+- **Compare in constant time.** A plain `===` leaks timing information that can be used to forge a
+  signature byte by byte. Use `timingSafeEqual` or your language's equivalent, and check lengths
+  first since it throws on a mismatch.
+- **Iterate the space-separated list.** Accept the request if any `v1` entry matches.
+
+## When verification fails
+
+Return `400` and do nothing else.
+
+```js
+if (!verified) {
+  return new Response("Invalid signature", { status: 400 });
+}
+```
+
+Do not log the payload as if it were real, do not write it to your database, and do not return `200`
+to make the noise stop.
+
+A `400` counts as a failed delivery, so a legitimate message rejected by a broken implementation
+enters the retry cycle and appears in your log with the response body you returned. That is useful:
+fix the handler, then resend from the log rather than losing the event. See
+[Retries and logs](/developer-documentation/webhooks/retries-and-logs).
+
+Return a short, non-specific reason. Do not tell a caller *why* verification failed — that helps
+someone probing your endpoint and helps nobody else.
+
+## Replay protection
+
+A valid signature stays valid forever, so an attacker who captures one real delivery could send those
+exact bytes and headers again. Because `svix-timestamp` is part of the signed content, it cannot be
+edited without breaking the signature — which makes it a reliable freshness check.
+
+The official libraries reject deliveries whose timestamp is more than five minutes from your server's
+clock, in either direction. If you verify manually, implement the same window, as in the example
+above.
+
+<Note>
+  A tight tolerance means your server clock matters. If verification fails on genuinely fresh
+  deliveries, check that NTP is running — clock drift produces exactly this symptom, usually in
+  containers or long-lived VMs.
+</Note>
+
+Combine the timestamp window with `svix-id` deduplication for full replay protection: the window
+stops old captures, and the ID stops a fresh one being processed twice.
+
+## During a secret rotation
+
+When you rotate an endpoint's secret, deploy the new value promptly — anything still verifying
+against the old one will reject deliveries, and each rejection is a failed delivery.
+
+To rotate without dropping anything in flight, accept either secret for the duration:
+
+```js
+const secrets = [
+  process.env.REFERLY_WEBHOOK_SECRET,
+  process.env.REFERLY_WEBHOOK_SECRET_PREVIOUS,
+].filter(Boolean);
+
+const event = secrets.reduce((acc, secret) => {
+  if (acc) return acc;
+  try {
+    return new Webhook(secret).verify(payload, svixHeaders);
+  } catch {
+    return null;
+  }
+}, null);
+
+if (!event) return new Response("Invalid signature", { status: 400 });
+```
+
+Deploy that, rotate, confirm the delivery log is clean, then remove the old secret. Leaving a retired
+secret accepted indefinitely defeats the point of rotating.
+
+## Pair verification with idempotency
+
+Verification proves a message is authentic. It does not prove you have not already processed it —
+retries and manual resends deliver the same authentic message again.
+
+Use `svix-id` as the idempotency key. It is stable across every attempt of the same event:
+
+```js
+const messageId = headers.get("svix-id");
+
+// Insert-if-absent on a unique column. A duplicate insert means we have
+// seen this message before, so acknowledge and stop.
+const inserted = await db.processedWebhooks.insertIfAbsent({ messageId });
+if (!inserted) return new Response("ok", { status: 200 });
+
+await handle(event);
+```
+
+Return `200` for duplicates. A duplicate is not an error, and returning anything else sends the
+message back into the retry cycle.
+
+<Note>
+  This is the receiving side. Idempotency when *sending* data to Referly — deduplicating sales you
+  report — is a separate mechanism, covered in
+  [Idempotency](/developer-documentation/server-side/idempotency).
+</Note>
+
+## Checklist
+
+- Read the **raw body** before any middleware parses it.
+- Verify with the official library, or HMAC-SHA256 over `id.timestamp.body` with the decoded secret.
+- On failure, return `400` and process nothing.
+- Enforce a five minute `svix-timestamp` window.
+- Deduplicate on `svix-id` before doing any work.
+- Keep the secret server-side and out of version control, and rotate it if it is ever exposed.
+
+Test the whole chain before you rely on it — the **Testing** tab on an endpoint sends a real signed
+delivery, so a passing test proves your verification works end to end. See
+[Test and replay](/developer-documentation/webhooks/testing).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Manage endpoints" icon="link" href="/developer-documentation/webhooks/managing-endpoints">
+    Find and rotate an endpoint's signing secret.
+  </Card>
+  <Card title="Payload structure" icon="brackets-curly" href="/developer-documentation/webhooks/payload-structure">
+    What you can parse once the signature checks out.
+  </Card>
+  <Card title="Retries and logs" icon="clock-rotate-left" href="/developer-documentation/webhooks/retries-and-logs">
+    See rejected deliveries and resend them after a fix.
+  </Card>
+  <Card title="Test and replay" icon="flask" href="/developer-documentation/webhooks/testing">
+    Send a signed test delivery to prove verification works.
+  </Card>
+  <Card title="Webhooks introduction" icon="webhook" href="/developer-documentation/webhooks/introduction">
+    How deliveries work end to end.
+  </Card>
+  <Card title="Idempotency" icon="fingerprint" href="/developer-documentation/server-side/idempotency">
+    The other direction — deduplicating what you send to Referly.
+  </Card>
+</Columns>

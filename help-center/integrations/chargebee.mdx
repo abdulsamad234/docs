@@ -1,6 +1,356 @@
 ---
 title: "Chargebee"
-description: "Track Chargebee subscriptions."
+description: "Connect Chargebee to Referly to track affiliate clicks, subscriptions, trials, renewals, and refunds. Step-by-step custom field, webhook, and API key setup for drop-in checkout, payment links, and the Chargebee API."
+keywords: ["chargebee affiliate tracking", "chargebee affiliate program", "referly chargebee integration", "chargebee custom field affiliate", "chargebee webhook affiliate tracking", "chargebee subscription commission", "chargebee payment links affiliate", "chargebee api key read only", "chargebee recurring commission", "chargebee refund affiliate commission"]
 ---
+Referly tracks Chargebee subscriptions by storing the referral on the **customer** in Chargebee. That one decision shapes the whole integration: because the referral lives on the customer rather than on a single checkout, every invoice that customer is ever billed carries it — so renewals, upgrades, and plan changes all keep earning the affiliate their commission with no extra work.
 
-{/* TODO: Write this article. */}
+Setting it up takes four things: the tracking script on your site, a custom field in Chargebee to hold the referral, a small piece of code to fill that field in at checkout, and a webhook so Chargebee tells Referly when money moves. A fifth, optional step connects your API key so Referly can read your plan names for product-level commission.
+
+<Note>
+  Chargebee is the most hands-on of Referly's payment integrations — you create the custom field and the webhook yourself. Set aside 20 minutes and work through the steps in order.
+</Note>
+
+## What the Chargebee integration can and can't do
+
+| What you want to track | Does Chargebee cover it? |
+| --- | --- |
+| **Clicks on affiliate links** | Yes, once the tracking script is on your site ([Step 1](#step-1-install-the-tracking-script-on-your-site)). |
+| **New referred customers** | Yes — as soon as a subscription is created, started, or activated for a customer carrying a referral. |
+| **Free trials** | Yes — a trial subscription creates the referred customer straight away. The commission follows when the trial converts and Chargebee takes the first payment. |
+| **First payments and every renewal** | Yes, and renewals need no extra setup. The referral sits on the customer, so every invoice raised against them is credited to the same affiliate. |
+| **Plan and item-level detail** | Yes, but only if you complete [Step 5](#step-5-connect-your-api-key-for-plan-level-detail). Without your API key, sales come through with their total but no line items, so [product-based commissions](/help-center/getting-started/commissions/product-based) won't have anything to match on. |
+| **Tax** | Yes — tax is read from the invoice so you can decide whether commission is paid on it. |
+| **Currency** | Yes — the currency comes from the plan being billed. |
+| **Refunds** | Yes — see [Refunds](#refunds). |
+| **Customers with no referral on them** | No — if the customer has no referral stored, Referly records nothing at all for that subscription or invoice, not even an unattributed sale. |
+| **Coupon and discount code attribution** | No — Chargebee coupons don't identify an affiliate. If your affiliates promote codes rather than links, [Stripe coupon codes](/help-center/integrations/stripe/coupon-codes) or [Shopify](/help-center/integrations/shopify) handle that. |
+| **Sign-ups with no subscription** | No — Chargebee only reports subscriptions and invoices. Use the [Universal integration](/help-center/integrations/universal) for leads. |
+| **Shipping** | No — shipping isn't reported separately for Chargebee. |
+| **Chargebacks** | No — a chargeback isn't reversed automatically. Adjust the sale or reward by hand. |
+| **Test site and live site at the same time** | No — a Referly program connects to one Chargebee site. Test and live sites in Chargebee are separate, with their own keys and their own webhooks. |
+
+## Before you start
+
+You'll need:
+
+- **Admin access to your Chargebee site**, so you can add a custom field, a webhook, and an API key.
+- **The ability to add code to your website**, or someone who can.
+- **Your Referly integration guide open.** In Referly, open your program, go to **Settings**, then **Integrations**, and pick the card that matches how you take payments: **Chargebee Drop-In**, **Chargebee Payment Links**, or **Chargebee API**. Your webhook address is shown there, already filled in with your program's details.
+
+{/* TODO screenshot: chargebee-guide-cards — upload it in the local Documentation Agent */}
+
+## Step 1: Install the tracking script on your site
+
+The tracking script recognises visitors who arrived from an affiliate link, records the click, and remembers who referred them until they subscribe.
+
+Copy the snippet from Step 1 of your Chargebee guide in Referly — it comes pre-filled with your program ID — and paste it inside the `head` section of your website, on every page.
+
+```html Tracking script
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+If you use Google Tag Manager, switch to the **Using Google Tag Manager** tab in the guide for that version instead.
+
+## Step 2: Create the custom field in Chargebee
+
+This is the field that holds the referral against each customer. Get the API name exactly right — Referly looks for that specific name and nothing else.
+
+<Steps>
+  <Step title="Open custom fields">
+    In your Chargebee dashboard, go to **Settings**, then **Configure Chargebee**, then **Custom Fields**.
+  </Step>
+  <Step title="Add a customer field">
+    Choose **Customer** as the object the field belongs to, and **Single line text** as its type.
+  </Step>
+  <Step title="Name it">
+    Set the **Label** to `pushlap_affiliate_id` and the **API Name** to `cf_pushlap_affiliate_id`. Chargebee usually adds the `cf_` prefix for you — check that the final API name matches exactly.
+  </Step>
+  <Step title="Save">
+    Save the field. It's now available on every customer in your site.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: chargebee-custom-field — upload it in the local Documentation Agent */}
+
+<Tip>
+  If you create customers through Chargebee's API rather than a hosted checkout, you can skip this field and put the referral in the customer's metadata instead, under the key `pushlap_affiliate_id`. Referly checks both places.
+</Tip>
+
+## Step 3: Send the referral into Chargebee
+
+Pick the tab that matches how your customers subscribe. In every case the snippet goes near the bottom of the page, just before the closing `body` tag, on the pages where checkout happens — and the tracking script from Step 1 has to be on the same page.
+
+<Tabs>
+  <Tab title="Drop-in checkout">
+    Use this if you open Chargebee's in-page checkout with Chargebee.js. It sets the custom field on the cart's customer before checkout opens.
+
+    ```html Chargebee drop-in
+    <script>
+      var setupCb = function () {
+        if (typeof Chargebee === "undefined") return;
+
+        var cbInstance = Chargebee.getInstance();
+        var cart = cbInstance.getCart();
+        if (window.affiliateId) {
+          cart.setCustomer({
+            cf_pushlap_affiliate_id: window.affiliateId,
+          });
+        }
+      };
+      window.addEventListener("affiliate_id_ready", function (event) {
+        "complete" === document.readyState ||
+        ("loading" !== document.readyState && !document.documentElement.doScroll)
+          ? setupCb()
+          : document.addEventListener("DOMContentLoaded", setupCb);
+      });
+    </script>
+    ```
+  </Tab>
+  <Tab title="Payment links">
+    Use this if you send people to Chargebee payment link pages. It adds the referral onto every Chargebee link on the page, so it travels with the customer into checkout.
+
+    ```html Chargebee payment links
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        setTimeout(function () {
+          const affiliateId = window.affiliateId;
+
+          $('a[href*="chargebee.com"]').each(function () {
+            const oldUrl = $(this).attr("href");
+            if (!oldUrl.includes("customer[cf_pushlap_affiliate_id]")) {
+              const separator = oldUrl.includes("?") ? "&" : "?";
+              const newUrl =
+                oldUrl +
+                separator +
+                "customer[cf_pushlap_affiliate_id]=" +
+                encodeURIComponent(affiliateId);
+              $(this).attr("href", newUrl);
+            }
+          });
+        }, 2000);
+      });
+    </script>
+    ```
+  </Tab>
+  <Tab title="Chargebee API">
+    Use this if you create customers yourself through Chargebee's API. Pass the referral in the customer's metadata when you create them — no custom field needed.
+
+    ```javascript Creating a customer
+    import { ChargeBee } from "chargebee-typescript";
+    var chargebee = new ChargeBee();
+
+    chargebee.configure({ site: "your-site", api_key: "your-api-key" });
+
+    chargebee.customer
+      .create({
+        first_name: "John",
+        last_name: "Doe",
+        email: "john@example.com",
+        meta_data: {
+          pushlap_affiliate_id: "THE_VALUE_FROM_window.affiliateId",
+        },
+      })
+      .request(function (error, result) {
+        if (error) {
+          console.log(error);
+        }
+      });
+    ```
+
+    The value comes from your front end, where the tracking script makes it available as `window.affiliateId`. Send it to your backend when the customer signs up, then pass it here.
+  </Tab>
+</Tabs>
+
+## Step 4: Add the Referly webhook in Chargebee
+
+This is how Chargebee tells Referly that a subscription started or an invoice was paid. Without it, nothing reaches Referly at all.
+
+<Steps>
+  <Step title="Open webhook settings">
+    In your Chargebee dashboard, go to **Settings**, then **Configure Chargebee**, then **API Keys and Webhooks**, and open the **Webhooks** tab. Select **Add Webhook**.
+  </Step>
+  <Step title="Name it">
+    Set the **Webhook Name** to `Referly Integration`, or anything else you'll recognise later.
+  </Step>
+  <Step title="Paste the webhook address">
+    Copy the webhook address from your Chargebee guide in Referly and paste it into the **Webhook URL** field. It already includes your program's details, so copy it rather than typing it out.
+  </Step>
+  <Step title="Set the API version">
+    Choose **Version 2**. Referly reads Chargebee's version 2 format.
+  </Step>
+  <Step title="Choose the events">
+    Rather than leaving **All Events** selected, pick these seven:
+
+    - Subscription Created
+    - Subscription Started
+    - Subscription Activated
+    - Subscription Cancelled
+    - Subscription Deleted
+    - Payment Succeeded
+    - Payment Refunded
+  </Step>
+  <Step title="Exclude card information">
+    Turn on **Exclude Card Information**. Referly has no use for card details, and there's no reason to send them anywhere they aren't needed.
+  </Step>
+  <Step title="Save">
+    Save the webhook. Chargebee allows up to five webhooks per site, so this sits alongside any you already have.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: chargebee-webhook-setup — upload it in the local Documentation Agent */}
+
+<Warning>
+  Test sites and live sites in Chargebee are entirely separate. A webhook added on your test site won't send anything from your live site — add it on both if you plan to test first, and remember each site has its own API keys too.
+</Warning>
+
+## Step 5: Connect your API key for plan-level detail
+
+This step is optional but strongly recommended. It lets Referly look up the plans on each invoice, which is what puts plan names on your sales and makes different commission rates per plan possible.
+
+### Create the key in Chargebee
+
+<Steps>
+  <Step title="Open API keys">
+    In your Chargebee dashboard, go to **Settings**, then **Configure Chargebee**, then **API Keys and Webhooks**, and open the **API Keys** tab. Select **Add API Key**.
+  </Step>
+  <Step title="Choose the key type">
+    Choose a **Read-Only Key**. Referly only reads your plans — it never changes anything in Chargebee — so there's no reason to hand over write access.
+  </Step>
+  <Step title="Copy the key">
+    Copy it as soon as it's created and keep it somewhere safe. Chargebee's [API key documentation](https://www.chargebee.com/docs/2.0/api_keys.html) covers key types in more detail.
+  </Step>
+  <Step title="Note your site name">
+    Your site name is the first part of your Chargebee address. If you sign in at `mysite.chargebee.com`, your site name is `mysite` — that part only, with no `.chargebee.com` on the end.
+  </Step>
+</Steps>
+
+### Enter them in Referly
+
+<Steps>
+  <Step title="Open the integrations dialog">
+    In Referly, open your program, go to **Settings**, then **Integrations**, select **Connect Integration** in the top right, and choose **Chargebee**.
+  </Step>
+  <Step title="Fill in both fields">
+    Paste your key into **API key** and your site name into **Site**.
+  </Step>
+  <Step title="Connect">
+    Select **Connect**. If it works, a green **Connected** badge appears with your site name.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: chargebee-connect-form — upload it in the local Documentation Agent */}
+
+<Note>
+  These fields lock once saved. To change the key or point at a different site, select **Disconnect** and connect again.
+</Note>
+
+## Step 6: Test the whole flow
+
+<Steps>
+  <Step title="Use your Chargebee test site">
+    Add the custom field, the webhook, and the API key on your test site, and point your test page at your test site's checkout.
+  </Step>
+  <Step title="Visit your site through an affiliate link">
+    Use a real affiliate's referral link from your **Affiliates** page, in a private window.
+  </Step>
+  <Step title="Check the click landed">
+    In Referly, open that affiliate's record and confirm the click count went up.
+  </Step>
+  <Step title="Subscribe">
+    Go through your checkout and subscribe with one of Chargebee's test cards.
+  </Step>
+  <Step title="Check the customer in Chargebee">
+    Open the new customer in your Chargebee dashboard and look at the `pushlap_affiliate_id` field. If it's empty, the Step 3 snippet didn't run — that's the single most common failure, and everything downstream depends on it.
+  </Step>
+  <Step title="Check the result in Referly">
+    Open **Customers** to find the buyer attached to the affiliate, **Sales** to confirm the invoice amount and the plan, and **Rewards** to see the commission.
+  </Step>
+  <Step title="Switch to live">
+    Repeat Steps 2, 4, and 5 on your live site, point your checkout back at live, and delete your test customers and sales from Referly so they don't skew your reporting.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: chargebee-customer-custom-field — upload it in the local Documentation Agent */}
+
+{/* TODO screenshot: referly-chargebee-sale — upload it in the local Documentation Agent */}
+
+## What happens automatically once you're set up
+
+<AccordionGroup>
+  <Accordion title="A subscription is created, started, or activated">
+    The customer becomes a referred customer in Referly, attached to the affiliate stored on their Chargebee record, with their plan name. A trial subscription lands here too, before any money has moved.
+  </Accordion>
+  <Accordion title="An invoice is paid">
+    The invoice becomes a sale and the commission is worked out from the affiliate's plan. Tax comes across, and the plans on the invoice come across as line items if you connected your API key.
+  </Accordion>
+  <Accordion title="A subscription renews">
+    Every renewal invoice raises another sale, credited to the same affiliate, because the referral is stored on the customer rather than on one checkout. This is what makes [recurring commissions](/help-center/getting-started/commissions/overview) work.
+  </Accordion>
+  <Accordion title="A payment is refunded">
+    See [Refunds](#refunds) below.
+  </Accordion>
+</AccordionGroup>
+
+## Refunds
+
+When a payment is refunded in Chargebee, Referly finds the matching sale and marks it as refunded, so no commission is owed on money you gave back.
+
+This only applies while the commission is still on hold. Once the affiliate has been cleared for payout on that sale, it's left alone — adjust it by hand if you want it reversed. See [Refunds](/help-center/manage/rewards/refunds) and [Reward holds](/help-center/manage/rewards/holds).
+
+## Disconnecting
+
+There are two parts, and they're independent:
+
+- **To stop tracking**, delete the Referly webhook in your Chargebee dashboard under **Settings**, then **Configure Chargebee**, then **API Keys and Webhooks**. Nothing reaches Referly after that.
+- **To remove your API key**, open **Connect Integration** in Referly, select **Chargebee**, and choose **Disconnect**. You can also revoke the key on Chargebee's side.
+
+Removing the API key alone doesn't stop tracking — sales still arrive through the webhook, they just lose their plan-level detail.
+
+Nothing already tracked is deleted. Anything that happens while the webhook is gone is not recorded and won't be picked up later.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Nothing is appearing in Referly">
+    Work backwards. Open a recent customer in Chargebee and check whether the `pushlap_affiliate_id` field has a value. If it's empty, the problem is the Step 3 snippet. If it has a value, check the webhook in Chargebee — that it exists, uses **Version 2**, and has the seven events selected.
+  </Accordion>
+  <Accordion title="The custom field is always empty">
+    Three things to check: the API name is exactly `cf_pushlap_affiliate_id`, the tracking script from Step 1 is on the same page as the checkout snippet, and the visitor actually arrived through an affiliate link. Test in a private window with a referral link.
+  </Accordion>
+  <Accordion title="Customers appear but sales don't">
+    The subscription events are getting through and the payment event isn't. Check that **Payment Succeeded** is selected on your webhook in Chargebee.
+  </Accordion>
+  <Accordion title="Sales appear with no plan name or line items">
+    That's the API key connection from [Step 5](#step-5-connect-your-api-key-for-plan-level-detail) missing or wrong. Check that the site name is the short name only — `mysite`, not `mysite.chargebee.com` — and that the key belongs to the same site the sales are coming from.
+  </Accordion>
+  <Accordion title="It worked on my test site but not live">
+    Chargebee keeps test and live completely separate. The custom field, the webhook, and the API key all have to be created again on your live site.
+  </Accordion>
+  <Accordion title="Renewals aren't creating commissions">
+    Open the customer in Chargebee and confirm the referral is still stored against them. If someone cleared the field or the customer was recreated, later invoices have nothing to match on. You can set the field on the customer by hand to fix it going forward.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Commission plans overview" icon="money-bill" href="/help-center/getting-started/commissions/overview" arrow>
+    Set what affiliates earn on first payments and renewals.
+  </Card>
+  <Card title="Product-based commissions" icon="tags" href="/help-center/getting-started/commissions/product-based" arrow>
+    Pay different rates on different Chargebee plans.
+  </Card>
+  <Card title="Universal integration" icon="puzzle-piece" href="/help-center/integrations/universal" arrow>
+    Track sign-ups and leads that never reach Chargebee.
+  </Card>
+  <Card title="Refunds" icon="rotate-left" href="/help-center/manage/rewards/refunds" arrow>
+    How refunded sales affect what your affiliates are owed.
+  </Card>
+</Columns>

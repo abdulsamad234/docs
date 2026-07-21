@@ -1,6 +1,145 @@
 ---
 title: "Postback URL"
-description: "Forward conversions to your own systems."
+description: "Send Referly referral and sale events straight into your own tracker. Set up your affiliate postback URL, pass your click ID with rsubID, and use macros to send commission, sale and referral data."
+keywords: ["affiliate postback url", "postback tracking affiliate", "s2s postback", "server to server postback", "rsubID click id", "wecantrack referly", "affiliate conversion tracking", "postback macros", "voluum affiliate postback", "media buyer affiliate tracking"]
 ---
+If you run paid traffic, you probably track clicks and conversions in your own platform — WeCanTrack, Voluum, RedTrack or something similar. A postback URL closes that loop: when one of your referrals or sales lands in Referly, Referly calls your tracker and tells it what happened, so your own reports show the conversion next to the ad spend that produced it.
 
-{/* TODO: Write this article. */}
+This is optional. If you're not running a tracker, you can skip this page entirely — your earnings are already visible in your portal either way.
+
+## Find the page
+
+In the affiliate portal, go to **Settings**, open the **Advanced** tab, and select **Postback URL**.
+
+{/* TODO screenshot: postback-page — upload it in the local Documentation Agent */}
+
+The page is per program. A postback URL you save with one brand doesn't carry over to another — set it up separately in each program you want events from.
+
+## Save your tracking URL
+
+Generate a postback URL in your tracking platform, paste it into the **Postback URL template** box, and select **Save Postback URL**. You'll see **Postback URL saved** when it's stored.
+
+{/* TODO screenshot: save-postback — upload it in the local Documentation Agent */}
+
+Two rules for the URL itself:
+
+- It has to be a full address starting with `http` or `https`. A partial path won't save.
+- Anywhere you want Referly to fill in a real value, put a macro in curly braces. Referly swaps each one for the actual value just before it makes the call, including inside query-string values.
+
+A typical URL looks like this:
+
+```text
+https://api.wecantrack.com/postback/v1/your-token?commission_amount={commission_amount}&advertiser_name={advertiser_name}&sub_id_1={extClickid}
+```
+
+To turn postbacks off again, clear the box and save.
+
+## Pass your own click ID through
+
+This is the part that makes attribution work, and the part people most often miss.
+
+Your tracker needs to know *which* of your clicks turned into this conversion. Referly can hand that back to you, but only if you sent it in the first place.
+
+Add `rsubID` to your referral link and put your tracker's click ID placeholder in it. If your placeholder is `wct_click_id`, your link looks like this:
+
+```text
+https://brandsite.com/?ref=your-affiliate-code&rsubID={wct_click_id}
+```
+
+Referly stores whatever arrives in `rsubID` against that click. Later, when the postback fires, `{extClickid}` in your URL resolves back to that same value — and your tracker matches the conversion to the right click.
+
+<Warning>
+The parameter has to be spelled `rsubID` exactly, including the capital letters. Any other name is ignored, and `{extClickid}` will come back empty, which means every conversion lands in your tracker unattributed.
+</Warning>
+
+## Know which macros you can use
+
+The page lists every available macro in an **Available macros** panel, each with a short description.
+
+{/* TODO screenshot: macro-list — upload it in the local Documentation Agent */}
+
+These are the ones you'll reach for most:
+
+| Macro | What it becomes |
+| --- | --- |
+| `{event}` | The event name, either `referral.created` or `sale.created` |
+| `{extClickid}` | Your own click ID, captured from `rsubID` |
+| `{clickid}` | Referly's own click ID for the referral or sale |
+| `{commission_amount}` | What you earned on this event |
+| `{sale_amount}` | The gross sale amount, before tax and shipping |
+| `{commission_base}` | The amount your commission was actually calculated on |
+| `{approval_status}` | Whether the commission was accepted, put on hold, or declined |
+| `{currency}` | The currency for the event |
+| `{advertiser_name}` | The program name |
+| `{referral_id}` | The referral this event belongs to |
+| `{sale_id}` | The sale, on sale events |
+| `{product_names}` | The products bought, comma separated |
+| `{plan_name}` | The plan or subscription the customer signed up to |
+| `{created_at}` | When the event happened |
+
+There are more on the page — external IDs, tax and shipping amounts, commission rate and type, reward type, and separate timestamps for the referral and the sale. Use the ones your tracker actually needs and leave the rest out; a shorter URL is easier to debug.
+
+A macro with no value simply resolves to nothing rather than breaking the call.
+
+## Understand when it fires
+
+The same URL is called for two events, and it's worth knowing the difference:
+
+<Steps>
+  <Step title="referral.created">
+    Someone signs up through your link. There's no money attached yet, so `{commission_amount}` comes back as `0`. Handle this in your tracker as a lead, not a sale — otherwise you'll be counting zero-value conversions as revenue.
+  </Step>
+  <Step title="sale.created">
+    A referral turns into an actual sale. This is the one carrying real commission, sale amount and product data.
+  </Step>
+</Steps>
+
+Because both events hit the same URL, use `{event}` to tell them apart on your end.
+
+Referly calls your URL as a normal web request and follows redirects. It gives up after ten seconds, so if your endpoint is slow to answer you may lose events — point the postback at your tracker's own endpoint rather than something that does heavy work before responding.
+
+## Set it up with WeCanTrack
+
+The page has a built-in guide for WeCanTrack specifically. Select the amber **Follow these instructions to effectively set up postback on WecanTrack** button to open it.
+
+{/* TODO screenshot: wecantrack-guide — upload it in the local Documentation Agent */}
+
+It walks through connecting a custom integration under **Affiliate Networks**, creating an account and generating a postback URL, connecting your website, and — the important step — making sure your click ID placeholder is carried in a parameter named `rsubID`. You then bring the generated URL back to this page and save it.
+
+The same shape works for any other tracker. Generate the postback URL there, make sure your click ID reaches Referly as `rsubID`, and map their parameters to Referly's macros.
+
+## Conversions aren't reaching your tracker
+
+Work through these in order.
+
+<AccordionGroup>
+  <Accordion title="Your click ID isn't coming back">
+    If conversions arrive but land unattributed, the click ID never got stored. Load your own referral link in a browser and check the address really carries `rsubID` with a value in it — trackers sometimes strip or rename parameters when they rewrite links. Then confirm your postback URL uses `{extClickid}` and not some other macro.
+  </Accordion>
+  <Accordion title="Nothing arrives at all">
+    Take the URL you saved, replace the macros with test values by hand, and open it in a browser. If your tracker doesn't register that, the problem is at their end or in the URL itself, not in Referly. Also check you saved it in the right program — the setting is per program.
+  </Accordion>
+  <Accordion title="You're seeing conversions with no value">
+    Those are almost certainly signup events, where `{commission_amount}` is `0` by design. Split them out using `{event}`.
+  </Accordion>
+  <Accordion title="Numbers don't match your portal">
+    Postbacks fire when an event is created, which is before the brand has approved the commission. A sale that's later declined or refunded still generated a postback. Use `{approval_status}` if you need to reflect that in your own reporting.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Referral links" icon="link" href="/help-center/affiliates/referral-links" arrow>
+    The links you'll be adding `rsubID` to.
+  </Card>
+  <Card title="My programs" icon="grid-2" href="/help-center/affiliates/my-programs" arrow>
+    Set this up separately per program.
+  </Card>
+  <Card title="Getting paid" icon="wallet" href="/help-center/affiliates/payouts" arrow>
+    What happens to a commission after the postback fires.
+  </Card>
+  <Card title="Postback URLs for developers" icon="code" href="/developer-documentation/integrations/postback-url" arrow>
+    The technical reference.
+  </Card>
+</Columns>

@@ -1,6 +1,152 @@
 ---
 title: "Webhooks"
-description: "Get notified when things change in your program."
+description: "Set up Referly webhooks from Settings, Advanced, Webhooks: create an endpoint, choose which affiliate, referral, sale, coupon, and promo code events to receive, protect your signing secret, send test events, and read delivery logs and retries."
+keywords: ["Referly webhooks", "affiliate program webhooks", "webhook endpoint", "signing secret", "webhook events", "sale.created webhook", "affiliate.created webhook", "webhook logs", "webhook retries", "test webhook", "real-time affiliate notifications"]
 ---
+A webhook tells your own system the moment something happens in your affiliate program — a new affiliate signs up, a sale gets recorded, a coupon changes. Instead of you checking Referly for news, Referly sends the news to a web address you choose, within seconds of it happening.
 
-{/* TODO: Write this article. */}
+To set them up, open **Settings** from the left sidebar, go to **Advanced**, then select **Webhooks**. The screen has three tabs: **Endpoints** (the addresses you send events to), **Event Catalog** (what each event contains), and **Logs** (everything that's been sent).
+
+{/* TODO screenshot: webhooks-overview — upload it in the local Documentation Agent */}
+
+<Info>
+  Creating endpoints is part of the **Business** and **Agency** plans, and it isn't included during a free trial. On other plans the **New Endpoint** button is locked and selecting it opens an upgrade prompt. See [plans and features](/help-center/billing/plans-and-features).
+</Info>
+
+<Note>
+  Setting this up needs someone who can add a web address to your system to receive the events — usually a developer. If nobody on your team writes code, [Zapier](/help-center/integrations/zapier) or [Make](/help-center/integrations/make) will get you most of the same results without any.
+</Note>
+
+## What you can be notified about
+
+There are fifteen events in five families, and each family covers something being created, changed, or removed:
+
+| Family | Events | Sent when |
+| --- | --- | --- |
+| Affiliate | `affiliate.created`, `affiliate.updated`, `affiliate.deleted` | Someone joins your program, their details or status change, or they're removed |
+| Referral | `referral.created`, `referral.updated`, `referral.deleted` | A referred customer is recorded, updated, or removed |
+| Sale | `sale.created`, `sale.updated`, `sale.deleted` | A sale is attributed to an affiliate, changed, or reversed |
+| Coupon | `coupon.created`, `coupon.updated`, `coupon.deleted` | A coupon is added, edited, or removed |
+| Promo code | `promocode.created`, `promocode.updated`, `promocode.deleted` | An affiliate's promo code is issued, edited, or removed |
+
+Pick only the events you'll actually act on. Every event you tick is another message your system has to handle.
+
+## Add an endpoint
+
+Select **New Endpoint** at the top right of the **Endpoints** tab. If you haven't created one yet, there's a **Create Endpoint** button in the middle of the screen instead.
+
+{/* TODO screenshot: create-endpoint-dialog — upload it in the local Documentation Agent */}
+
+<Steps>
+  <Step title="Enter the URL">
+    In **URL**, paste the web address that should receive the events, such as `https://example.com/webhook`. It has to be reachable from the internet — an address that only works on your own machine won't receive anything.
+  </Step>
+  <Step title="Name it">
+    Use **Description** to say what this endpoint is for, like "Production webhook endpoint". This is the name you'll see in the list, so make it obvious which system it points at.
+  </Step>
+  <Step title="Choose the events">
+    Under **Events**, tick every event this address should receive. They're grouped by family, so you can scroll to the group you want. You have to pick at least one.
+  </Step>
+  <Step title="Create it">
+    Select **Create**. The endpoint appears in the list right away, marked **Active**, and starts receiving events immediately.
+  </Step>
+</Steps>
+
+Each endpoint card shows its name, the address, an **Active** or **Disabled** badge, and the date you created it.
+
+## Browse the event catalog
+
+The **Event Catalog** tab lists every event type with a description and an example of the information it carries. Open one before you build anything — it shows your developer exactly which fields to expect, so they don't have to guess.
+
+{/* TODO screenshot: event-catalog — upload it in the local Documentation Agent */}
+
+## Open an endpoint's details
+
+Select the **...** button on an endpoint card and choose **View Details**. The detail screen shows:
+
+- **Endpoint URL** — the address events are sent to, with a button to copy it.
+- **Signing Secret** — hidden behind dots until you select the eye icon. There are buttons to copy it and to replace it with a new one.
+- **Registered Events** — the events this endpoint is subscribed to, as small tags.
+- An **Active** or **Disabled** badge at the top right, next to a **...** menu with **Disable**, **Edit**, and **Delete**.
+
+{/* TODO screenshot: endpoint-details — upload it in the local Documentation Agent */}
+
+Use **Edit** to change the address, the name, or which events it receives. Changes apply to everything sent from then on.
+
+## Protect your signing secret
+
+Every event Referly sends is stamped with your endpoint's signing secret. Your system uses that secret to confirm the event genuinely came from Referly, and not from someone pretending to be us. Without that check, anyone who learns your address could send you fake sales.
+
+Give the secret to your developer through a password manager, never over email or chat. The technical steps are in [verifying signatures](/developer-documentation/webhooks/verifying-signatures).
+
+<Warning>
+  Selecting the refresh icon next to the secret replaces it with a new one. Anything still checking against the old secret will start rejecting events, so update your system at the same time.
+</Warning>
+
+## Send a test event
+
+Before you rely on an endpoint, prove it works. On the endpoint's detail screen, open the **Testing** tab, choose an event from **Event Type**, and select **Send Test Event**.
+
+Referly sends a realistic example of that event to your address. The example data is shown on screen underneath, so you can compare it against what your system received.
+
+{/* TODO screenshot: send-test-event — upload it in the local Documentation Agent */}
+
+<Check>
+  When the "Test webhook sent successfully" message appears, the event has left Referly. Check the **Logs** tab to see whether your server accepted it.
+</Check>
+
+## Check what's been delivered
+
+The **Logs** tab lists everything sent for this program, newest first, with the event type, a message reference, the time, and a **Succeeded** or **Failed** status. Use the **Filter** dropdown to narrow it to **Succeeded** or **Failed** only.
+
+{/* TODO screenshot: webhook-logs — upload it in the local Documentation Agent */}
+
+Select a row to open the full record. The **Message** tab shows the information that was sent, and the **Attempts** tab lists every delivery try with its status, the address, the time, and the response your server gave back. That response is the fastest way to see why something failed.
+
+An endpoint's own detail screen also has a **Recent Activity** list showing its last few deliveries, so you can check one endpoint without wading through everything.
+
+## Understand retries and resends
+
+If your server doesn't accept an event, the delivery is marked **Failed** and Referly tries again automatically over the following hours. A short outage on your side usually sorts itself out with no action from you.
+
+When automatic tries are exhausted, or you've fixed a problem and want the event through now, select **Resend** on the log row or on an individual attempt. Referly sends the same event again.
+
+<Note>
+  Because an event can arrive more than once, your system should be able to receive the same event twice without recording the sale twice. Every message carries a reference your developer can use to spot repeats — see [retries and logs](/developer-documentation/webhooks/retries-and-logs).
+</Note>
+
+## Disable or delete an endpoint
+
+Select the **...** button on an endpoint card, or on its detail screen, and choose:
+
+- **Disable** — stops events going to that address while keeping its settings, secret, and history. Choose **Enable** on the same menu to turn it back on. This is the right choice while your server is down or being rebuilt.
+- **Delete** — removes the endpoint entirely. You'll be asked to confirm.
+
+<Warning>
+  Deleting an endpoint can't be undone. Its signing secret and delivery history go with it, so if you recreate the same address later you'll get a new secret and have to update your system.
+</Warning>
+
+## Webhooks, the API, and Zapier
+
+These three overlap, so it helps to know which one you want:
+
+- **Webhooks** push news to you the moment it happens. Best when your system needs to react instantly — provisioning an account, updating a dashboard, paying a bonus.
+- **The [API](/help-center/settings/advanced/api-keys)** works the other way round: your system asks Referly for data, or sends data in, whenever it wants. Best for reports, imports, and recording sales.
+- **[Zapier](/help-center/integrations/zapier) and [Make](/help-center/integrations/make)** are webhooks with the code already written. Best when you want events landing in Slack, a spreadsheet, or your CRM without building anything.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="API keys" icon="key" href="/help-center/settings/advanced/api-keys" arrow>
+    Let other tools read and write your program data.
+  </Card>
+  <Card title="Webhooks for developers" icon="code" href="/developer-documentation/webhooks/introduction" arrow>
+    Event structure, signature checks, and retry behaviour.
+  </Card>
+  <Card title="Zapier" icon="bolt" href="/help-center/integrations/zapier" arrow>
+    Connect Referly to thousands of apps without code.
+  </Card>
+  <Card title="Plans and features" icon="tags" href="/help-center/billing/plans-and-features" arrow>
+    Check whether your plan includes webhooks.
+  </Card>
+</Columns>

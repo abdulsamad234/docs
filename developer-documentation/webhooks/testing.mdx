@@ -1,6 +1,281 @@
 ---
 title: "Test and replay"
-description: "Send test events and replay past ones."
+description: "Test Referly webhooks with the Testing tab, develop locally through an ngrok or Cloudflare tunnel, replay real failed deliveries, and sign requests locally for automated handler tests."
+keywords: ["test webhook", "send test event", "webhook testing", "replay webhook", "resend webhook", "ngrok webhook", "Cloudflare tunnel webhook", "local webhook development", "webhook unit test", "svix sign", "webhook go live checklist"]
 ---
+You do not want to discover a broken handler when a real sale arrives. Referly can send a signed test
+delivery to any endpoint on demand, and can resend real deliveries so you can iterate against a
+genuine payload. This page covers both, plus the local development setup and what to check before you
+go live.
 
-{/* TODO: Write this article. */}
+## Send a test event
+
+Open your campaign, go to **Settings**, then **Advanced**, then **Webhooks**. Open the endpoint from
+its **...** menu with **View Details**, and select the **Testing** tab.
+
+{/* TODO screenshot: webhook-testing-tab — upload it in the local Documentation Agent */}
+
+<Steps>
+  <Step title="Pick an event">
+    Choose from the **Event Type** dropdown. It lists all fifteen event types.
+  </Step>
+  <Step title="Send it">
+    Select **Send Test Event**. A "Test webhook sent successfully" toast confirms the message left
+    Referly.
+  </Step>
+  <Step title="Check it landed">
+    The toast only means Referly sent it. Whether your server accepted it is on the **Logs** tab, or
+    in **Recent Activity** on this endpoint's **Overview** tab.
+  </Step>
+</Steps>
+
+A test event is a **real, signed delivery**. It carries the same `svix-id`, `svix-timestamp`, and
+`svix-signature` headers as production traffic, it is retried on failure, and it appears in the log
+alongside everything else. If your signature verification passes on a test event, it will pass on a
+real one.
+
+Test events go **only to the endpoint you sent them from**. Your other endpoints on the same program
+receive nothing, so you can test a new endpoint without waking up your production consumer.
+
+## What the test actually sends
+
+Two things are worth knowing before you rely on a test payload.
+
+### The panel on screen is the schema, not the payload
+
+The JSON shown under **Event Schema** after you pick an event type is the registered *schema* for
+that event — the shape and types of its fields. It is not the body that gets delivered.
+
+To see the payload your server actually received, open the **Logs** tab, select the message, and read
+**Message Content** on the **Message** tab. That is the byte-for-byte record of what was sent. See
+[Retries and logs](/developer-documentation/webhooks/retries-and-logs).
+
+### Coupon and promo code tests send an empty body
+
+Referly has predefined sample payloads for the `referral.*`, `affiliate.*`, and `sale.*` event types.
+Those tests deliver a realistic, fully populated object.
+
+<Warning>
+  The `coupon.*` and `promocode.*` event types have no predefined sample. Sending a test for one of
+  those delivers an **empty body** — correct headers, valid signature, `{}` where the object should
+  be. Do not use it to check your field handling.
+</Warning>
+
+To exercise a coupon or promo code handler, trigger the event for real: create or edit a coupon in
+the dashboard with a scratch endpoint subscribed. That also gives you a genuine payload in the log to
+resend later.
+
+Even for the families that do have samples, the sample is illustrative. Enum values in samples appear
+lowercase where live payloads send uppercase — see
+[Payload structure](/developer-documentation/webhooks/payload-structure). Validate against a real
+event before you go live.
+
+## Develop against a tunnel
+
+Endpoints must be reachable from the public internet, so `http://localhost:3000/webhooks` receives
+nothing. Put a tunnel in front of your local server and register the tunnel's hostname.
+
+<CodeGroup>
+
+```bash ngrok
+ngrok http 3000
+# Forwarding  https://a1b2-203-0-113-42.ngrok-free.app -> http://localhost:3000
+```
+
+```bash Cloudflare Tunnel
+cloudflared tunnel --url http://localhost:3000
+# https://random-words-here.trycloudflare.com
+```
+
+</CodeGroup>
+
+Register the HTTPS hostname plus your route as a new endpoint — for example
+`https://a1b2-203-0-113-42.ngrok-free.app/webhooks/referly` — and copy that endpoint's own signing
+secret into your local environment. It is a different secret from production.
+
+<Note>
+  Free tunnel hostnames change every time you restart. When yours changes, **Edit** the endpoint and
+  update the URL rather than creating another one, so your local secret stays valid and your delivery
+  history stays in one place.
+</Note>
+
+Delete the tunnel endpoint when you are done. A stale endpoint pointing at a dead hostname fails
+every delivery and fills your log with noise.
+
+## Use a separate program for testing
+
+Referly has one live environment — there is no sandbox, and API keys are not split into test and live
+modes. Endpoints are scoped to a program, so the clean separation is a **second program**.
+
+Create a test campaign, point your staging site at its program ID, and register your tunnel endpoint
+there. Test affiliates, referrals, and sales then live entirely in that program, and cannot reach
+your production endpoints or distort your real reporting. Sales you create while testing can be
+deleted afterwards.
+
+While you are building, subscribe your scratch endpoint to **all fifteen event types**. Seeing
+everything is what teaches you which events your integration actually needs, and it costs nothing on
+a program with no real traffic. Narrow the subscription before go-live — see
+[Event types](/developer-documentation/webhooks/event-types).
+
+## Replay real events
+
+A synthetic sample is never quite the real thing. Once a genuine event exists in your log, that is
+the best test fixture you have.
+
+**Resend** appears on a row in the **Logs** list and on each individual attempt in the **Attempts**
+tab. Both redeliver the same message, with the same `svix-id` and the same stored payload.
+
+This is the tightest loop for fixing a broken handler:
+
+<Steps>
+  <Step title="Find the failed delivery">
+    Filter the **Logs** tab to **Failed** and open the message.
+  </Step>
+  <Step title="Read the response">
+    Expand the attempt to see the response body your server returned — usually the error itself.
+  </Step>
+  <Step title="Fix and deploy">
+    Patch the handler and ship it.
+  </Step>
+  <Step title="Resend">
+    Select **Resend**. The original payload is delivered again, against your fixed code.
+  </Step>
+</Steps>
+
+Because a resend reuses the original `svix-id`, it also doubles as an idempotency test. If your
+handler is correct, the second delivery of an already-processed message is a no-op that returns
+`200`.
+
+## Verify your handler end to end
+
+Before you call an integration finished, confirm all six behaviours. Each maps to a real failure mode.
+
+| Check | How to test | Expected |
+| --- | --- | --- |
+| Signature verification passes | Send a test event from the **Testing** tab | `200` in the log |
+| A forged request is rejected | `curl` your endpoint with a body and no `svix-*` headers | `400`, nothing processed |
+| The handler acknowledges quickly | Watch the attempt timing in the log | Well inside the timeout, work done after responding |
+| A duplicate is a no-op | **Resend** a message you already processed | `200`, no second record written |
+| Unknown event types are ignored | Send an event type you do not handle | `200`, no crash |
+| Real failures return non-`2xx` | Force an error in your handler | Delivery marked **Failed** and retried |
+
+That fifth row matters more than it looks. A handler with a `switch` and no `default` throws on the
+first event type you did not anticipate — including a new one Referly adds later. Ignore what you do
+not recognise and return `200`.
+
+The sixth is its mirror image: swallowing errors and returning `200` anyway means a failed delivery
+is never retried and the event is lost silently. Let genuine failures fail.
+
+## Test without the dashboard
+
+Your test suite should not depend on someone selecting **Send Test Event**. The `svix` library can
+sign a request locally, so you can build a valid delivery in a unit test.
+
+<CodeGroup>
+
+```js JavaScript
+import crypto from "node:crypto";
+import { Webhook } from "svix";
+
+const TEST_SECRET = "whsec_" + crypto.randomBytes(24).toString("base64");
+
+export function signedWebhook(body) {
+  const payload = JSON.stringify(body);
+  const msgId = `msg_test_${crypto.randomUUID()}`;
+  const timestamp = new Date();
+
+  const signature = new Webhook(TEST_SECRET).sign(msgId, timestamp, payload);
+
+  return {
+    payload,
+    headers: {
+      "svix-id": msgId,
+      "svix-timestamp": String(Math.floor(timestamp.getTime() / 1000)),
+      "svix-signature": signature,
+    },
+  };
+}
+
+// In a test:
+const { payload, headers } = signedWebhook({
+  event: "sale.created",
+  body: { id: 8241, affiliateId: "aff_1", totalEarned: 199.99 },
+});
+
+const res = await fetch("http://localhost:3000/webhooks/referly", {
+  method: "POST",
+  headers: { ...headers, "content-type": "application/json" },
+  body: payload,
+});
+```
+
+```python Python
+import os, uuid, json
+from datetime import datetime, timezone
+from svix.webhooks import Webhook
+
+TEST_SECRET = os.environ["TEST_WEBHOOK_SECRET"]
+
+def signed_webhook(body: dict):
+    payload = json.dumps(body)
+    msg_id = f"msg_test_{uuid.uuid4()}"
+    timestamp = datetime.now(tz=timezone.utc)
+
+    signature = Webhook(TEST_SECRET).sign(msg_id, timestamp, payload)
+
+    return payload, {
+        "svix-id": msg_id,
+        "svix-timestamp": str(int(timestamp.timestamp())),
+        "svix-signature": signature,
+    }
+```
+
+</CodeGroup>
+
+Point your handler at `TEST_SECRET` in the test environment and you can cover the whole matrix
+offline — valid signature, tampered body, wrong secret, stale timestamp, duplicate `svix-id`, unknown
+event type — without a network call.
+
+<Tip>
+  Copy a real payload out of **Message Content** in the log and check it into your repo as a fixture.
+  Signing it locally gives you a test that is both realistic and fast.
+</Tip>
+
+## Go live
+
+When you move from the scratch endpoint to the real one:
+
+- **Create the production endpoint** against your production URL, on your production program. Do not
+  repoint the test endpoint — keep the two separate so you can keep testing.
+- **Narrow the subscription** to the events you actually handle, instead of the everything list you
+  used while developing.
+- **Store the production signing secret** in your production secret manager. It is different from the
+  test endpoint's secret.
+- **Confirm a real event lands.** Trigger a genuine action — create an affiliate, record a test sale
+  — and check the log shows **Succeeded**.
+- **Delete or disable the tunnel endpoint** so it stops failing.
+- **Set up monitoring** on your side. Nothing alerts you when deliveries start failing; see
+  [Retries and logs](/developer-documentation/webhooks/retries-and-logs).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Manage endpoints" icon="link" href="/developer-documentation/webhooks/managing-endpoints">
+    Create the scratch and production endpoints.
+  </Card>
+  <Card title="Verify signatures" icon="shield-check" href="/developer-documentation/webhooks/verifying-signatures">
+    What a test event proves when it passes.
+  </Card>
+  <Card title="Retries and logs" icon="clock-rotate-left" href="/developer-documentation/webhooks/retries-and-logs">
+    Find a failed delivery and resend it.
+  </Card>
+  <Card title="Event types" icon="list" href="/developer-documentation/webhooks/event-types">
+    Narrow your subscription before go-live.
+  </Card>
+  <Card title="Payload structure" icon="brackets-curly" href="/developer-documentation/webhooks/payload-structure">
+    What a real payload contains, versus a sample.
+  </Card>
+  <Card title="Webhooks introduction" icon="webhook" href="/developer-documentation/webhooks/introduction">
+    How deliveries work end to end.
+  </Card>
+</Columns>

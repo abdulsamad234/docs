@@ -1,6 +1,344 @@
 ---
 title: "Wise"
-description: "Pay affiliates through Wise."
+description: "Connect Wise to Referly to pay affiliate commissions in multiple currencies. Step-by-step setup: Wise Business account, API key, balance top-up, connecting, paying a batch, fees, and troubleshooting."
+keywords: ["Wise integration", "Wise payouts", "pay affiliates with Wise", "Wise API key", "Wise Business account", "affiliate commission payouts", "Wise transfer fees", "multi-currency affiliate payouts", "Referly Wise setup", "Wise batch payment"]
 ---
+Wise is a money-transfer service built for sending money across borders. Connecting it to Referly lets you pay affiliate commissions in a lot of currencies from one Wise balance, without typing a single transfer by hand.
 
-{/* TODO: Write this article. */}
+This guide walks through the whole thing end to end: opening the right kind of Wise account, getting the key Referly needs, connecting it, what your affiliates have to do on their side, and exactly what happens when you pay a batch. Some of these steps happen on Wise's site rather than in Referly — they're included, because the setup doesn't work without them.
+
+## What the Wise integration can and can't do
+
+It helps to be clear about this up front, because Wise splits the work between Referly and your Wise account.
+
+**What Referly does for you:**
+
+- Builds the payout batch from approved commissions, so you never assemble a list of who gets what.
+- Creates one Wise transfer per affiliate, in the currency each affiliate asked to be paid in.
+- Shows you the Wise fee and the exchange rate for every transfer *before* you commit to anything.
+- Keeps the payout statuses in your dashboard in step with Wise, so a payout flips to Paid or Failed on its own once Wise processes it.
+- Emails you when a payout fails, and records the reason Wise gave.
+
+**What Referly can't do:**
+
+- **It can't put money into your Wise balance.** You top up Wise yourself, in advance. If the balance is short when you go to pay, the transfers won't go through.
+- **It can't approve the payment for you.** Referly creates the transfers; you sign in to Wise to approve and fund them. This is a Wise security rule, not a Referly limitation — Wise only supports funding transfers over an integration for accounts based in the US, Canada, Australia, New Zealand, Singapore, and Malaysia. Everywhere else, approving in Wise is the only way.
+- **It can't pay an affiliate who hasn't given you their details.** An affiliate with no payout email (or no bank details, if they chose the local bank option) is skipped.
+- **It can't run alongside manual bank transfer.** Turning Wise on switches the **Manual Bank Account** method off, because Wise already sends money to bank accounts for you.
+
+<Note>
+  Wise is one of several ways to pay. If you'd rather not handle transfers at all, [Referly Payouts](/help-center/integrations/referly-payouts) pays your affiliates on your behalf. See [Manage payouts yourself or let Referly handle them](/help-center/manage/payouts/self-managed-vs-referly) to compare the two.
+</Note>
+
+## Before you start
+
+You'll need all of these before the connection will work:
+
+<Steps>
+  <Step title="A Wise Business account">
+    Wise only issues the kind of key Referly needs on business accounts. A personal Wise account won't get you there.
+  </Step>
+  <Step title="A verified account">
+    Wise has to have finished checking your business. Until verification is done, you can't create a key and you can't send money.
+  </Step>
+  <Step title="2-step verification turned on">
+    Wise blocks key creation until your account is protected with 2-step verification.
+  </Step>
+  <Step title="Money in your Wise balance">
+    Enough, in the currency your program pays in, to cover the batch plus Wise's fees.
+  </Step>
+  <Step title="Admin access to your Referly program">
+    You need to be able to open Program Settings.
+  </Step>
+</Steps>
+
+## Step 1: Open or upgrade to a Wise Business account
+
+Do this on Wise's site, not in Referly.
+
+<Steps>
+  <Step title="Go to Wise and choose the business option">
+    Head to [wise.com](https://wise.com) and sign up. When Wise asks what kind of account you want, choose the business account. If you already have a personal Wise account, sign in and add a business profile to it — you don't need a second login.
+  </Step>
+  <Step title="Enter your business details">
+    Wise asks for your registered business name, address, company registration number, and what your business does. Use the details exactly as they appear on your registration documents, or verification will stall later.
+  </Step>
+  <Step title="Pay the one-off setup fee if Wise asks for one">
+    Wise charges a small one-time fee to open a business account in some countries. The amount depends on where your business is registered — Wise shows it during signup.
+  </Step>
+</Steps>
+
+## Step 2: Finish business verification
+
+Wise won't let you send money or create a key until it has verified you.
+
+<Steps>
+  <Step title="Upload the documents Wise asks for">
+    This usually means proof of business registration, proof of business address, and ID for the people who own or control the company. The exact list depends on your country and company type — Wise tells you which ones apply to you.
+  </Step>
+  <Step title="Wait for the review">
+    Verification commonly takes a couple of business days, but can take longer if Wise comes back with questions. Watch your email.
+  </Step>
+  <Step title="Confirm your account is active">
+    When you can see balances and the option to send money in your Wise account, you're verified.
+  </Step>
+</Steps>
+
+## Step 3: Turn on 2-step verification in Wise
+
+Wise will not let you create an API key without this.
+
+<Steps>
+  <Step title="Open your Wise account settings">
+    Sign in to Wise on a desktop browser and open **Your account**.
+  </Step>
+  <Step title="Find the security section">
+    Look for the security or login settings, and turn on 2-step verification.
+  </Step>
+  <Step title="Choose your second step">
+    Wise supports a code by SMS or an authenticator app. Pick one and follow the prompts to confirm it works.
+  </Step>
+</Steps>
+
+## Step 4: Create the API key in Wise
+
+This is the one piece of information Referly needs from Wise. It's a long string of letters and numbers that lets Referly act on your Wise account.
+
+<Steps>
+  <Step title="Open the API tokens page">
+    Sign in to Wise on a desktop browser — this page isn't in the mobile app. Go to **Your account**, then **Connect and manage apps**, then **API tokens**. On some accounts this section is still labelled **Integrations and tools**, and the page is called **API keys**. Both lead to the same place.
+  </Step>
+  <Step title="Add a new token">
+    Select **Add new token**.
+  </Step>
+  <Step title="Name it and set the access level to full">
+    Give it a name you'll recognise later, like `Referly payouts`. Then set the access level to **Full access**. This part matters: a read-only key lets Referly see your account but not create transfers, so payouts will fail.
+  </Step>
+  <Step title="Complete 2-step verification">
+    Wise asks you to confirm it's really you before it creates the key.
+  </Step>
+  <Step title="Copy the key">
+    Copy it somewhere safe straight away and treat it like a password — anyone with it can move money out of your Wise account. Don't paste it into a shared document or a chat.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: wise-api-tokens-page — upload it in the local Documentation Agent */}
+
+<Warning>
+  If you ever think the key has leaked, go back to this page in Wise and delete it. That immediately cuts off anything using it, including Referly, so you'll need to create a new key and reconnect.
+</Warning>
+
+## Step 5: Top up your Wise balance
+
+Referly pays affiliates out of your Wise balance. Wise won't pull money from your bank on demand for these transfers, so the money has to already be sitting there.
+
+<Steps>
+  <Step title="Work out how much you need">
+    Add up the batch total, then leave headroom for Wise's fees and exchange-rate movement. Referly shows you the exact figure before you pay, but you'll want the money in place first.
+  </Step>
+  <Step title="Add money in the right currency">
+    In Wise, open the balance for the currency your program pays in and select **Add money**. Bank transfer is usually cheapest; card top-ups are faster but cost more.
+  </Step>
+  <Step title="Wait for it to land">
+    A bank top-up can take a day or two depending on the currency and method. Don't leave this until the day the batch is due.
+  </Step>
+</Steps>
+
+## Step 6: Connect Wise to Referly
+
+Now you're back in Referly.
+
+<Steps>
+  <Step title="Open your payout settings">
+    Go to **Program Settings → Program details → Payout settings**. This page is covered in more detail in [Payout settings](/help-center/settings/program/payout-settings).
+  </Step>
+  <Step title="Find the Wise Payouts card">
+    It sits in the **Cash Payout Methods** section, described as "Send cash commissions directly via Wise". Select **Connect account** on that card.
+  </Step>
+  <Step title="Paste your API key">
+    In the panel that opens, paste the key you copied from Wise into the **API key** field. Use the eye icon to check you pasted it correctly — a stray space at either end is the most common reason this fails.
+  </Step>
+  <Step title="Select Connect">
+    Referly checks the key against Wise and pulls back the profiles it can see.
+  </Step>
+  <Step title="Choose which Wise profile to pay from">
+    You'll get a list under **Select an account to connect**, each one labelled **Business Account** or **Personal Account**. Choose your business profile — that's the one holding the balance you topped up.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: wise-connect-panel — upload it in the local Documentation Agent */}
+
+When it works you'll see a "Wise account connected successfully" message, and a green **Connected** badge showing your Wise profile name at the top of the panel. That badge is your at-a-glance confirmation from then on.
+
+{/* TODO screenshot: wise-connected-badge — upload it in the local Documentation Agent */}
+
+Behind the scenes, Referly also sets up a live status feed with Wise at this point. That's what lets your payouts update themselves later instead of you having to check Wise and mark things off by hand.
+
+## Step 7: Turn Wise on as a payout method
+
+Connecting the account and offering it to affiliates are two different things.
+
+<Steps>
+  <Step title="Toggle the Wise Payouts card on">
+    Back on the **Payout settings** page, switch the Wise card on so affiliates can pick it.
+  </Step>
+  <Step title="Check what happened to manual bank transfer">
+    If **Manual Bank Account** was on, it's now switched off and greyed out, with a note explaining that it isn't available while Wise is enabled. That's expected. If you specifically need affiliates to hand you bank details for transfers you make yourself, turn Wise off instead — see [Payout methods](/help-center/manage/payouts/payout-methods).
+  </Step>
+  <Step title="Save">
+    Your affiliates will see Wise as an option the next time they open their payout settings.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: wise-payout-method-card — upload it in the local Documentation Agent */}
+
+## How your affiliates set up their side
+
+You can't pay an affiliate until they've told Referly where the money should go. Here's what they do, so you know what to tell them.
+
+<Steps>
+  <Step title="They open their payout settings">
+    In the affiliate portal, under **Settings → Payouts → Cash payouts**.
+  </Step>
+  <Step title="They pick a method">
+    They'll see **Wise** ("Receive payouts directly in your Wise account") and, if you've enabled it, **Local Bank Account** ("Receive money directly in your bank account via Wise"). Both run through your Wise account; they differ in where the money ends up.
+  </Step>
+  <Step title="They enter a payout email address">
+    For the Wise method, this is the only detail required. It's the email Wise will send the money to.
+  </Step>
+  <Step title="They choose a payout currency">
+    Affiliates can pick the currency they want to receive. If they don't choose one, Referly uses your program's currency.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: affiliate-wise-setup — upload it in the local Documentation Agent */}
+
+<Info>
+  Affiliates who choose **Wise** do not need an existing Wise account to get paid. When the transfer goes out, Wise emails them a link where they enter their bank details to claim the money. Per Wise's own rules, they have **7 calendar days** to claim it — after that Wise cancels the transfer and refunds you. Tell your affiliates to watch for that email so a payout doesn't bounce back.
+</Info>
+
+If an affiliate would rather the money land straight in their bank account with no claim step, they should choose **Local Bank Account** instead. That option asks for the specific bank fields Wise requires for their country and currency, and those fields change depending on the destination — a US account needs a routing number, a European one needs an IBAN, and so on.
+
+## Pay a batch through Wise
+
+Once a batch is ready, this is the full sequence.
+
+### Review the fees before you create anything
+
+Open the batch and select the pay action. Referly asks Wise to quote every transfer in the batch and shows you a breakdown in the **Pay with Wise** dialog:
+
+| Line | What it means |
+| --- | --- |
+| Total payouts | The commission amounts you owe, added up |
+| Wise transfer fees | What Wise charges to move the money on these routes |
+| Affiliates receive (total) | What actually lands with your affiliates |
+| Total from Wise balance (You pay) | The amount that leaves your Wise balance |
+
+{/* TODO screenshot: wise-fee-preview — upload it in the local Documentation Agent */}
+
+<Info>
+  The fee is taken out of the amount, not added on top. **Total from Wise balance (You pay)** is the real number to check against your balance — it already includes the fee.
+</Info>
+
+If any affiliate can't be quoted, Referly warns you here with the reason and the affiliate's name, rather than letting the whole batch fail later. Common causes are a missing payout email or a currency Wise doesn't support for that route.
+
+### Create the transfers
+
+Select **Create Wise Transfers**. Referly groups them into a single batch on Wise and hands them over.
+
+Nothing has moved yet. The confirmation says **Transfers Created on Wise**, with the status **Awaiting approval**.
+
+{/* TODO screenshot: wise-transfers-created — upload it in the local Documentation Agent */}
+
+### Approve and fund them in Wise
+
+This step happens in Wise, and it's the one people forget.
+
+<Steps>
+  <Step title="Open the batch in Wise">
+    Select **Open on Wise** from the confirmation, or **View on Wise** from the batch page later. Both take you straight to the transfers.
+  </Step>
+  <Step title="Sign in and review">
+    Check the recipients and amounts against what Referly showed you.
+  </Step>
+  <Step title="Approve and fund from your balance">
+    Confirm the payment. Wise may ask for 2-step verification. If your balance is short, Wise will tell you here — top up and come back.
+  </Step>
+</Steps>
+
+Until you do this, the money stays in your account and your affiliates get nothing, no matter what the batch looks like in Referly.
+
+### Watch the statuses settle
+
+Once you've approved in Wise, you don't have to do anything else. Wise tells Referly what's happening and the statuses move on their own:
+
+| What you see in Referly | What's going on |
+| --- | --- |
+| Sent to Wise | Transfers created, waiting for you to approve and fund them in Wise |
+| Processing | Wise has your money and is moving it |
+| Paid | Wise has sent the money out to the affiliate |
+| Failed | Wise cancelled, refunded, or bounced the transfer back |
+
+When every payout in the batch reaches Paid, the batch itself is marked paid and you get a confirmation email. If any of them fail, the batch is flagged and Referly emails you the reason Wise gave. See [Batch statuses](/help-center/manage/payouts/batch-statuses) and [Failed payouts](/help-center/manage/payouts/failed-payouts).
+
+{/* TODO screenshot: wise-batch-statuses — upload it in the local Documentation Agent */}
+
+## Fees, currencies, and delivery times
+
+- **Fees.** Wise charges per transfer, and the amount depends on the route, the currencies, and the size of the payment. Referly shows you Wise's own quote before you pay rather than estimating. For the underlying pricing, [Wise's pricing page](https://wise.com/pricing) is the source of truth.
+- **Exchange rates.** When you pay in one currency and an affiliate receives another, Wise converts at its own rate and shows it in the breakdown. The rate is locked when the transfer is created, not when you approve it.
+- **Delivery time.** After you approve and fund, money typically reaches affiliates within 1 to 3 business days, depending on the currency route. Referly shows Wise's estimate for your specific batch.
+- **Where you can send.** Wise sends to a large and changing list of countries and currencies. Rather than repeat a list that goes stale, check [Wise's send-money coverage](https://wise.com/help) for your destination. If a route isn't supported, Referly surfaces it as an unquotable payout during the fee review.
+
+## If you'd rather pay in Wise directly
+
+You don't have to use the connected flow. From a batch, open the actions menu and choose **Export Wise CSV**. You get a file formatted for Wise's own bulk upload, with each affiliate's name, payout email, the source and target currency, the amount, and a reference.
+
+Upload that file in Wise and pay the batch there. Bear in mind that when you pay this way, Referly can't track it — you'll need to mark the batch as paid yourself. See [Export payouts](/help-center/manage/payouts/export).
+
+{/* TODO screenshot: wise-export-csv — upload it in the local Documentation Agent */}
+
+## Disconnect Wise
+
+Go back to **Payout settings**, open the Wise card, and select **Disconnect**.
+
+This removes your API key from Referly and shuts down the status feed, so payouts will no longer update themselves. Transfers already approved in Wise still complete — Wise doesn't care that Referly disconnected — but you'll have to check on them in Wise and update Referly by hand.
+
+If you're disconnecting because the key was compromised, also delete the key in Wise. Removing it from Referly doesn't invalidate it on Wise's side.
+
+## Troubleshooting
+
+| What you see | What's wrong | What to do |
+| --- | --- | --- |
+| "Invalid Wise API key" | The key is mistyped, expired, deleted in Wise, or read-only | Create a fresh **Full access** key in Wise and paste it again. Check for a trailing space |
+| "No Wise profiles found for this API key" | The key belongs to an account with no usable profile, or verification isn't finished | Confirm your business account is verified, then create the key again from that account |
+| An affiliate is skipped when you pay | No payout email, or no bank details on the local bank option | Ask them to complete **Settings → Payouts → Cash payouts** in the affiliate portal |
+| A payout can't be quoted during fee review | Wise doesn't support that currency route, or the affiliate's details don't match what Wise needs | Ask the affiliate to switch payout currency, or pay them another way this cycle |
+| Transfers created but nothing arrives | You haven't approved and funded them in Wise | Open the batch in Wise and confirm the payment |
+| Wise rejects the payment for insufficient funds | Your balance doesn't cover the total plus fees | Top up the balance in the right currency and approve again |
+| Statuses stay on "Sent to Wise" | Either still awaiting approval, or the connection was removed | Check the batch in Wise. If Wise shows it as sent, reconnect Wise in Referly |
+| Money comes back a week after payout | The affiliate never claimed it from Wise's email | Ask them to switch to **Local Bank Account** so there's no claim step, then re-run the payout |
+| The manual bank option is greyed out | Wise is enabled | This is by design. Turn Wise off if you need manual bank details |
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Payout methods" icon="wallet" href="/help-center/manage/payouts/payout-methods" arrow>
+    Compare every way you can pay affiliates in Referly.
+  </Card>
+  <Card title="Payout settings" icon="sliders" href="/help-center/settings/program/payout-settings" arrow>
+    Where you enable methods, set a schedule, and pick a minimum.
+  </Card>
+  <Card title="PayPal" icon="paypal" href="/help-center/integrations/paypal" arrow>
+    Pay affiliates through PayPal instead of, or alongside, Wise.
+  </Card>
+  <Card title="Referly Payouts" icon="building-columns" href="/help-center/integrations/referly-payouts" arrow>
+    Let Referly pay your affiliates and handle the paperwork.
+  </Card>
+  <Card title="Payout batches" icon="layer-group" href="/help-center/manage/payouts/batches" arrow>
+    How batches are built, reviewed, and paid.
+  </Card>
+  <Card title="Failed payouts" icon="triangle-exclamation" href="/help-center/manage/payouts/failed-payouts" arrow>
+    What to do when a payout doesn't reach an affiliate.
+  </Card>
+</Columns>

@@ -1,6 +1,382 @@
 ---
 title: "Stripe Buy Button"
-description: "Attribute sales from a Buy Button."
+description: "Track affiliate referrals through an embedded Stripe Buy Button in Referly. Install the tracking script and snippet, connect Stripe, set client-reference-id on the button, and verify attribution end to end."
+keywords: ["Stripe Buy Button affiliate tracking", "stripe-buy-button client-reference-id", "Referly Stripe Buy Button", "buy-button-id affiliate tracking", "embedded buy button referral tracking", "Stripe buy button commission tracking", "no-code affiliate tracking Stripe", "multiple buy buttons attribution", "Stripe buy button test mode", "buy button referral attribution"]
 ---
+The Stripe Buy Button is a single ready-made payment button you generate in the Stripe Dashboard and paste onto your site as two lines of code. A customer selects it and goes straight into Stripe's checkout.
 
-{/* TODO: Write this article. */}
+Referly tracks it by putting the referral identifier onto the button before anyone selects it, so Stripe carries it through to the payment. There's a snippet that does this for you.
+
+<Info>
+  Showing several plans side by side? The [Stripe Pricing Table](/help-center/integrations/stripe/pricing-table) is a better fit. Sharing plain checkout URLs? See [Stripe Payment Links](/help-center/integrations/stripe/payment-links). Building checkout from your own backend? The [Stripe Session API](/help-center/integrations/stripe/session-api) method is the most precise.
+</Info>
+
+## What this method tracks
+
+| What happens | Tracked | Notes |
+| --- | --- | --- |
+| Someone clicks a referral link | Yes | Recorded by the tracking script, before Stripe is involved |
+| A visitor becomes a referral at checkout | Yes | Created when the checkout started from the button completes |
+| A free trial started from the button | Yes | The referral appears with the plan name. No reward until the first real payment |
+| The first payment | Yes | Sale, amount, product and commission arrive together |
+| Subscription renewals | Yes | Matched to the original referral by the customer's email |
+| One-off payments | Yes | Same as a first payment |
+| Several buy buttons on one page | Yes | Every button on the page gets the same identifier, so whichever one the customer picks is attributed |
+| Multiple currencies | Yes | Converted into your program's currency |
+| Which product was bought | Yes | Used for [product-based commissions](/help-center/getting-started/commissions/product-based) |
+| Tax and shipping | Yes | Captured separately, and excluded from the commission if you've turned that on in **Settings** then **Program Details** |
+| Refunds | Yes | The matching reward is voided — see [refunds](/help-center/manage/rewards/refunds) |
+| A purchase made with an affiliate's promo code | Yes | Promo codes take priority over the link |
+
+### What it can't track
+
+- **Sign-ups before payment.** The referral only exists once someone completes checkout. If you want it recorded at sign-up, you need the [Session API method](/help-center/integrations/stripe/session-api).
+- **A button that finished loading before the referral identifier was ready.** Both load independently, so this needs verifying rather than assuming — see [make sure the identifier arrived](#make-sure-the-identifier-arrived).
+- **A referral identifier Stripe rejects.** Stripe accepts only letters, numbers, dashes and underscores here, and drops anything else silently while the button carries on working normally. Keep affiliate codes plain — no spaces, dots or accented characters.
+- **A button inside an iframe or a third-party widget.** Code on your page can't reach inside those.
+- **A buyer who switches devices** between clicking the referral link and paying.
+- **A buyer whose browser blocked the script,** or who cleared their cookies in between.
+- **A purchase after the cookie window closed.** See [tracking methods](/help-center/settings/program/tracking-methods).
+- **Live payments while you're connected in test mode,** and the reverse. Referly deliberately ignores the mismatched ones.
+
+## Before you start
+
+<Steps>
+  <Step title="A Stripe account you can log into as an administrator">
+    You'll authorize Referly from inside Stripe, so you need permission to connect apps.
+  </Step>
+  <Step title="Somewhere to paste code on your site">
+    You need to be able to add code to the `head` section of your pages, and to place the button where you want it.
+  </Step>
+  <Step title="Your commission plan set up">
+    Have it ready before the first sale arrives. See [affiliate program setup](/help-center/getting-started/set-up-program/affiliate-program-setup).
+  </Step>
+</Steps>
+
+## Step 1: Create your buy button in Stripe
+
+Skip this if your button is already on your site.
+
+<Steps>
+  <Step title="Open Payment Links in Stripe">
+    In the [Stripe Dashboard](https://dashboard.stripe.com/payment-links), open **Payment Links** from the left menu. Buy buttons are generated from a payment link.
+  </Step>
+  <Step title="Pick or create a link">
+    Select an existing payment link, or create a new one for the product you want to sell.
+  </Step>
+  <Step title="Switch it to a buy button">
+    Select **Buy button**, then set the button's text and colours to match your site. Stripe's own walkthrough is in their [buy button guide](https://docs.stripe.com/payment-links/buy-button).
+  </Step>
+  <Step title="Turn on promotion codes if your affiliates use them">
+    In the link's settings, allow customers to enter a promotion code at checkout. Without it, an affiliate's promo code can't be used. See [coupons and promo codes](/help-center/engage/coupons/overview).
+  </Step>
+  <Step title="Copy the embed code">
+    Stripe gives you two lines — a script tag and the button itself:
+
+    ```html
+    <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+    <stripe-buy-button
+      buy-button-id="buy_btn_YOUR_BUTTON_ID"
+      publishable-key="pk_live_YOUR_KEY">
+    </stripe-buy-button>
+    ```
+
+    Paste it where you want the button to appear.
+  </Step>
+</Steps>
+
+<Note>
+  You don't need to change the embed code for Referly. The identifier is added to it automatically once the snippet in Step 4 is in place.
+</Note>
+
+## Step 2: Install the tracking script
+
+The tracking script records clicks and remembers which affiliate sent each visitor. Nothing works without it.
+
+Open **Integrations** from the left sidebar, find the **Stripe Buy Button** card, and select it. The guide that opens has your script already filled in with your program's ID.
+
+{/* TODO screenshot: integrations-buy-button-card — upload it in the local Documentation Agent */}
+
+Copy that snippet and paste it into the `head` section of every page on your site — especially any page with a buy button. It looks like this:
+
+```html
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+<Warning>
+  Copy the snippet from your dashboard rather than from this page. Your program ID is unique, and programs run by an agency load the script from a different address.
+</Warning>
+
+If you use Google Tag Manager, the same guide has a Tag Manager version to add as a Custom HTML tag firing on all pages.
+
+## Step 3: Connect your Stripe account
+
+Connecting Stripe is what lets Referly hear about payments. You don't create API keys and you don't set anything up by hand — you authorize Referly's app from inside Stripe.
+
+<Steps>
+  <Step title="Open the connect dialog">
+    On the **Integrations** page, select **Connect Integration** at the top right, then choose **Stripe**.
+
+    {/* TODO screenshot: connect-stripe-picker — upload it in the local Documentation Agent */}
+  </Step>
+  <Step title="Choose live or test">
+    Select **Connect Stripe Account** for your real account, or **Connect Test Mode** to connect a sandbox first. Testing first is the safer order.
+  </Step>
+  <Step title="Authorize Referly in Stripe">
+    A Stripe page opens in a new tab. Sign in, pick the account from the account picker at the top, and confirm. If you're connecting test mode, make sure a sandbox is selected — Stripe explains sandboxes in their [test mode guide](https://docs.stripe.com/test-mode).
+  </Step>
+  <Step title="Confirm the connection">
+    Back in Referly, the Stripe panel shows a green **Connected** badge with your account name, or a yellow **Test Mode** badge for a sandbox.
+
+    {/* TODO screenshot: stripe-live-test-badges — upload it in the local Documentation Agent */}
+  </Step>
+</Steps>
+
+<Warning>
+  The badge colour decides which payments count. Yellow **Test Mode** means real payments are ignored. Green **Connected** means test payments are ignored. This is the most common reason a correct setup appears to record nothing.
+</Warning>
+
+## Step 4: Add the buy button snippet
+
+This is the piece that does the work. It waits for the referral identifier, then adds it to every buy button on the page so it travels with the customer into Stripe's checkout.
+
+Copy it from the **Stripe Buy Button** guide on the **Integrations** page and paste it into the `head` section, **after** the tracking script from Step 2. Order matters — the snippet needs the tracking script to have loaded first.
+
+{/* TODO screenshot: buy-button-snippet-step — upload it in the local Documentation Agent */}
+
+```html
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+(function () {
+  let linksUpdated = false;
+  let updateAttempts = 0;
+  const MAX_ATTEMPTS = 5;
+
+  function updateStripeLinks() {
+    updateAttempts++;
+    if (updateAttempts > MAX_ATTEMPTS) return;
+    if (linksUpdated) return;
+
+    const affiliateId = window.affiliateId;
+    if (!affiliateId) return;
+
+    let updatedCount = 0;
+
+    $('a[href^="https://buy.stripe.com/"]').each(function () {
+      const $link = $(this);
+      const oldUrl = $link.attr("href");
+      if (!oldUrl.includes("client_reference_id")) {
+        const separator = oldUrl.includes("?") ? "&" : "?";
+        $link.attr("href", oldUrl + separator + "client_reference_id=" + affiliateId);
+        updatedCount++;
+      }
+    });
+
+    $("[pricing-table-id]").each(function () {
+      $(this).attr("client-reference-id", affiliateId);
+      updatedCount++;
+    });
+
+    $("[buy-button-id]").each(function () {
+      $(this).attr("client-reference-id", affiliateId);
+      updatedCount++;
+    });
+
+    if (updatedCount > 0) linksUpdated = true;
+  }
+
+  if (typeof jQuery === "undefined") {
+    console.error("[Referly Stripe] jQuery is required but not loaded");
+    return;
+  }
+
+  $(document).ready(function () {
+    window.addEventListener("affiliate_id_ready", function () {
+      setTimeout(updateStripeLinks, 150);
+    });
+    window.addEventListener("affiliate_referral_ready", function () {
+      setTimeout(updateStripeLinks, 150);
+    });
+
+    const checkInterval = setInterval(function () {
+      if (window.affiliateId && !linksUpdated) updateStripeLinks();
+      if (linksUpdated || updateAttempts >= MAX_ATTEMPTS) clearInterval(checkInterval);
+    }, 500);
+
+    setTimeout(function () {
+      clearInterval(checkInterval);
+      if (!linksUpdated && window.affiliateId) updateStripeLinks();
+    }, 3000);
+  });
+})();
+</script>
+```
+
+<Note>
+  The snippet needs jQuery, which is why the first line loads it. If your site already loads jQuery, delete that first line — loading it twice can break other scripts on your page.
+</Note>
+
+It updates every buy button on the page in one pass, so a page with three buttons needs the snippet once, not three times. The same snippet also handles [payment links](/help-center/integrations/stripe/payment-links) and [pricing tables](/help-center/integrations/stripe/pricing-table).
+
+## Make sure the identifier arrived
+
+This is worth doing properly rather than assuming.
+
+Your buy button is drawn by Stripe's own code, and the visitor's referral identifier is fetched by Referly's code. The two happen independently, so the only way to know they lined up is to check — in two places.
+
+<Steps>
+  <Step title="Visit the page through a referral link">
+    Use a private window and a real affiliate's code, for example `your-domain.com?ref=THEIRCODE`.
+  </Step>
+  <Step title="Inspect the button element">
+    Right-click the button and choose **Inspect**. Find the `stripe-buy-button` element in your page. It should now carry a `client-reference-id` attribute with a value in it.
+  </Step>
+  <Step title="Then confirm with a real test purchase">
+    The attribute being present is a good sign, but not proof. Complete a test checkout and confirm the value reaches Stripe — Step 5 walks through it. This second check is the one that counts.
+  </Step>
+</Steps>
+
+### If the identifier never lands
+
+If your test purchase shows an empty **Client reference ID** in Stripe, the button had already finished loading before the identifier was ready. Set the attribute yourself and hold the button back until you have a value:
+
+```html
+<div id="buy-button-slot"></div>
+
+<script>
+  function renderBuyButton(referralId) {
+    const button = document.createElement("stripe-buy-button");
+    button.setAttribute("buy-button-id", "buy_btn_YOUR_BUTTON_ID");
+    button.setAttribute("publishable-key", "pk_live_YOUR_KEY");
+    if (referralId) {
+      button.setAttribute("client-reference-id", referralId);
+    }
+    document.getElementById("buy-button-slot").appendChild(button);
+  }
+
+  if (window.affiliateId) {
+    renderBuyButton(window.affiliateId);
+  } else {
+    let rendered = false;
+    window.addEventListener("affiliate_id_ready", function (event) {
+      if (!rendered) {
+        rendered = true;
+        renderBuyButton(event.detail.clickId);
+      }
+    });
+    // Draw the button anyway if no referral turns up
+    setTimeout(function () {
+      if (!rendered) {
+        rendered = true;
+        renderBuyButton(window.affiliateId || null);
+      }
+    }, 2000);
+  }
+</script>
+```
+
+Keep Stripe's own `buy-button.js` script tag on the page as well — this only replaces the button element, not the script that powers it.
+
+<Warning>
+  Always draw the button eventually, even when there's no referral. Most of your visitors won't come from an affiliate, and they still need to be able to buy.
+</Warning>
+
+## Step 5: Test the whole flow
+
+Test before you send a single affiliate link out, with your Stripe connection showing the yellow **Test Mode** badge.
+
+<Steps>
+  <Step title="Switch Stripe to a sandbox and make a test button">
+    In the Stripe Dashboard, use the account picker at the top to switch into a sandbox, then create a buy button there. Test and live buttons have different IDs and different publishable keys, so use the test embed code on a test page.
+  </Step>
+  <Step title="Visit the page through a referral link">
+    Open it in a private window with a real affiliate's code.
+  </Step>
+  <Step title="Check the attribute is set">
+    Inspect the button element and confirm it has a `client-reference-id` with a value.
+  </Step>
+  <Step title="Buy with a test card">
+    Select the button and pay with Stripe's test card `4242 4242 4242 4242`, any future expiry, and any three-digit security code. The full list is in Stripe's [testing guide](https://docs.stripe.com/testing).
+  </Step>
+  <Step title="Confirm it in Stripe">
+    Open the payment in the Stripe Dashboard and check the Checkout Session shows your value in **Client reference ID**. This is the check that actually matters.
+  </Step>
+  <Step title="Confirm it in Referly">
+    Open **Referrals** in the left sidebar — the customer should be listed against the right affiliate. Then open **Rewards** to see the commission.
+
+    {/* TODO screenshot: referral-from-buy-button — upload it in the local Documentation Agent */}
+  </Step>
+</Steps>
+
+<Check>
+  When the Checkout Session in Stripe carries the value and the referral in Referly shows the right affiliate, your setup works. Repeat once in live mode with a small real payment you refund afterwards — the refund should void the reward.
+</Check>
+
+## Go live
+
+1. On the **Integrations** page, open the Stripe panel and select **Disconnect**.
+2. Select **Connect Stripe Account** and authorize your live account.
+3. Confirm the badge is green and reads **Connected**.
+4. Swap the test button embed code on your site for the live one, including the live publishable key.
+
+<Warning>
+  Referrals created during testing stay in your dashboard. Delete them before you launch if you don't want test data in your reports.
+</Warning>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The button has no client-reference-id attribute">
+    Work through these in order:
+
+    1. **Is the tracking script loading?** Open your browser's developer console and type `window.affiliateId`. If it's empty, go back to Step 2 — the script isn't running, or you didn't arrive through a referral link.
+    2. **Is jQuery loaded?** The console shows an error mentioning jQuery if it's missing. The snippet does nothing without it.
+    3. **Is the snippet after the tracking script?** If the order is reversed, the snippet runs too early.
+    4. **Is the button added to the page later?** If a pop-up, tab or accordion reveals it after the page has settled, the snippet has already stopped looking. Use the [manual approach](#if-the-identifier-never-lands).
+  </Accordion>
+  <Accordion title="The attribute is there but Stripe's Client reference ID is empty">
+    Two likely causes. Either the button finished drawing before the attribute was set, in which case use the [manual approach](#if-the-identifier-never-lands). Or Stripe rejected the value — it accepts only letters, numbers, dashes and underscores, and drops anything else without warning. Check the affiliate's code for spaces or punctuation.
+  </Accordion>
+  <Accordion title="Only some of my buttons are attributed">
+    The snippet updates every buy button it can see in a single pass. If one button is attributed and another isn't, the missing one was added to the page after that pass — usually inside a tab, modal or accordion. Move it into the initial page content, or use the manual approach for that button.
+  </Accordion>
+  <Accordion title="Nothing appears in Referly at all">
+    Almost always the test-mode mismatch. A yellow **Test Mode** badge means live payments are ignored, a green **Connected** badge means test payments are ignored. Reconnect in the mode you're actually testing in.
+
+    If the badge is right, confirm the payment actually succeeded in Stripe.
+  </Accordion>
+  <Accordion title="The referral appeared but there's no reward">
+    Normal for a free trial — the reward is created when money actually moves. If a payment did go through, check the affiliate is on a [commission plan](/help-center/getting-started/commissions/overview) that covers the product they sold.
+  </Accordion>
+  <Accordion title="The wrong affiliate got the sale">
+    Check whether a promo code was used at checkout. An affiliate's promo code takes priority over the link, so someone who clicked one affiliate's link but typed another's code is credited to the code owner. You can move the sale by [changing the referral's affiliate](/help-center/manage/customers/overview).
+  </Accordion>
+  <Accordion title="Renewals aren't paying commission">
+    Renewals are matched by the customer's email address. Compare the email on the Stripe customer with the email on the referral in Referly — if they differ, the connection is broken.
+  </Accordion>
+  <Accordion title="The sale showed up late">
+    If a payment arrives before Referly has finished creating the referral, it's held and retried a few minutes later rather than dropped. Wait about ten minutes before assuming a sale is missing.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Stripe integration overview" icon="stripe" href="/help-center/integrations/stripe" arrow>
+    Every way to connect Stripe, and which one fits you.
+  </Card>
+  <Card title="Stripe Pricing Table" icon="table" href="/help-center/integrations/stripe/pricing-table" arrow>
+    The same approach for a full plan comparison table.
+  </Card>
+  <Card title="Stripe Payment Links" icon="link" href="/help-center/integrations/stripe/payment-links" arrow>
+    Track referrals through plain checkout URLs.
+  </Card>
+  <Card title="Tracking methods" icon="crosshairs" href="/help-center/settings/program/tracking-methods" arrow>
+    Set your cookie duration and how clicks are attributed.
+  </Card>
+</Columns>

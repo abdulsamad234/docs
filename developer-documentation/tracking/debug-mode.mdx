@@ -1,6 +1,157 @@
 ---
 title: "Debug mode"
-description: "Turn on logging to troubleshoot tracking."
+description: "Turn on Referly tracking debug logs to troubleshoot affiliate attribution. Where the Enable Debug Logging setting lives, how to read the console output, common failure signatures, and the network and storage checks that go with it."
+keywords: ["Referly debug mode", "affiliate tracking debug", "enable debug logging", "affiliate tracker console log", "troubleshoot affiliate tracking", "tracking not working affiliate", "getPushLapAffiliateInfo", "add-click request", "affiliate tracking CSP", "debug affiliate attribution"]
 ---
+When tracking isn't working, guessing is slow. Debug mode makes the tracker narrate its decisions to the browser console — which parameter it looked for, what it found, which branch it took, and what click ID came back — so you can see exactly where the chain breaks.
 
-{/* TODO: Write this article. */}
+## Turn it on
+
+Debug logging is a **program setting**, not a query string or a console flag. There is no `?debug=true` to append; the tracker learns whether to log from your program configuration.
+
+In your dashboard go to **Settings → Program details → Others** and switch on **Enable Debug Logging**, described there as logging affiliate tracking activity in the browser console. Save, then reload the page you're testing.
+
+{/* TODO screenshot: enable-debug-logging-toggle — upload it in the local Documentation Agent */}
+
+<Warning>
+  This is on for **every visitor**, not only for you. While it's enabled, anyone who lands on your site from an affiliate link gets referral codes and click IDs printed in their console. Turn it off as soon as you've finished debugging.
+</Warning>
+
+## What you'll see
+
+Every message is prefixed so you can filter the console on it:
+
+```
+[Push Lap Growth] Program urlModifier: ref
+```
+
+Type `Push Lap` into the console's filter box to hide everything else. One message carries a second inline prefix (`[PUSHLAP GROWTH]:`) — same source, different vintage.
+
+### Logging starts partway through
+
+This is the part that catches people out. The tracker doesn't know logging is enabled until it has fetched your program configuration, which happens **after** several decisions have already been made. Everything before that point is silent, whatever the setting says.
+
+In practice:
+
+- The storage-mechanism probe, the program ID lookup, and the initial parameter scan produce no output.
+- A visitor arriving with **no referral parameter** short-circuits before the configuration fetch, so that page load logs nothing at all.
+- A **returning** visitor with stored attribution and a clean URL takes the fast path, which also never reaches the point where logging switches on.
+- If the configuration fetch itself **fails**, logging is never enabled — so a broken fetch looks identical to debug mode being off.
+
+The upshot: to see anything, load a page **with a referral parameter in the URL**. That's the path that logs, and it's the path you care about.
+
+```
+https://your-domain.com/?ref=TESTCODE
+```
+
+## Reading a healthy log
+
+A first visit from an affiliate link, working correctly:
+
+```
+[Push Lap Growth] Cross-tracking domains: ['your-app.io']
+[Push Lap Growth] Program urlModifier: ref
+[Push Lap Growth] Affiliate param from URL (ref=): jane
+[Push Lap Growth] Creating new click for affiliate: jane
+[Push Lap Growth] Click created with ID: 84213
+[Push Lap Growth] Updated window.affiliateId from ref to click ID: {previous: 'jane', current: '84213'}
+[Push Lap Growth] Setting up cross-domain link decoration for 1 domains
+```
+
+Read it as a checklist. Your configured parameter is `ref`; the URL supplied `jane`; a click was recorded; the click ID replaced the temporary value in `window.affiliateId`; cross-domain decoration is armed. Every line you'd want is there.
+
+The same affiliate's link clicked a second time looks slightly different — a repeat click is recorded, not a new referral:
+
+```
+[Push Lap Growth] Affiliate param from URL (ref=): jane
+[Push Lap Growth] Using existing affiliate data from storage for multiple clicks support
+[Push Lap Growth] Creating new click for affiliate: jane
+[Push Lap Growth] [PUSHLAP GROWTH]: Creating Multiple clicks for affiliate: jane
+[Push Lap Growth] Click created with ID: 84219
+```
+
+## Failure signatures
+
+<AccordionGroup>
+  <Accordion title="Nothing is logged at all">
+    Work through these in order: the setting isn't saved or the page wasn't reloaded; the snippet isn't on the page; the script tag is missing `data-affiliate` or `data-program-id`; you loaded the page **without** a referral parameter, so the tracker short-circuited; or the program configuration fetch failed, which prevents logging from ever switching on. Confirm the script itself loaded in the Network tab before assuming anything else.
+  </Accordion>
+  <Accordion title="No matching affiliate param for this program's urlModifier">
+    The parameter in your link isn't the one your program uses. The line above it tells you which one it wanted — `Program urlModifier: via` means your link needs `?via=`, not `?ref=`. See [URL parameters](/developer-documentation/tracking/url-parameters).
+  </Accordion>
+  <Accordion title="Affiliate param from URL (ref=): null">
+    The tracker looked for the right parameter and the URL didn't have it. Usually a redirect stripped the query string before the page finished loading, or the code is in the hash fragment rather than the query string.
+  </Accordion>
+  <Accordion title="Creating new click, but no Click created with ID">
+    The click request didn't come back with a record. Look for `Error handling click:` immediately after — the tracker clears stored attribution when this happens rather than leaving half-written state. Check the request itself in the Network tab and whether an ad blocker or CSP is blocking `www.referly.so`.
+  </Accordion>
+  <Accordion title="Click created with ID, but attribution is gone on the next page">
+    Recording worked and storage didn't. Almost always HTTPS: Referly's cookies are `Secure` and browsers discard them on plain HTTP. Otherwise cookies are blocked entirely and the local storage fallback is also unavailable. See [cookies and storage](/developer-documentation/tracking/cookies-and-storage).
+  </Accordion>
+  <Accordion title="No cross-domain decoration line">
+    `Setting up cross-domain link decoration` only appears when the program has approved domains **and** the visitor has active attribution. Missing means one of those isn't true. See [cross-domain tracking](/developer-documentation/tracking/cross-domain-tracking).
+  </Accordion>
+</AccordionGroup>
+
+## When the log isn't enough
+
+Debug output covers the attribution decision. For everything around it, these four checks resolve most of what's left.
+
+### Inspect the resolved state
+
+```js
+window.getPushLapAffiliateInfo();
+// { ref: "jane", clickId: "84213", storageType: "cookies" }
+```
+
+`storageType` is the quickest way to discover you've silently been testing the local storage fallback because cookies were blocked in that browser profile. If `ref` is set but `clickId` still equals `ref`, the click request hasn't completed. Run it after `affiliate_referral_ready` has fired, never before.
+
+### Watch the network
+
+Filter the Network tab on `referly` and look for two requests:
+
+| Request | Means |
+| --- | --- |
+| `affiliate-program-v2` | Your program configuration — cookie window, parameter, approved domains, debug flag |
+| `add-click` | The click being recorded. Its response contains the click ID |
+
+A missing `affiliate-program-v2` request points at a blocked host or a CSP problem. An `add-click` that never fires means the tracker decided not to record — go back to the log for the reason.
+
+### Verify storage directly
+
+In **Application → Cookies**, look for two entries named after your program ID, ending `_affiliate_ref` and `_affiliate_referral`. If they're under **Local Storage** instead, the cookie path failed. If they're absent after a `Click created with ID` line, the write was rejected.
+
+### Rule out CSP and HTTPS
+
+The tracker needs `https://referly.so` and `https://cdn.jsdelivr.net` in `script-src`, and `https://www.referly.so` in `connect-src`. Blocking the jsDelivr host doesn't stop tracking outright but breaks subdomain cookie scoping, which produces confusing partial failures. The console reports CSP violations directly. Full detail in [install the snippet](/developer-documentation/tracking/install-the-snippet).
+
+## Turn it off
+
+Once you're done, switch **Enable Debug Logging** back off and save. Leaving it on means every visitor's console is filled with your tracking internals, and referral codes and click IDs are visible to anyone who opens developer tools on your site.
+
+<Tip>
+  If you need ongoing visibility without exposing it to visitors, listen for the tracker's own events in your application code and log through your existing telemetry instead. The [JavaScript API reference](/developer-documentation/tracking/javascript-api/reference) covers `affiliate_id_ready` and `affiliate_referral_ready`.
+</Tip>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Install the snippet" icon="code" href="/developer-documentation/tracking/install-the-snippet">
+    Verification steps and the CSP hosts the tracker needs.
+  </Card>
+  <Card title="URL parameters" icon="link" href="/developer-documentation/tracking/url-parameters">
+    Match your link's parameter to your program's.
+  </Card>
+  <Card title="Cookies and storage" icon="cookie" href="/developer-documentation/tracking/cookies-and-storage">
+    Inspect and clear tracking data between tests.
+  </Card>
+  <Card title="Attribution and the cookie window" icon="clock" href="/developer-documentation/tracking/attribution">
+    Which branch the tracker should have taken.
+  </Card>
+  <Card title="Cross-domain tracking" icon="arrow-right-arrow-left" href="/developer-documentation/tracking/cross-domain-tracking">
+    Debugging handoffs between domains.
+  </Card>
+  <Card title="JavaScript API" icon="code" href="/developer-documentation/tracking/javascript-api/reference">
+    Events and globals to inspect by hand.
+  </Card>
+</Columns>

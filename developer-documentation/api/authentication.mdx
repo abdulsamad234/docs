@@ -1,6 +1,191 @@
 ---
 title: "Authentication"
-description: "Create a key and authorise your requests."
+description: "Authenticate Referly REST API requests with a bearer token. Generate an API key in your dashboard, set the Authorization header, handle 401 and 403 errors, and rotate keys safely."
+keywords: ["Referly API authentication", "affiliate API key", "bearer token", "Authorization header", "API key rotation", "401 Unauthorized", "REST API auth"]
 ---
+Every request to the Referly REST API carries an API key as a bearer token. There is no OAuth flow,
+no signing step, and no session to maintain — one header on every request:
 
-{/* TODO: Write this article. */}
+```bash
+curl https://www.referly.so/api/v1/affiliates \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+A key belongs to exactly one affiliate program, and it is the key alone that tells Referly which
+program you are working with. That is why no endpoint takes a program ID: send a different key and
+you are reading and writing a different program's data.
+
+<Note>
+  API access is included with the Business plan. If your requests come back `403` with `User does
+  not have API access`, check your plan on the [pricing page](https://referly.so/pricing).
+</Note>
+
+## Create an API key
+
+Keys are created in the dashboard, not through the API.
+
+<Steps>
+  <Step title="Open your program's settings">
+    Go to **Settings**, then **Advanced**, then **API Keys**.
+  </Step>
+  <Step title="Generate a key">
+    Click **Generate New Key**. The key appears in the list straight away.
+  </Step>
+  <Step title="Copy it into your server config">
+    Click **Copy** on the key you want and store it as an environment variable in your backend.
+  </Step>
+</Steps>
+
+Keys look like a UUID, for example `3f8a1c92-5d47-4e1b-9c0a-7b2f6e13d5aa`. They do not expire, and
+Referly keeps the full value visible in the dashboard, so you can come back and copy an existing key
+later instead of generating a new one.
+
+You can hold as many keys as you want on a program. Issuing one per consumer — your backend, a
+data-sync job, an internal admin tool — costs nothing and means you can revoke one without breaking
+the others.
+
+<Note>
+  Keys that Zapier creates for itself when you connect the [Zapier
+  integration](/developer-documentation/integrations/zapier) are deliberately hidden from this list.
+  Disconnect the app in Zapier to revoke those.
+</Note>
+
+## Authorize a request
+
+Send the key in the `Authorization` header, prefixed with `Bearer` and a single space. The header
+name is case-insensitive; the `Bearer ` prefix is not optional.
+
+<CodeGroup>
+
+```bash cURL
+curl https://www.referly.so/api/v1/affiliates \
+  -H "Authorization: Bearer $REFERLY_API_KEY"
+```
+
+```js Node.js
+const res = await fetch("https://www.referly.so/api/v1/affiliates", {
+  headers: {
+    Authorization: `Bearer ${process.env.REFERLY_API_KEY}`,
+  },
+});
+
+const affiliates = await res.json();
+```
+
+```python Python
+import os
+import requests
+
+res = requests.get(
+    "https://www.referly.so/api/v1/affiliates",
+    headers={"Authorization": f"Bearer {os.environ['REFERLY_API_KEY']}"},
+)
+
+affiliates = res.json()
+```
+
+</CodeGroup>
+
+Writes need a JSON body and the matching content type, but the auth header is identical:
+
+```bash
+curl -X POST https://www.referly.so/api/v1/affiliates \
+  -H "Authorization: Bearer $REFERLY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"email": "affiliate@example.com", "firstName": "Ada"}'
+```
+
+## What a key can do
+
+A Referly API key is all-or-nothing. There are no scopes, no read-only variant, and no per-endpoint
+permissions — any valid key can read, create, update, and delete every resource in its program:
+affiliates, referrals, sales, links, coupons, promotional codes, and payout batches.
+
+Treat a key with the same care as a database password. Anyone holding it can delete your affiliates
+or fabricate commissionable sales.
+
+## When authentication fails
+
+Failed requests return the HTTP status below and a JSON body of the shape `{"error": "…"}`.
+
+| Status | Error | What happened |
+| --- | --- | --- |
+| `401` | `Unauthorized` | The `Authorization` header is missing, or it does not start with `Bearer `. |
+| `401` | `Invalid auth token` | The header was well-formed but the key does not exist — usually a typo, a truncated environment variable, or a key that has been deleted. |
+| `403` | `User does not have API access` | The key is valid, but the account behind the program is not on a plan that includes API access. |
+| `404` | `Affiliate program not found` | The program the key belonged to no longer exists. |
+| `429` | `Too many requests. Please slow down.` | You exceeded the [rate limit](/developer-documentation/api/rate-limits) for that endpoint. |
+
+Rate limiting is counted per key and applied before the key is looked up, so a request carrying a
+wrong key can still come back `429` rather than `401` if you are hammering the endpoint. Fix the
+throttling first, then the credential.
+
+See [Errors](/developer-documentation/api/errors) for the full status-code reference.
+
+## Rotate and revoke keys
+
+Deleting a key takes effect immediately — the next request using it gets `401 Invalid auth token`.
+There is no grace period and no way to restore a deleted key, so rotate in this order:
+
+<Steps>
+  <Step title="Generate the replacement">
+    Create a new key while the old one is still live.
+  </Step>
+  <Step title="Deploy it">
+    Update the environment variable everywhere the old key is used and restart or redeploy, so every
+    running instance has picked it up.
+  </Step>
+  <Step title="Verify traffic has moved">
+    Make one real request with the new key and confirm it succeeds.
+  </Step>
+  <Step title="Delete the old key">
+    Click the delete button on the old key in **Settings** → **Advanced** → **API Keys**.
+  </Step>
+</Steps>
+
+Rotate straight away if a key was committed to a repository, pasted into a support ticket or chat,
+or shipped in anything a browser can download.
+
+## Keep keys server-side
+
+The API responds to cross-origin requests, so a key technically works from browser JavaScript. Do
+not do it. Every key carries full write access to your program and cannot be scoped down, so any
+key that reaches a browser is a key your visitors can extract and use against you.
+
+<Warning>
+  Never put an API key in frontend JavaScript, a mobile app bundle, a browser extension, a public
+  repository, or a URL query string. Anything a user can download, a user can read.
+</Warning>
+
+Practical habits that keep keys where they belong:
+
+- **Read keys from the environment**, never from a checked-in config file. Keep `.env` files in
+  `.gitignore`.
+- **Use a separate key per consumer** so revoking one does not take everything else down.
+- **Never send a key in a query parameter** — URLs end up in server logs, proxies, and browser
+  history. The header is the only supported place.
+- **Proxy client requests through your own server** if a frontend needs Referly data, so your server
+  holds the key and decides what to return.
+- **Use a second program for testing.** Referly has one live environment, and keys are not split
+  into test and live modes. Create a throwaway program and point staging at it.
+
+If you only need to record conversions from the browser, you do not need an API key at all — the
+[tracking script](/developer-documentation/tracking/install-the-snippet) does that with a public
+program ID that is safe to expose.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Rate limits" icon="gauge-high" href="/developer-documentation/api/rate-limits">
+    How many requests each endpoint allows, and how to back off.
+  </Card>
+  <Card title="Errors" icon="triangle-exclamation" href="/developer-documentation/api/errors">
+    Every status code the API returns and what to do about it.
+  </Card>
+  <Card title="API reference" icon="terminal" href="/api-reference/introduction">
+    Endpoint-by-endpoint documentation, with the base URL and request shapes.
+  </Card>
+  <Card title="Introduction" icon="book-open" href="/developer-documentation/getting-started/introduction">
+    How tracking, conversions, the API, and webhooks fit together.
+  </Card>
+</Columns>

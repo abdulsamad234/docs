@@ -1,6 +1,431 @@
 ---
 title: "Cal.com"
-description: "Track referrals and sales from Cal.com."
+description: "Connect Cal.com to Referly so bookings are credited to the referring affiliate. Covers Cal Referral Tracking for free meetings and Cal Payment Tracking for paid ones, including the embed namespace, the metadata referlyAff embed edit, and the Booking Created and Booking Paid webhook."
+keywords: ["Cal.com affiliate tracking", "Cal.com Referly integration", "track Cal.com bookings affiliates", "Cal.com webhook Booking Paid", "Cal.com embed namespace", "metadata referlyAff", "Cal.com affiliate program", "affiliate commissions for paid bookings"]
 ---
+[Cal.com](https://cal.com/) is the scheduling tool behind a lot of demo calls, consultations, and paid sessions. Connecting it to Referly means a booking made by someone who arrived on an affiliate link gets credited to that affiliate, and if you charge for the meeting, the payment turns into commission.
 
-{/* TODO: Write this article. */}
+Referly ships **two separate Cal.com setups**, and picking the right one is the first decision you make. They work differently, they're configured differently, and running both on the same meeting type will double-count your bookings.
+
+{/* TODO screenshot: cal-integration-cards — upload it in the local Documentation Agent */}
+
+## Which of the two setups you need
+
+| | **Cal Referral Tracking** | **Cal Payment Tracking** |
+| --- | --- | --- |
+| Use it when | Your meetings are free | You charge for the meeting through Cal.com |
+| What lands in Referly | A referred customer, with no revenue | A referred customer **and** the amount paid |
+| Difficulty | Easy | Medium |
+| What you set up | The tracking script, plus a short script under your embed | The tracking script, an edit to your embed code, and a webhook in Cal.com |
+| Works with | Any Cal.com embed | Inline embeds and floating button embeds |
+
+The short version: **if money changes hands in Cal.com, use Payment Tracking. If it doesn't, use Referral Tracking.** Payment Tracking also records the booking itself, so you don't need both.
+
+<Warning>
+  Don't set up both on the same meeting type. Each one records the booking separately, so you'd end up with two entries in Referly for a single meeting and pay commission twice.
+</Warning>
+
+Both setups live in the same place. In your Referly dashboard, open **Settings** from the left sidebar, select **Integrations**, and look for the two Cal.com cards: **Cal Referral Tracking** and **Cal Payment Tracking**. Select **Instructions** on the one you need, and keep that window open, because it has your program's own details already filled in.
+
+## What this integration can and can't track
+
+| What you want to track | Referral Tracking | Payment Tracking |
+| --- | --- | --- |
+| Link clicks and visits | Yes | Yes |
+| Bookings as referred customers | Yes | Yes |
+| The attendee's name and email | Yes | Yes |
+| Revenue from paid meetings | No | Yes |
+| Automatic currency conversion into your program's currency | Not applicable | Yes |
+| Several attendees on one booking | Yes, each one is recorded | Yes, each one is recorded |
+| Cancellations | No | No |
+| Reschedules | No | No |
+| No-shows | No | No |
+| Refunds | No | No |
+| Bookings from a bare `cal.com` link | No | No |
+| Bookings made on a different device than the click | No | No |
+
+<Info>
+  Referly only ever hears about a booking being made or paid for. Everything that happens to a meeting afterwards, including cancelling it, moving it, or refunding it, is invisible. If you pay per booked call, decide upfront with your affiliates how you'll handle meetings that never happen.
+</Info>
+
+## Before you start
+
+You'll need:
+
+- A live Referly program with at least one affiliate to test with. See [setting up your program](/help-center/getting-started/set-up-program/affiliate-program-setup) if you haven't got that far.
+- A Cal.com account, and the ability to edit the meeting type you want to track.
+- Your Cal.com scheduler **embedded on your own website**. This is required, not a preference, and the next section explains why.
+- For Payment Tracking: payments already set up on that meeting type in Cal.com, through one of their payment apps.
+- Access to edit your website's code, or someone who can paste snippets for you.
+
+## Your affiliates must link to your site, not to Cal.com
+
+This trips people up more than anything else in this guide.
+
+Referly recognises a referred visitor only on pages carrying the Referly tracking script. You control your own website, so the script can go there. You don't control `cal.com`, so it can't go there. An affiliate link pointing straight at your Cal.com booking page is invisible to Referly, and nothing you set up afterwards can rescue it.
+
+Both setups also read the referral out of the page the embed is sitting on, which is another reason the scheduler needs to be on your site rather than somewhere you send people away to.
+
+| How the visitor books | Referral Tracking | Payment Tracking |
+| --- | --- | --- |
+| Inline embed on your page | Yes | Yes |
+| Floating pop-up button on your page | Yes | Yes |
+| Pop-up via element click on your page | Yes | Not covered by the provided setup |
+| A link on your page out to `cal.com` | No | No |
+| An affiliate link pointing directly at `cal.com` | No | No |
+
+<Warning>
+  Tell affiliates to share their Referly link, which points at your own domain and looks like `https://your-site.com/?ref=their-code`. Bookings from a shared `cal.com` address can't be credited to anyone, and there's no way to recover them later.
+</Warning>
+
+Cal.com's own [guide to adding an embed](https://cal.com/help/embedding/adding-embed) covers getting the code: open **Event Types**, select the three-dots menu on the meeting type, and choose **Embed**.
+
+## Add the Referly tracking script to your site
+
+Both setups need this. It's what notices a visitor arriving on an affiliate link and remembers it in their browser for the length of your cookie window.
+
+Copy it from **Step 1: Tracking clicks** in whichever instructions window you opened. Your program's own identifier is already filled in where `YOUR_PROGRAM_ID` appears here:
+
+```html
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+{/* TODO screenshot: cal-tracking-script — upload it in the local Documentation Agent */}
+
+Paste it into the `head` section of your site, site-wide if you can. On Webflow that's **Site settings**, then the **Custom code** tab, then **Head code**, followed by publishing. On WordPress, look for a "header scripts" setting in your theme or a header-and-footer plugin. In Google Tag Manager, use a **Custom HTML** tag firing on **All Pages**.
+
+It has to be on the page holding your Cal.com embed, and on every page an affiliate might send someone to.
+
+## Find your embed's namespace
+
+Both setups need this one small detail, so it's worth doing before you go further.
+
+When you generate an embed, Cal.com gives you a block of code containing a line that looks like this:
+
+```js
+Cal("init", "15min", { origin: "https://app.cal.com" });
+```
+
+The word in quotes after `init` is the **namespace**. In that example it's `15min`. It's usually named after the meeting type, and the rest of the embed code refers back to it, as in `Cal.ns["15min"](...)`.
+
+Write yours down. Every snippet below has a placeholder where your namespace goes, and getting it wrong is the single most common reason nothing happens.
+
+<Note>
+  Self-hosting Cal.com? The `origin` in that line points at your own installation rather than `https://app.cal.com`. Leave whatever Cal.com generated for you exactly as it is.
+</Note>
+
+## Set up Referral Tracking
+
+Use this path if your meetings are free. It records each booking as a referred customer with no revenue attached.
+
+Copy the script from **Step 2: Setting Up Referral Tracking Scripts** in the **Cal Referral Tracking** instructions window, and paste it into your page **below** the Cal.com embed code, so the embed exists before this runs.
+
+Replace `INSERT_YOUR_NS_HERE` with your namespace, and note that `YOUR_PROGRAM_ID` is already filled in for you in the version inside Referly:
+
+```html
+<script>
+  Cal.ns["INSERT_YOUR_NS_HERE"]("on", {
+    action: "bookingSuccessfulV2",
+    callback: async ({ detail }) => {
+      const { data } = detail;
+
+      const uid = data?.uid;
+      const affiliateId = window.affiliateId;
+
+      if (!uid || !affiliateId) {
+        console.warn("Missing uid or affiliateId", { uid, affiliateId });
+        return;
+      }
+
+      try {
+        const res = await fetch(
+          "https://www.referly.so/api/webhooks/cal?program_id=YOUR_PROGRAM_ID",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              uid,
+              affiliateId,
+            }),
+          }
+        );
+
+        const result = await res.json();
+
+        console.log("Booking sent to referly:", result);
+      } catch (err) {
+        console.error("Failed to send booking:", err);
+      }
+    },
+  });
+</script>
+```
+
+{/* TODO screenshot: cal-referral-script — upload it in the local Documentation Agent */}
+
+What this does, in plain terms: the moment someone finishes booking inside your embed, it tells Referly which booking was made and which affiliate referred the visitor. Referly then looks the booking up with Cal.com to get the attendee's name and email, and records the referral. Bookings by visitors who didn't arrive on an affiliate link are ignored, so your organic bookings stay untouched.
+
+If a meeting has several attendees, each one is recorded against the same affiliate.
+
+That's the whole setup for this path. Skip ahead to the testing section.
+
+## Set up Payment Tracking
+
+Use this path if you charge for the meeting through Cal.com. It's two pieces of work: teaching your embed to carry the referral, then telling Cal.com to notify Referly.
+
+### Add the referral to your embed code
+
+Cal.com's embed generator gives you code like this:
+
+```js
+Cal("init", "15min", { origin: "https://app.cal.com" });
+
+Cal.ns["15min"]("floatingButton", {
+  calLink: "your-name/15min",
+  config: { layout: "month_view", useSlotsViewOnSmallScreen: "true" },
+});
+Cal.ns["15min"]("ui", { hideEventTypeDetails: false, layout: "month_view" });
+```
+
+You replace everything from the `init` line onwards with the version from **Step 2: Setting Up Sales Tracking** in the **Cal Payment Tracking** instructions window. There's an **Inline** tab and a **Floating Buttons** tab there, so pick the one matching your embed.
+
+Here's the inline version:
+
+```js
+(function initCalWithAffiliateRetry() {
+  const MAX_RETRIES = 20;
+  const RETRY_DELAY_MS = 300;
+  const AFFILIATE_WAIT_MS = 2000;
+
+  let retries = 0;
+  const startedAt = Date.now();
+
+  function runInit() {
+    const affLink = window.affiliateId ?? null;
+
+    Cal("init", "15min", { origin: "https://app.cal.com" });
+
+    Cal.ns["15min"]("inline", {
+      elementOrSelector: "#my-cal-inline-15min",
+      calLink: "your-name/15min",
+      config: {
+        layout: "month_view",
+        "metadata[referlyAff]": affLink,
+      },
+    });
+
+    Cal.ns["15min"]("ui", {
+      hideEventTypeDetails: false,
+      layout: "month_view",
+    });
+  }
+
+  function attemptInit() {
+    const elapsed = Date.now() - startedAt;
+
+    const affiliateReady =
+      Boolean(window.affiliateId) || elapsed >= AFFILIATE_WAIT_MS;
+
+    if (affiliateReady) {
+      runInit();
+      return;
+    }
+
+    retries++;
+
+    if (retries > MAX_RETRIES) {
+      console.warn("Affiliate not ready, fallback init");
+      runInit();
+      return;
+    }
+
+    setTimeout(attemptInit, RETRY_DELAY_MS);
+  }
+
+  window.addEventListener("affiliate_referral_ready", attemptInit, {
+    once: true,
+  });
+  setTimeout(attemptInit, 0);
+})();
+```
+
+And the floating button version, which differs only in the middle:
+
+```js
+    Cal.ns["15min"]("floatingButton", {
+      calLink: "your-name/15min",
+      config: {
+        layout: "month_view",
+        "metadata[referlyAff]": affLink,
+      },
+    });
+```
+
+{/* TODO screenshot: cal-payment-embed-code — upload it in the local Documentation Agent */}
+
+Four things to carry across from your own generated code, or the embed will break:
+
+<Steps>
+  <Step title="Your namespace">
+    Replace every `15min` with your own namespace, including inside `Cal.ns[...]`.
+  </Step>
+  <Step title="Your calLink">
+    Replace `your-name/15min` with the `calLink` value Cal.com generated for you.
+  </Step>
+  <Step title="Your element selector">
+    For inline embeds only, replace `#my-cal-inline-15min` with the `elementOrSelector` value from your generated code.
+  </Step>
+  <Step title="The rest of your config and ui settings">
+    Keep whatever layout and appearance settings Cal.com gave you. The only thing you're **adding** is the `"metadata[referlyAff]": affLink` line inside `config`. Don't remove your existing settings to make room for it.
+  </Step>
+</Steps>
+
+The wrapper around all this exists for a good reason. Referly needs a moment to work out who referred the visitor, and the embed needs to be built with that answer already in hand. This code waits for Referly, then builds the embed, and gives up waiting after two seconds so the scheduler always appears even for visitors who came from nowhere in particular.
+
+### Add the webhook in Cal.com
+
+Now tell Cal.com to notify Referly when a booking is made or paid for.
+
+<Steps>
+  <Step title="Open your webhook settings">
+    In Cal.com, go to **Settings**, then **Developer**, then **Webhooks**. Select **New** to create one.
+  </Step>
+  <Step title="Paste the subscriber URL">
+    Copy the address shown under **Step 3** in the Cal Payment Tracking instructions window and paste it into **Subscriber URL**. It's unique to your program and looks like this:
+
+    ```text
+    https://www.referly.so/api/webhooks/cal-sale?program_id=YOUR_PROGRAM_ID
+    ```
+
+    Copy it from Referly rather than typing it out. The part after `program_id=` tells Referly which program the bookings belong to.
+  </Step>
+  <Step title="Choose the event triggers">
+    Under **Event Triggers**, select these two and nothing else:
+
+    - **Booking Created**
+    - **Booking Paid**
+
+    Referly ignores every other trigger, so adding more only creates noise.
+  </Step>
+  <Step title="Leave the secret blank">
+    The optional secret field isn't needed here.
+  </Step>
+  <Step title="Create it">
+    Select **Create Webhook**. It starts working immediately.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: cal-webhook-setup — upload it in the local Documentation Agent */}
+
+<Note>
+  A webhook can be attached to your whole account or to one specific meeting type. Account-level is usually what you want, so any paid meeting type is covered. If you set it at the meeting-type level, remember to add it again for each new paid meeting type you create.
+</Note>
+
+Cal.com's own reference is their [webhooks documentation](https://cal.com/docs/developing/guides/automation/webhooks). If you self-host Cal.com, note that their hosted service only accepts secure addresses, which the Referly address already is.
+
+Referly converts the amount into your program's currency automatically, so a meeting priced in euros still reports correctly in a dollar-based program. The same booking is never counted twice, even though Cal.com sends both a created and a paid notification for it.
+
+## Test it end to end
+
+Do this before telling any affiliate the integration is live.
+
+<Steps>
+  <Step title="Grab a real affiliate link">
+    Open **Affiliates** in the left sidebar, pick an affiliate, and copy their referral link.
+  </Step>
+  <Step title="Open it in a private window">
+    Use a private or incognito window so old tracking data doesn't interfere. Land on the page with your Cal.com embed and let it finish loading. This is the moment the referral is recorded.
+  </Step>
+  <Step title="Book a slot">
+    Book through the embed exactly as a customer would, using an email address you haven't used before. If you're testing Payment Tracking, go through the payment as well.
+  </Step>
+  <Step title="Check Referly">
+    Open **Customers** in the left sidebar. The booking should appear within a minute, with the attendee's name and email and the meeting title, credited to the affiliate whose link you used. With Payment Tracking, the amount and its commission show up alongside it.
+  </Step>
+  <Step title="Check it appeared once, not twice">
+    If you see the same booking twice, you have both setups running on the same meeting type. Remove one.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: cal-test-booking — upload it in the local Documentation Agent */}
+
+<Check>
+  When the test booking appears once under **Customers** against the right affiliate, with the right amount if you charged for it, you're done.
+</Check>
+
+Cancel the test meeting in Cal.com and remove the test referral in Referly so your reports start clean.
+
+## How Referly decides who gets the credit
+
+When a visitor lands on your site through an affiliate link, Referly records the click and keeps it in their browser for as long as your cookie window allows. When they book, that stored referral travels with the booking, either passed straight to Referly by the referral script or carried inside the booking itself for Payment Tracking. Referly looks it up and credits the affiliate behind it.
+
+If Referly can't find the exact click, it falls back to matching against your affiliates' referral codes, which keeps things working when someone clears their cookies mid-visit.
+
+Everything depends on that stored referral existing. A booking made in a different browser, on another device, or after your cookie window has run out won't be credited to anyone. And once a customer is credited to an affiliate, that credit stays put: later clicks from other affiliates don't take it over.
+
+## Limitations to be aware of
+
+- **Only the booking is tracked.** Cancellations, reschedules, no-shows, and refunds never reach Referly. A cancelled meeting stays in your reports as a referral.
+- **Referral Tracking never records revenue.** Bookings arrive with no value. If you want money attached, either use Payment Tracking or [add the sale by hand](/help-center/manage/customers/add-a-sale) when the deal closes.
+- **The visitor must book in the browser they clicked in.** Clicking on a phone and booking on a laptop won't match.
+- **A bare `cal.com` link can never be tracked.** Worth repeating in your affiliate onboarding notes.
+- **Setup is per embed.** A new meeting type embedded on a new page isn't tracked until you repeat the steps for it.
+- **Payment Tracking's provided setup covers inline and floating button embeds.** The pop-up-via-element-click embed isn't covered.
+- **Recurring meeting types are booked once**, so they're recorded once, not once per occurrence.
+- **Ad blockers and strict privacy settings** stop the tracking script for a small share of visitors, as with any affiliate tool.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The scheduler doesn't appear at all after I edited the embed code">
+    Something in the replacement didn't carry across. Check that your namespace, your `calLink`, and, for inline embeds, your element selector all match what Cal.com generated. Restore the original embed code, confirm the scheduler comes back, then redo the edit one value at a time.
+  </Accordion>
+  <Accordion title="Bookings happen but nothing appears in Referly">
+    Start with the namespace, which is the usual culprit. It has to be the exact word from the `init` line of your own embed code, in every place the snippet uses it.
+
+    Then check the ordering: for Referral Tracking, the script goes **below** the embed code. Check the tracking script is on that page too. And confirm you published the site after making the changes.
+  </Accordion>
+  <Accordion title="Bookings appear but always with no revenue">
+    You're on Referral Tracking, which never records amounts. Switch that meeting type to Payment Tracking, and remove the referral script when you do so you don't get two entries per booking.
+
+    If you're already on Payment Tracking, check that the meeting type actually charges in Cal.com, and that **Booking Paid** is selected on your webhook.
+  </Accordion>
+  <Accordion title="Every booking shows up twice">
+    Both setups are running on the same meeting type. Pick one and remove the other. Payment Tracking on its own covers both the booking and the payment.
+  </Accordion>
+  <Accordion title="Clicks are counted but bookings never are">
+    The tracking script works and the Cal.com side doesn't. For Payment Tracking, open your webhook in Cal.com and check its recent deliveries: if nothing was sent, the triggers are wrong; if something was sent but nothing appeared in Referly, the referral isn't reaching the booking, which points back at the embed code edit.
+  </Accordion>
+  <Accordion title="A booking wasn't credited even though the customer used an affiliate link">
+    Check whether they clicked on one device and booked on another, whether the click was older than your cookie window, or whether the affiliate shared your `cal.com` address instead of their referral link. You can attach the referral to the right affiliate by hand from the customer's page, described in [managing referred customers](/help-center/manage/customers/overview).
+  </Accordion>
+  <Accordion title="The amount is right but the currency looks wrong">
+    Referly converts into your program's currency using the rate at the time of the booking, so the number won't match your Cal.com price exactly when the two currencies differ. Check your program's currency in your program settings if the conversion isn't what you expected.
+  </Accordion>
+</AccordionGroup>
+
+Still stuck? [Book an integration call](https://www.referly.so/book-integration-call) and we'll go through your setup with you.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Calendly" icon="calendar-days" href="/help-center/integrations/calendly" arrow>
+    The same idea for Calendly bookings.
+  </Card>
+  <Card title="Universal integration" icon="code" href="/help-center/integrations/universal" arrow>
+    Track a platform that isn't listed.
+  </Card>
+  <Card title="Add a sale" icon="plus" href="/help-center/manage/customers/add-a-sale" arrow>
+    Record revenue that closes after the call.
+  </Card>
+  <Card title="All integrations" icon="puzzle-piece" href="/help-center/integrations/overview" arrow>
+    See every platform Referly connects to.
+  </Card>
+</Columns>

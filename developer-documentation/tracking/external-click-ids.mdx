@@ -1,6 +1,128 @@
 ---
 title: "External click IDs"
-description: "Pass a sub-affiliate network's click ID through."
+description: "How Referly captures the rsubID external click ID from affiliate network traffic, stores it per program in the browser, records it on the click, and returns it on conversion through the postback URL extClickid macro for network reconciliation."
+keywords: ["rsubID parameter", "external click ID affiliate network", "affiliate network postback reconciliation", "extClickid macro", "sub ID tracking affiliate", "network click ID pass back", "Referly postback URL", "affiliate network integration tracking"]
 ---
+When an affiliate network sends you traffic, it has already recorded that click on its own side under its own identifier. For the network to pay its publisher, the conversion you report back has to carry that identifier — its click record and yours have to meet somewhere.
 
-{/* TODO: Write this article. */}
+The external click ID is that carrier. A network appends it to the landing URL, Referly holds on to it for the life of the referral, and hands it back on the postback when the visitor converts. Referly never interprets the value; it is an opaque string that goes in one end and comes out the other.
+
+## The rsubID parameter
+
+The parameter name is `rsubID`, and it is **case-sensitive** — `rsubid`, `RSUBID`, and `rsubId` are all ignored. It is read from the query string only, never from the hash fragment.
+
+```
+https://example.com/?ref=jane&rsubID=nw_88f21c4a9
+```
+
+The value is read exactly as the browser decodes it, with no validation, no length limit, and no format expectation. Whatever the network puts there is what you get back.
+
+`rsubID` sits alongside the referral code rather than replacing it. Attribution still runs off the referral code — see [URL parameters](/developer-documentation/tracking/url-parameters) — and the external click ID is metadata carried along for the ride.
+
+## How it is stored in the browser
+
+Unlike the UTMs and ad platform click IDs, which are read once and written straight to the click, the external click ID is also persisted in the visitor's browser.
+
+- The storage key is your program ID followed by `_rsubID`, for example `prog_a1b2c3_rsubID`.
+- It goes in a cookie, falling back to localStorage when cookies are unavailable. Same mechanism as the rest of the tracking state — see [cookies and storage](/developer-documentation/tracking/cookies-and-storage).
+- It is written for your program's cookie window, which defaults to 60 days.
+- It is scoped per program. Two Referly programs on the same domain keep separate external click IDs and never read each other's.
+
+Persisting it matters because the conversion usually happens on a later page view, on a URL that no longer carries `rsubID`. Without storage, the identifier would be gone by the time it is needed.
+
+## Resolution order
+
+On every page load the tracking script resolves a current external click ID from two candidates:
+
+<Steps>
+  <Step title="The URL wins">
+    If `rsubID` is on the current URL, that value is used and it overwrites whatever was stored.
+  </Step>
+  <Step title="Otherwise the stored value is reused">
+    If the URL has no `rsubID`, the value already in storage for this program is carried forward and re-saved, resetting its expiry.
+  </Step>
+  <Step title="Otherwise nothing">
+    If neither exists, the external click ID is empty and the stored key is removed.
+  </Step>
+</Steps>
+
+The practical effect is last-touch: a visitor who arrives through network A and later returns through network B ends up with network B's identifier, which is the one that will be reported on conversion.
+
+## What lands on the click
+
+When a click is recorded, the resolved value is written to the click's `extClickId` field. Both cases that produce a click do this — the first arrival on a referral URL, and any repeat arrival on a referral URL for the same code.
+
+<Warning>
+  Storage and the click are not the same thing. A visitor who lands on a URL carrying `rsubID` but **no** referral code, with a referral already stored from earlier, has the value saved to their browser but no click is written — no click is created when the referral parameter is absent. The identifier is still there for the conversion, but it will not appear on any click row. See [click data](/developer-documentation/tracking/click-data) for exactly when clicks are created.
+</Warning>
+
+## Passing it back on conversion
+
+The return trip runs through the affiliate's postback URL. Each affiliate can set one on their own account; when Referly records a `referral.created` or `sale.created` event for that affiliate, it resolves the macros in the URL template and fires a GET request, following redirects, with a 10-second timeout.
+
+Two macros matter here:
+
+| Macro | Value |
+| --- | --- |
+| `{extClickid}` | The external click ID from the click — the network's own identifier |
+| `{clickid}` | Referly's numeric click ID. `{click_id}` is an alias |
+
+A network postback template usually looks something like this:
+
+```
+https://network.example.com/postback?cid={extClickid}&event={event}&amount={sale_amount}&currency={currency}
+```
+
+Both macros are populated from the click that the conversion was attributed to. That click is found by the click ID reported with the conversion — so if your integration does not send a click ID, there is no click to read, and `{extClickid}` resolves to an empty string. Any macro with no value resolves to empty rather than being left in the URL.
+
+The full macro list and setup steps live in [postback URLs](/developer-documentation/integrations/postback-url).
+
+<Warning>
+  Macro values are substituted into the template without URL-encoding. If a network's identifier can contain `&`, `#`, or `?`, it will break the resolved postback URL. Ask the network for a token-safe identifier, or expect to see malformed postbacks.
+</Warning>
+
+## The full round trip
+
+<Steps>
+  <Step title="The network sends the click">
+    Its ad or link redirects to your landing page with both the referral code and `rsubID` on the URL.
+  </Step>
+  <Step title="Referly records the click">
+    The referral code resolves to an affiliate, a click is written, and `extClickId` is stored on it. The value is also saved to the visitor's browser for the cookie window.
+  </Step>
+  <Step title="The visitor converts">
+    Your integration or server call reports the sign-up or sale along with the click ID from `window.affiliateId`.
+  </Step>
+  <Step title="The postback fires">
+    Referly loads that click, resolves `{extClickid}` from it, and calls the affiliate's postback URL.
+  </Step>
+  <Step title="The network reconciles">
+    It matches the identifier against its own click record and credits its publisher.
+  </Step>
+</Steps>
+
+## Things that clear or lose the value
+
+- **A tracking error.** If the script throws while resolving a click, it clears the referral code, the click ID, and the stored external click ID together, leaving a clean slate rather than a half-written state.
+- **The cookie window expiring.** The stored value expires with the rest of the tracking state.
+- **A different browser or device.** Storage is per browser, so a visitor who clicks on their phone and converts on their laptop loses the identifier along with the attribution.
+- **The wrong casing.** `rsubID` is matched exactly. This is the most common integration mistake — check the network's actual outgoing URL rather than its documentation.
+
+Turn on [debug mode](/developer-documentation/tracking/debug-mode) to see the resolved external click ID logged on every page load, which is the fastest way to tell a casing problem from a storage problem.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Click data" icon="database" href="/developer-documentation/tracking/click-data">
+    Every field stored on a click, and when a click is recorded at all.
+  </Card>
+  <Card title="UTMs and ad click IDs" icon="bullseye" href="/developer-documentation/tracking/utm-and-ad-click-ids">
+    The campaign parameters read off the same URL, and how they differ from this one.
+  </Card>
+  <Card title="Postback URLs" icon="arrow-right-arrow-left" href="/developer-documentation/integrations/postback-url">
+    Setting up the postback template and the full list of macros.
+  </Card>
+  <Card title="Cookies and storage" icon="cookie-bite" href="/developer-documentation/tracking/cookies-and-storage">
+    What the tracking script keeps in the browser, and for how long.
+  </Card>
+</Columns>

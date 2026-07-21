@@ -1,6 +1,203 @@
 ---
 title: "Ecwid"
-description: "Track Ecwid orders."
+description: "Track Ecwid store sales in Referly with two snippets — a storefront tracking script and order confirmation page code. Step-by-step setup, testing, and what the integration can and can't track."
+keywords: ["ecwid affiliate tracking", "ecwid affiliate program", "referly ecwid integration", "ecwid order confirmation tracking code", "ecwid custom tracking code affiliate", "lightspeed ecwid affiliate", "ecwid conversion tracking referral", "ecwid affiliate commission", "ecwid storefront tracking script"]
 ---
+Referly tracks Ecwid sales from your order confirmation page. One snippet on your storefront works out who referred a visitor; a second snippet on the page shoppers land on after paying tells Referly the sale happened and who to credit.
 
-{/* TODO: Write this article. */}
+There's no app to install, no API key to create, and no webhook to configure. That makes it the quickest integration to set up — but it's also the most limited, so read [what it can and can't do](#what-the-ecwid-integration-can-and-cant-do) before you commit to it.
+
+<Note>
+  There's nothing to connect under **Connect Integration** in Referly for Ecwid. The two snippets below are the whole setup.
+</Note>
+
+## What the Ecwid integration can and can't do
+
+| What you want to track | Does Ecwid cover it? |
+| --- | --- |
+| **Clicks on affiliate links** | Yes, once the tracking script is on your storefront ([Step 1](#step-1-add-the-tracking-script-to-your-storefront)). |
+| **Referred customers** | Yes — the buyer's name and email come across and they're attached to the affiliate who referred them. |
+| **Order totals** | Yes — the order total comes across, converted into your program's currency if the shopper paid in a different one. |
+| **Ad click IDs** | Yes — if an affiliate's traffic carried an ad-network tracking ID, Referly can match on that as a backup. See [External click IDs](/developer-documentation/tracking/external-click-ids). |
+| **Product-level detail** | No — Ecwid sends the order total, not the individual items. [Product-based commissions](/help-center/getting-started/commissions/product-based) won't have anything to match on, so use a percentage or flat rate for the whole order. |
+| **Tax and shipping as separate amounts** | No — they're included in the total but not reported separately, so you can't exclude them from commission. |
+| **Refunds** | No — refunds aren't reported back. Adjust or delete the sale in Referly by hand. See [Handling refunds](#handling-refunds). |
+| **Discount code attribution** | No — Ecwid discount codes don't identify an affiliate. Affiliates need to promote links. |
+| **Subscriptions and renewals** | No — only the order the shopper places on the confirmation page is reported. Renewals aren't. |
+| **Sign-ups with no order** | No — the confirmation page is the only thing that reports back. Use the [Universal integration](/help-center/integrations/universal) if you want to reward sign-ups. |
+| **Orders placed without the confirmation page loading** | No — if a shopper closes the tab before the page loads, or an order is created by hand in your Ecwid admin, nothing reaches Referly. |
+| **Orders from shoppers with no referral** | No — nothing is recorded, not even an unattributed sale. |
+
+<Tip>
+  If most of that list matters to you, consider selling through [Stripe](/help-center/integrations/stripe) or [Shopify](/help-center/integrations/shopify) instead, which report orders from the payment side and cover refunds, products, and renewals.
+</Tip>
+
+## Before you start
+
+You'll need:
+
+- **Admin access to your Ecwid control panel**, so you can add tracking code.
+- **Access to your website's code**, if your store is an Ecwid widget embedded in your own site. If you use Ecwid's own Instant Site, you'll add the storefront script through Ecwid's custom code settings instead.
+- **Your Referly guide open.** In Referly, open your program, go to **Settings**, then **Integrations**, and select the **Ecwid Order Confirmation Page** card. Both snippets are shown there, pre-filled with your program ID.
+
+{/* TODO screenshot: ecwid-guide-card — upload it in the local Documentation Agent */}
+
+## Step 1: Add the tracking script to your storefront
+
+This is what recognises a visitor who arrived from an affiliate link, records the click, and remembers who referred them until they check out.
+
+Copy the snippet from Step 1 of the Ecwid guide in Referly and add it inside the `head` section of every page of your store — not only your product pages, and not only your checkout.
+
+```html Tracking script
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+<Warning>
+  This snippet has to be present on the order confirmation page too. The code in Step 2 reads the referral that this script works out — without it on that page, nothing is reported.
+</Warning>
+
+## Step 2: Add the code to your order confirmation page
+
+This is the piece that tells Referly a sale happened.
+
+<Steps>
+  <Step title="Open your tracking settings">
+    In your Ecwid control panel, go to **Settings**, then **General**, then **Tracking & Analytics**.
+  </Step>
+  <Step title="Find the confirmation page section">
+    Scroll to **Custom tracking code on Order Confirmation page**.
+  </Step>
+  <Step title="Paste the code">
+    Paste the snippet below into that box, replacing `YOUR_PROGRAM_ID` with your own program's ID — or copy the version from your Referly guide, which already has it filled in.
+  </Step>
+  <Step title="Save">
+    Save your settings. It takes effect on the next order.
+  </Step>
+</Steps>
+
+```html Order confirmation code
+<script>
+  <#noescape>
+    const email = "${customer.email?js_string}";
+    const amount = "${order.total}";
+    const name = "${customer.name?js_string}";
+    const userId = "${customer.membershipId?js_string}";
+
+    if (window.affiliateId && email && amount) {
+      fetch("https://www.referly.so/api/affiliates/capture-sale", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          amount,
+          name,
+          email,
+          affiliateId: window.affiliateId,
+          programId: "YOUR_PROGRAM_ID",
+          url: window.location.href,
+        }),
+      }).catch((error) => {
+        console.log("Error recording sale:", error);
+      });
+    }
+  </#noescape>
+</script>
+```
+
+{/* TODO screenshot: ecwid-tracking-code-settings — upload it in the local Documentation Agent */}
+
+### What the code is doing
+
+You don't need to understand it to use it, but it helps when something goes wrong:
+
+- The `${...}` pieces are Ecwid's own placeholders. Ecwid swaps them for the real buyer's email, name, and order total when the page loads.
+- The `<#noescape>` wrapper tells Ecwid this is JavaScript rather than plain HTML, so the values come through in a usable form. Ecwid's [order confirmation tracking documentation](https://support.ecwid.com/hc/en-us/articles/360009524819-Custom-tracking-code-on-the-Order-Confirmation-page) explains this.
+- The `?js_string` on the text values protects against buyer names containing apostrophes or quotes, which would otherwise break the code silently.
+- Nothing is sent when the buyer didn't come from an affiliate link, so your ordinary orders are unaffected.
+
+## Step 3: Place a test order
+
+<Steps>
+  <Step title="Visit your store through an affiliate link">
+    Use a real affiliate's referral link from your **Affiliates** page, in a private or incognito window.
+  </Step>
+  <Step title="Check the click landed">
+    In Referly, open that affiliate's record and confirm the click count went up. If it didn't, the Step 1 script isn't running.
+  </Step>
+  <Step title="Buy something">
+    Complete a small order and let the confirmation page load fully. Don't close the tab early — that page is what reports the sale.
+  </Step>
+  <Step title="Check the result in Referly">
+    Open **Customers** to find the buyer attached to the affiliate, **Sales** to confirm the amount, and **Rewards** to see the commission.
+  </Step>
+  <Step title="Clean up">
+    Refund the test order in Ecwid, then delete the test customer and sale from your **Customers** and **Sales** pages — Referly won't remove them for you.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: referly-ecwid-sale — upload it in the local Documentation Agent */}
+
+## Handling refunds
+
+Ecwid refunds don't reach Referly, so this one is manual. When you refund an order, open the matching sale on your **Sales** page in Referly and delete or adjust it, so the affiliate isn't paid on money you gave back.
+
+If you approve rewards on a schedule rather than automatically, catching refunds before the hold period ends means nothing gets paid out in error. See [Reward holds](/help-center/manage/rewards/holds) and [Approve or decline rewards](/help-center/manage/rewards/approve-or-decline).
+
+## Watching for duplicate sales
+
+The order number isn't sent along with the sale, so a shopper who reloads the confirmation page — or reaches it twice — can produce a second sale for the same order.
+
+It isn't common, but it's worth a look when you review rewards: two sales for the same customer, for the same amount, moments apart, are almost certainly one order counted twice. Delete the extra one from your **Sales** page before approving the reward.
+
+## Removing the integration
+
+Remove the confirmation page code from **Settings**, then **General**, then **Tracking & Analytics** in your Ecwid control panel, and take the tracking script out of your storefront. Nothing else needs undoing, because there's no connection saved on Referly's side.
+
+Nothing already tracked is deleted — your affiliates, referred customers, sales, and rewards all stay.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Clicks aren't being counted">
+    The Step 1 script isn't running on the page visitors land on. It has to be on every page of your store. If your store is embedded in your own website, add it to your site's pages; if you use Ecwid's Instant Site, add it through Ecwid's custom code settings.
+  </Accordion>
+  <Accordion title="Clicks are tracked but sales aren't">
+    Two usual causes. Either the Step 1 script isn't present on the confirmation page — it needs to be there as well as on your storefront — or the Step 2 code didn't save correctly. Place another test order and watch the confirmation page load fully.
+  </Accordion>
+  <Accordion title="Sales appear with no affiliate attached">
+    The shopper didn't arrive through an affiliate link in that browser, or they cleared their cookies between arriving and buying. Test with a fresh private window and a real affiliate's link.
+  </Accordion>
+  <Accordion title="Some orders come through and others don't">
+    Shoppers who close the tab before the confirmation page loads aren't reported, and neither are orders you create by hand in your Ecwid admin. That's inherent to tracking from the confirmation page — add anything missing with [Add a sale](/help-center/manage/customers/add-a-sale).
+  </Accordion>
+  <Accordion title="Sale amounts look wrong">
+    The order total is sent as text and converted into your program's currency. If amounts look off by an exchange rate, check the currency set on your program under [Program details](/help-center/settings/program/general).
+  </Accordion>
+  <Accordion title="I can't build a per-product commission plan">
+    Ecwid doesn't send the individual items on an order, so there's nothing for a product rule to match on. Use a percentage or flat rate across the whole order instead — see [Commission plans overview](/help-center/getting-started/commissions/overview).
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Commission plans overview" icon="money-bill" href="/help-center/getting-started/commissions/overview" arrow>
+    Set a percentage or flat rate for your Ecwid orders.
+  </Card>
+  <Card title="Add a sale" icon="plus" href="/help-center/manage/customers/add-a-sale" arrow>
+    Record an order by hand when it wasn't reported.
+  </Card>
+  <Card title="Universal integration" icon="puzzle-piece" href="/help-center/integrations/universal" arrow>
+    Track sign-ups and form submissions as well as orders.
+  </Card>
+  <Card title="Integrations overview" icon="grid-2" href="/help-center/integrations/overview" arrow>
+    See every tool Referly connects to.
+  </Card>
+</Columns>

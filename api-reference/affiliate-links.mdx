@@ -1,25 +1,211 @@
 ---
 title: "Affiliates and referral links"
-description: "Use the affiliateLinks array as the source of truth for an affiliate's referral links. The legacy link property is deprecated."
-keywords: ["affiliate links", "referral links", "affiliateLinks", "Referly API"]
+description: "How affiliates and referral links relate in the Referly API: the affiliateLinks array, the deprecated link field, slug rules, tracking URLs, and the endpoints for creating and managing links."
+keywords: ["affiliate links", "referral links", "affiliateLinks", "affiliate link slug", "tracking URL", "Referly API"]
 ---
+Every affiliate in your program owns one or more **referral links**. A referral link is a short slug (for example `jane-doe`) that Referly appends to your destination URLs as a query parameter so it can attribute clicks, referrals, and sales back to that affiliate.
 
-Affiliate objects returned by the Affiliates API (for example **Get Affiliate(s)** and **Create an Affiliate**) include an **`affiliateLinks`** array: one entry per referral link slug for that affiliate, each with `id`, `link`, timestamps, and related IDs.
+An affiliate can have many slugs — one per campaign, channel, or landing page — and they all credit the same affiliate.
 
 <Warning>
-  The legacy **`link`** property on the affiliate object is **deprecated** and may be `null`. Use
-  **`affiliateLinks`** (and the [Links](/api-reference/links/get) endpoints to manage links) as the
-  source of truth.
+  The legacy **`link`** property on the affiliate object is **deprecated** and is usually `null`. Use
+  the **`affiliateLinks`** array, and the [Links endpoints](/api-reference/links/get), as the source
+  of truth for an affiliate's referral links.
 </Warning>
 
-- **Create affiliate** (`POST /affiliates`): optional body field **`affiliateLink`** sets the slug of the initial link; if omitted, a slug is generated.
-- **Update affiliate** (`PUT /affiliates`): optional **`affiliateLink`** **adds** a new link; it does not remove or replace existing `affiliateLinks`.
+## The affiliate object
+
+Affiliate objects returned by [Get Affiliate(s)](/api-reference/affiliates/get) and [Create an Affiliate](/api-reference/affiliates/create) include an `affiliateLinks` array with one entry per slug:
+
+```json Affiliate response (truncated)
+{
+  "id": "9f1c0b7e-4a2b-4d55-9a10-2c6b5f0a7e31",
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "email": "jane@example.com",
+  "status": "ACTIVE",
+  "commissionRate": 20,
+  "link": null,
+  "affiliateLinks": [
+    {
+      "id": "3e8a1d92-77c4-4f0e-b6a5-1d0c9e2f4b88",
+      "link": "jane-doe",
+      "userId": "9f1c0b7e-4a2b-4d55-9a10-2c6b5f0a7e31",
+      "programId": "c2d4f6a8-0b1c-4e3d-8f5a-6b7c8d9e0f12",
+      "createdAt": "2025-03-04T09:12:44.000Z",
+      "updatedAt": "2025-03-04T09:12:44.000Z"
+    }
+  ]
+}
+```
+
+<ResponseField name="affiliateLinks" type="array">
+  Every referral link belonging to this affiliate. Each entry has `id`, `link` (the slug), `userId`,
+  `programId`, `createdAt`, and `updatedAt`.
+</ResponseField>
+
+<ResponseField name="link" type="string | null" deprecated={true}>
+  Legacy single-link field. Kept for backwards compatibility and typically `null`. Read
+  `affiliateLinks` instead.
+</ResponseField>
+
+## Create an affiliate with a chosen slug
+
+`POST /affiliates` requires `firstName`, `lastName`, and `email`. Every affiliate is created with at least one referral link, so the slug is decided at creation time.
+
+<ParamField body="affiliateLink" type="string">
+  The slug for the affiliate's first referral link. If you omit it, Referly generates one from the
+  affiliate's email address and keeps trying until it finds an unused slug.
+</ParamField>
+
+```bash cURL
+curl -X POST https://www.referly.so/api/v1/affiliates \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName": "Jane",
+    "lastName": "Doe",
+    "email": "jane@example.com",
+    "affiliateLink": "jane-doe"
+  }'
+```
+
+If you pass an `affiliateLink` that another affiliate in the program already uses, the request fails with `400` and `The requested affiliate link is already in use`. Referly only falls back to an auto-generated slug when you left `affiliateLink` out.
+
+See [Create an Affiliate](/api-reference/affiliates/create) for the full list of body fields.
+
+## Add more links to an existing affiliate
+
+There are two ways to give an affiliate an additional slug, and both **add** rather than replace:
+
+<Tabs>
+  <Tab title="Links endpoint (recommended)">
+    `POST /links` creates the link and returns it with its tracking URLs and stats. Identify the
+    owner with either `affiliateId` or `affiliateEmail`.
+
+    ```bash cURL
+    curl -X POST https://www.referly.so/api/v1/links \
+      -H "Authorization: Bearer YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "link": "jane-summer",
+        "affiliateEmail": "jane@example.com"
+      }'
+    ```
+  </Tab>
+  <Tab title="Affiliates endpoint">
+    `PUT /affiliates` accepts an `affiliateLink` field. It appends a new slug and leaves the existing
+    `affiliateLinks` untouched — it never renames or removes a link.
+
+    ```bash cURL
+    curl -X PUT https://www.referly.so/api/v1/affiliates \
+      -H "Authorization: Bearer YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "affiliateId": "9f1c0b7e-4a2b-4d55-9a10-2c6b5f0a7e31",
+        "affiliateLink": "jane-summer"
+      }'
+    ```
+  </Tab>
+</Tabs>
+
+To rename or remove a slug, use [Update Affiliate Link](/api-reference/links/update) or [Delete Affiliate Link](/api-reference/links/delete).
+
+## Slug rules
+
+Slugs are validated when you create or rename a link through the Links endpoints:
+
+- Only letters, numbers, and hyphens are allowed. Anything else returns `400` with `Link can only contain letters, numbers, and hyphens`.
+- A slug must be unique across your affiliate program. Reusing one returns `400` with `This link already exists for this affiliate program`.
+- The slug is the visible part of the URL your affiliates share, so short and readable works best.
+
+## Tracking URLs
+
+A slug on its own is not a shareable URL. [Get Affiliate Link(s)](/api-reference/links/get) and [Create an Affiliate Link](/api-reference/links/create) return a `fullURLs` array that combines the slug with each destination URL configured on your program:
+
+```json Link response (truncated)
+{
+  "link": "jane-doe",
+  "clicks": 128,
+  "referrals": 14,
+  "sales": 6,
+  "totalRevenue": 412.5,
+  "fullURLs": [
+    {
+      "baseUrl": "https://example.com",
+      "fullUrl": "https://example.com/?ref=jane-doe"
+    },
+    {
+      "baseUrl": "https://example.com/pricing",
+      "fullUrl": "https://example.com/pricing?ref=jane-doe"
+    }
+  ]
+}
+```
+
+The query parameter name is your program's URL modifier, which defaults to `ref`. Any custom URL parameters you configured on a destination URL are appended too. See [Tracking parameters](/developer-documentation/reference/tracking-parameters) for how a click on one of these URLs is attributed.
+
+## Look up an affiliate or a link
+
+The two `GET` endpoints let you resolve records from whichever identifier you happen to hold.
+
+### Find an affiliate
+
+`GET /affiliates` returns a single affiliate when you pass an identifier, or an array of every affiliate in the program when you pass none.
+
+<ParamField query="id" type="string">
+  Accepts three kinds of value: an affiliate ID, a numeric click ID, or a referral link slug. Referly
+  tries the click ID first when the value is entirely numeric, then falls back to matching the
+  affiliate ID or a slug in `affiliateLinks`.
+</ParamField>
+
+<ParamField query="email" type="string">
+  The affiliate's email address.
+</ParamField>
+
+```bash Resolve an affiliate from a slug
+curl "https://www.referly.so/api/v1/affiliates?id=jane-doe" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+When nothing matches, the response body is `null` with a `200` status rather than a `404`.
+
+### Find links
+
+`GET /links` accepts `id`, `link`, `affiliateId`, or `affiliateEmail`, and always returns an array. Use `affiliateId` or `affiliateEmail` to list every link an affiliate owns, each with its own `clicks`, `referrals`, `sales`, and `totalRevenue`.
+
+```bash List one affiliate's links
+curl "https://www.referly.so/api/v1/links?affiliateEmail=jane@example.com" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## Errors
+
+Both resources share the same authentication and error behaviour. Failures return a JSON object with an `error` message.
+
+| Status | When it happens |
+| --- | --- |
+| `400` | A required field is missing, an identifier does not resolve, a slug is malformed, or a slug is already in use. |
+| `401` | The `Authorization` header is missing or malformed, or the API key is not valid. |
+| `403` | The program does not have API access on its current plan. |
+| `404` | The affiliate program tied to the API key no longer exists. |
+| `429` | You exceeded the rate limit for this endpoint. Slow down and retry. |
+
+See [Authentication](/api-reference/authentication) for how to generate an API key.
+
+## Related
 
 <Columns cols={2}>
   <Card title="Affiliate endpoints" icon="users" href="/api-reference/affiliates/get">
     Create, read, update, and delete affiliates.
   </Card>
   <Card title="Link endpoints" icon="link" href="/api-reference/links/get">
-    Manage an affiliate's referral links.
+    Create, read, rename, and delete referral links.
+  </Card>
+  <Card title="Coupons and promotional codes" icon="ticket" href="/api-reference/coupons-and-promotional-codes">
+    Attribute sales with discount codes instead of links.
+  </Card>
+  <Card title="Authentication" icon="key" href="/api-reference/authentication">
+    Generate an API key and authorize your requests.
   </Card>
 </Columns>

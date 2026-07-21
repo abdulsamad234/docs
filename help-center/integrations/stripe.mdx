@@ -1,6 +1,289 @@
 ---
 title: "Stripe"
-description: "Track Stripe payments, subscriptions, and refunds."
+description: "Connect Stripe to Referly to track referred customers, subscriptions, trials, renewals, coupon sales, and refunds automatically. Step-by-step setup, test-mode walkthrough, and what the integration can and can't track."
+keywords: ["stripe affiliate tracking", "connect stripe to referly", "stripe affiliate program", "stripe client_reference_id affiliate", "stripe subscription commission tracking", "stripe recurring affiliate commissions", "stripe test mode affiliate tracking", "stripe refund affiliate commission", "stripe coupon code affiliate", "referly stripe integration"]
 ---
+Stripe is the most complete integration Referly offers. Once your Stripe account is connected, Referly watches every payment that happens in it — first purchases, subscription renewals, trials that convert, refunds, and coupon redemptions — and turns the ones that came from an affiliate into referred customers, sales, and commissions. You don't export anything, and you don't record sales by hand.
 
-{/* TODO: Write this article. */}
+This guide is the starting point for every Stripe setup. It covers what the integration can and can't do, how to connect your account (on both the Stripe side and the Referly side), how to send the referral through to your checkout, and how to test the whole thing before you go live. Each checkout style — Payment Links, Pricing Tables, Buy Buttons, your own Checkout code, coupon codes — has its own detailed guide, linked from [Step 3](#step-3-send-the-referral-through-to-stripe).
+
+<Note>
+  Referly can only be connected to **one payment processor at a time**. Connecting Stripe means Shopify, Chargebee, Paddle, WooCommerce, Polar, and Zylvie stay disconnected for this program.
+</Note>
+
+## What the Stripe integration can and can't do
+
+Connecting Stripe covers the money side of your program completely. It does **not** cover clicks or sign-ups on its own — those come from the Referly tracking script and from other integrations.
+
+| What you want to track | Does Stripe cover it? |
+| --- | --- |
+| **Clicks on affiliate links** | No — Stripe never sees a click. You need the Referly tracking script on your site ([Step 1](#step-1-install-the-tracking-script-on-your-site)). |
+| **Sign-ups and leads that don't reach Stripe** | No — if someone creates a free account and never enters checkout, Stripe has nothing to report. Use the [Universal integration](/help-center/integrations/universal) or the [referral widget](/help-center/engage/widget/overview) for those. |
+| **New referred customers at checkout** | Yes — a completed checkout creates the referred customer in Referly, attached to the affiliate who sent them. |
+| **Free trials** | Yes — a trial that starts through checkout creates the referred customer straight away with a sale value of zero. The commission is created when the trial converts and Stripe takes the first real payment. |
+| **One-time payments** | Yes — every successful charge becomes a sale. |
+| **Subscriptions and renewals** | Yes — the first payment and every renewal after it. Renewals are matched to the referred customer by their email address, so they keep earning even though the renewal charge carries no referral reference. |
+| **Product-level detail** | Yes — Referly reads the line items on the payment, so [product-based commissions](/help-center/getting-started/commissions/product-based) work. |
+| **Tax and shipping** | Yes — both are read from the payment so commission can be calculated on the amount you actually want to pay on. |
+| **Payments in other currencies** | Yes — amounts are converted into your program's currency before commission is worked out. |
+| **Plan names** | Yes — the plan the customer is on is shown on their record and updates when their subscription changes. |
+| **Coupon and promo code sales** | Yes — a payment that used an affiliate's code is credited to that affiliate, even with no click and no link. See [Stripe coupon codes](/help-center/integrations/stripe/coupon-codes). |
+| **Refunds** | Yes — see [How refunds are handled](#how-refunds-are-handled). |
+| **Chargebacks and disputes** | No — a disputed payment is not reversed automatically. Adjust the sale or the reward by hand if you need to. |
+| **Payments taken outside the connected account** | No — invoices paid by bank transfer outside Stripe, payments in a second Stripe account, or manual invoices are invisible to Referly. Add those with [Add a sale](/help-center/manage/customers/add-a-sale) or the [Referly API](/help-center/settings/advanced/api-keys). |
+
+<Warning>
+  Referly only processes Stripe events while your Referly subscription is active. If your plan lapses, payments that happen in the meantime are ignored and won't appear later.
+</Warning>
+
+## Before you start
+
+You'll need:
+
+- **Owner or admin access to your Stripe account**, so you can approve the connection when Stripe asks.
+- **The ability to add a line of code to your website**, or someone who can do it for you. This is what tracks clicks and carries the referral to checkout.
+- **An active Referly plan** on the program you're connecting.
+- **A decision on test mode or live mode.** Referly connects to one or the other, never both at once. If you want to rehearse first, read [Step 4](#step-4-test-the-whole-flow-before-you-go-live) before connecting.
+
+You'll also want to have decided how your customers pay — Payment Links, a Stripe Pricing Table, a Buy Button, or a checkout you built yourself — because that decides which guide you follow in Step 3.
+
+## Step 1: Install the tracking script on your site
+
+The tracking script is what recognises a visitor who arrived from an affiliate link, records the click, and remembers who referred them until they buy. Without it, Stripe payments can still be credited through coupon codes, but you'll have no clicks, no conversion rate, and no link-based attribution.
+
+<Steps>
+  <Step title="Open your integration instructions">
+    In your Referly dashboard, open your program, go to **Settings**, then **Integrations**. The page is titled **Integration Instructions**.
+  </Step>
+  <Step title="Open the guide that matches your checkout">
+    Select the card for the way you take payments — for example **Stripe Payment Links** or **Stripe Session API**. The first step of every guide shows your tracking script, already filled in with your program's ID.
+  </Step>
+  <Step title="Copy the script and paste it into your site">
+    Paste it inside the `head` section of your website, on every page. If you use Google Tag Manager, switch to the **Using Google Tag Manager** tab in the guide and copy that version instead.
+  </Step>
+</Steps>
+
+The snippet looks like this, with your own program ID in place of the placeholder:
+
+```html Tracking script
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+<Tip>
+  Copy the snippet from your dashboard rather than from here — it comes pre-filled with your program ID, and programs run by an agency use a different script address.
+</Tip>
+
+For everything the script does and how attribution is decided, see [Install the snippet](/developer-documentation/tracking/install-the-snippet) and [Tracking methods](/help-center/settings/program/tracking-methods).
+
+{/* TODO screenshot: integration-instructions-page — upload it in the local Documentation Agent */}
+
+## Step 2: Connect your Stripe account
+
+Connecting is a single approval — you don't create API keys, and you don't add a webhook endpoint in Stripe by hand. Referly uses Stripe's own app connection flow, so Stripe asks you to approve access and then sends Referly the events it needs.
+
+<Steps>
+  <Step title="Open the integrations dialog">
+    On the **Integration Instructions** page, select **Connect Integration** in the top right. A **Choose Integration** dialog opens with every payment processor Referly supports.
+  </Step>
+  <Step title="Choose Stripe">
+    Select the **Stripe** card. The panel that opens lists what the integration gives you — real-time payment tracking, product-level commission, and accurate commission tracking.
+  </Step>
+  <Step title="Select Connect Stripe Account">
+    A new tab opens on Stripe's site. If a pop-up blocker stops it, allow pop-ups for Referly and select the button again.
+  </Step>
+  <Step title="Sign in to Stripe and approve">
+    Sign in to Stripe if you aren't already. Stripe shows you which account you're about to connect and what access it's granting. If you have more than one Stripe account, check carefully that the right one is selected — a Stripe account can be linked to only one Referly program. Approve the connection.
+  </Step>
+  <Step title="Wait for the redirect back to Referly">
+    Stripe sends you back to Referly, which shows **Adding your stripe account...** and then a confirmation that your Stripe account is connected. Select **Proceed to dashboard**.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: choose-integration-dialog — upload it in the local Documentation Agent */}
+
+{/* TODO screenshot: connect-stripe-flow — upload it in the local Documentation Agent */}
+
+### Check that it connected
+
+Open **Connect Integration** again and select **Stripe**. A green **Connected** badge appears at the top with your Stripe account's display name — the same name Stripe shows in its own dashboard. If you connected in test mode, the badge is yellow and reads **Test Mode** instead.
+
+{/* TODO screenshot: stripe-connected-badge — upload it in the local Documentation Agent */}
+
+If you see the message that the Stripe account is already linked to another campaign, that account is connected to a different Referly program. Disconnect it there first, or connect a different Stripe account.
+
+### Connecting in test mode
+
+The **Connect Test Mode** button connects your Stripe account's test data instead of your live data, so you can rehearse the whole flow with test cards before real money is involved.
+
+<Warning>
+  Test mode and live mode are mutually exclusive. While your program is connected in test mode, Referly **ignores every live payment**. While it's connected in live mode, it ignores every test payment. Nothing is queued up and applied later — those payments are simply not recorded. Connect in test mode only while you're testing, and switch to live before you launch.
+</Warning>
+
+## Step 3: Send the referral through to Stripe
+
+Connecting your account tells Referly which payments to watch. This step tells Referly **who to credit** for each one.
+
+When someone lands on your site from an affiliate link, the tracking script records the click and stores a reference for that visitor. That reference has to travel with them into Stripe. Referly looks for it in three places on the payment:
+
+- The **Client reference ID** field on the checkout — the field Stripe shows as `client_reference_id`.
+- Checkout metadata under the key `pushLapAffiliateId`.
+- Customer or subscription metadata under the key `pushLapAffiliateId`.
+
+You don't need all three. Pick the guide that matches how you take payments, and it walks you through exactly what to add:
+
+| How you take payments | Guide | What it involves |
+| --- | --- | --- |
+| You built your own Stripe Checkout or subscription flow in code | [Stripe Session API](/help-center/integrations/stripe/session-api) | Pass the reference when you create the checkout session. The most accurate method. |
+| You share Stripe **Payment Links** | [Stripe Payment Links](/help-center/integrations/stripe/payment-links) | Add a second snippet that adds the reference to your payment links automatically. |
+| You embed a Stripe **Pricing Table** | [Stripe Pricing Table](/help-center/integrations/stripe/pricing-table) | Add a snippet that fills in the pricing table's client reference ID. |
+| You embed a Stripe **Buy Button** | [Stripe Buy Button](/help-center/integrations/stripe/buy-button) | Add a snippet that fills in the buy button's client reference ID. |
+| Affiliates share discount codes instead of links | [Stripe coupon codes](/help-center/integrations/stripe/coupon-codes) | No checkout changes at all — the code itself identifies the affiliate. |
+| You use WordPress with Stripe | [WordPress](/help-center/integrations/wordpress) | The WordPress-specific version of the snippet method. |
+
+{/* TODO screenshot: stripe-guide-cards — upload it in the local Documentation Agent */}
+
+<Note>
+  When a payment carries **both** an affiliate's coupon code and a link reference, the **coupon code wins**. This is deliberate: if the customer typed an affiliate's code at checkout, that affiliate gets the credit.
+</Note>
+
+### A limit worth knowing about
+
+If you're adding the reference to a Stripe Payment Link URL, Stripe only accepts letters, numbers, dashes, and underscores in the `client_reference_id` parameter, up to 200 characters. Stripe silently drops anything else — the payment page still works, but the reference never arrives and the sale can't be attributed. Referly's snippet always sends a plain number, so this only bites if you build the URL yourself. See Stripe's [payment link URL parameters](https://docs.stripe.com/payment-links/url-parameters) for the details.
+
+## Step 4: Test the whole flow before you go live
+
+Rehearse in test mode. It takes ten minutes and catches the two mistakes almost everyone makes — the script on the wrong pages, and the reference never reaching Stripe.
+
+<Steps>
+  <Step title="Switch your Stripe Dashboard into test mode">
+    In the Stripe Dashboard, use the account picker to switch into your account's test sandbox, or open Stripe's [Sandboxes page](https://dashboard.stripe.com/sandboxes). Stripe's [test mode documentation](https://docs.stripe.com/test-mode) explains how sandboxes and test mode relate.
+  </Step>
+  <Step title="Connect Referly in test mode">
+    In Referly, open **Connect Integration**, select **Stripe**, and choose **Connect Test Mode**. If you're already connected in live mode, select **Disconnect** first. Confirm you now see the yellow **Test Mode** badge.
+  </Step>
+  <Step title="Recreate your checkout in test mode">
+    Payment links, pricing tables, and buy buttons are separate objects in test mode — the live ones won't work. Create test versions in Stripe and point your test page at them.
+  </Step>
+  <Step title="Visit your own site through an affiliate link">
+    Open your site with an affiliate's referral parameter on the end, for example `your-site.com/?ref=TESTAFFILIATE`. Use a real affiliate's code from your **Affiliates** page. If you changed your link parameter in your program settings, use that instead of `ref`.
+  </Step>
+  <Step title="Complete a test payment">
+    Go through your checkout and pay with Stripe's test card `4242 4242 4242 4242`, any future expiry date such as `12/34`, any 3-digit CVC, and any postal code. Stripe's [testing documentation](https://docs.stripe.com/testing) lists more test cards, including ones that fail on purpose.
+  </Step>
+  <Step title="Check the payment in Stripe">
+    In the Stripe Dashboard, open **Payments** and select the test payment you just made. Look for the **Client reference ID** on the payment, or the `pushLapAffiliateId` entry under metadata. If it's empty, the reference never left your website — go back to your Step 3 guide.
+  </Step>
+  <Step title="Check the customer in Stripe">
+    Open the customer record in Stripe. When Referly credits a payment, it writes the affiliate's name and email, your program name, and a link back to Referly into that customer's metadata. Seeing those means Referly matched the payment to an affiliate.
+  </Step>
+  <Step title="Check the result in Referly">
+    In Referly, open **Customers** — the test buyer should be there, attached to the affiliate, with their plan name. Open **Sales** and confirm the amount, and check the affiliate's commission on the **Rewards** page.
+  </Step>
+  <Step title="Go live">
+    When you're happy, open **Connect Integration**, select **Stripe**, choose **Disconnect**, then **Connect Stripe Account** to reconnect in live mode. Swap your test payment links and buttons back to the live ones.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: stripe-payment-client-reference-id — upload it in the local Documentation Agent */}
+
+{/* TODO screenshot: stripe-customer-metadata — upload it in the local Documentation Agent */}
+
+{/* TODO screenshot: referly-customer-and-sale — upload it in the local Documentation Agent */}
+
+<Warning>
+  Test data doesn't carry over to live mode. Test customers and test sales stay in Referly after you switch — delete them from your **Customers** and **Sales** pages so they don't distort your reporting.
+</Warning>
+
+## What happens automatically once you're connected
+
+You don't have to do anything for these — Referly acts on them as soon as Stripe reports them.
+
+<AccordionGroup>
+  <Accordion title="A checkout completes">
+    The buyer becomes a referred customer in Referly, attached to the affiliate identified by the reference on the checkout, or by the coupon code they used. Their email, name, and plan come across with them. If the checkout was for a free trial, the customer is created with a sale value of zero — no commission yet.
+  </Accordion>
+  <Accordion title="A payment succeeds">
+    The charge becomes a sale, and commission is worked out from the affiliate's plan. The line items, tax, and shipping all come across, and the amount is converted into your program's currency if the customer paid in a different one. This is where trial conversions land too — the first real charge after a trial creates the first commission.
+  </Accordion>
+  <Accordion title="A subscription renews">
+    Renewal charges carry no referral reference, so Referly matches them to the referred customer by email address within your program. That's what makes [recurring commissions](/help-center/getting-started/commissions/overview) work month after month without any extra setup.
+  </Accordion>
+  <Accordion title="A subscription is created or cancelled">
+    The customer's plan name is kept up to date on their record in Referly, and clears when their subscription ends.
+  </Accordion>
+  <Accordion title="A customer is created with a referral reference">
+    If you attach the reference to the customer in Stripe rather than the checkout, that alone is enough to create the referred customer in Referly. This is how flows that don't use Stripe Checkout — a payment form you built yourself, for instance — get their customers attributed.
+  </Accordion>
+  <Accordion title="A payment is refunded">
+    See [How refunds are handled](#how-refunds-are-handled) below.
+  </Accordion>
+  <Accordion title="A coupon or promo code changes in Stripe">
+    Referly keeps its copy of your Stripe coupons and promo codes in step — redemption counts, whether a code is still active, and codes you delete in Stripe. See [Coupons and promo codes](/help-center/engage/coupons/overview).
+  </Accordion>
+</AccordionGroup>
+
+## How refunds are handled
+
+When Stripe reports a refund, what happens depends on whether the affiliate has already been cleared for payout on that sale.
+
+| When the refund happens | What Referly does |
+| --- | --- |
+| **Within your payout hold period** | The sale is removed and the affiliate's totals are recalculated, so no commission is owed on money you gave back. |
+| **After the hold period has passed** | The sale stays, because the commission has already cleared. Adjust it by hand if you want to claw it back. |
+
+Your hold period is the number of days you set in your payout settings. See [Refunds](/help-center/manage/rewards/refunds) and [Reward holds](/help-center/manage/rewards/holds) for how this fits with approving rewards.
+
+## Changing or disconnecting your Stripe account
+
+Open **Connect Integration**, select **Stripe**, and choose **Disconnect**. Referly stops receiving events from that Stripe account immediately.
+
+Disconnecting does not delete anything you've already tracked — your referred customers, sales, and rewards all stay. What stops is new tracking: payments taken while you're disconnected are not recorded, and they won't be picked up when you reconnect.
+
+To move to a different Stripe account, disconnect first and then connect the new one. A single Stripe account can only ever be linked to one Referly program.
+
+{/* TODO screenshot: disconnect-stripe — upload it in the local Documentation Agent */}
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Payments are appearing in Referly but with no affiliate attached">
+    The payment reached Referly, but nothing on it identified an affiliate. Make a test purchase and check the **Client reference ID** on the payment in Stripe. If it's empty, the problem is on your website — recheck the guide for your checkout type in [Step 3](#step-3-send-the-referral-through-to-stripe), and make sure the tracking script is on the page where the checkout starts.
+  </Accordion>
+  <Accordion title="Nothing at all is appearing in Referly">
+    Check three things, in order. First, that the **Connected** badge shows the right Stripe account. Second, that the badge colour matches where the payment happened — a yellow **Test Mode** badge means live payments are being ignored, and vice versa. Third, that your Referly subscription is active.
+  </Accordion>
+  <Accordion title="Clicks aren't being counted">
+    The tracking script isn't running on the page the visitor landed on. It has to be on every page of your site, not only your checkout page. Test by visiting your site with an affiliate's referral parameter and checking whether the click appears on that affiliate's record.
+  </Accordion>
+  <Accordion title="A renewal didn't create a new commission">
+    Renewals are matched by email address. If the customer pays under a different email in Stripe than the one on their Referly record, the renewal won't match. Correct the email on the customer's record in Referly so future renewals line up.
+  </Accordion>
+  <Accordion title="Stripe says the account is already linked to another campaign">
+    That Stripe account is connected to a different Referly program. Open that program, disconnect Stripe there, then connect it here.
+  </Accordion>
+  <Accordion title="Coupon sales aren't being credited">
+    The code the customer used has to be a code Referly knows about and has assigned to an affiliate. See [Connect a coupon source](/help-center/engage/coupons/connect-a-source) and [Stripe coupon codes](/help-center/integrations/stripe/coupon-codes).
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Stripe Session API" icon="code" href="/help-center/integrations/stripe/session-api" arrow>
+    The most accurate setup, for checkouts you built yourself.
+  </Card>
+  <Card title="Stripe Payment Links" icon="link" href="/help-center/integrations/stripe/payment-links" arrow>
+    Track sales from Stripe's hosted payment links.
+  </Card>
+  <Card title="Stripe coupon codes" icon="ticket" href="/help-center/integrations/stripe/coupon-codes" arrow>
+    Give every affiliate a discount code instead of a link.
+  </Card>
+  <Card title="Commission plans overview" icon="money-bill" href="/help-center/getting-started/commissions/overview" arrow>
+    Decide what your affiliates earn on these sales.
+  </Card>
+</Columns>

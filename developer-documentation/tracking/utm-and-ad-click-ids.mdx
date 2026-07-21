@@ -1,6 +1,126 @@
 ---
 title: "UTMs and ad click IDs"
-description: "The campaign and ad identifiers Referly stores."
+description: "How Referly captures UTM parameters and ad platform click IDs (gclid, gbraid, wbraid, fbclid, msclkid, ttclid, twclid, li_fat_id) from affiliate referral link URLs, stores them on the click, and makes UTMs available as analytics breakdown dimensions."
+keywords: ["UTM tracking affiliate links", "gclid affiliate tracking", "fbclid tracking", "affiliate UTM parameters", "ad click ID capture", "msclkid ttclid twclid li_fat_id", "paid traffic affiliate attribution", "utm_source utm_medium utm_campaign"]
 ---
+Affiliates rarely send traffic from one place. The same referral link goes in a newsletter, a YouTube description, and a paid social campaign, and the click totals in your dashboard collapse all of it into one number unless something distinguishes them.
 
-{/* TODO: Write this article. */}
+Referly's answer is to read the campaign parameters already on the landing URL and store them on the click. Thirteen parameters are captured: the five standard UTMs, and eight click identifiers appended by the major ad platforms. Nothing has to be configured — if the parameter is on the URL when the tracking script runs, it lands on the click.
+
+## Where the parameters are read from
+
+All of them come from `window.location.search` on the page where the tracking script resolves the referral. That has three consequences worth internalising:
+
+- **Only the query string counts.** Parameters in the hash fragment (after a `#`) are not read.
+- **Only the landing page counts.** Once the referral is stored, later page views do not create clicks, so UTMs picked up while browsing your site are never recorded.
+- **A redirect that drops the query string drops the parameters.** If your landing URL bounces through a redirect that only preserves the referral code, everything else is gone by the time the script runs.
+
+Parameters are read at the same moment as the rest of the click, so they arrive on the same record. See [click data](/developer-documentation/tracking/click-data) for the full field list.
+
+## UTM parameters
+
+The five conventional UTM parameters are read verbatim — no normalisation, no lowercasing, no trimming. `Newsletter` and `newsletter` are two different values in your reports.
+
+| URL parameter | Stored as | Typical use |
+| --- | --- | --- |
+| `utm_source` | `utmSource` | Where the traffic came from — `newsletter`, `youtube`, `partner-blog` |
+| `utm_medium` | `utmMedium` | The channel type — `email`, `social`, `cpc`, `video` |
+| `utm_campaign` | `utmCampaign` | The campaign name — `black-friday-2026` |
+| `utm_term` | `utmTerm` | The paid keyword |
+| `utm_content` | `utmContent` | The specific creative or placement — `banner-a`, `footer-link` |
+
+Any UTM that is not on the URL is stored empty. There is no inheritance from a previous click and no fallback to a stored value.
+
+## Ad platform click IDs
+
+When an affiliate runs paid ads to your site, the ad platform appends its own click identifier to the destination URL. Referly captures eight of them:
+
+| URL parameter | Platform | Stored as |
+| --- | --- | --- |
+| `gclid` | Google Ads | `gclid` |
+| `gbraid` | Google Ads, iOS app-to-web | `gbraid` |
+| `wbraid` | Google Ads, web-to-app | `wbraid` |
+| `fbclid` | Meta — Facebook and Instagram | `fbclid` |
+| `msclkid` | Microsoft Ads | `msclkid` |
+| `ttclid` | TikTok Ads | `ttclid` |
+| `twclid` | X Ads | `twclid` |
+| `li_fat_id` | LinkedIn Ads | `liFatId` |
+
+Note the one name that changes shape: the URL parameter is `li_fat_id`, the stored field is `liFatId`. The other seven keep their names.
+
+Each is stored on the click as-is. Referly does not validate them, expand them, or call back to the ad platform with them — they are there so you can reconcile a Referly click against the ad platform's own click record when an affiliate disputes attribution, and so you can tell paid affiliate traffic apart from organic.
+
+<Note>
+  Affiliate networks that pass their own tracking identifier use a different parameter, `rsubID`, which behaves differently: it persists in the visitor's browser and is passed back out on conversion. That one has its own page — see [external click IDs](/developer-documentation/tracking/external-click-ids).
+</Note>
+
+## How ad click IDs change the referrer classification
+
+Every click gets a `referrerType`, and the ad click IDs feed directly into it. The classification runs in this order:
+
+<Steps>
+  <Step title="No referrer at all">
+    If `document.referrer` is empty, the type is `direct` and nothing else is checked.
+  </Step>
+  <Step title="Any ad click ID present">
+    If any of the eight parameters above is on the URL, the type is `paid`. This beats the domain lists below — a Google Ads click that referred from `google.com` classifies as `paid`, not `search`.
+  </Step>
+  <Step title="Domain matching">
+    Otherwise the referrer hostname is matched against the search, social, and email lists, falling through to `unknown`.
+  </Step>
+</Steps>
+
+<Warning>
+  The empty-referrer check happens **first**. A visitor whose browser sends no referrer — a stripped referrer policy, an in-app browser, a click out of a native app — classifies as `direct` even with a `gclid` on the URL. The `gclid` is still stored on the click; only the type is affected. If you are auditing paid traffic, filter on the click ID field rather than trusting `referrerType` alone.
+</Warning>
+
+## Adding parameters to a referral link
+
+Parameters go on the affiliate's referral URL alongside the referral code. Order does not matter, and the referral code does not have to come first:
+
+```
+https://example.com/?ref=jane&utm_source=newsletter&utm_medium=email&utm_campaign=march-launch
+```
+
+```
+https://example.com/pricing?utm_source=youtube&utm_content=video-description&ref=jane
+```
+
+The referral parameter itself is whatever your program's URL modifier is set to — `ref` by default. Everything else is passed through untouched.
+
+Three rules to pass on to affiliates:
+
+- URL-encode values that contain spaces or symbols. `utm_campaign=black friday` breaks the URL; `utm_campaign=black-friday` or `black%20friday` does not.
+- Keep values consistent. Reports group on the exact string, so `utm_source=YouTube` and `utm_source=youtube` show up as two separate rows.
+- Ad click IDs are appended by the ad platform automatically. Affiliates should never type a `gclid` by hand — they only need auto-tagging switched on at the platform.
+
+Your affiliates can build these URLs themselves from their portal. See [referral links](/help-center/affiliates/referral-links) for what they see.
+
+## Repeat clicks and parameter values
+
+When a visitor arrives on a referral URL for a code that is already stored in their browser, Referly records a second click and re-reads every parameter from that new URL. So the newsletter click and the paid social click that follow it are two rows with two different sets of UTMs, both credited to the same affiliate.
+
+What this does not do is rewrite history. The first click keeps its own parameters, and the conversion is stamped onto whichever click ID was in the browser when the conversion was reported. Read [attribution](/developer-documentation/tracking/attribution) for how that resolves.
+
+## Using the parameters in reporting
+
+All five UTM fields are indexed and available as breakdown dimensions in the performance analytics in your dashboard — pick `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, or `utm_content` and get clicks, referrals, revenue, and commission grouped by value. Rows with an empty value for the chosen dimension are excluded rather than bucketed into "none", so the breakdown total can be lower than your overall click count.
+
+The eight ad click IDs are stored and queryable but are not offered as breakdown dimensions — an identifier that is unique per click has no useful grouping. Use them for reconciliation against the ad platform, not for aggregate reporting.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Click data" icon="database" href="/developer-documentation/tracking/click-data">
+    Every field stored on a click, and when a click is recorded at all.
+  </Card>
+  <Card title="External click IDs" icon="link" href="/developer-documentation/tracking/external-click-ids">
+    The `rsubID` parameter for affiliate networks, and how it is passed back.
+  </Card>
+  <Card title="URL parameters" icon="link-simple" href="/developer-documentation/tracking/url-parameters">
+    How the referral code itself is read, and configuring your URL modifier.
+  </Card>
+  <Card title="Attribution" icon="route" href="/developer-documentation/tracking/attribution">
+    Which click gets credit when a visitor arrives more than once.
+  </Card>
+</Columns>

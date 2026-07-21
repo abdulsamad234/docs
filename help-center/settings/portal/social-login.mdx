@@ -1,6 +1,102 @@
 ---
 title: "Social login"
-description: "Let affiliates sign in with a social account."
+description: "Let affiliates sign in and sign up with Google in Referly. Turn on social login, add your Google OAuth Client ID and Secret, set the authorized redirect URL, and choose the account-picker option."
+keywords: ["affiliate social login", "sign in with Google", "Google OAuth affiliate portal", "passwordless affiliate login", "Referly social login", "Google Client ID Client Secret", "authorized redirect URL", "affiliate portal login"]
 ---
+Social login lets your affiliates sign in and sign up with their Google account instead of creating a separate email and password. It's faster for them, there's no extra password to forget, and you decide whether to offer it. Right now Google is the supported provider.
 
-{/* TODO: Write this article. */}
+To find it, open **Settings** from the left sidebar, go to **Affiliate Portal**, then select **Social Login**.
+
+{/* TODO screenshot: social-login-overview — upload it in the local Documentation Agent */}
+
+<Info>
+  Social login is available on the **Business plan** or higher. On lower plans the settings appear locked. See [plans and features](/help-center/billing/plans-and-features) for what each plan includes.
+</Info>
+
+Google login uses your **own** Google credentials, so the sign-in screen and consent screen show your brand, not Referly's. Setting it up takes three parts: turn Google on, create your Google credentials, and connect the two with a redirect URL. Plan about 10 minutes the first time.
+
+## Turn on Google login
+
+At the top of the page is a **Google** row with a switch on the right. Turn the switch on to open the setup panel underneath. Nothing is live for your affiliates until you add your credentials and save.
+
+{/* TODO screenshot: google-enable-switch — upload it in the local Documentation Agent */}
+
+When Google login is on, the **Client ID** and **Client Secret** fields are both required. You can't save until they're filled in. The next section explains where those values come from.
+
+## Create your Google credentials
+
+Your Client ID and Client Secret come from the [Google Cloud Console](https://console.cloud.google.com/), which is free. You create a project, set up a consent screen, and generate an OAuth client. This is the part that puts your brand on the Google sign-in screen your affiliates see.
+
+<Steps>
+  <Step title="Create or pick a project">
+    In the Google Cloud Console, create a new project (or choose an existing one). This is the container for your login setup.
+  </Step>
+  <Step title="Set up the consent screen">
+    Go to **APIs & Services**, then **OAuth consent screen**. Add your app name, your support email, and your logo. This is exactly what affiliates see when they choose to continue with Google, so use your program's name and logo here.
+  </Step>
+  <Step title="Create an OAuth client">
+    Go to **APIs & Services**, then **Credentials**. Select **Create Credentials**, choose **OAuth client ID**, and pick **Web application** as the type.
+  </Step>
+  <Step title="Copy your Client ID and Client Secret">
+    Google shows you a **Client ID** and a **Client Secret**. Copy each one and paste it into the matching field on the Social Login page in Referly.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: google-credentials-fields — upload it in the local Documentation Agent */}
+
+For Google's own walkthrough, see their guide on [using OAuth 2.0 for web server applications](https://developers.google.com/identity/protocols/oauth2/web-server#prerequisites).
+
+## Add the authorized redirect URL
+
+Google needs to know where to send affiliates back to after they sign in. Referly generates that address for you as the **Authorized Redirect URL** on the Social Login page.
+
+{/* TODO screenshot: redirect-url-copy — upload it in the local Documentation Agent */}
+
+Select the copy button next to the **Authorized Redirect URL** field. Then, back in the Google Cloud Console, open your OAuth client under **APIs & Services** then **Credentials**, and paste the URL into the **Authorized redirect URIs** field. Save it in Google.
+
+<Warning>
+  The redirect URL must match exactly. If it's missing or different in Google, affiliates get an error from Google instead of being signed in. If you later move your portal to a [custom domain](/help-center/settings/portal/custom-domain), the redirect URL changes, so copy the new one into Google again.
+</Warning>
+
+## Choose whether to always show the account picker
+
+The **Always show account selector prompt** switch controls what happens when an affiliate already has a Google account signed in on their device.
+
+{/* TODO screenshot: account-selector-toggle — upload it in the local Documentation Agent */}
+
+Leave it off and Google signs them in with their current account automatically for the smoothest experience. Turn it on and Google always asks them to pick which account to use, even when they only have one. This is useful for affiliates who share a computer or run more than one Google account.
+
+## Save your changes
+
+When you've made a change, a **Save Changes** button appears at the bottom right. Select it to go live.
+
+<Check>
+  When the "Social login settings saved" message appears, the Google button is live on your affiliate login and sign-up pages.
+</Check>
+
+If the button stays greyed out, your Client ID or Client Secret is still empty. Fill both in, then save.
+
+## How it looks to your affiliates
+
+Once it's on, affiliates see a **Login with Google** button on the login page and a **Sign up with Google** button on the sign-up page, above the usual email and password form.
+
+{/* TODO screenshot: affiliate-google-button — upload it in the local Documentation Agent */}
+
+Social login sits alongside email and password, it doesn't replace it. Affiliates can still use whichever they prefer, and someone who signs up with Google can keep using Google every time they come back. To change how the rest of these pages look, see [setting up login and sign up](/help-center/settings/portal/login-and-sign-up).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Login and sign up" icon="right-to-bracket" href="/help-center/settings/portal/login-and-sign-up" arrow>
+    Choose the layout and look of your login and sign-up pages.
+  </Card>
+  <Card title="Custom domain" icon="globe" href="/help-center/settings/portal/custom-domain" arrow>
+    Serve your portal from your own web address.
+  </Card>
+  <Card title="Onboarding" icon="user-plus" href="/help-center/settings/portal/onboarding" arrow>
+    Set up what affiliates do right after they sign in.
+  </Card>
+  <Card title="Plans and features" icon="tags" href="/help-center/billing/plans-and-features" arrow>
+    See which plan unlocks social login.
+  </Card>
+</Columns>

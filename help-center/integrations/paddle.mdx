@@ -1,6 +1,282 @@
 ---
 title: "Paddle"
-description: "Track Paddle transactions."
+description: "Connect Paddle Billing to Referly to track affiliate clicks, transactions, subscription renewals, and refunds. Step-by-step API key setup, checkout custom data snippet, sandbox testing, and what the integration can and can't track."
+keywords: ["paddle affiliate tracking", "paddle billing affiliate program", "referly paddle integration", "paddle custom data affiliate", "paddle checkout affiliate tracking", "paddle api key permissions", "paddle subscription affiliate commission", "paddle sandbox affiliate testing", "paddle refund affiliate commission", "paddle recurring commission"]
 ---
+Referly connects to Paddle Billing with an API key. Once connected, Referly watches every completed transaction in your Paddle account — first purchases, subscription renewals, upgrades, and refunds — and turns the ones that came from an affiliate into referred customers, sales, and commissions.
 
-{/* TODO: Write this article. */}
+Paddle works a little differently from other payment processors: it only tells Referly about a transaction, not about who sent the customer. So there's an extra step where you attach the referral to your checkout. Once that's in place, Paddle carries it forward to every renewal on its own, and recurring commissions work without any further setup.
+
+<Note>
+  This integration is for **Paddle Billing**, Paddle's current platform. Paddle Classic, the older product, isn't supported.
+</Note>
+
+## What the Paddle integration can and can't do
+
+| What you want to track | Does Paddle cover it? |
+| --- | --- |
+| **Clicks on affiliate links** | Yes, once the tracking script is on your site ([Step 1](#step-1-install-the-tracking-script-on-your-site)). |
+| **First purchases** | Yes — every completed transaction that carries a referral becomes a sale. |
+| **Subscription renewals** | Yes, and automatically. Paddle copies the referral from the first transaction onto the subscription, and onto every transaction that subscription creates afterwards. Nothing extra to set up for [recurring commissions](/help-center/getting-started/commissions/overview). |
+| **Free trials** | Yes, in the sense that the commission is created when the trial converts and Paddle takes the first real payment. A trial with no payment produces no transaction, so nothing is recorded until money moves. |
+| **Product-level detail** | Yes — the line items on the transaction come across with their names, quantities, and prices, so [product-based commissions](/help-center/getting-started/commissions/product-based) work. |
+| **Tax** | Yes — tax is read from the transaction so you can decide whether commission is paid on it. |
+| **Transactions in other currencies** | Yes — the amount is converted into your program's currency before commission is worked out. |
+| **Refunds** | Yes — see [Refunds](#refunds). |
+| **Subscription cancellations** | Yes — the plan is cleared on the customer's record in Referly. |
+| **Transactions with no referral attached** | No — and this is the big one. If a transaction doesn't carry the referral, Referly records **nothing at all**, not even an unattributed sale. See [What happens when the referral is missing](#what-happens-when-the-referral-is-missing). |
+| **Discount and coupon code attribution** | No — Paddle discount codes don't identify an affiliate. If you want affiliates promoting codes, use [Stripe coupon codes](/help-center/integrations/stripe/coupon-codes) or a different processor. |
+| **Sign-ups and leads with no payment** | No — Paddle only reports transactions. Use the [Universal integration](/help-center/integrations/universal) for those. |
+| **Shipping** | No — shipping isn't reported separately for Paddle. |
+| **Chargebacks** | No — a chargeback isn't reversed automatically. Adjust the sale or reward by hand. |
+| **Sandbox and live at the same time** | No — a connection is either sandbox or live, decided by the key you paste in. |
+| **Two Paddle accounts** | No — a Paddle API key can only be connected to one Referly program. |
+
+## Before you start
+
+You'll need:
+
+- **Admin access to your Paddle dashboard**, so you can create an API key.
+- **The ability to add code to your website**, or someone who can. There are two snippets: one for tracking clicks and one for your checkout.
+- **A decision on sandbox or live.** Paddle keeps the two completely separate — separate dashboards, separate keys, separate data. Referly connects to one or the other.
+
+## Step 1: Install the tracking script on your site
+
+The tracking script recognises visitors who arrived from an affiliate link, records the click, and remembers who referred them until they buy.
+
+<Steps>
+  <Step title="Open your integration instructions">
+    In Referly, open your program, go to **Settings**, then **Integrations**, and select the **Paddle Overlay Checkout** card.
+  </Step>
+  <Step title="Copy the script from Step 1 of the guide">
+    It comes pre-filled with your program ID. If you use Google Tag Manager, switch to the **Using Google Tag Manager** tab for that version instead.
+  </Step>
+  <Step title="Paste it into your site">
+    Put it inside the `head` section of your website, on every page.
+  </Step>
+</Steps>
+
+```html Tracking script
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+{/* TODO screenshot: paddle-guide-card — upload it in the local Documentation Agent */}
+
+## Step 2: Create an API key in Paddle
+
+<Steps>
+  <Step title="Choose sandbox or live">
+    Sign in to the Paddle dashboard you want to connect. Sandbox and live are separate environments with separate keys, so make sure you're in the right one before you start.
+  </Step>
+  <Step title="Open the API keys screen">
+    Go to **Developer Tools**, then **Authentication**, then the **API keys** tab, and select **New API key**.
+  </Step>
+  <Step title="Name it and set its permissions">
+    Give it a name you'll recognise, such as "Referly". Referly needs two permissions: **`customer.read`**, so it can look up who bought, and **`notification_setting.write`**, so it can set up the connection back to Referly for you.
+  </Step>
+  <Step title="Set the expiry date carefully">
+    Paddle defaults new keys to expiring in **90 days**, and the longest you can choose is one year. When the key expires, your tracking stops. Set the longest expiry you're comfortable with, and put a reminder in your calendar to replace it before that date.
+  </Step>
+  <Step title="Copy the key">
+    Copy it as soon as it's created and keep it somewhere safe. Sandbox keys start with `pdl_sdbx_apikey_` and live keys with `pdl_live_apikey_` — a quick way to check you grabbed the right one.
+  </Step>
+</Steps>
+
+Paddle's [API key documentation](https://developer.paddle.com/api-reference/about/authentication) covers key creation and rotation in more detail.
+
+{/* TODO screenshot: paddle-api-key — upload it in the local Documentation Agent */}
+
+<Warning>
+  Treat this key like a password. Anyone who has it can act on your Paddle account within the permissions you granted.
+</Warning>
+
+## Step 3: Connect Paddle in Referly
+
+<Steps>
+  <Step title="Open the integrations dialog">
+    In Referly, open your program, go to **Settings**, then **Integrations**, select **Connect Integration** in the top right, and choose **Paddle** from the **Choose Integration** grid.
+  </Step>
+  <Step title="Paste your key">
+    Fill in the **API key** field with the key you copied.
+  </Step>
+  <Step title="Give it a nickname">
+    **Account Nickname** can be anything that helps you recognise the account later — your business name works well.
+  </Step>
+  <Step title="Set Sandbox Mode to match your key">
+    Turn **Sandbox Mode** on if you pasted a sandbox key, and leave it off for a live key. Getting this wrong is the most common reason a connection fails.
+  </Step>
+  <Step title="Connect">
+    Select **Connect**. Referly checks the key against Paddle and, if it works, sets up the connection back from Paddle for you. You'll see a green **Connected** badge with your nickname.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: paddle-connect-form — upload it in the local Documentation Agent */}
+
+You don't add anything under Paddle's **Notifications** settings by hand. Referly creates that destination during connect, and it listens for completed transactions, subscriptions, cancellations, and refund adjustments.
+
+<Note>
+  These fields lock once saved, including **Sandbox Mode**. To change the key or switch between sandbox and live, select **Disconnect** and connect again.
+</Note>
+
+## Step 4: Send the referral through your checkout
+
+This is the step that decides who gets paid. It adds the visitor's referral to the custom data on your Paddle checkout, so the transaction Paddle reports back carries the affiliate with it.
+
+Paste the snippet for your setup into your site, just before the closing `body` tag, on every page where your Paddle checkout can open.
+
+<Tabs>
+  <Tab title="Opening checkout in code">
+    Use this if you open Paddle's checkout yourself with `Paddle.Checkout.open()`. It wraps that call so the referral is added every time, whichever button opened it.
+
+    ```html Paddle.Checkout.open
+    <script type="text/javascript">
+      function injectPushLapAffiliateId() {
+        const pushLapAffiliateId = window.affiliateId;
+
+        if (pushLapAffiliateId) {
+          const originalOpen = Paddle.Checkout.open;
+
+          Paddle.Checkout.open = function (options) {
+            options.customData = options.customData || {};
+            options.customData.pushlap_affiliate_id = pushLapAffiliateId;
+            originalOpen.call(Paddle.Checkout, options);
+          };
+        }
+      }
+
+      window.addEventListener("affiliate_referral_ready", injectPushLapAffiliateId);
+    </script>
+    ```
+  </Tab>
+  <Tab title="Using Paddle buttons">
+    Use this if your checkout opens from buttons with Paddle's `paddle_button` class and HTML attributes. It fills in the custom data attribute on each of those buttons.
+
+    ```html HTML data attributes
+    <script type="text/javascript">
+      function injectPushLapAffiliateId() {
+        const pushLapAffiliateId = window.affiliateId;
+
+        if (pushLapAffiliateId) {
+          const signupButtons = document.querySelectorAll(".paddle_button");
+
+          signupButtons.forEach((signupButton) => {
+            if (pushLapAffiliateId) {
+              const customData = JSON.stringify({ pushlap_affiliate_id: pushLapAffiliateId });
+              signupButton.setAttribute("data-custom-data", customData);
+            } else {
+              signupButton.removeAttribute("data-custom-data");
+            }
+          });
+        }
+      }
+
+      window.addEventListener("affiliate_referral_ready", injectPushLapAffiliateId);
+    </script>
+    ```
+  </Tab>
+</Tabs>
+
+Both snippets wait until the tracking script from Step 1 has worked out who referred the visitor, so the order they load in doesn't matter — but the tracking script does need to be on the same page.
+
+### Why renewals take care of themselves
+
+Paddle copies the custom data from the first transaction onto the subscription it creates, and then onto every transaction that subscription produces afterwards. So the referral rides along with each renewal and each upgrade, with no work from you. Paddle's [custom data documentation](https://developer.paddle.com/build/transactions/custom-data) explains this behaviour.
+
+### What happens when the referral is missing
+
+If a transaction arrives without a referral in its custom data, Referly ignores it completely — no sale is created, not even one without an affiliate attached. This is different from the Stripe and WooCommerce integrations, which record the sale either way.
+
+In practice that means your Referly **Sales** page shows only affiliate-driven revenue for Paddle, and any transaction where the snippet didn't run is invisible. If you need it counted, add it with [Add a sale](/help-center/manage/customers/add-a-sale).
+
+## Step 5: Test it end to end
+
+<Steps>
+  <Step title="Connect your sandbox first">
+    Create a key in your Paddle sandbox, connect it in Referly with **Sandbox Mode** on, and point your test page at your sandbox Paddle setup.
+  </Step>
+  <Step title="Visit your site through an affiliate link">
+    Use a real affiliate's referral link from your **Affiliates** page, in a private window.
+  </Step>
+  <Step title="Check the click was recorded">
+    Open that affiliate's record in Referly and confirm the click count went up. If it didn't, the tracking script isn't running.
+  </Step>
+  <Step title="Complete a checkout">
+    Go through your Paddle checkout and pay with one of Paddle's test cards.
+  </Step>
+  <Step title="Check the transaction in Paddle">
+    In your Paddle dashboard, open the transaction and look at its custom data. You should see the referral there. If it's empty, the Step 4 snippet didn't run — check it's on the page where your checkout opens.
+  </Step>
+  <Step title="Check the result in Referly">
+    Open **Customers** to find the buyer attached to the affiliate, **Sales** to confirm the amount and products, and **Rewards** to see the commission.
+  </Step>
+  <Step title="Switch to live">
+    Disconnect in Referly, create a live key in your live Paddle dashboard, and connect again with **Sandbox Mode** off. Delete your sandbox test customers and sales so they don't skew your reporting.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: paddle-transaction-custom-data — upload it in the local Documentation Agent */}
+
+{/* TODO screenshot: referly-paddle-sale — upload it in the local Documentation Agent */}
+
+## Refunds
+
+When a refund is approved in Paddle, Referly finds the matching sale and marks it as refunded, so no commission is owed on money you gave back.
+
+This only applies while the commission is still on hold. Once the affiliate has been cleared for payout on that sale, it's left alone — adjust it by hand if you want it reversed. See [Refunds](/help-center/manage/rewards/refunds) and [Reward holds](/help-center/manage/rewards/holds).
+
+A refund that's created but not yet approved doesn't change anything until Paddle approves it.
+
+## Disconnecting or replacing your key
+
+Open **Connect Integration** in Referly, select **Paddle**, and choose **Disconnect**. Referly stops receiving transactions from that account immediately.
+
+Nothing already tracked is deleted. Transactions that happen while you're disconnected are not recorded and won't be picked up when you reconnect, so if you're replacing an expiring key, create the new key first and reconnect promptly.
+
+You can also remove the destination Referly created from your Paddle dashboard under **Developer Tools**, then **Notifications**, if you want a clean slate on Paddle's side.
+
+{/* TODO screenshot: disconnect-paddle — upload it in the local Documentation Agent */}
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connecting fails">
+    Almost always one of three things: **Sandbox Mode** doesn't match the key you pasted, the key is missing the `notification_setting.write` permission, or the key has expired. Check the key's prefix — `pdl_sdbx_apikey_` for sandbox, `pdl_live_apikey_` for live.
+  </Accordion>
+  <Accordion title="Everything stopped working after a few months">
+    Your Paddle API key expired. Paddle keys expire — 90 days by default, a year at most. Create a new key, disconnect in Referly, and connect with the new one.
+  </Accordion>
+  <Accordion title="No sales are appearing">
+    Open a recent transaction in your Paddle dashboard and look at its custom data. If the referral isn't there, the Step 4 snippet didn't run on the page where your checkout opened. If it is there, check that your Referly plan is active.
+  </Accordion>
+  <Accordion title="Clicks are being tracked but sales aren't">
+    That's the same problem from the other direction: the tracking script is working, the checkout snippet isn't. Both need to be on the pages where your checkout can open.
+  </Accordion>
+  <Accordion title="Renewals aren't creating commissions">
+    Check the renewal transaction in Paddle for custom data. If the first transaction had it and the renewal doesn't, the subscription was created outside your normal checkout flow. You can add the custom data to the subscription in Paddle so future renewals carry it.
+  </Accordion>
+  <Accordion title="Paddle says the account is already connected to another program">
+    That API key is in use on a different Referly program. Disconnect it there, or create a separate key.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Commission plans overview" icon="money-bill" href="/help-center/getting-started/commissions/overview" arrow>
+    Set what affiliates earn on first payments and renewals.
+  </Card>
+  <Card title="Product-based commissions" icon="tags" href="/help-center/getting-started/commissions/product-based" arrow>
+    Pay different rates on different Paddle products.
+  </Card>
+  <Card title="Universal integration" icon="puzzle-piece" href="/help-center/integrations/universal" arrow>
+    Track sign-ups and leads that never reach Paddle.
+  </Card>
+  <Card title="Add a sale" icon="plus" href="/help-center/manage/customers/add-a-sale" arrow>
+    Record a sale by hand when a transaction wasn't attributed.
+  </Card>
+</Columns>

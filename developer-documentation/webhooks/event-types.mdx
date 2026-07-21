@@ -1,6 +1,265 @@
 ---
 title: "Event types"
-description: "Every event Referly sends and when it fires."
+description: "All fifteen Referly webhook event types and what triggers them: affiliate.created, referral.updated, sale.created, sale.deleted, coupon and promocode events, plus which ones your integration actually needs."
+keywords: ["Referly webhook events", "webhook event types", "sale.created", "sale.deleted", "affiliate.created", "affiliate.updated", "referral.created", "referral.updated", "promocode webhook", "coupon webhook", "affiliate program event types", "webhook event catalog"]
 ---
+Referly emits fifteen event types, covering five object families in your program. Every endpoint
+subscribes to its own subset via the **Events** checklist — see
+[Manage endpoints](/developer-documentation/webhooks/managing-endpoints).
 
-{/* TODO: Write this article. */}
+This page is about *what fires each event*. For the fields inside the payload, see
+[Payload structure](/developer-documentation/webhooks/payload-structure).
+
+## Naming convention
+
+Every event type is `family.action`, lowercase, with exactly one dot:
+
+- **Families:** `affiliate`, `referral`, `sale`, `coupon`, `promocode`
+- **Actions:** `created`, `updated`, `deleted`
+
+The value arrives in the payload's `event` key, so a `switch` on that string is usually all the
+routing your handler needs.
+
+<Warning>
+  The promo code family is `promocode`, not `promotional_code` or `promotional-code` — even though
+  the object is called a promotional code everywhere else, including in the
+  [REST API](/api-reference/promotional-codes/get). Match on `promocode.` exactly.
+</Warning>
+
+## Quick reference
+
+| Event type | Fires when |
+| --- | --- |
+| `affiliate.created` | Someone joins your program, from any source |
+| `affiliate.updated` | An affiliate's profile, status, commission plan, tier, or links change |
+| `affiliate.deleted` | An affiliate is removed from the program |
+| `referral.created` | A tracked click becomes an identified customer |
+| `referral.updated` | A referral's details or subscription status change |
+| `referral.deleted` | A referral is removed |
+| `sale.created` | A payment is attributed to an affiliate and commission is calculated |
+| `sale.updated` | An existing sale's amount, commission, or payout state changes |
+| `sale.deleted` | A sale is reversed, refunded, or removed |
+| `coupon.created` | A discount is created |
+| `coupon.updated` | A discount's terms change |
+| `coupon.deleted` | A discount is removed |
+| `promocode.created` | A customer-facing code is issued against a coupon |
+| `promocode.updated` | A promotional code is edited |
+| `promocode.deleted` | A promotional code is removed |
+
+## Affiliate events
+
+An affiliate is a person promoting your program. See
+[the data model](/developer-documentation/reference/data-model) for how affiliates relate to links,
+referrals, and commissions.
+
+### affiliate.created
+
+Fires the moment an affiliate record exists, whatever created it:
+
+- A signup through your program's affiliate signup widget or hosted page
+- Someone redeeming an invite code
+- `POST /api/v1/affiliates`
+- A Zapier or Make action
+- An affiliate added manually in the dashboard
+
+The payload includes the affiliate's commission plan, commission tier, referral links, promotional
+codes, and their answers to any signup questions — so you can create a matching CRM record without a
+follow-up call.
+
+<Note>
+  This fires on creation, not approval. If your program reviews applications, a newly created
+  affiliate may be pending. Check `status` on the payload, and watch `affiliate.updated` for the
+  transition. See [statuses and enums](/developer-documentation/reference/statuses-and-enums).
+</Note>
+
+### affiliate.updated
+
+The busiest event in the system. It fires on profile edits, status changes such as approval or
+rejection, payout detail changes, commission plan or commission tier reassignment, and bulk actions
+applied across many affiliates at once.
+
+It also fires when an affiliate's **referral links** are created, edited, or deleted — including
+through `POST`, `PUT`, and `DELETE` on `/api/v1/links`. There is no separate link event family;
+link changes surface here, with the current links on the affiliate object.
+
+If you only care about a subset — approvals, say — subscribe and filter in your handler on the
+fields you track. Which leads to the next point.
+
+### affiliate.deleted
+
+Fires when an affiliate is removed, from the dashboard, `DELETE /api/v1/affiliates`, Zapier, or Make.
+The payload carries only the `id`.
+
+## Referral events
+
+A referral is a customer who arrived through an affiliate and has been identified — the bridge
+between an anonymous click and the sales that follow.
+
+### referral.created
+
+Fires when attribution resolves a click into a tracked customer: your site reports a signup or the
+first payment, and Referly creates the referral against the affiliate who earned it. This happens
+through the [tracking script](/developer-documentation/tracking/install-the-snippet), the
+[server-side capture endpoints](/developer-documentation/server-side/capture-endpoints), an
+integration such as Stripe or Shopify, the API, or manual creation in the dashboard.
+
+<Note>
+  Referrals created by a resync — when Referly backfills historical data from a payment provider
+  after you connect it — do not emit this event. That keeps a one-off import of thousands of past
+  customers from flooding your endpoint.
+</Note>
+
+### referral.updated
+
+Fires on edits to the referral itself, and on **subscription status changes pushed by your payment
+provider**. A Stripe or Paddle subscription going active, past due, or cancelled reaches you here,
+with the current state in the payload's `status`.
+
+This is the event to watch if you mirror customer lifecycle state, and the one most likely to arrive
+without you doing anything.
+
+### referral.deleted
+
+Fires when a referral is removed from the dashboard, the API, Zapier, or Make. The payload carries
+only the `id`. Deleting a referral is how you undo bad attribution, so treat it as a signal to
+reverse whatever you did on `referral.created`.
+
+## Sale events
+
+A sale is one attributed payment, with the commission it generated.
+
+### sale.created
+
+Fires once for every payment attributed to an affiliate, and it fires from a single place in Referly
+no matter how the sale arrived:
+
+- Payment integrations — [Stripe](/developer-documentation/integrations/stripe-app),
+  [Shopify](/developer-documentation/integrations/shopify-app),
+  [WooCommerce](/developer-documentation/integrations/woocommerce), Paddle, Chargebee, Polar, and the
+  rest
+- [Server-side reporting](/developer-documentation/server-side/reporting-sales) from your backend
+- `POST /api/v1/sales`
+- Zapier and Make
+- A sale entered manually in the dashboard
+
+Because every source converges on the same path, you do not need source-specific handling. The
+payload arrives with the affiliate, the referral, and `commissionEarned` already expanded, and
+`paymentTrigger` tells you which kind of payment produced it if you do want to branch.
+
+For most integrations, this is the one event that matters.
+
+### sale.updated
+
+Fires when a sale changes after the fact: the amount or commission is recalculated, the commission
+plan behind it changes, or the sale is rolled into a payout. That last case is how payout progress
+reaches you — check `payoutCreated` and `payoutId` on the entries in the sale's `commissions` array.
+
+### sale.deleted
+
+Fires when a sale is reversed or removed — a **Stripe refund or dispute**, a deletion from the
+dashboard, `DELETE /api/v1/sales`, the WooCommerce plugin cancelling an order, Zapier, or Make.
+
+<Warning>
+  If you pay commission, credit an account, or fulfil anything on `sale.created`, you must handle
+  `sale.deleted`. It is the only signal that an attributed sale has been undone, and it carries only
+  the `id` — so store that `id` when you process the sale, or you will not know what to reverse.
+</Warning>
+
+## Coupon events
+
+A coupon is the discount itself — the amount off, the currency, the duration. Customers never type a
+coupon; they type a promotional code attached to it. See
+[coupons and promotional codes](/api-reference/coupons-and-promotional-codes).
+
+`coupon.created`, `coupon.updated`, and `coupon.deleted` fire from the dashboard and from
+`/api/v1/coupons`. The payload includes the coupon's promotional codes.
+
+## Promo code events
+
+A promotional code is the customer-facing string tied to a coupon, usually issued to a specific
+affiliate so their audience gets a discount and they get attribution without a link.
+
+`promocode.created`, `promocode.updated`, and `promocode.deleted` fire when codes are issued, edited,
+or removed in the dashboard, including when codes are generated in bulk for a group of affiliates.
+The payload includes the parent coupon.
+
+## What to actually subscribe to
+
+Subscribing to everything is the most common mistake. Filtering happens at the endpoint, before
+delivery, so a narrow subscription means a quieter log and a cheaper handler.
+
+<Columns cols={2}>
+  <Card title="Most integrations" icon="star">
+    `sale.created` and `affiliate.created`. Revenue in, partners in — enough to drive fulfilment and
+    CRM sync.
+  </Card>
+  <Card title="If you act on money" icon="rotate-left">
+    Add `sale.deleted` and `sale.updated`, so refunds and payout state do not leave you out of sync.
+  </Card>
+  <Card title="If you mirror the program" icon="database">
+    Add the `referral.*` family and `affiliate.updated` to keep a full local copy.
+  </Card>
+  <Card title="Rarely needed" icon="ticket">
+    The `coupon.*` and `promocode.*` families, unless you manage discounts in another system.
+  </Card>
+</Columns>
+
+## Update events carry no diff
+
+An `updated` event gives you the object's current state, not a list of what changed. There is no
+`previous_attributes` and no changed-fields array.
+
+If you need to know *what* changed — did the status flip to approved, did the commission rate move —
+compare the payload against your own stored copy of the object. This is another reason to persist
+what you receive rather than treating events as fire-and-forget.
+
+Delete events are the mirror image: their `body` contains only the `id`, because the object is gone
+and there is nothing left to expand.
+
+## Browse the Event Catalog
+
+The dashboard has a live copy of this reference. Open **Settings**, then **Advanced**, then
+**Webhooks**, and select the **Event Catalog** tab. Each event type is listed with its description
+and an example payload matching the schema Referly registers for it.
+
+{/* TODO screenshot: event-catalog — upload it in the local Documentation Agent */}
+
+Use it to check a field name without leaving the dashboard, and the **Testing** tab on an endpoint to
+send yourself a real example — see [Test and replay](/developer-documentation/webhooks/testing).
+
+## Events that do not exist
+
+Worth stating plainly, so you do not build around something that will never arrive:
+
+- **No payout events.** Payout state reaches you on `sale.updated`, through `payoutCreated` and
+  `payoutId` on the sale's `commissions` entries. The `payout_batch.created` payload you
+  may see in the non-cash payouts setup wizard belongs to the
+  [Referly Payouts integration](/help-center/integrations/referly-payouts), a separate flow, and is
+  not subscribable here.
+- **No click events.** Clicks are high volume and are not emitted as webhooks. Read them through the
+  API instead — see [click data](/developer-documentation/tracking/click-data).
+- **No link events.** Referral link changes arrive as `affiliate.updated`.
+- **No commission or commission plan events.** Commission values ride along on the sale.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Payload structure" icon="brackets-curly" href="/developer-documentation/webhooks/payload-structure">
+    Every field inside each event, family by family.
+  </Card>
+  <Card title="Manage endpoints" icon="link" href="/developer-documentation/webhooks/managing-endpoints">
+    Subscribe an endpoint to the events you picked here.
+  </Card>
+  <Card title="Verify signatures" icon="shield-check" href="/developer-documentation/webhooks/verifying-signatures">
+    Prove a request came from Referly before you trust it.
+  </Card>
+  <Card title="Retries and logs" icon="clock-rotate-left" href="/developer-documentation/webhooks/retries-and-logs">
+    What happens when your endpoint rejects an event.
+  </Card>
+  <Card title="Test and replay" icon="flask" href="/developer-documentation/webhooks/testing">
+    Send a sample of any event type to your endpoint.
+  </Card>
+  <Card title="Data model" icon="diagram-project" href="/developer-documentation/reference/data-model">
+    How affiliates, referrals, sales, coupons, and codes relate.
+  </Card>
+</Columns>

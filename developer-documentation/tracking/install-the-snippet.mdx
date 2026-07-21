@@ -1,6 +1,287 @@
 ---
 title: "Install the snippet"
-description: "Add the tracking script to your site."
+description: "Install the Referly affiliate tracking script on your website. Copy the snippet, add it site-wide to the head tag, and verify clicks are recorded. Includes Next.js, Google Tag Manager, and WordPress examples."
+keywords: ["Referly tracking script", "install affiliate tracking snippet", "affiliate-tracker.js", "data-program-id", "client-side affiliate tracking", "affiliate tracking Next.js", "affiliate tracking Google Tag Manager", "affiliate tracking WordPress", "window.affiliateRef", "affiliate_referral_ready"]
 ---
+Referly's client-side tracking is a single script tag. Once it's on your site, every visitor who arrives from an affiliate link is recognised, recorded as a click, and remembered in their browser for the length of your cookie window — so that when they sign up or buy later, the right affiliate gets credit.
 
-{/* TODO: Write this article. */}
+This page covers where to get the snippet, where to put it, what it does once it loads, and how to prove it's working.
+
+## Get your snippet
+
+The snippet is generated for you with your program ID already filled in. In your Referly dashboard, open your program, go to the campaign settings, and copy the block under **Insert this line of code in your website's head tag**.
+
+{/* TODO screenshot: tracking-script-snippet — upload it in the local Documentation Agent */}
+
+It looks like this:
+
+```html Standard install
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+Three parts matter, and all three are required:
+
+<ParamField path="src" type="string" required>
+  `https://referly.so/affiliate-tracker.js`. If your program is run through an agency white-label account, the dashboard gives you `https://cdn.jsdelivr.net/npm/affiliate-tracker/dist/affiliate-tracker.js` instead. Use whichever URL your dashboard shows — the script only recognises itself when loaded from a known origin.
+</ParamField>
+
+<ParamField path="data-affiliate" type="attribute" required>
+  A valueless marker attribute. The tracker finds its own tag with `script[data-affiliate]`, so if you drop this attribute the script loads and then does nothing at all. This is the single most common installation mistake.
+</ParamField>
+
+<ParamField path="data-program-id" type="string" required>
+  Your program's ID. Without it the tracker exits immediately.
+</ParamField>
+
+<Tip>
+  `async` is recommended but optional. The tracker never blocks rendering and does its work after the page is parsed.
+</Tip>
+
+### Passing the program ID in the URL instead
+
+If your host strips unknown `data-` attributes from script tags, you can pass the program ID as a query parameter on the script URL:
+
+```html
+<script src="https://referly.so/affiliate-tracker.js?programId=YOUR_PROGRAM_ID" async></script>
+```
+
+This is a fallback. Prefer the `data-` attributes when you have the choice.
+
+## Where to put it
+
+Put the snippet in the `head` of **every page on your site**, not just your checkout or your homepage.
+
+Affiliates link to whatever page they want — a blog post, a pricing page, a landing page, a comparison article. If the tracker isn't on the page the visitor lands on, no click is recorded and there is nothing to attribute the eventual sale to. Site-wide installation is the only configuration that reliably works.
+
+<Warning>
+  Your site must be served over HTTPS. Referly writes its cookies with `SameSite=None; Secure`, which browsers reject on plain HTTP. On an insecure origin the script runs, calls the API, and then silently fails to persist anything.
+</Warning>
+
+## Install by stack
+
+<CodeGroup>
+
+```html Plain HTML
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script
+      src="https://referly.so/affiliate-tracker.js"
+      data-affiliate
+      data-program-id="YOUR_PROGRAM_ID"
+      async>
+    </script>
+  </head>
+  <body>
+    ...
+  </body>
+</html>
+```
+
+```jsx Next.js (App Router)
+// app/layout.tsx
+import Script from "next/script";
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <Script
+          src="https://referly.so/affiliate-tracker.js"
+          data-affiliate=""
+          data-program-id="YOUR_PROGRAM_ID"
+          strategy="afterInteractive"
+        />
+      </body>
+    </html>
+  );
+}
+```
+
+```jsx Next.js (Pages Router)
+// pages/_document.tsx
+import { Html, Head, Main, NextScript } from "next/document";
+
+export default function Document() {
+  return (
+    <Html lang="en">
+      <Head>
+        <script
+          src="https://referly.so/affiliate-tracker.js"
+          data-affiliate=""
+          data-program-id="YOUR_PROGRAM_ID"
+          async
+        />
+      </Head>
+      <body>
+        <Main />
+        <NextScript />
+      </body>
+    </Html>
+  );
+}
+```
+
+```html Google Tag Manager
+<script>
+  var pushLap = document.createElement('script');
+  pushLap.src = "https://referly.so/affiliate-tracker.js";
+  pushLap.setAttribute('data-affiliate', '');
+  pushLap.setAttribute('data-program-id', 'YOUR_PROGRAM_ID');
+  document.head.appendChild(pushLap);
+</script>
+```
+
+```php WordPress (functions.php)
+add_action('wp_head', function () {
+  ?>
+  <script
+    src="https://referly.so/affiliate-tracker.js"
+    data-affiliate
+    data-program-id="YOUR_PROGRAM_ID"
+    async>
+  </script>
+  <?php
+});
+```
+
+</CodeGroup>
+
+For Google Tag Manager, use a **Custom HTML** tag on the **All Pages** trigger. A tag that only fires on your thank-you page is worse than no tag at all, because the click was never recorded on the landing page.
+
+For WordPress, a header-scripts plugin or your theme's "custom code" box works just as well as `functions.php`. See [the WordPress guide](/help-center/integrations/wordpress) for the options.
+
+## What happens when the script loads
+
+Understanding the sequence makes debugging much faster. On page load the tracker:
+
+1. Loads the public-suffix helper it uses to work out your registrable domain, so cookies can be set on `.your-domain.com` and shared across subdomains.
+2. Tests whether cookies are writable. If they aren't, it falls back to `localStorage` for the whole session. See [cookies and storage](/developer-documentation/tracking/cookies-and-storage).
+3. Checks for a [cross-domain handoff](/developer-documentation/tracking/cross-domain-tracking) on the incoming URL and restores attribution from it if present.
+4. Reads your program ID off the script tag. No ID, no tracking.
+5. Checks whether the URL carries any recognised referral parameter, and whether attribution already exists in storage. **If neither is true it stops here** — no network requests are made for ordinary visitors.
+6. Fetches your program's configuration to learn your URL parameter, your cookie duration, your approved cross-domain list, and whether [debug mode](/developer-documentation/tracking/debug-mode) is on.
+7. Records the click against the affiliate and stores the result.
+8. Sets `window.affiliateRef` and `window.affiliateId`, then fires the readiness events.
+
+That step 5 short-circuit is deliberate: visitors who did not arrive from an affiliate link cost you nothing and trigger no requests.
+
+### Globals and events it exposes
+
+Once the tracker has resolved, these are available on `window`:
+
+| Global | What it holds |
+| --- | --- |
+| `window.affiliateRef` | The affiliate's referral code, or `null` |
+| `window.affiliateId` | The click ID for this visit, or `null` |
+| `window.createPushLapEmail` | Record a referred customer from a sign-up |
+| `window.createPushLapSale` | Record a sale from the browser |
+| `window.pushLapTrackAddToCart` | Record an add-to-cart event |
+
+And two events fire on `window`:
+
+| Event | Fires when |
+| --- | --- |
+| `affiliate_id_ready` | Attribution was resolved. `event.detail` carries `ref` and `clickId` |
+| `affiliate_referral_ready` | The tracker has finished, whether or not attribution was found |
+
+Always wait for one of these before reading the globals or calling the functions — the tracker resolves asynchronously, so code that runs on `DOMContentLoaded` will usually run too early:
+
+```js
+window.addEventListener("affiliate_referral_ready", () => {
+  if (window.affiliateRef) {
+    console.log("Referred by", window.affiliateRef, "click", window.affiliateId);
+  }
+});
+```
+
+Full details are in the [JavaScript API reference](/developer-documentation/tracking/javascript-api/reference).
+
+## Verify the installation
+
+<Steps>
+  <Step title="Visit your site with a referral parameter">
+    Take a real affiliate link from your dashboard, or append your program's parameter yourself, and open it in a fresh browser profile: `https://your-domain.com/?ref=TESTCODE`.
+  </Step>
+  <Step title="Check the globals">
+    Open the browser console and run `window.affiliateRef` and `window.affiliateId`. The first should return the referral code; the second a numeric click ID as a string. If `affiliateId` still equals the referral code, the click request has not completed or failed.
+  </Step>
+  <Step title="Check storage">
+    In **Application → Cookies**, look for two entries named after your program ID: one ending `_affiliate_ref` holding the code, one ending `_affiliate_referral` holding the click ID. If cookies were unavailable these appear under **Local Storage** instead.
+  </Step>
+  <Step title="Check the dashboard">
+    Reload your program's analytics. The click should appear against that affiliate within a few seconds.
+  </Step>
+  <Step title="Navigate away and back">
+    Open your site again with no parameters. `window.affiliateRef` should still return the code — that's the cookie window doing its job. See [attribution and the cookie window](/developer-documentation/tracking/attribution).
+  </Step>
+</Steps>
+
+If any step fails, turn on [debug mode](/developer-documentation/tracking/debug-mode) and read the console log — it narrates every decision the tracker makes.
+
+## Content Security Policy
+
+If you run a CSP, the tracker needs three allowances. Note that the script is served from the apex domain while the API lives on `www`:
+
+```
+script-src  https://referly.so https://cdn.jsdelivr.net;
+connect-src https://www.referly.so;
+```
+
+`cdn.jsdelivr.net` is required for the domain-parsing helper the tracker loads at startup. Blocking it degrades cookie scoping on subdomains.
+
+## Common mistakes
+
+<AccordionGroup>
+  <Accordion title="The data-affiliate attribute was dropped">
+    Minifiers, tag managers, and some CMS "insert script" fields strip valueless attributes. The tracker locates itself with `script[data-affiliate]`, so without it nothing happens and there is no error. In frameworks that require a value, write `data-affiliate=""`.
+  </Accordion>
+  <Accordion title="Installed only on the checkout or thank-you page">
+    Attribution is created on the **landing** page, not the converting page. If the snippet isn't on the page the affiliate linked to, the visit is never attributed.
+  </Accordion>
+  <Accordion title="Serving the site over HTTP">
+    Referly's cookies are `Secure`. On HTTP they are silently discarded and attribution never survives a page navigation. This most often bites on local development against `http://localhost`.
+  </Accordion>
+  <Accordion title="Reading window.affiliateRef too early">
+    The tracker resolves after one or two network round trips. Code in an inline script, or on `DOMContentLoaded`, runs first and sees `null`. Listen for `affiliate_referral_ready` instead.
+  </Accordion>
+  <Accordion title="Expecting it to re-run on client-side navigation">
+    In a single-page app the tracker runs once, on the initial document load, and reads the URL as it was then. That's fine — attribution is captured on entry and persists in storage — but do not expect a fresh click to be recorded when your router changes the path.
+  </Accordion>
+  <Accordion title="Two copies of the snippet on one page">
+    Installing through both your theme and a tag manager loads the tracker twice. Remove one; duplicate clicks are the usual symptom.
+  </Accordion>
+  <Accordion title="Using a parameter your program doesn't use">
+    The tracker only honours the referral parameter configured for your program. Testing with `?ref=` when your program is set to `?via=` produces nothing. See [URL parameters](/developer-documentation/tracking/url-parameters).
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="URL parameters" icon="link" href="/developer-documentation/tracking/url-parameters">
+    Which parameters the tracker recognises and how to change yours.
+  </Card>
+  <Card title="Cookies and storage" icon="cookie" href="/developer-documentation/tracking/cookies-and-storage">
+    What gets written to the browser, and the localStorage fallback.
+  </Card>
+  <Card title="Attribution and the cookie window" icon="clock" href="/developer-documentation/tracking/attribution">
+    How Referly decides which affiliate gets credit.
+  </Card>
+  <Card title="Debug mode" icon="bug" href="/developer-documentation/tracking/debug-mode">
+    Turn on console logging to troubleshoot an install.
+  </Card>
+  <Card title="JavaScript API" icon="code" href="/developer-documentation/tracking/javascript-api/reference">
+    Record sign-ups, sales, and cart events from the browser.
+  </Card>
+  <Card title="Server-side tracking" icon="server" href="/developer-documentation/server-side/overview">
+    Report conversions from your backend instead.
+  </Card>
+</Columns>

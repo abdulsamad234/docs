@@ -1,6 +1,231 @@
 ---
 title: "Glossary"
-description: "The terms Referly uses and what they mean."
+description: "A-Z definitions of Referly terms for developers: program ID, affiliate link, click ID, referral, sale, commission plan, payout batch, coupon, promotional code, webhook, and every status value."
+keywords: ["affiliate marketing glossary", "Referly terms", "click ID", "commission plan", "promotional code vs coupon", "attribution window", "cookie duration", "affiliate API terminology", "payout batch", "external click ID"]
 ---
+Every term you will meet in these docs, the API, and the dashboard — with the field it maps to and
+where to read more.
 
-{/* TODO: Write this article. */}
+If you are new to Referly, read [Core concepts](/developer-documentation/getting-started/core-concepts)
+first. This page is for looking things up afterwards.
+
+## A
+
+**Affiliate** — a person promoting your program. Identified by email, belongs to exactly one program,
+and holds an **affiliate status** (below) that controls whether they can earn. In the API,
+affiliates are the `/affiliates` resource.
+
+**Affiliate group** — a named set of affiliates that share defaults: a commission plan, visible
+assets, coupon rules, and tiers. Assigning someone to a group is the usual way to change what a
+whole cohort earns without editing each affiliate.
+
+**Affiliate link** — the referral URL an affiliate shares. The stored value is the short code, not
+the full URL: the code goes into your site's URL parameter, as in `?ref=AFFILIATE_CODE`. An
+affiliate can hold several. Read them from the `affiliateLinks` array — the singular `link` property
+is deprecated. See [Affiliates and referral links](/api-reference/affiliate-links).
+
+**Affiliate status** — `INVITED`, `INACTIVE` (displayed as **Pending**), `ACTIVE`, `DECLINED`,
+`DEACTIVATED`, or `BANNED`. Only `ACTIVE` affiliates earn; deactivated and banned affiliates have
+their commissions put on hold rather than deleted.
+
+**API key** — the bearer token that authenticates REST API requests. Generated from **API Keys** in
+your dashboard sidebar, scoped to one program, and carrying full read and write access — which is
+why it belongs on your server only. See [Authentication](/developer-documentation/api/authentication).
+
+**Attribution** — deciding which affiliate gets credit for a conversion. Referly resolves it from
+the referral stored in the browser, the identifier you send with a sale, or the promotional code
+used. See [Attribution](/developer-documentation/tracking/attribution).
+
+**Attribution window** — how long a click stays eligible to earn. In Referly this is set by the
+**cookie duration**, 60 days by default.
+
+## C
+
+**Click** — one recorded visit through a referral link. Created by the tracking script, and captures
+the affiliate, the link, the landing page, and campaign context. A repeat visit through the same
+link creates another click rather than updating the first.
+
+**Click ID** — the click's numeric identifier, exposed in the browser as `window.affiliateId`. It is
+the most precise identifier you can send when reporting a sale, because it points at one specific
+visit. Store it against your user at signup so renewals months later can still be attributed. See
+[Server-side tracking](/developer-documentation/server-side/overview).
+
+**Commission** — what an affiliate earned from one sale. Derived by Referly from the commission
+plan; never created directly through the API. Carries a **commission approval status** and, for
+non-cash programs, a reward type.
+
+**Commission approval status** — `ACCEPTED` (approved and payable), `ON_HOLD` (waiting, with a
+`holdReason`), or `DECLINED` (rejected). Hold reasons are `PROGRAM_SETTINGS`, `FRAUD_PREVENTION`,
+`AFFILIATE_DEACTIVATED`, or `AFFILIATE_BANNED`.
+
+**Commission basis** — whether a plan pays once per customer or on every payment they make. Expressed
+through the plan's duration settings rather than a single flag.
+
+**Commission plan** — the rules that turn a sale into a commission: a rate, a type
+(`PERCENTAGE` or `FLAT`), an optional duration, and optional rules, tiers, and per-product amounts.
+Every affiliate has one, directly or through their group.
+
+**Commission rule** — a condition that must match before a plan's rate applies. Rules key on
+`ORDER_AMOUNT`, `PRODUCT`, `MEDIUM`, `LANDING_PAGE`, `STATEMENT_DESCRIPTION`, or `COUPON_USED`, and
+are grouped so that either all or some of them must match.
+
+**Commission tier** — a level an affiliate reaches by hitting a referral count or revenue threshold,
+used to pay better rates as someone performs. Tiers are named and ordered.
+
+**Cookie duration** — how many days a referral stays stored in a visitor's browser. Defaults to 60
+and is set per program. The value drives your effective attribution window.
+
+**Coupon** — the discount itself: a percentage or fixed amount off, with an optional duration,
+redemption limit, and product restrictions. A coupon is not what the customer types — that is a
+**promotional code**.
+
+**Cross-domain tracking** — carrying attribution from one domain to another, for example from a
+marketing site to an app on a different domain. The script decorates outbound links with handoff
+parameters, and must be installed on both ends. See
+[Cross-domain tracking](/developer-documentation/tracking/cross-domain-tracking).
+
+## E
+
+**External click ID** — an affiliate network's own click identifier, captured from the `rsubID`
+parameter on the landing URL and handed back on conversion so the network can reconcile. Referly
+treats it as an opaque string. See
+[External click IDs](/developer-documentation/tracking/external-click-ids).
+
+**External ID** — your identifier for a sale, sent as `externalId` (typically a charge or order ID).
+Unique per program, which is what makes retrying a request safe. See
+[Idempotency](/developer-documentation/server-side/idempotency).
+
+**External invoice ID** — your identifier for the invoice behind a sale, sent as `externalInvoiceId`.
+Also unique per program, and useful when one invoice can arrive through more than one path.
+
+## I
+
+**Idempotency** — the property that sending the same request twice has the same effect as sending it
+once. Referly provides it through the uniqueness of `externalId` and `externalInvoiceId`, so a
+retried sale does not double-pay an affiliate.
+
+**Integration** — a first-party connection to another platform (Stripe, Shopify, WooCommerce,
+Paddle, Chargebee, Polar, PayPal, Zapier, Make, and others) that reports conversions to Referly
+without you writing code. See [Integrations](/developer-documentation/integrations/overview).
+
+## N
+
+**Non-cash reward** — a commission paid as account credit or a coupon instead of money. The
+commission object carries the reward type alongside the cash amount, so a program can mix both.
+
+## P
+
+**Payment trigger** — what caused a reward: `SIGNUP`, `PURCHASE`, `BONUS`, or `CONTENT_REWARD`. Lets
+you pay for a free signup as well as for revenue.
+
+**Payout** — approved commissions grouped into one payment to one affiliate for one period. Status
+is `PENDING`, `PROCESSING`, `PAID`, or `FAILED`.
+
+**Payout batch** — a set of payouts processed together so you pay a whole cohort in one run. Batches
+move through their own longer status list, from `PREPARING` and `READY` through `PROCESSING` and
+`SENDING_TO_AFFILIATE` to `PAID` or `FAILED`.
+
+**Postback URL** — a URL Referly calls with conversion details, used to report back to affiliate
+networks and ad platforms. You build it with macros such as `{event}`, `{clickid}`,
+`{extClickid}`, and `{commission_amount}`, which Referly substitutes at send time. See
+[Postback URL](/developer-documentation/integrations/postback-url).
+
+**Program** — the container for your affiliates, commission plans, coupons, and tracking settings.
+One brand, one program. Run several brands and you run several programs, each with its own API key.
+
+**Program ID** — the program's identifier, used as `data-program-id` in the tracking snippet. Public
+by design, and safe to put in client-side code. You never send it to the REST API, because the API
+key already identifies the program.
+
+**Promotional code** — the string a customer types at checkout, such as `SARAH20`. It points at a
+coupon for the discount and at an affiliate for the credit. One coupon can back many codes, each
+owned by a different affiliate. See
+[Coupons and promotional codes](/api-reference/coupons-and-promotional-codes).
+
+## R
+
+**Rate limit** — the per-key ceiling on API requests. Reads are the most generous and sales the
+strictest, since each sale triggers attribution and commission calculation. Exceeding one returns
+`429`. See [Rate limits](/developer-documentation/api/rate-limits).
+
+**Referral** — a referred customer: the person a click turned into. Holds their name and email, the
+crediting affiliate, running revenue and commission totals, and the commission plan in force.
+Unique on email within a program, so one customer belongs to one affiliate.
+
+**Referral link** — another name for an **affiliate link**, defined above.
+
+**Referral status** — `ACTIVE` for a normal tracked customer, `SUBMITTED` when an affiliate has
+submitted them for your review, `DECLINED` when rejected. The field is named `subscriptionStatus`.
+
+## S
+
+**Sale** — one payment made by a referral. Carries the amount as `totalEarned`, your own
+identifiers, the products bought, and optional `tax` and `shipping` amounts that can be excluded
+from the commission base. A subscription produces one sale per payment, not one per subscription.
+
+**Sale status** — `ACTIVE` or `REFUNDED`. Refunding changes the status and reverses the commission;
+it does not delete the sale.
+
+**Source** — where an object came from: `API`, `INTEGRATION`, `MANUAL`, `IMPORTED`, `AUTOMATED`, or
+`UNKNOWN` for sales, with `AFFILIATE_SUBMITTED` also available for referrals. Recorded on every
+object so imported history stays distinguishable from live tracking.
+
+## T
+
+**Tracking method** — how a sale was attributed: `LINK` or `COUPON`. Stored on the referral as
+`referralMedium`, and available as a commission rule condition so you can pay differently for each.
+
+**Tracking script** — the JavaScript that records clicks and stores attribution in the browser,
+loaded from `https://www.referly.so/affiliate-tracker.js` with the `data-affiliate` and
+`data-program-id` attributes. See
+[Install the snippet](/developer-documentation/tracking/install-the-snippet).
+
+## U
+
+**URL parameter** — the query-string key that carries an affiliate's code on your site. `ref` by
+default, configurable per program, with around forty alternatives supported such as `via`,
+`partner`, and `aff`. The script reacts only to the one your program is set to. See
+[URL parameters](/developer-documentation/tracking/url-parameters).
+
+**UTM parameters** — standard campaign parameters (`utm_source`, `utm_medium`, and the rest)
+recorded on the click alongside ad click IDs, so you can see which of an affiliate's channels
+converted. See [UTM and ad click IDs](/developer-documentation/tracking/utm-and-ad-click-ids).
+
+## W
+
+**Webhook** — an HTTP callback Referly sends when something changes in your program. Events cover
+affiliates, referrals, sales, coupons, and promotional codes in created, updated, and deleted form —
+`affiliate.created`, `sale.updated`, `referral.deleted`, and so on. Deliveries are signed, retried,
+and logged. See [Webhooks](/developer-documentation/webhooks/introduction).
+
+## Status values at a glance
+
+| Object | Field | Values |
+| --- | --- | --- |
+| Affiliate | `status` | `INVITED`, `INACTIVE`, `ACTIVE`, `DECLINED`, `DEACTIVATED`, `BANNED` |
+| Referral | `subscriptionStatus` | `ACTIVE`, `SUBMITTED`, `DECLINED` |
+| Sale | `status` | `ACTIVE`, `REFUNDED` |
+| Commission | `approvalStatus` | `ACCEPTED`, `ON_HOLD`, `DECLINED` |
+| Commission | `holdReason` | `PROGRAM_SETTINGS`, `FRAUD_PREVENTION`, `AFFILIATE_DEACTIVATED`, `AFFILIATE_BANNED` |
+| Payout | `status` | `PENDING`, `PROCESSING`, `PAID`, `FAILED` |
+
+<Card title="Statuses and enums" icon="list-check" href="/developer-documentation/reference/statuses-and-enums" horizontal>
+  The complete list, including payout batch statuses and every source value.
+</Card>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Core concepts" icon="diagram-project" href="/developer-documentation/getting-started/core-concepts">
+    How these objects fit together, in order.
+  </Card>
+  <Card title="Quickstart" icon="bolt" href="/developer-documentation/getting-started/quickstart">
+    Install tracking and record your first sale.
+  </Card>
+  <Card title="Data model" icon="database" href="/developer-documentation/reference/data-model">
+    Field-by-field reference for each object.
+  </Card>
+  <Card title="API reference" icon="terminal" href="/api-reference/introduction">
+    Endpoint-by-endpoint documentation.
+  </Card>
+</Columns>

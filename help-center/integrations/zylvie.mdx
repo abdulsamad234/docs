@@ -1,6 +1,328 @@
 ---
 title: "Zylvie"
-description: "Track Zylvie sales."
+description: "Connect Zylvie to Referly to track affiliate clicks, sales, leads, and subscriptions. Step-by-step custom field, custom code, and workflow setup, plus what the integration can and can't track."
+keywords: ["zylvie affiliate tracking", "zylvie affiliate program", "referly zylvie integration", "zylvie custom field affiliate", "zylvie webhook workflow affiliate", "zylvie checkout tracking", "zylvie lead tracking affiliate", "zylvie subscription commission", "zylvie custom code head", "zylvie private integration referly"]
 ---
+Referly tracks Zylvie sales through a hidden custom field on your checkout. The tracking script works out who referred a visitor, fills that field in behind the scenes, and Zylvie sends the field's value to Referly along with the order — which is how the right affiliate gets credited.
 
-{/* TODO: Write this article. */}
+It's the most involved setup of any Referly integration, because Zylvie doesn't have a built-in place to put a referral. Set aside half an hour, and work through the steps in order — each one depends on the one before it.
+
+<Warning>
+  Zylvie is a **private integration**, so the Zylvie option won't appear in your dashboard until it's switched on for your account. Email [support@referly.so](mailto:support@referly.so) and ask for Zylvie to be enabled, then come back to this guide.
+</Warning>
+
+## What the Zylvie integration can and can't do
+
+| What you want to track | Does Zylvie cover it? |
+| --- | --- |
+| **Clicks on affiliate links** | Yes, once the tracking script is on your site ([Step 1](#step-1-install-the-tracking-script-on-your-site)). |
+| **Sales** | Yes — someone paying for a product becomes a sale credited to the affiliate behind it. |
+| **Leads** | Yes — someone giving their name and email for a free product becomes a referred customer, before any money has moved. Few payment integrations can do this. |
+| **Subscriptions** | Yes — a visitor subscribing to a subscription product is tracked, with the subscription's status carried across. |
+| **Product-level detail** | Yes — the products on the order come across with names, prices, and quantities, so [product-based commissions](/help-center/getting-started/commissions/product-based) work. |
+| **Currency** | Yes — the order currency comes across and the amount is converted into your program's currency. |
+| **Refunds** | No — refunds aren't reported back automatically. If you refund a Zylvie order, adjust or delete the sale in Referly by hand. |
+| **Orders where the hidden field is empty** | No — nothing is recorded, not even an unattributed sale. |
+| **Discount code attribution** | No — Zylvie discount codes don't identify an affiliate. Affiliates need to promote links, not codes. |
+| **Products you didn't apply the custom field to** | No — the field has to be applied to a product for that product's checkout to carry the referral. |
+| **Chargebacks** | No — adjust by hand. |
+| **Two Zylvie stores** | No — a Referly program connects to one store. |
+
+## Before you start
+
+You'll need:
+
+- **Zylvie enabled on your Referly account.** See the note above.
+- **Admin access to your Zylvie store**, so you can add custom fields, custom code, and workflows.
+- **A browser you can open developer tools in.** One step involves looking up a field name on your own checkout page. It sounds technical but it's four clicks, and the steps below walk you through it.
+
+## Step 1: Install the tracking script on your site
+
+Everything else depends on this. The script recognises visitors who arrived from an affiliate link, records the click, and makes the referral available for the checkout field to pick up.
+
+Copy the snippet from Step 1 of the **Zylvie** guide in Referly — open your program, go to **Settings**, then **Integrations**, and select the Zylvie card — and paste it inside the `head` section of your website, on every page.
+
+```html Tracking script
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+{/* TODO screenshot: zylvie-guide-card — upload it in the local Documentation Agent */}
+
+## Step 2: Connect Zylvie in Referly
+
+<Steps>
+  <Step title="Get your API key from Zylvie">
+    In your Zylvie dashboard, go to **Settings**, then **API**, and copy your API key.
+  </Step>
+  <Step title="Open the integrations dialog">
+    In Referly, open your program, go to **Settings**, then **Integrations**, select **Connect Integration** in the top right, and choose **Zylvie**.
+  </Step>
+  <Step title="Fill in both fields">
+    Paste your key into **API key**, and put your Zylvie store name into **Site**.
+  </Step>
+  <Step title="Connect">
+    Select **Connect**. A green **Connected** badge appears with your store name when it's saved.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: zylvie-connect-form — upload it in the local Documentation Agent */}
+
+<Note>
+  These fields lock once saved. To change the key or point at a different store, select **Disconnect** and connect again.
+</Note>
+
+## Step 3: Create the custom field in Zylvie
+
+This is the field that carries the referral through checkout. The label matters — Referly looks for that exact name on incoming orders, so get it right.
+
+<Steps>
+  <Step title="Open custom fields">
+    In your Zylvie dashboard, go to your **Settings** page, then **Custom Fields**, then **Create Custom Field**.
+  </Step>
+  <Step title="Name it">
+    Set the **Name/Label** to `PLG Affiliate Id`, spelled exactly like that.
+  </Step>
+  <Step title="Choose the type">
+    Choose **Text field where users can type anything**.
+  </Step>
+  <Step title="Choose the products">
+    Under **Apply to which products**, select **All products**, or pick the specific products you want Referly to track. A product without this field can't be attributed to an affiliate.
+  </Step>
+  <Step title="Save">
+    Select **Save Changes**.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: zylvie-custom-field — upload it in the local Documentation Agent */}
+
+## Step 4: Find the field's name on your checkout
+
+Zylvie gives every custom field its own internal name, and the code in the next step needs it. You'll find it by looking at one of your own checkout pages.
+
+<Steps>
+  <Step title="Open a checkout page">
+    Go to the checkout page of any product you applied the field to in Step 3. You should see a **PLG Affiliate Id** box on the form.
+  </Step>
+  <Step title="Open developer tools">
+    Right-click anywhere on the page and choose **Inspect**. A panel opens showing the page's underlying code.
+  </Step>
+  <Step title="Select the field">
+    In that panel, select the icon for picking an element on the page — usually an arrow over a square, in the top-left of the panel — then click the **PLG Affiliate Id** box on the form.
+  </Step>
+  <Step title="Note the name">
+    The panel highlights that field's code. Look for its `name` value: something like `custom_field__N6maydmW`. Write it down exactly, including the two underscores. You'll paste it into the next two steps.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: zylvie-inspect-field-name — upload it in the local Documentation Agent */}
+
+<Tip>
+  Copy the part after `custom_field__` separately as well — the code in Step 6 needs that shorter piece on its own.
+</Tip>
+
+## Step 5: Add the code that fills the field in
+
+<Steps>
+  <Step title="Open your custom code settings">
+    In your Zylvie dashboard, go to your profile settings page and select **Custom Code**.
+  </Step>
+  <Step title="Paste this into the head code">
+    Add the snippet below to the **head code** section.
+  </Step>
+  <Step title="Set the field name">
+    Replace the value of `fieldName` with the name you noted in Step 4. This is the one thing you must change — if it's wrong, the field stays empty and nothing gets tracked.
+  </Step>
+</Steps>
+
+```html Fill the referral field
+<script>
+(function () {
+  // Set this to the name you noted in Step 4
+  let fieldName = "custom_field__N6maydmW";
+
+  const checkAndPopulateField = () => {
+    if (window.affiliateId) {
+      const customFieldInput =
+        document.querySelector('input[name="' + fieldName + '"]') ||
+        document.querySelector('[data-field-name="affiliate_id"]');
+
+      if (customFieldInput) {
+        customFieldInput.value = window.affiliateId;
+        customFieldInput.dispatchEvent(new Event("change", { bubbles: true }));
+        customFieldInput.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+      return true;
+    }
+    return false;
+  };
+
+  if (checkAndPopulateField()) return;
+
+  let attempts = 0;
+  const interval = setInterval(() => {
+    if (checkAndPopulateField() || attempts++ > 20) {
+      clearInterval(interval);
+    }
+  }, 100);
+})();
+</script>
+```
+
+Make sure the tracking script from Step 1 is also present on your checkout pages — this snippet reads the referral that script works out.
+
+## Step 6: Hide the field from your customers
+
+Right now your customers can see an odd **PLG Affiliate Id** box on your checkout. This step hides both the box and its label, so the form looks normal while the value still gets submitted.
+
+Add this to the same **head code** section, and set both values from what you noted in Step 4: `fieldName` is the full name, and `labelName` is the same thing with `custom_field__` removed from the front.
+
+```html Hide the referral field
+<script>
+(function () {
+  document.addEventListener("DOMContentLoaded", () => {
+    // The full name from Step 4
+    const fieldName = "custom_field__zV82Wk4w";
+    const affInput = document.querySelector(`input[name="${fieldName}"]`);
+
+    if (affInput) {
+      affInput.type = "hidden";
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // The same name with "custom_field__" removed
+    const labelName = "zV82Wk4w";
+    const label = document.querySelector(`label[for="${labelName}_label"]`);
+
+    if (label) {
+      label.style.display = "none";
+    }
+  });
+})();
+</script>
+```
+
+{/* TODO screenshot: zylvie-custom-code — upload it in the local Documentation Agent */}
+
+<Warning>
+  Load one of your checkout pages after saving and check the box is gone. Leaving it visible invites customers to type into it, and a customer-typed value credits the wrong affiliate — or nobody.
+</Warning>
+
+## Step 7: Create the workflows that report to Referly
+
+This is how Zylvie tells Referly that something happened. You create one workflow per event you want tracked, all pointing at the same address.
+
+<Steps>
+  <Step title="Open workflows">
+    In your Zylvie account, go to **Automations**, then **Workflows**, then **Webhooks**, and select **Create Workflow**.
+  </Step>
+  <Step title="Choose the trigger">
+    Pick the first trigger from the list below.
+  </Step>
+  <Step title="Paste the address">
+    Copy the webhook address from the Zylvie guide in Referly and paste it in. It already includes your program's details, so copy it rather than typing it out. Name the workflow `Referly Integration`.
+  </Step>
+  <Step title="Save, then repeat">
+    Save it, then create another workflow for each remaining trigger. Zylvie needs a separate workflow per trigger — one workflow won't cover all three.
+  </Step>
+</Steps>
+
+Create one workflow for each of these:
+
+- **You received a new sale** — a visitor paid for a product.
+- **You received a new lead** — a visitor submitted their name and email for a free product.
+- **A visitor subscribed to a subscription product**.
+
+You can create just the ones you need. If you don't sell free products, skip the lead trigger; if you have no subscriptions, skip that one.
+
+{/* TODO screenshot: zylvie-workflow-setup — upload it in the local Documentation Agent */}
+
+## Step 8: Test it end to end
+
+<Steps>
+  <Step title="Visit your store through an affiliate link">
+    Use a real affiliate's referral link from your **Affiliates** page, in a private window.
+  </Step>
+  <Step title="Check the click landed">
+    In Referly, open that affiliate's record and confirm the click count went up. If it didn't, the tracking script isn't running.
+  </Step>
+  <Step title="Open a checkout page and check the field">
+    Open the checkout for one of your products. The **PLG Affiliate Id** box should be invisible. Using **Inspect** again, confirm the hidden field now has a value in it rather than being empty.
+  </Step>
+  <Step title="Place an order">
+    Complete a purchase, or submit for one of your free products to test the lead path.
+  </Step>
+  <Step title="Check the result in Referly">
+    Open **Customers** to find the buyer attached to the affiliate, **Sales** to confirm the amount and products, and **Rewards** to see the commission.
+  </Step>
+  <Step title="Clean up">
+    Delete your test customer and sale from your **Customers** and **Sales** pages so they don't skew your reporting.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: referly-zylvie-sale — upload it in the local Documentation Agent */}
+
+## Handling refunds
+
+Zylvie refunds don't reach Referly, so this one is manual. When you refund a Zylvie order, open the matching sale on your **Sales** page in Referly and delete or adjust it, so the affiliate isn't paid on money you gave back.
+
+If you approve rewards on a schedule, catching refunds before the payout hold period ends means nothing is paid out in error. See [Reward holds](/help-center/manage/rewards/holds) and [Approve or decline rewards](/help-center/manage/rewards/approve-or-decline).
+
+## Disconnecting
+
+There are two parts:
+
+- **To stop tracking**, delete the Referly workflows in your Zylvie account under **Automations**, then **Workflows**.
+- **To remove your API key**, open **Connect Integration** in Referly, select **Zylvie**, and choose **Disconnect**.
+
+You may also want to remove the two snippets from your Zylvie custom code and delete the custom field, so your checkout is left clean.
+
+Nothing already tracked is deleted. Orders placed while the workflows are gone are not recorded and won't be picked up later.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="I can't see Zylvie in the integrations list">
+    Zylvie is a private integration and has to be switched on for your account. Email [support@referly.so](mailto:support@referly.so) to request it.
+  </Accordion>
+  <Accordion title="Nothing is appearing in Referly">
+    Work backwards. Open a checkout page through an affiliate link and inspect the hidden field — if it's empty, the problem is the Step 5 code, most often a mismatched field name. If it has a value, check your workflows exist in Zylvie and point at the right address.
+  </Accordion>
+  <Accordion title="The field isn't being filled in">
+    Three things to check: the `fieldName` in the Step 5 code exactly matches what you saw in Step 4, the tracking script from Step 1 is on your checkout pages, and you actually arrived through an affiliate link. Test in a private window.
+  </Accordion>
+  <Accordion title="Customers can see the PLG Affiliate Id box">
+    The Step 6 code isn't matching. Check both values: `fieldName` is the whole name, and `labelName` is the same name with `custom_field__` removed from the front. They are different values, and mixing them up is the usual cause.
+  </Accordion>
+  <Accordion title="Some products are tracked and others aren't">
+    The custom field is only applied to some of your products. Open **Custom Fields** in your Zylvie settings and set the field to apply to all the products you want tracked.
+  </Accordion>
+  <Accordion title="Sales come through but leads don't">
+    Each trigger needs its own workflow in Zylvie. Create a separate workflow for the new-lead trigger pointing at the same address.
+  </Accordion>
+  <Accordion title="A refund isn't showing in Referly">
+    That's expected — Zylvie refunds aren't reported back. Adjust the sale by hand on your **Sales** page.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Product-based commissions" icon="tags" href="/help-center/getting-started/commissions/product-based" arrow>
+    Pay different rates on different Zylvie products.
+  </Card>
+  <Card title="Managing rewards" icon="gift" href="/help-center/manage/rewards/overview" arrow>
+    Approve, hold, and adjust what your affiliates earn.
+  </Card>
+  <Card title="Add a sale" icon="plus" href="/help-center/manage/customers/add-a-sale" arrow>
+    Record a sale by hand when an order wasn't attributed.
+  </Card>
+  <Card title="Integrations overview" icon="puzzle-piece" href="/help-center/integrations/overview" arrow>
+    See every tool Referly connects to.
+  </Card>
+</Columns>

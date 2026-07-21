@@ -1,6 +1,534 @@
 ---
 title: "Payload structure"
-description: "The shape of a webhook request body."
+description: "Reference for the JSON structure of Referly webhook payloads: the event and body envelope, svix headers, and every field on sale, referral, affiliate, coupon, and promo code events, with full examples."
+keywords: ["Referly webhook payload", "webhook JSON structure", "sale.created payload", "affiliate.created payload", "referral.created payload", "webhook body fields", "svix headers", "commissionEarned", "affiliateLinks", "webhook delete event", "affiliate webhook schema"]
 ---
+Every Referly webhook delivery is the same shape: a `POST` carrying a JSON object with two keys. This
+page documents that envelope, then the fields inside each of the five object families.
 
-{/* TODO: Write this article. */}
+For what causes each event to fire, see [Event types](/developer-documentation/webhooks/event-types).
+
+## The HTTP request
+
+```http
+POST /your/endpoint HTTP/1.1
+Content-Type: application/json
+svix-id: msg_2gT4kQxZ9pLmNvBc
+svix-timestamp: 1773487458
+svix-signature: v1,K5oZfzN95Z9UVu1EsfQmfVNQhnkZ2pj9o9NDN2/H1eE=
+```
+
+| Header | What it is |
+| --- | --- |
+| `svix-id` | Unique ID for this message. Stable across every retry of the same event — use it as your idempotency key. |
+| `svix-timestamp` | Unix seconds when the message was sent. Part of the signed content, so it also guards against replay. |
+| `svix-signature` | One or more space-separated signatures. See [Verify signatures](/developer-documentation/webhooks/verifying-signatures). |
+
+The body is always UTF-8 JSON. Verify the signature against the **raw** bytes before parsing — see
+[Verify signatures](/developer-documentation/webhooks/verifying-signatures).
+
+## The envelope
+
+```json
+{
+  "event": "sale.created",
+  "body": { }
+}
+```
+
+<ResponseField name="event" type="string" required>
+  The event type that fired, always `family.action` — for example `sale.created`. Identical to the
+  Svix event type on the message.
+</ResponseField>
+
+<ResponseField name="body" type="object" required>
+  The object the event happened to, with its useful relations expanded. For `deleted` events this
+  contains only `id`.
+</ResponseField>
+
+There is no `data`, no `previous_attributes`, and no envelope-level timestamp — use `svix-timestamp`
+or the object's own `createdAt`.
+
+## Field conventions
+
+These hold across every family.
+
+### Enum values are uppercase
+
+Enums serialise exactly as stored: `"PURCHASE"`, `"ACTIVE"`, `"STRIPE"`, `"LINK"`. Compare
+case-sensitively against the uppercase form.
+
+<Warning>
+  The example payloads in the dashboard's **Event Catalog** show lowercase values such as
+  `"purchase"` and `"active"`. Those samples are illustrative — live deliveries send the uppercase
+  enum. Match on uppercase.
+</Warning>
+
+### Dates are ISO 8601 strings
+
+`createdAt`, `updatedAt`, `expiresAt`, `refundedAt`, and friends are ISO 8601 with a timezone, for
+example `"2026-03-11T09:24:18.442Z"`. Never a Unix timestamp.
+
+### IDs are UUID strings, except sales
+
+Affiliates, referrals, coupons, and promotional codes use UUID strings. **Sales use an
+auto-incrementing integer**, so `body.id` on a sale event is a number, not a string, and so is the
+`id` on `sale.deleted`. Type your handler accordingly.
+
+### Money is a plain number in the program's currency
+
+Amounts such as `totalEarned`, `commissionEarned`, and `totalRevenue` are decimal numbers in your
+program's currency — `199.99`, not `19999` minor units. There is no per-payload currency field on
+sales or referrals; the currency is a property of the program.
+
+### Assume nullable
+
+Most fields other than `id` are nullable. `email`, `name`, `affiliateId`, `referralId`,
+`commissionRate`, and every relation can be `null`. Code defensively rather than trusting a field to
+be present because it was present last time.
+
+## Sale payloads
+
+The largest and most commonly consumed payload. Emitted on `sale.created` and `sale.updated`.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `id` | number | Auto-incrementing sale ID |
+| `affiliateId` | string, null | The affiliate credited |
+| `referralId` | string, null | The referred customer |
+| `externalId` | string, null | Your order or charge ID, if you supplied one |
+| `externalInvoiceId` | string, null | Your invoice ID, if you supplied one |
+| `affiliateLinkId` | string, null | Which referral link earned it |
+| `promotionalCodeId` | string, null | Set when the sale was attributed by code rather than link |
+| `paymentTrigger` | string | `SIGNUP`, `PURCHASE`, `BONUS`, or `CONTENT_REWARD` |
+| `name` | string, null | Customer name at time of sale |
+| `email` | string, null | Customer email at time of sale |
+| `totalEarned` | number | Gross sale amount |
+| `commissionRate` | number, null | Rate applied, as a percentage |
+| `commissionEarned` | number, null | Commission for this sale's own affiliate — see below |
+| `clicks` | number | Clicks recorded before the sale |
+| `productsBought` | string array | Product names, may be empty |
+| `taxAmount` | number | Tax portion of `totalEarned` |
+| `shippingAmount` | number | Shipping portion of `totalEarned` |
+| `status` | string | `ACTIVE` or `REFUNDED` |
+| `refundedAt` | string, null | ISO date if refunded |
+| `source` | string | `UNKNOWN`, `API`, `INTEGRATION`, `MANUAL`, `IMPORTED`, or `AUTOMATED` |
+| `integrationSalesSource` | string, null | `STRIPE`, `SHOPIFY`, `WOOCOMMERCE`, `PADDLE`, `CHARGEBEE`, `POLAR`, `MEMBERSTACK`, `SKILLPLATE`, `ZYLVIE`, `ZAPIER`, `MAKE`, or `JAVASCRIPT` |
+| `metadata` | object, null | Whatever you attached when reporting the sale |
+| `createdAt` | string | ISO date |
+| `affiliateProgramId` | string, null | The program this belongs to |
+| `affiliate` | object, null | The full affiliate record |
+| `referral` | object, null | The full referral record, with `status` added |
+| `commissions` | array | Every commission generated by this sale |
+
+### commissionEarned versus commissions
+
+A single sale can generate several commissions — the selling affiliate's, plus a parent's under
+multi-level rules, plus bonuses. The `commissions` array holds all of them.
+
+The top-level `commissionEarned` is a convenience: it is the `commissionEarned` of the commission
+belonging to **this sale's own affiliate**. If you only pay the direct affiliate, read the top-level
+field. If you mirror the full ledger, iterate `commissions`.
+
+Each entry in `commissions` carries `id`, `affiliateId`, `commissionEarned`, `approvalStatus`
+(`ON_HOLD`, `ACCEPTED`, or `DECLINED`), `rewardType` (`CASH` or `NON_CASH`), `payoutCreated`,
+`payoutId`, `manuallyPaid`, `holdReason`, `bonusReason`, `createdAt`, and `updatedAt`.
+
+<Warning>
+  Payout state lives on the **commission**, not the sale. `payoutCreated`, `payoutId`, and
+  `manuallyPaid` are fields inside `commissions[]` — there are no top-level equivalents on the sale
+  object, and no expanded `payout` object, even though the Event Catalog schema lists them. To learn
+  whether an affiliate has been paid for a sale, read `commissions[].payoutCreated` and
+  `commissions[].payoutId`.
+</Warning>
+
+### Example: sale.created
+
+```json
+{
+  "event": "sale.created",
+  "body": {
+    "id": 8241,
+    "affiliateId": "9f1c0b7e-4a2b-4d55-9a10-2c6b5f0a7e31",
+    "referralId": "3e8a1d92-77c4-4f0e-b6a5-1d0c9e2f4b88",
+    "externalId": "order_6789",
+    "externalInvoiceId": "in_1QhT2p0aBcDeF",
+    "affiliateLinkId": "7b2e5c14-9d33-4a81-bf20-8e4a1c7d6055",
+    "promotionalCodeId": null,
+    "paymentTrigger": "PURCHASE",
+    "name": "John Smith",
+    "email": "john.smith@example.com",
+    "totalEarned": 199.99,
+    "commissionRate": 20,
+    "commissionEarned": 40.0,
+    "clicks": 5,
+    "productsBought": ["Annual Subscription"],
+    "taxAmount": 0,
+    "shippingAmount": 0,
+    "status": "ACTIVE",
+    "refundedAt": null,
+    "source": "INTEGRATION",
+    "integrationSalesSource": "STRIPE",
+    "metadata": null,
+    "createdAt": "2026-03-11T09:24:18.442Z",
+    "affiliateProgramId": "c2d4f6a8-0b1c-4e3d-8f5a-6b7c8d9e0f12",
+    "affiliate": {
+      "id": "9f1c0b7e-4a2b-4d55-9a10-2c6b5f0a7e31",
+      "firstName": "Sarah",
+      "lastName": "Johnson",
+      "email": "sarah.johnson@example.com",
+      "status": "ACTIVE"
+    },
+    "referral": {
+      "id": "3e8a1d92-77c4-4f0e-b6a5-1d0c9e2f4b88",
+      "referredUserExternalId": "cus_QhT2p0aBcDeF",
+      "name": "John Smith",
+      "email": "john.smith@example.com",
+      "subscriptionStatus": "ACTIVE",
+      "status": "ACTIVE"
+    },
+    "commissions": [
+      {
+        "id": 15092,
+        "affiliateId": "9f1c0b7e-4a2b-4d55-9a10-2c6b5f0a7e31",
+        "commissionEarned": 40.0,
+        "approvalStatus": "ACCEPTED",
+        "rewardType": "CASH",
+        "payoutCreated": false,
+        "payoutId": null,
+        "manuallyPaid": false,
+        "saleId": 8241,
+        "createdAt": "2026-03-11T09:24:18.442Z"
+      }
+    ]
+  }
+}
+```
+
+## Referral payloads
+
+Emitted on `referral.created` and `referral.updated`.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `id` | string | Referral UUID |
+| `affiliateId` | string, null | The affiliate credited |
+| `referredUserExternalId` | string | Your identifier for the customer |
+| `name` | string, null | Customer name |
+| `email` | string, null | Customer email |
+| `totalRevenue` | number | Lifetime revenue from this customer |
+| `totalCommission` | number | Lifetime commission generated |
+| `initialLandingPage` | string, null | First page they hit, including query string |
+| `referralMedium` | string, null | `LINK` or `COUPON` |
+| `subscriptionStatus` | string, null | `ACTIVE`, `SUBMITTED`, or `DECLINED` |
+| `status` | string, null | Duplicate of `subscriptionStatus` — see below |
+| `submissionType` | string, null | `AUTOMATIC` or `MANUAL` |
+| `source` | string | `UNKNOWN` and other referral sources |
+| `integrationReferralSource` | string, null | Which integration created it |
+| `affiliateLinkId` | string, null | Which link earned it |
+| `commissionPlanId` | string, null | Plan governing its commissions |
+| `plan` | string, null | Your product plan name, if reported |
+| `notes` | string, null | Free text |
+| `metadata` | object, null | Whatever you attached |
+| `createdAt` | string | ISO date |
+| `affiliateProgramId` | string, null | The program this belongs to |
+| `affiliate` | object, null | The affiliate, with `affiliateLinks` and a `link` shortcut |
+| `commissionPlan` | object, null | The commission plan, when one applies |
+
+### status is an alias
+
+The stored column is `subscriptionStatus`. Referly copies it to `status` in the webhook payload for
+convenience, so both keys appear with the same value. Read either — but be aware `status` is a
+webhook-only convenience and is not a field on the referral elsewhere in the API.
+
+### Example: referral.created
+
+```json
+{
+  "event": "referral.created",
+  "body": {
+    "id": "3e8a1d92-77c4-4f0e-b6a5-1d0c9e2f4b88",
+    "affiliateId": "9f1c0b7e-4a2b-4d55-9a10-2c6b5f0a7e31",
+    "referredUserExternalId": "cus_QhT2p0aBcDeF",
+    "name": "John Smith",
+    "email": "john.smith@example.com",
+    "totalRevenue": 0,
+    "totalCommission": 0,
+    "initialLandingPage": "https://example.com/pricing?ref=sarah-johnson",
+    "referralMedium": "LINK",
+    "subscriptionStatus": "ACTIVE",
+    "status": "ACTIVE",
+    "submissionType": "AUTOMATIC",
+    "source": "UNKNOWN",
+    "integrationReferralSource": "STRIPE",
+    "commissionPlanId": "5d7f9a11-3c22-4b88-91ee-2f0a6b3c4d55",
+    "plan": "Professional",
+    "notes": null,
+    "metadata": null,
+    "createdAt": "2026-03-11T09:24:18.442Z",
+    "affiliateProgramId": "c2d4f6a8-0b1c-4e3d-8f5a-6b7c8d9e0f12",
+    "affiliate": {
+      "id": "9f1c0b7e-4a2b-4d55-9a10-2c6b5f0a7e31",
+      "firstName": "Sarah",
+      "lastName": "Johnson",
+      "email": "sarah.johnson@example.com",
+      "status": "ACTIVE",
+      "link": "sarah-johnson",
+      "affiliateLinks": [
+        {
+          "id": "7b2e5c14-9d33-4a81-bf20-8e4a1c7d6055",
+          "link": "sarah-johnson",
+          "createdAt": "2026-01-08T14:02:11.000Z"
+        }
+      ]
+    },
+    "commissionPlan": {
+      "id": "5d7f9a11-3c22-4b88-91ee-2f0a6b3c4d55",
+      "name": "Premium Affiliate Plan",
+      "commissionRate": 20,
+      "commissionType": "PERCENTAGE"
+    }
+  }
+}
+```
+
+## Affiliate payloads
+
+Emitted on `affiliate.created` and `affiliate.updated`. The affiliate is a user record, so this is
+the widest payload — the fields below are the ones you can rely on.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `id` | string | Affiliate UUID |
+| `firstName` | string | |
+| `lastName` | string | |
+| `name` | string, null | Display name, when set |
+| `email` | string | |
+| `emailVerified` | string, null | ISO date, or null if unverified |
+| `image` | string, null | Avatar URL |
+| `status` | string | Program membership status |
+| `detailsComplete` | boolean | Whether they finished onboarding |
+| `programId` | string, null | The program they belong to |
+| `payoutEmail` | string, null | Where they get paid, often different from `email` |
+| `paymentMethod` | string, null | Their chosen payout method |
+| `commissionRate` | number, null | Affiliate-specific override |
+| `useCommissionPlanCommissionRate` | boolean | Whether the plan's rate wins over the override |
+| `exemptFromCommissionTierChanges` | boolean | Pinned out of automatic tier movement |
+| `commissionPlanId` | string, null | |
+| `commissionTierId` | string, null | |
+| `numberOfReferredUsers` | number | Running total |
+| `numberOfClicks` | number | Running total |
+| `totalRevenue` | number | Running total |
+| `totalCommissionEarned` | number | Running total |
+| `createdAt` | string | ISO date |
+| `updatedAt` | string | ISO date |
+| `link` | string, null | Shortcut to the first referral link's slug |
+| `affiliateLinks` | array | Every referral link — `id`, `link`, `createdAt` |
+| `commissionPlan` | object, null | `id`, `name`, `commissionRate`, `commissionType`, `numberOfPayments`, `numberOfMonths` |
+| `commissionTier` | object, null | `id`, `tier`, `name`, `emoji`, `minReferrals`, `minRevenue` |
+| `questionAnswers` | array | Their answers to your signup questions |
+| `promotionalCodes` | array | Codes issued to them — `id`, `code`, `active`, `expiresAt`, `couponId` |
+
+### link versus affiliateLinks
+
+In webhook payloads, `link` is populated with the slug of the affiliate's **first** referral link as
+a convenience. That differs from the REST API, where the affiliate object's `link` property is
+deprecated and usually `null`.
+
+An affiliate can own many slugs, so `link` is lossy. Read `affiliateLinks` whenever an affiliate might
+have more than one — see
+[affiliates and referral links](/api-reference/affiliate-links).
+
+### Example: affiliate.created
+
+```json
+{
+  "event": "affiliate.created",
+  "body": {
+    "id": "9f1c0b7e-4a2b-4d55-9a10-2c6b5f0a7e31",
+    "firstName": "Sarah",
+    "lastName": "Johnson",
+    "name": "Sarah Johnson",
+    "email": "sarah.johnson@example.com",
+    "emailVerified": "2026-03-11T09:20:04.000Z",
+    "image": null,
+    "status": "ACTIVE",
+    "detailsComplete": true,
+    "programId": "c2d4f6a8-0b1c-4e3d-8f5a-6b7c8d9e0f12",
+    "payoutEmail": "sarah.payments@example.com",
+    "paymentMethod": "paypal",
+    "commissionRate": 20,
+    "useCommissionPlanCommissionRate": true,
+    "exemptFromCommissionTierChanges": false,
+    "commissionPlanId": "5d7f9a11-3c22-4b88-91ee-2f0a6b3c4d55",
+    "commissionTierId": "8c1b2a34-5e6f-4071-a2b3-c4d5e6f70819",
+    "numberOfReferredUsers": 0,
+    "numberOfClicks": 0,
+    "totalRevenue": 0,
+    "totalCommissionEarned": 0,
+    "createdAt": "2026-03-11T09:20:04.000Z",
+    "updatedAt": "2026-03-11T09:20:04.000Z",
+    "link": "sarah-johnson",
+    "affiliateLinks": [
+      {
+        "id": "7b2e5c14-9d33-4a81-bf20-8e4a1c7d6055",
+        "link": "sarah-johnson",
+        "createdAt": "2026-03-11T09:20:04.000Z"
+      }
+    ],
+    "commissionPlan": {
+      "id": "5d7f9a11-3c22-4b88-91ee-2f0a6b3c4d55",
+      "name": "Premium Affiliate Plan",
+      "commissionRate": 20,
+      "commissionType": "PERCENTAGE",
+      "numberOfPayments": null,
+      "numberOfMonths": null
+    },
+    "commissionTier": {
+      "id": "8c1b2a34-5e6f-4071-a2b3-c4d5e6f70819",
+      "tier": 1,
+      "name": "Bronze",
+      "emoji": "🥉",
+      "minReferrals": 0,
+      "minRevenue": 0
+    },
+    "questionAnswers": [
+      {
+        "id": "a1b2c3d4-e5f6-4708-9a0b-1c2d3e4f5061",
+        "answer": "From a social media post",
+        "questionId": "f0e1d2c3-b4a5-4968-8776-5544332211aa"
+      }
+    ],
+    "promotionalCodes": []
+  }
+}
+```
+
+## Coupon payloads
+
+Emitted on `coupon.created` and `coupon.updated`. The body is the coupon with its
+`promotionalCodes` array expanded.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `id` | string | Coupon UUID |
+| `externalId` | string, null | The provider's coupon ID, for example a Stripe coupon |
+| `name` | string, null | |
+| `amountOff` | number, null | Fixed discount, set when `couponType` is fixed |
+| `percentOff` | number, null | Percentage discount |
+| `currency` | string, null | Applies to `amountOff` |
+| `couponType` | string | `PERCENTAGE` or fixed |
+| `couponCategory` | string | Who the discount is aimed at |
+| `duration` | string | How long it applies |
+| `durationInMonths` | number, null | When duration is repeating |
+| `maxRedemptions` | number, null | |
+| `timesRedeemed` | number | |
+| `valid` | boolean | |
+| `redeemBy` | string, null | ISO expiry |
+| `limitToProducts` | boolean | |
+| `productIds` | string array | |
+| `collectionIds` | string array | |
+| `integrationType` | string, null | Which provider it lives in |
+| `affiliateProgramId` | string | |
+| `createdAt` | string | ISO date |
+| `updatedAt` | string | ISO date |
+| `promotionalCodes` | array | The codes attached to this coupon |
+
+## Promo code payloads
+
+Emitted on `promocode.created` and `promocode.updated`. The body is the promotional code with its
+parent `coupon` expanded.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `id` | string | Promotional code UUID |
+| `code` | string | The string a customer types |
+| `externalId` | string, null | The provider's promotion code ID |
+| `active` | boolean | |
+| `expiresAt` | string, null | ISO date |
+| `maxRedemptions` | number, null | |
+| `timesRedeemed` | number | |
+| `firstTimeOrder` | boolean | Restricted to a customer's first order |
+| `minimumAmount` | number, null | |
+| `minimumAmountCurrency` | string, null | |
+| `limitToCustomers` | boolean | |
+| `customerId` | string, null | |
+| `limitToAffiliate` | boolean | |
+| `isAutoGenerated` | boolean | Created by an automatic coupon rule |
+| `isAffiliateGenerated` | boolean | Created by the affiliate themselves |
+| `affiliateId` | string, null | The affiliate this code belongs to |
+| `couponId` | string | |
+| `coupon` | object | The parent coupon |
+| `createdAt` | string | ISO date |
+| `updatedAt` | string | ISO date |
+
+## Delete events
+
+All five `deleted` events share one shape. The object is gone, so there is nothing to expand:
+
+```json
+{
+  "event": "sale.deleted",
+  "body": {
+    "id": 8241
+  }
+}
+```
+
+```json
+{
+  "event": "affiliate.deleted",
+  "body": {
+    "id": "9f1c0b7e-4a2b-4d55-9a10-2c6b5f0a7e31"
+  }
+}
+```
+
+This is the practical reason to store the `id` of everything you process. On a `sale.deleted` you get
+the integer and nothing else — no affiliate, no amount, no customer — so your own records are the
+only way to know what to reverse.
+
+## Payloads are snapshots
+
+The body is serialised once, when the event is sent. It is not re-read on delivery.
+
+That has two consequences:
+
+- **A retry delivers the original payload.** If a delivery fails at 09:00 and succeeds on retry at
+  14:00, you receive the 09:00 state, not the current state. See
+  [Retries and logs](/developer-documentation/webhooks/retries-and-logs).
+- **Events can arrive stale or out of order.** A `sale.updated` that succeeded on first try can land
+  before a `sale.created` that needed three attempts. Where ordering matters, compare `createdAt` or
+  re-read the object through the [REST API](/api-reference/introduction) before acting on it.
+
+## Fields not listed here
+
+Payloads are built by spreading the stored record, so a delivery may contain fields beyond this
+reference — internal columns, newly added fields, relations included for other reasons.
+
+Treat anything not documented here as unstable: safe to log, not safe to depend on. Equally, do not
+assume a documented field is always present — parse defensively and ignore what you do not
+recognise, so a new field never breaks your handler.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Event types" icon="list" href="/developer-documentation/webhooks/event-types">
+    Which events produce which of these bodies.
+  </Card>
+  <Card title="Verify signatures" icon="shield-check" href="/developer-documentation/webhooks/verifying-signatures">
+    Check the signature before you parse the body.
+  </Card>
+  <Card title="Retries and logs" icon="clock-rotate-left" href="/developer-documentation/webhooks/retries-and-logs">
+    Inspect the exact payload that was delivered.
+  </Card>
+  <Card title="Data model" icon="diagram-project" href="/developer-documentation/reference/data-model">
+    How these objects relate to each other.
+  </Card>
+  <Card title="Statuses and enums" icon="tags" href="/developer-documentation/reference/statuses-and-enums">
+    Every enum value you can receive.
+  </Card>
+  <Card title="Test and replay" icon="flask" href="/developer-documentation/webhooks/testing">
+    Send yourself a real payload to inspect.
+  </Card>
+</Columns>

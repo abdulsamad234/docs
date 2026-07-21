@@ -1,6 +1,71 @@
 ---
 title: "Fraud prevention"
-description: "Detect self-referrals by email or IP address."
+description: "Stop affiliates from referring themselves in Referly. Turn on self-referral detection, choose email and IP address matching, and decide whether flagged rewards are held for review or rejected automatically."
+keywords: ["affiliate fraud prevention", "self-referral detection", "affiliate self referral", "email matching", "IP address matching", "hold for review", "reject automatically", "affiliate fraud", "flagged rewards"]
 ---
+The most common way an affiliate program leaks money isn't elaborate fraud — it's an affiliate buying through their own link to give themselves a discount, over and over. You end up paying commission on sales you would have made anyway, to a customer who is also the affiliate.
 
-{/* TODO: Write this article. */}
+Referly's fraud prevention watches for exactly that. When a referral looks like it came from the affiliate themselves, the reward is either held for you to look at or rejected outright, depending on how strict you want to be.
+
+To set it up, go to **Settings**, open **Program details**, and select **Fraud prevention**.
+
+{/* TODO screenshot: fraud-prevention-page — upload it in the local Documentation Agent */}
+
+## Turn on self-referral detection
+
+The page opens with a single switch, **Self-Referral Detection**, described as "Automatically detect and flag rewards when an affiliate may be referring themselves". It's off until you turn it on, and the rest of the settings stay hidden until you do.
+
+Everything on this page saves the moment you change it — there's no Save button to press. You'll see **Fraud prevention settings saved** each time a change goes through.
+
+## Choose how referrals are checked
+
+Turning detection on reveals **Detection Methods**, with the instruction "Choose how to determine if a referral might be a self-referral". There are two checks, and both are on by default:
+
+{/* TODO screenshot: detection-methods — upload it in the local Documentation Agent */}
+
+- **Email matching** — "Compare the referral's or sale's email with the affiliate's email". This catches the obvious case: an affiliate using their own email address to buy through their own link.
+- **IP address matching** — "Compare the referral's original click IP with the affiliate's IP". This catches the affiliate who signs up with a second email address but is sitting on the same internet connection.
+
+The two work independently, so you can run either on its own. Leaving both on is the usual choice — they catch different behaviors, and an affiliate determined to work around one often trips the other.
+
+A word of caution on each. **Email matching** is precise and rarely wrong. **IP address matching** is broader by nature: people genuinely share connections in households, offices, and co-working spaces, so a legitimate referral to a family member or a colleague can look like a self-referral. That's a good reason to prefer holding for review over automatic rejection, at least until you've seen what it catches.
+
+If you turn both methods off while detection is still on, there's nothing left to check against — the feature is effectively idle, and Referly won't warn you about it.
+
+## Decide what happens when something is caught
+
+**When self-referral is detected** controls the consequence. It's a single dropdown with two options:
+
+{/* TODO screenshot: detection-action — upload it in the local Documentation Agent */}
+
+- **Hold for review** — "Rewards will be held for manual review before approval". The reward waits for you to approve or reject it by hand. This is the default and the safer setting.
+- **Reject automatically** — "Rewards will be automatically rejected when fraud is detected". No queue, no decision to make.
+
+Start with **Hold for review**. It shows you what the rules actually catch in your program before anything is thrown away, and false positives cost you nothing more than a moment's attention. Once you've watched the queue for a few weeks and the flagged rewards are consistently genuine self-referrals, switching to **Reject automatically** saves you the review.
+
+## What detection does and doesn't do
+
+Worth being clear about the scope, because it's narrower than "fraud prevention" might suggest:
+
+- **It acts on rewards, not on traffic.** Nothing here blocks a click, a sign-up, or a purchase. The customer's order goes through exactly as normal — it's the affiliate's commission that gets held or rejected.
+- **It only looks for self-referrals.** These rules compare a referral against the affiliate's own email and connection. They're not a general-purpose fraud engine, and there are no blocklists, velocity limits, or country rules here.
+- **A hold overrides automatic approval.** If your program approves rewards automatically, a reward flagged here still stops and waits for you. That's the point — the check would be worthless otherwise.
+
+Held rewards show up alongside your other pending rewards, where you approve or reject them. If you're regularly finding genuine fraud, tightening who gets into your program in the first place helps as much as catching it afterwards — see the auto-approve settings in [General program settings](/help-center/settings/program/general).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="General program settings" icon="sliders" href="/help-center/settings/program/general" arrow>
+    Control whether affiliates and rewards are approved automatically.
+  </Card>
+  <Card title="Tracking methods" icon="crosshairs" href="/help-center/settings/program/tracking-methods" arrow>
+    How referrals get attributed to an affiliate in the first place.
+  </Card>
+  <Card title="Payout settings" icon="wallet" href="/help-center/settings/program/payout-settings" arrow>
+    Use a holding period to protect against refunds and chargebacks.
+  </Card>
+  <Card title="Affiliate groups" icon="users" href="/help-center/settings/program/affiliate-groups" arrow>
+    Segment affiliates so trusted partners get different terms.
+  </Card>
+</Columns>

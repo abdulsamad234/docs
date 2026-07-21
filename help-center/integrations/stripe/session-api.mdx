@@ -1,6 +1,426 @@
 ---
 title: "Stripe Session API"
-description: "Attribute checkouts created with the Sessions API."
+description: "Track affiliate referrals through Stripe Checkout Sessions in Referly. Install the tracking script, connect Stripe, pass client_reference_id or pushLapAffiliateId metadata, and test attribution end to end."
+keywords: ["Stripe Session API affiliate tracking", "Stripe Checkout Session client_reference_id", "pushLapAffiliateId metadata", "Referly Stripe integration", "track Stripe subscriptions affiliate", "Stripe recurring commission tracking", "window.affiliateId", "affiliate_id_ready event", "Stripe test mode affiliate tracking", "Stripe checkout referral attribution"]
 ---
+If you've built your own Stripe checkout in your own app — you call Stripe from your backend to create a Checkout Session — this is the most accurate way to track referrals in Referly. You pass the referral identifier straight into the session you're already creating, so attribution never depends on guessing who the buyer was.
 
-{/* TODO: Write this article. */}
+It's the method Referly recommends when you have a developer available. It takes about 30 minutes end to end, and needs one small change in your frontend and one in your backend.
+
+<Info>
+  Not building your own checkout? Use [Stripe Payment Links](/help-center/integrations/stripe/payment-links), the [Stripe Pricing Table](/help-center/integrations/stripe/pricing-table), or the [Stripe Buy Button](/help-center/integrations/stripe/buy-button) instead — those need no backend code.
+</Info>
+
+## What this method tracks
+
+Once it's set up, Referly follows a referred customer from the first click all the way through renewals and refunds.
+
+| What happens | Tracked | Notes |
+| --- | --- | --- |
+| Someone clicks a referral link | Yes | Recorded by the tracking script, before Stripe is involved at all |
+| A visitor becomes a referral at checkout | Yes | The referral appears as soon as the Checkout Session completes |
+| A visitor becomes a referral at sign-up, before paying | Yes, with an extra step | See [track sign-ups before payment](#track-sign-ups-before-payment) |
+| A free trial starts | Yes | The referral is created with the plan name. No commission is earned yet — there's no payment |
+| The first payment | Yes | The sale, the amount, the products, and the commission all land together |
+| Subscription renewals | Yes | Every recurring payment creates a new sale and a new commission |
+| One-off payments | Yes | Same as a subscription's first payment |
+| Plan changes and upgrades | Yes | The new amount is used for the next commission |
+| Multiple currencies | Yes | Converted into your program's currency automatically |
+| Products bought | Yes | Used for [product-based commissions](/help-center/getting-started/commissions/product-based) |
+| Tax and shipping | Yes | Captured separately, and excluded from the commission if you've turned that on in **Settings** then **Program Details** |
+| Refunds and partial refunds | Yes | The matching reward is voided — see [refunds](/help-center/manage/rewards/refunds) |
+| Cancellations | Yes | The referral is updated when the subscription ends |
+| A purchase made with an affiliate's promo code | Yes | Promo codes win over links — see [what wins when both are present](#what-wins-when-both-are-present) |
+
+### What it can't track
+
+Be honest with yourself about these before you launch — every one of them shows up as an unattributed sale, not as an error.
+
+- **A checkout you create without the identifier.** If the value is missing when the session is created, there's nothing to attribute. Sessions created by hand in the Stripe Dashboard fall into this group.
+- **A buyer who switches devices.** Someone who clicks the link on their phone and pays on their laptop can't be connected — the referral is remembered in the browser that clicked.
+- **A buyer whose browser blocked the script,** or who cleared their cookies and site data between clicking and buying.
+- **A purchase after the cookie window closed.** Your program's cookie duration decides how long a click stays valid. See [tracking methods](/help-center/settings/program/tracking-methods).
+- **Payments taken outside Stripe.** Bank transfers or invoices you settle elsewhere never reach Referly. Add those with [add a sale](/help-center/manage/customers/add-a-sale).
+- **Live payments while you're connected in test mode,** and test payments while you're connected in live mode. Referly deliberately ignores the mismatched ones.
+
+## Before you start
+
+<Steps>
+  <Step title="A Stripe account you can log into as an administrator">
+    You'll authorize Referly from inside Stripe, so you need permission to connect apps to the account.
+  </Step>
+  <Step title="Access to your site's code">
+    You need to be able to add a script tag to your pages and change the code that creates the Checkout Session.
+  </Step>
+  <Step title="Your Referly program set up">
+    Your commission plan should exist before the first sale arrives, so rewards are calculated correctly. See [affiliate program setup](/help-center/getting-started/set-up-program/affiliate-program-setup).
+  </Step>
+</Steps>
+
+## Step 1: Install the tracking script
+
+The tracking script is what records clicks and remembers which affiliate sent each visitor. Nothing else works without it.
+
+Open **Integrations** from the left sidebar, find the **Stripe Session API** card, and select it. The guide that opens has your script already filled in with your program's ID.
+
+{/* TODO screenshot: integrations-stripe-session-api-card — upload it in the local Documentation Agent */}
+
+Copy that snippet and paste it into the `head` section of every page on your site — including your pricing page and your checkout page. It looks like this:
+
+```html
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+<Warning>
+  Copy the snippet from your dashboard rather than from this page. Your program ID is unique, and programs run by an agency load the script from a different address.
+</Warning>
+
+If you manage your site's tags through Google Tag Manager, the same guide has a Tag Manager version of the snippet. Add it as a Custom HTML tag that fires on all pages.
+
+```html
+<script>
+  var pushLap = document.createElement('script');
+  pushLap.src = "https://referly.so/affiliate-tracker.js";
+  pushLap.setAttribute('data-affiliate', '');
+  pushLap.setAttribute('data-program-id', 'YOUR_PROGRAM_ID');
+  document.head.appendChild(pushLap);
+</script>
+```
+
+### Check that clicks are being recorded
+
+Visit your own site with a referral link — for example `your-domain.com?ref=TESTCODE`, using the code of a real affiliate in your program. Then open **Analytics** in the left sidebar and confirm the click shows up. If it doesn't, the script isn't loading, and there's no point continuing until it does. See [installing the snippet](/developer-documentation/tracking/install-the-snippet) for help.
+
+## Step 2: Connect your Stripe account
+
+Connecting Stripe is what lets Referly hear about payments. You don't create API keys and you don't set up a webhook endpoint by hand — you authorize Referly's app from inside Stripe, and everything is wired up for you.
+
+<Steps>
+  <Step title="Open the connect dialog">
+    On the **Integrations** page, select **Connect Integration** at the top right, then choose **Stripe** from the list.
+
+    {/* TODO screenshot: connect-integration-picker — upload it in the local Documentation Agent */}
+  </Step>
+  <Step title="Choose live or test">
+    Select **Connect Stripe Account** to connect your real account, or **Connect Test Mode** to connect a sandbox first. Most people connect test mode first, check everything works, then disconnect and reconnect in live mode.
+
+    {/* TODO screenshot: stripe-connect-live-or-test — upload it in the local Documentation Agent */}
+  </Step>
+  <Step title="Authorize Referly in Stripe">
+    A Stripe page opens in a new tab. Sign in if you're asked to, pick the account you want to connect from the account picker at the top, and confirm. Stripe's own walkthrough of this screen is in their [connected accounts documentation](https://docs.stripe.com/connect/accounts).
+
+    If you're connecting test mode, make sure the account picker is showing a sandbox before you confirm. Stripe explains how sandboxes work in their [test mode guide](https://docs.stripe.com/test-mode).
+  </Step>
+  <Step title="Confirm the connection">
+    You're sent back to Referly. The Stripe panel now shows a green **Connected** badge with your account name, or a yellow **Test Mode** badge if you connected a sandbox.
+
+    {/* TODO screenshot: stripe-connected-badge — upload it in the local Documentation Agent */}
+  </Step>
+</Steps>
+
+<Warning>
+  The badge colour matters. While the yellow **Test Mode** badge is showing, Referly processes test payments and ignores real ones. While the green **Connected** badge is showing, it's the other way round. This is the single most common reason a working setup appears to record nothing.
+</Warning>
+
+## Step 3: Read the referral identifier in your frontend
+
+Once the script from Step 1 is on the page, it makes the referral identifier available to the rest of your frontend code as `window.affiliateId`.
+
+There's a timing detail that matters. When someone lands with a referral link, the script first sets `window.affiliateId` to the affiliate's code, then swaps it for a numeric click ID as soon as it has registered the click with Referly. Both values work for attribution, but only the numeric click ID connects the sale to the exact click, which is what makes your click-to-sale reporting accurate.
+
+So read the value at the moment the customer starts checkout, not when the page first loads. If you need to know the instant it's ready, listen for the `affiliate_id_ready` event:
+
+```js
+window.addEventListener("affiliate_id_ready", (event) => {
+  // event.detail.clickId is the numeric click ID
+  // event.detail.ref is the affiliate's code
+  console.log(event.detail);
+});
+```
+
+For most checkouts, reading it inside your button handler is enough:
+
+```js
+async function startCheckout(priceId) {
+  const response = await fetch("/api/create-checkout-session", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      priceId,
+      referralId: window.affiliateId ?? null,
+    }),
+  });
+
+  const { url } = await response.json();
+  window.location.href = url;
+}
+```
+
+<Note>
+  `window.affiliateId` is empty for visitors who didn't arrive through a referral link. That's normal — send `null` and Referly records the sale without an affiliate.
+</Note>
+
+## Step 4: Attach the identifier to the Checkout Session
+
+In your backend, put the value you just received onto the Checkout Session. Referly reads it from any of these three places, so pick whichever suits your code:
+
+| Where you put it | When to use it |
+| --- | --- |
+| `client_reference_id` | The simplest option, and the one to use if you're not already using this field for something else. Stripe allows up to 200 characters here |
+| `metadata.pushLapAffiliateId` | Use this if `client_reference_id` is already carrying your own cart or user ID |
+| `metadata.affiliateId` | Also accepted, for compatibility with older setups |
+
+### Using client_reference_id
+
+<CodeGroup>
+
+```js Node.js
+const session = await stripe.checkout.sessions.create({
+  mode: "subscription",
+  line_items: [{ price: "price_1234", quantity: 1 }],
+  success_url: "https://your-domain.com/success",
+  cancel_url: "https://your-domain.com/pricing",
+  client_reference_id: referralId,
+});
+```
+
+```python Python
+session = stripe.checkout.Session.create(
+    mode="subscription",
+    line_items=[{"price": "price_1234", "quantity": 1}],
+    success_url="https://your-domain.com/success",
+    cancel_url="https://your-domain.com/pricing",
+    client_reference_id=referral_id,
+)
+```
+
+```php PHP
+$session = $stripe->checkout->sessions->create([
+  'mode' => 'subscription',
+  'line_items' => [['price' => 'price_1234', 'quantity' => 1]],
+  'success_url' => 'https://your-domain.com/success',
+  'cancel_url' => 'https://your-domain.com/pricing',
+  'client_reference_id' => $referralId,
+]);
+```
+
+```ruby Ruby
+session = Stripe::Checkout::Session.create({
+  mode: 'subscription',
+  line_items: [{ price: 'price_1234', quantity: 1 }],
+  success_url: 'https://your-domain.com/success',
+  cancel_url: 'https://your-domain.com/pricing',
+  client_reference_id: referral_id,
+})
+```
+
+</CodeGroup>
+
+### Using metadata instead
+
+<CodeGroup>
+
+```js Node.js
+const session = await stripe.checkout.sessions.create({
+  mode: "subscription",
+  line_items: [{ price: "price_1234", quantity: 1 }],
+  success_url: "https://your-domain.com/success",
+  cancel_url: "https://your-domain.com/pricing",
+  metadata: {
+    pushLapAffiliateId: referralId,
+  },
+});
+```
+
+```python Python
+session = stripe.checkout.Session.create(
+    mode="subscription",
+    line_items=[{"price": "price_1234", "quantity": 1}],
+    success_url="https://your-domain.com/success",
+    cancel_url="https://your-domain.com/pricing",
+    metadata={"pushLapAffiliateId": referral_id},
+)
+```
+
+```php PHP
+$session = $stripe->checkout->sessions->create([
+  'mode' => 'subscription',
+  'line_items' => [['price' => 'price_1234', 'quantity' => 1]],
+  'success_url' => 'https://your-domain.com/success',
+  'cancel_url' => 'https://your-domain.com/pricing',
+  'metadata' => ['pushLapAffiliateId' => $referralId],
+]);
+```
+
+```ruby Ruby
+session = Stripe::Checkout::Session.create({
+  mode: 'subscription',
+  line_items: [{ price: 'price_1234', quantity: 1 }],
+  success_url: 'https://your-domain.com/success',
+  cancel_url: 'https://your-domain.com/pricing',
+  metadata: { pushLapAffiliateId: referral_id },
+})
+```
+
+</CodeGroup>
+
+<Warning>
+  Send the field only when you actually have a value. Stripe rejects a metadata value longer than 500 characters and a `client_reference_id` longer than 200, and an empty string is treated as no referral. Stripe's full rules are in their [Create a Session reference](https://docs.stripe.com/api/checkout/sessions/create) and their [metadata guide](https://docs.stripe.com/api/metadata).
+</Warning>
+
+## Recommended for subscriptions
+
+For a subscription, also copy the identifier onto the subscription itself. Referly reads it when the subscription is created, which means the referral is recorded even in the rare cases where the Checkout Session event doesn't reach it first.
+
+```js
+const session = await stripe.checkout.sessions.create({
+  mode: "subscription",
+  line_items: [{ price: "price_1234", quantity: 1 }],
+  success_url: "https://your-domain.com/success",
+  cancel_url: "https://your-domain.com/pricing",
+  client_reference_id: referralId,
+  subscription_data: {
+    metadata: {
+      pushLapAffiliateId: referralId,
+    },
+  },
+});
+```
+
+### How free trials behave
+
+If your plan starts with a free trial, the subscription is created but no money moves. Referly records the referral straight away, with the plan name and an **Active** status, and no reward yet. When the trial ends and the first payment succeeds, the sale and the commission are created then.
+
+This is usually what you want: affiliates see the trial as progress, and only get paid when it converts. If you'd rather hold rewards even longer, use the [holding period](/help-center/manage/payouts/schedule).
+
+## Track sign-ups before payment
+
+By default the referral appears when checkout completes. If you want it to appear the moment someone signs up — before they've paid anything — create the Stripe Customer yourself at sign-up and put the identifier in the customer's metadata:
+
+```js
+const customer = await stripe.customers.create({
+  email: user.email,
+  name: user.name,
+  metadata: {
+    pushLapAffiliateId: referralId,
+  },
+});
+```
+
+Then pass that customer to Checkout when they eventually buy:
+
+```js
+const session = await stripe.checkout.sessions.create({
+  customer: customer.id,
+  mode: "subscription",
+  line_items: [{ price: "price_1234", quantity: 1 }],
+  success_url: "https://your-domain.com/success",
+  cancel_url: "https://your-domain.com/pricing",
+  client_reference_id: referralId,
+});
+```
+
+The referral now shows up in Referly at sign-up, and the sale attaches to it later. Keep the identifier on the session too — it costs nothing and covers you if the customer was created some other way.
+
+## What wins when both are present
+
+Sometimes more than one signal points at an affiliate. Referly resolves it in this order:
+
+1. **An affiliate's promo code used at checkout.** If the Stripe promotion code on the order belongs to one of your affiliates, that affiliate gets the sale, even if the click came from someone else. See [coupons and promo codes](/help-center/engage/coupons/overview).
+2. **The identifier you passed on the session.** The click ID or affiliate code from Steps 3 and 4.
+3. **The customer's email matching an existing referral.** This is what makes renewals work: a renewal payment carries no click ID, so Referly matches the email to the referral created at the first purchase and pays the same affiliate again.
+
+<Note>
+  Point 3 is why the email matters. If a customer's email in Stripe changes between the first payment and a renewal, the renewal won't find the original referral and the commission won't be paid.
+</Note>
+
+## Step 5: Test the whole flow
+
+Test before you send a single affiliate link out. Do it with your Stripe connection showing the yellow **Test Mode** badge.
+
+<Steps>
+  <Step title="Switch Stripe to a sandbox">
+    In the Stripe Dashboard, use the account picker at the top to switch into a sandbox. Point your app at your test API keys — Stripe's [API keys guide](https://docs.stripe.com/keys) explains where to find them.
+  </Step>
+  <Step title="Visit your site through a referral link">
+    Open your site with a real affiliate's link, for example `your-domain.com?ref=THEIRCODE`. Use a private window so you start clean.
+  </Step>
+  <Step title="Check the identifier is there">
+    Open your browser's developer console and type `window.affiliateId`. You should get a value back. If it's empty, go back to Step 1 — the script isn't running.
+  </Step>
+  <Step title="Buy something with a test card">
+    Go through your own checkout and pay with Stripe's test card `4242 4242 4242 4242`, any future expiry date, and any three-digit security code. The full list is in Stripe's [testing guide](https://docs.stripe.com/testing).
+  </Step>
+  <Step title="Confirm it in Stripe">
+    In the Stripe Dashboard, open the payment and check the Checkout Session carries your value in **Client reference ID** or in metadata. If it isn't there, the problem is in your backend code, not in Referly.
+  </Step>
+  <Step title="Confirm it in Referly">
+    Open **Referrals** in the left sidebar. The customer should be listed against the right affiliate, with the plan name filled in. Then open **Rewards** — the commission for the payment should be there.
+
+    {/* TODO screenshot: referral-attributed-to-affiliate — upload it in the local Documentation Agent */}
+  </Step>
+</Steps>
+
+<Check>
+  When the referral shows the right affiliate and the reward shows the right amount, your integration is working. Repeat the test once in live mode with a small real payment you refund afterwards — the refund should void the reward.
+</Check>
+
+## Go live
+
+When your test passes:
+
+1. On the **Integrations** page, open the Stripe panel and select **Disconnect**.
+2. Select **Connect Stripe Account** and authorize your live Stripe account.
+3. Confirm the badge is now green and reads **Connected**.
+4. Deploy your app with your live Stripe keys.
+
+<Warning>
+  Disconnecting and reconnecting does not delete referrals or rewards you've already recorded. But do leave test data behind — referrals created in test mode stay in your dashboard, so delete them before you launch if you don't want them in your reports.
+</Warning>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The sale is in Referly but no affiliate is attached">
+    The identifier didn't reach Stripe. Open the Checkout Session in the Stripe Dashboard and look for **Client reference ID** or your metadata key. If it's empty, your frontend read `window.affiliateId` before the script had set it, or the value wasn't passed through to your backend. Log the value at the moment you create the session and check what you're getting.
+  </Accordion>
+  <Accordion title="Nothing appears in Referly at all">
+    Nine times out of ten this is the test-mode mismatch. Check the badge on the Stripe panel: a yellow **Test Mode** badge means live payments are ignored, and a green **Connected** badge means test payments are ignored. Reconnect in the mode you're actually testing in.
+
+    If the badge is right, confirm the payment succeeded in Stripe — an incomplete or failed payment never creates a sale.
+  </Accordion>
+  <Accordion title="The referral appeared but there's no reward">
+    A referral with no reward is normal for a free trial, or for a checkout that didn't take a payment yet. The reward is created when money actually moves. If a payment did succeed and there's still no reward, check that the affiliate is on a [commission plan](/help-center/getting-started/commissions/overview) that covers the product they sold.
+  </Accordion>
+  <Accordion title="The wrong affiliate got the sale">
+    Check whether a promo code was used. An affiliate's promo code takes priority over the click, so a customer who clicked one affiliate's link but typed another affiliate's code at checkout is credited to the code owner. You can move the sale by [changing the referral's affiliate](/help-center/manage/customers/overview).
+  </Accordion>
+  <Accordion title="Renewals aren't paying commission">
+    Renewals are matched by the customer's email address. Compare the email on the Stripe customer with the email on the referral in Referly — if they differ, the link is broken. This usually happens when a customer changes their email in Stripe, or when the first purchase was made as a guest with a different address.
+  </Accordion>
+  <Accordion title="The sale showed up late">
+    If a payment arrives before Referly has finished creating the referral, the payment is held and retried a few minutes later rather than dropped. Wait about ten minutes before assuming a sale is missing.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Stripe integration overview" icon="stripe" href="/help-center/integrations/stripe" arrow>
+    Every way to connect Stripe, and which one fits you.
+  </Card>
+  <Card title="Stripe Payment Links" icon="link" href="/help-center/integrations/stripe/payment-links" arrow>
+    Track referrals without writing any backend code.
+  </Card>
+  <Card title="Tracking methods" icon="crosshairs" href="/help-center/settings/program/tracking-methods" arrow>
+    Set your cookie duration and how clicks are attributed.
+  </Card>
+  <Card title="Refunds" icon="rotate-left" href="/help-center/manage/rewards/refunds" arrow>
+    What happens to a reward when a Stripe payment is refunded.
+  </Card>
+</Columns>

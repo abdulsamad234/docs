@@ -1,6 +1,171 @@
 ---
 title: "URL parameters"
-description: "How referral codes are read from a URL."
+description: "How Referly reads affiliate referral codes from URL parameters. Covers the ref parameter and its 38 alternatives, changing your tracking parameter, last-click precedence, rsubID, and the UTM and ad click IDs captured with every click."
+keywords: ["Referly URL parameters", "affiliate referral parameter", "ref parameter affiliate tracking", "urlModifier", "affiliate link format", "rsubID", "external click ID", "last click attribution", "gclid fbclid affiliate tracking", "change affiliate tracking parameter"]
 ---
+Every affiliate link is an ordinary URL on your own site with one extra query parameter on it. That parameter carries the affiliate's referral code, and it's the only thing that tells Referly who sent the visitor.
 
-{/* TODO: Write this article. */}
+This page covers which parameter your program uses, how to change it, what the tracker does when it finds one, and the other parameters Referly reads or writes along the way.
+
+## Your program's referral parameter
+
+Each program has exactly **one** referral parameter, and the default is `ref`:
+
+```
+https://your-domain.com/pricing?ref=jane
+```
+
+Everything after the equals sign is the affiliate's referral code. The rest of the URL is yours — path, hash, and any other query parameters pass through untouched, so an affiliate can link to any page on your site.
+
+The tracker reads `window.location.search` only. A referral code hidden in the hash fragment (`/#/?ref=jane`) is invisible to it, which matters if you run a hash-router SPA.
+
+### Change your parameter
+
+If `?ref=` clashes with something your app already uses, or you're migrating from another platform and need to keep old links working, pick a different one. In your dashboard open the campaign settings and find **Affiliate URL Tracking**, then choose from the parameter list.
+
+{/* TODO screenshot: url-tracking-parameter — upload it in the local Documentation Agent */}
+
+<Warning>
+  Changing this parameter breaks every affiliate link already in circulation. Links using the old parameter stop being recognised the moment you save. Change it during setup, not after your affiliates have published their links.
+</Warning>
+
+### The full parameter list
+
+You can't invent your own parameter — you choose from this fixed list. Most exist so you can match the parameter another platform used before you migrated:
+
+```
+ref        via        partner    aff        id         r
+invite     plgid      a          stream     mhk        bt
+coupon     promo      with       envoy      plref      refcode
+share      s          go         partener   virtual    now
+vca        offer      am_id      vap        ooo        freshbook
+img        join       referral_code         fpr        inv
+cpn        trovabando fp_ref
+```
+
+<Note>
+  `partener` is a deliberate misspelling kept for compatibility with a platform that shipped it that way. If you're migrating, match whatever your old links actually used, typo and all.
+</Note>
+
+Parameter names are case-sensitive. `?REF=jane` is not `?ref=jane`.
+
+## How a parameter is matched
+
+The tracker checks the URL in two stages, and the difference between them explains most "why isn't this tracking?" questions.
+
+### Stage one: is any referral parameter present?
+
+Before making any network request, the tracker scans the URL for **any** name on the list above. If it finds none, and the browser has no stored attribution from an earlier visit, it stops right there — no requests, no cost, nothing recorded. This is why ordinary organic traffic is free of overhead.
+
+### Stage two: does it match your program?
+
+Only if stage one passes does the tracker fetch your program's configuration and read the parameter you actually configured. A link built with `?via=jane` when your program is set to `ref` clears stage one but fails stage two: the visit is not attributed to anyone.
+
+Getting this wrong is the usual cause of a link that "looks right" and records nothing. If clicks aren't appearing, confirm the parameter in the link is character-for-character the one in your settings.
+
+## Precedence: what happens when a code is found
+
+The tracker weighs the code in the URL against whatever is already stored in the browser. There are five outcomes.
+
+| In the URL | Already stored | Result |
+| --- | --- | --- |
+| Nothing recognised | Nothing | Stops immediately. No requests |
+| Nothing recognised | An earlier referral | The stored referral is reused and its expiry is pushed forward |
+| A code | Nothing | A new click is recorded and stored |
+| The **same** code | The same code | An additional, non-unique click is recorded. The visitor stays with that affiliate |
+| A **different** code | An earlier referral | A new click is recorded for the new code, replacing what was stored |
+
+That last row is the important one: **the most recent affiliate link wins**. If a visitor clicks Jane's link on Monday and Sam's on Wednesday, Sam owns the attribution from Wednesday onward. See [attribution and the cookie window](/developer-documentation/tracking/attribution) for how long each of these survives.
+
+## Other parameters Referly reads
+
+### rsubID — your own click identifier
+
+Append `rsubID` to an affiliate link to attach an identifier of your own to the click:
+
+```
+https://your-domain.com/?ref=jane&rsubID=newsletter-week-12
+```
+
+The value is stored in the browser alongside the referral for the same duration, and sent with every click recorded for that visitor. It's sticky: once stored, later visits without the parameter still carry it, so a visitor who returns directly keeps the identifier from the link they originally arrived on.
+
+Use it to reconcile Referly clicks against an ad platform, a sub-affiliate network, or your own campaign tracking. Full detail in [external click IDs](/developer-documentation/tracking/external-click-ids).
+
+### _plg_ref and _plg_cid — cross-domain handoff
+
+These two are written by Referly, not by you. When a visitor with active attribution clicks a link to another domain on your approved cross-tracking list, the tracker appends the referral code as `_plg_ref` and the click ID as `_plg_cid` so the receiving domain can pick the attribution back up.
+
+On the receiving side, the tracker reads them, restores the attribution into that domain's own storage, and then removes both parameters from the address bar with `history.replaceState` — so visitors never see them and they don't end up in shared links or your analytics.
+
+Never add these by hand. See [cross-domain tracking](/developer-documentation/tracking/cross-domain-tracking).
+
+### UTMs and ad click IDs
+
+When a click is recorded, the tracker also captures whatever campaign parameters happen to be on the URL. These do **not** affect attribution — the referral code alone decides who gets credit — but they're stored on the click so you can segment traffic later.
+
+| Captured | Parameters |
+| --- | --- |
+| UTM tags | `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content` |
+| Google | `gclid`, `gbraid`, `wbraid` |
+| Meta | `fbclid` |
+| Microsoft | `msclkid` |
+| TikTok | `ttclid` |
+| X | `twclid` |
+| LinkedIn | `li_fat_id` |
+
+The presence of an ad click ID also classifies the visit as paid traffic. Without one, the visit is classified from the referring domain instead — search, social, email, direct, or unknown. See [UTM and ad click IDs](/developer-documentation/tracking/utm-and-ad-click-ids).
+
+So an affiliate running paid ads to your site can send a link like this, and all three layers are recorded together:
+
+```
+https://your-domain.com/?ref=jane&rsubID=yt-preroll&utm_source=youtube&utm_medium=cpc&gclid=EAIaIQ...
+```
+
+## Building links your affiliates can use
+
+You don't need affiliates to assemble URLs by hand. Configure your landing pages in the campaign settings and Referly generates the correct link for each affiliate, with your parameter and their code already in place. You can attach fixed extra query parameters to a landing page too, and they'll be carried on every link built from it.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The link has a code but nothing is recorded">
+    The parameter name doesn't match your program's. Compare the link against **Affiliate URL Tracking** in your campaign settings — `?via=` will not work on a program configured for `ref`.
+  </Accordion>
+  <Accordion title="The code is in the hash, not the query string">
+    `https://your-domain.com/#/pricing?ref=jane` puts the parameter inside the fragment, which the tracker never reads. It has to be in the query string, before any `#`.
+  </Accordion>
+  <Accordion title="Your framework strips unknown query parameters">
+    Some routers and edge redirects rewrite URLs and drop parameters they don't recognise. If a redirect fires before the tracker runs, the code is gone by the time it looks. Preserve the query string across any redirect on your landing pages.
+  </Accordion>
+  <Accordion title="A returning visitor is credited to the wrong affiliate">
+    Expected behaviour. The most recent affiliate link wins, and it overwrites what was stored.
+  </Accordion>
+  <Accordion title="You changed the parameter and clicks stopped">
+    Old links are dead. Regenerate them for your affiliates, or change the parameter back.
+  </Accordion>
+</AccordionGroup>
+
+Turn on [debug mode](/developer-documentation/tracking/debug-mode) to watch the tracker report exactly which parameter it looked for and what it found.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Install the snippet" icon="code" href="/developer-documentation/tracking/install-the-snippet">
+    Get the tracker onto your site before testing any link.
+  </Card>
+  <Card title="Attribution and the cookie window" icon="clock" href="/developer-documentation/tracking/attribution">
+    How long a referral survives and who wins a conflict.
+  </Card>
+  <Card title="Cookies and storage" icon="cookie" href="/developer-documentation/tracking/cookies-and-storage">
+    Where the referral code is kept in the browser.
+  </Card>
+  <Card title="External click IDs" icon="tag" href="/developer-documentation/tracking/external-click-ids">
+    Using rsubID to reconcile clicks with your own systems.
+  </Card>
+  <Card title="UTM and ad click IDs" icon="chart-line" href="/developer-documentation/tracking/utm-and-ad-click-ids">
+    Everything captured alongside the referral.
+  </Card>
+  <Card title="Cross-domain tracking" icon="arrow-right-arrow-left" href="/developer-documentation/tracking/cross-domain-tracking">
+    How _plg_ref and _plg_cid carry attribution between domains.
+  </Card>
+</Columns>

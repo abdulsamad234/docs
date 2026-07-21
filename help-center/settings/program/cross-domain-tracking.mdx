@@ -1,6 +1,79 @@
 ---
 title: "Cross-domain tracking"
-description: "Keep attribution across several domains."
+description: "Preserve affiliate attribution across multiple domains in Referly. Add approved domains so referral tracking survives when visitors move from your marketing site to a checkout on another domain."
+keywords: ["cross-domain tracking", "cross domain affiliate tracking", "approved domains", "affiliate attribution across domains", "separate checkout domain", "link decoration", "subdomain tracking", "referral tracking cookie"]
 ---
+If your marketing site and your checkout live on two different domains, you have a quiet attribution problem. A visitor arrives from an affiliate link on one domain, Referly remembers the referral there — and then the visitor clicks through to the other domain to buy. Browsers keep that memory locked to the domain that set it, so the second site has no idea an affiliate was ever involved. The sale goes through and nobody gets paid for it.
 
-{/* TODO: Write this article. */}
+Cross-domain tracking fixes that by sharing the referral across a list of domains you approve.
+
+To set it up, go to **Settings**, open **Program details**, and select **Cross-domain tracking**.
+
+{/* TODO screenshot: cross-domain-page — upload it in the local Documentation Agent */}
+
+## When you need it
+
+You need this if a visitor can cross from one of your domains to another between clicking an affiliate link and buying. The common shapes:
+
+- Your marketing site is on one domain and your store or checkout is on another.
+- You run a separate domain for a product, campaign, or region and send referral traffic through it.
+- You've moved to a new domain but the old one still receives affiliate traffic.
+
+You don't need it for subdomains. Referly covers those automatically — more on that below.
+
+## How it works
+
+The page includes a **How Cross-Domain Tracking Works** panel you can expand. Two behaviors matter:
+
+**Automatic Link Decoration.** When a visitor arrives through an affiliate link, any link on the page pointing at another approved domain quietly carries the affiliate's tracking information with it. When the visitor follows that link, the referral is re-established on the second domain, and attribution survives the jump. You don't have to build special links — it happens to the ones already on your pages.
+
+**Automatic Subdomain Support.** Approving a domain approves all of its subdomains. Adding `example.com` also covers `shop.example.com`, `blog.example.com`, and any other subdomain. Don't add them individually.
+
+## Add your domains
+
+There's no on/off switch on this page. Cross-domain tracking is active for whatever domains are in your list, so adding the first one turns it on and removing the last one turns it off.
+
+In the **Approved Domains** card, type a domain into the field and select **Add Domain**. You'll see **Domain added successfully**, and the domain appears in the list below with a line confirming its subdomain coverage, like "Includes all subdomains (*.example.com)".
+
+{/* TODO screenshot: add-approved-domain — upload it in the local Documentation Agent */}
+
+Enter the bare domain only — no `https://`, no `www.`, so `example.com` rather than `https://www.example.com`. Selecting **Add Domain** with an empty field gives you **Please enter a domain**.
+
+Add every domain in the journey, including the one visitors start on. A referral that begins on your marketing site and ends on your checkout needs both listed, not just the checkout.
+
+Once at least one domain is in the list, a green summary confirms what will happen: affiliate cookies will be set across your listed domains and all their subdomains, and attribution will be preserved as visitors move between them.
+
+{/* TODO screenshot: approved-domains-list — upload it in the local Documentation Agent */}
+
+To remove one, hover its row and select the trash icon, labelled **Remove domain**. You'll see **Domain removed**.
+
+## Install the tracking script on every domain
+
+This is the step that determines whether any of it works.
+
+<Warning>
+Your Referly tracking script must be installed on **each** approved domain. Approving a domain here gives Referly permission to share attribution with it — it does not put the script there. A domain on the list without the script installed still loses the referral.
+</Warning>
+
+Only add domains you own or control. You're authorizing them to receive your affiliate tracking data, so an unfamiliar domain on this list is worth removing.
+
+## Check that it worked
+
+Once your domains are listed and the script is on each one, test it the way a customer would: open one of your affiliate links, land on the first domain, click through to the second, and complete a purchase. Then look at that affiliate's referrals — the sale should be credited to them. If it isn't, the two usual culprits are a domain missing from the list (often the starting domain) or the script missing from the second site.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Tracking methods" icon="crosshairs" href="/help-center/settings/program/tracking-methods" arrow>
+    Choose whether referrals are tracked by link, coupon code, or both.
+  </Card>
+  <Card title="General program settings" icon="sliders" href="/help-center/settings/program/general" arrow>
+    Set the landing pages your affiliate links point to.
+  </Card>
+  <Card title="Automated short links" icon="scissors" href="/help-center/settings/program/automated-short-links" arrow>
+    Give every affiliate a short, branded link automatically.
+  </Card>
+  <Card title="Fraud prevention" icon="shield" href="/help-center/settings/program/fraud-prevention" arrow>
+    Catch affiliates referring themselves.
+  </Card>
+</Columns>

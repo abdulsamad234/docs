@@ -1,6 +1,149 @@
 ---
 title: "Server-side tracking overview"
-description: "When to report conversions from your backend."
+description: "Track affiliate conversions from your backend with the Referly API. Learn when to report sales server-side, how to capture and store the click ID, which identifiers Referly accepts, and how to avoid duplicate commissions."
+keywords: ["server-side tracking", "affiliate conversion API", "report sale server-side", "click ID", "Referly API", "server-side attribution", "affiliate tracking without cookies", "subscription renewal tracking"]
 ---
+Server-side tracking means your backend tells Referly about a conversion, instead of waiting for a script in the visitor's browser to notice it. The browser still does one job — recognising the affiliate link and creating the click — but the sale itself is reported by your own code, authenticated with an API key.
 
-{/* TODO: Write this article. */}
+If your checkout runs on Stripe, Shopify, Paddle, or another platform Referly integrates with, you probably don't need any of this. Those integrations already report sales server-side for you. This section is for everything they can't reach.
+
+## When to track server-side
+
+Reach for server-side reporting when the conversion doesn't happen in the browser that clicked the affiliate link, or when you can't trust a browser to report it at all:
+
+- **Server-rendered or off-site checkouts.** The purchase completes on a payment page you don't control, or the confirmation page never loads a script.
+- **Mobile and native apps.** There's no browser to run the tracking snippet at the point of purchase.
+- **Subscriptions and renewals.** The first payment happens in a browser, but every renewal after that is billed by your system with nobody watching.
+- **Ad blockers and privacy settings.** A share of visitors will never execute a client-side conversion call. A server call always lands.
+- **Payment providers without a Referly integration.** You already receive a webhook from your provider — forward it to Referly.
+- **Conversions your team creates.** Sales closed by a salesperson, invoices raised manually, or upgrades applied from your own admin panel.
+- **Backfills and migrations.** Recording historical sales that happened before you installed tracking.
+
+Stay client-side when your checkout completes in the same browser session as the click and you're on a supported platform. The purpose-built integration will always be less work than maintaining your own calls.
+
+## How the flow works
+
+Server-side reporting is a three-step chain. Break any link and the sale arrives with nobody to credit.
+
+### 1. Capture the click identifier in the browser
+
+The [tracking snippet](/developer-documentation/tracking/install-the-snippet) reads the affiliate parameter from the URL, records a click, and stores the result in the visitor's browser. It exposes two globals once it's finished:
+
+| Global | What it holds |
+| --- | --- |
+| `window.affiliateId` | The click ID — a numeric string identifying this specific visit. This is the identifier you want. |
+| `window.affiliateRef` | The affiliate's referral code, taken from the link they shared. |
+
+Both are also persisted under `PROGRAM_ID_affiliate_referral` and `PROGRAM_ID_affiliate_ref` in cookies, with a `localStorage` fallback, for the length of your cookie window.
+
+The snippet works asynchronously, so read the globals after the tracker signals that it's ready rather than on page load:
+
+```js
+window.addEventListener("affiliate_id_ready", (event) => {
+  // event.detail.clickId is the same value as window.affiliateId
+  document.querySelector("#referral").value = event.detail.clickId;
+});
+```
+
+See the [JavaScript API reference](/developer-documentation/tracking/javascript-api/reference) for the full set of globals and events.
+
+### 2. Store it against your user
+
+When someone signs up, send the click ID to your backend along with the rest of the sign-up form and save it on your user, customer, or subscription record. This is the step teams skip, and it's the one that matters — a renewal billed eight months later has no browser and no cookie to fall back on. The only reason you can still credit the affiliate is that you wrote the click ID down.
+
+Store it as an opaque string. Don't parse it or assume anything about its format.
+
+### 3. Report the conversion from your server
+
+When the payment succeeds, POST the sale to the Referly API with the stored identifier:
+
+```bash
+curl -X POST https://www.referly.so/api/v1/sales \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "referralId": "48219",
+    "email": "customer@example.com",
+    "name": "Jane Doe",
+    "totalEarned": 99.00,
+    "externalId": "ch_3PabcXYZ"
+  }'
+```
+
+Referly resolves the identifier to an affiliate, creates or reuses the referred customer, applies the affiliate's commission plan, and records the sale. [Report a sale](/developer-documentation/server-side/reporting-sales) covers every field and the responses you'll get back.
+
+## Identifiers Referly accepts
+
+A sale has to name the affiliate somehow. Send one of these:
+
+| Field | Accepted values | Use it when |
+| --- | --- | --- |
+| `referralId` | A click ID, an existing referred customer's ID, an affiliate's ID, or an affiliate link code | You captured the click ID client-side, or you already know the affiliate. Referly tries these in order until one matches. |
+| `email` | The customer's email address | The customer has already been recorded as a referral, and you want to match on their email rather than store an ID. |
+| `promoCode` | A promotional code tied to a coupon in your program | The affiliate promotes a discount code rather than a link, so there is no click to reference. |
+
+A few things worth knowing:
+
+- The click ID is the most precise option. It ties the sale to one specific visit, which keeps the click, referral, and sale connected in your reports.
+- Matching on `email` only works if a referral with that email already exists in your program. If it doesn't, the sale has nothing to attach to.
+- If none of the identifiers resolve to an affiliate, the request does not create a commission. Attribution is never guessed.
+
+`totalEarned` is always required, as are the customer's `email` and `name` — either sent directly or already present on the referral you matched.
+
+## Authentication
+
+Every server-side call carries an API key as a Bearer token:
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+Keys are generated in your dashboard, are scoped to a single affiliate program, and carry full read and write access to it. Keep them on your server and out of any client bundle. API access is a Business plan feature — a key on a plan without it returns `403`.
+
+<Card title="Generate an API key" icon="key" href="/developer-documentation/api/authentication" horizontal arrow>
+  Create a key and authorise your requests.
+</Card>
+
+Requests are also rate limited per key and per endpoint. See [rate limits](/developer-documentation/api/rate-limits) before you build a bulk backfill, and [errors](/developer-documentation/api/errors) for the response shapes.
+
+## How this fits with the platform integrations
+
+Referly's payment integrations are themselves server-side — the difference is that Referly runs them for you.
+
+| You're using | What reports the sale |
+| --- | --- |
+| Stripe, Shopify, Paddle, Chargebee, Polar and similar | The integration, from the provider's webhooks. Nothing for you to build. |
+| A provider without an integration | Your server, forwarding that provider's webhook to the Referly API. |
+| The [universal forms integration](/developer-documentation/integrations/universal) | The form script records the person; sales still come from your server or a payment integration. |
+| An ad network or partner sending conversions to you | A [postback URL](/developer-documentation/integrations/postback-url). |
+
+<Warning>
+  Don't report a sale from your server that an active integration already reports. Both paths call the same commission logic, and without a shared external identifier you'll pay the affiliate twice. If you run both, send the same `externalId` from each so Referly can recognise the duplicate.
+</Warning>
+
+## Don't send the same sale twice
+
+Networks time out, webhooks retry, and queues replay. Referly deduplicates on the external identifiers you supply — `externalId` for your own sale or transaction reference, `externalInvoiceId` for the invoice or charge from your payment provider. A retry carrying an identifier Referly has already seen for that affiliate is recognised and does not create a second commission.
+
+Send them on every request. Without an external identifier, Referly has nothing to compare against and a retried call becomes a duplicate sale.
+
+<Card title="Idempotency" icon="rotate" href="/developer-documentation/server-side/idempotency" horizontal arrow>
+  Retry safely without creating duplicate sales.
+</Card>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Report a sale" icon="cart-shopping" href="/developer-documentation/server-side/reporting-sales" arrow>
+    Every field on the sales endpoint, with examples.
+  </Card>
+  <Card title="Capture endpoints" icon="satellite-dish" href="/developer-documentation/server-side/capture-endpoints" arrow>
+    The public endpoints the tracking script calls.
+  </Card>
+  <Card title="Install the snippet" icon="code" href="/developer-documentation/tracking/install-the-snippet" arrow>
+    Where the click ID you'll store comes from.
+  </Card>
+  <Card title="Webhooks" icon="webhook" href="/developer-documentation/webhooks/introduction" arrow>
+    Receive events back from Referly when a sale is recorded.
+  </Card>
+</Columns>

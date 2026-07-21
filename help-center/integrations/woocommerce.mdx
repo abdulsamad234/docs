@@ -1,6 +1,223 @@
 ---
 title: "WooCommerce"
-description: "Track orders from your WooCommerce store."
+description: "Connect WooCommerce to Referly to track affiliate clicks, sign-ups, orders, coupon sales, and refunds. Step-by-step WordPress plugin install, REST API key setup for product-based commission, and what the integration can and can't track."
+keywords: ["woocommerce affiliate tracking", "woocommerce affiliate plugin", "referly woocommerce integration", "woocommerce rest api consumer key affiliate", "woocommerce affiliate program setup", "woocommerce coupon affiliate tracking", "woocommerce product based commission", "wordpress affiliate plugin", "woocommerce order tracking commission", "woocommerce refund affiliate commission"]
 ---
+Referly connects to WooCommerce through a WordPress plugin you install on your site. Once it's activated and pointed at your program, it tracks clicks on affiliate links, records the customers those links bring in, and reports every order back to Referly with its products, tax, shipping, and the coupon used — so commissions are worked out for you.
 
-{/* TODO: Write this article. */}
+There are two parts to the setup, and the second one is optional:
+
+1. **The plugin.** This does the actual tracking. Everyone needs it.
+2. **Your WooCommerce API keys.** These let Referly read your product list, which is what makes [product-based commissions](/help-center/getting-started/commissions/product-based) possible. Skip it if every product pays the same rate.
+
+<Note>
+  This guide covers WooCommerce stores. If you run WordPress with Stripe rather than WooCommerce, follow the [WordPress](/help-center/integrations/wordpress) guide instead.
+</Note>
+
+## What the WooCommerce integration can and can't do
+
+| What you want to track | Does WooCommerce cover it? |
+| --- | --- |
+| **Clicks on affiliate links** | Yes — the plugin records a click whenever someone lands on your site through an affiliate link. |
+| **Sign-ups and leads** | Yes — when someone who arrived through an affiliate link gives you their email address, they're recorded as a referred customer before they've bought anything. This is something the Shopify integration can't do. |
+| **Orders** | Yes — each completed order becomes a sale credited to the affiliate behind it. |
+| **Product-level detail** | Yes — line items come across with names, quantities, and prices. Connect your API keys as well if you want different commission rates per product. |
+| **Tax and shipping** | Yes — both are reported separately so you can choose whether commission is paid on them. |
+| **Orders in other currencies** | Yes — the order currency comes across and the amount is converted into your program's currency. |
+| **Coupon code sales** | Yes — an order that used an affiliate's coupon is credited to that affiliate with no click and no link needed. Redemption counts sync back to Referly too. |
+| **Refunds** | Yes — see [Refunds](#refunds). |
+| **Ad click IDs passed through to the order** | Yes — if a click carried an external tracking ID, Referly uses it as a backup way to match the order. See [External click IDs](/developer-documentation/tracking/external-click-ids). |
+| **Test mode** | No — the WooCommerce connection is live only. To rehearse, place a small real order and refund it. |
+| **Subscriptions and renewals** | Only where each renewal creates a new order in WooCommerce that the plugin reports. Renewals handled by a payment processor outside WooCommerce aren't seen. |
+| **Chargebacks** | No — a chargeback isn't reversed automatically. Adjust the sale or reward by hand. |
+| **Manual and phone orders** | Only if they carry an affiliate's coupon code. There's no click or link on an order you create by hand. |
+| **A second store** | No — a Referly program connects to one WooCommerce site. |
+
+## Before you start
+
+You'll need:
+
+- **Administrator access to your WordPress site**, so you can upload and activate a plugin.
+- **Your Referly program ID.** You'll find it on the WooCommerce guide inside Referly — open your program, go to **Settings**, then **Integrations**, and select the **Woocommerce** card. Your program ID is shown there, ready to copy.
+- **A recent backup of your site.** Standard practice before adding any plugin.
+
+{/* TODO screenshot: woocommerce-guide-card — upload it in the local Documentation Agent */}
+
+## Step 1: Install the Referly plugin on your site
+
+<Steps>
+  <Step title="Download the plugin">
+    On the **Woocommerce** guide in Referly, select the download link to get the plugin file. It downloads as a `.zip` — leave it zipped.
+  </Step>
+  <Step title="Upload it to WordPress">
+    In your WordPress admin, go to **Plugins**, then **Add New**, and select **Upload Plugin** at the top of the screen. Choose the `.zip` file you downloaded and select **Install Now**.
+  </Step>
+  <Step title="Activate it">
+    When WordPress says the plugin installed successfully, select **Activate Plugin**. WordPress's [plugin documentation](https://wordpress.org/documentation/article/manage-plugins/) covers uploading plugins in more detail if you get stuck.
+  </Step>
+</Steps>
+
+## Step 2: Point the plugin at your program
+
+<Steps>
+  <Step title="Open the plugin settings">
+    A **Referly** item appears in the left-hand menu of your WordPress admin. Select it.
+  </Step>
+  <Step title="Enter your program ID">
+    Paste the affiliate program ID you copied from Referly into the field, and select **Connect**.
+  </Step>
+</Steps>
+
+That's the whole tracking setup. You don't add a script to your theme, and you don't create keys for this part — the plugin handles clicks, sign-ups, and orders on its own.
+
+{/* TODO screenshot: wordpress-plugin-settings — upload it in the local Documentation Agent */}
+
+<Tip>
+  If you use a caching plugin or a CDN, clear your cache after activating. Cached pages served from before the plugin was active won't record clicks.
+</Tip>
+
+## Step 3: Connect your API keys for product-based commission
+
+Do this step only if you want to pay different commission rates on different products. It lets Referly read your product catalogue so you can pick products when building a commission plan. Orders are tracked with or without it.
+
+### Generate the keys in WooCommerce
+
+<Steps>
+  <Step title="Check your permalinks first">
+    In your WordPress admin, go to **Settings**, then **Permalinks**, and make sure anything other than **Plain** is selected. WooCommerce's API doesn't work with plain permalinks.
+  </Step>
+  <Step title="Open the REST API settings">
+    Go to **WooCommerce**, then **Settings**, then the **Advanced** tab, then **REST API**. Select **Add key**.
+  </Step>
+  <Step title="Fill in the key details">
+    Give it a **Description** you'll recognise later, such as "Referly". Choose a **User** with administrator access — the key acts as that user. Set **Permissions** to **Read/Write**.
+  </Step>
+  <Step title="Generate and copy both values">
+    Select **Generate API key**. WooCommerce shows you a **Consumer key** and a **Consumer secret**. Copy both now and keep them somewhere safe.
+  </Step>
+</Steps>
+
+<Warning>
+  The consumer secret is shown **only once**. If you navigate away before copying it, you'll have to revoke the key and create a new one. WooCommerce's [REST API documentation](https://woocommerce.com/document/woocommerce-rest-api/) covers this.
+</Warning>
+
+{/* TODO screenshot: woocommerce-rest-api-key — upload it in the local Documentation Agent */}
+
+### Enter the keys in Referly
+
+<Steps>
+  <Step title="Open the integrations dialog">
+    In Referly, open your program, go to **Settings**, then **Integrations**, and select **Connect Integration** in the top right. Choose **WooCommerce** from the **Choose Integration** grid.
+  </Step>
+  <Step title="Paste your keys">
+    Fill in **Woocommerce Consumer Key**, **Woocommerce Consumer Secret**, and **Woocommerce Website URL**. The website URL is the address of your store, including `https://` — for example `https://www.example.com`.
+  </Step>
+  <Step title="Connect">
+    Select **Connect**. Referly checks the keys against your store straight away. If they work, a green **Connected** badge appears at the top with your store address. If they don't, the most common causes are plain permalinks, a key set to **Read** only, or a typo in the website URL.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: woocommerce-connect-form — upload it in the local Documentation Agent */}
+
+<Note>
+  These fields are locked once saved, so nobody can quietly change them. To use a different key, select **Disconnect** and connect again.
+</Note>
+
+## How Referly decides who gets credit for an order
+
+When an order goes through, Referly works through the following, and stops at the first match:
+
+1. **The click behind the visit.** The plugin remembers who referred the shopper from the moment they land on your site, and sends that with the order.
+2. **An external click ID.** If the affiliate's traffic carried an ad-network tracking ID, Referly can match on that instead.
+3. **The affiliate's link.** If the reference is an affiliate's link rather than a click, Referly matches the link.
+4. **The coupon on the order.** If the order used a coupon belonging to one of your affiliates, that affiliate is credited — no click needed at all.
+
+If none of those match, the order is still recorded as a sale in your program, just without an affiliate attached. That's deliberate: your revenue reporting stays complete, and you can attach the sale to an affiliate by hand if you know who earned it.
+
+### Coupons
+
+Referly can manage your WooCommerce coupons for you: create a coupon in Referly, assign codes to affiliates, and let them promote a code instead of a link. Redemption counts flow back so you can see which codes are working, and codes you edit or delete in WordPress stay in step.
+
+Set this up on the [Coupons](/help-center/engage/coupons/overview) page — see [Connect a coupon source](/help-center/engage/coupons/connect-a-source) and [Create coupons](/help-center/engage/coupons/create).
+
+## Step 4: Place a test order
+
+<Steps>
+  <Step title="Get a real affiliate's link">
+    Open your **Affiliates** page in Referly and copy a link from a test affiliate.
+  </Step>
+  <Step title="Visit your store through it">
+    Open the link in a private or incognito window so nothing is remembered from earlier visits.
+  </Step>
+  <Step title="Confirm the click landed">
+    In Referly, open that affiliate's record and check the click count went up. If it didn't, the plugin isn't running on the page — clear your cache and try again.
+  </Step>
+  <Step title="Place an order">
+    Buy something small, making sure checkout collects an email address. The plugin reports the order as soon as it's completed.
+  </Step>
+  <Step title="Check Referly">
+    Open **Customers** to find the buyer attached to the affiliate, then **Sales** to check the order total and its products, then **Rewards** to see the commission.
+  </Step>
+  <Step title="Refund it">
+    Refund the test order in WooCommerce and confirm the sale disappears from Referly. Then delete the leftover test customer from your **Customers** page.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: referly-woocommerce-sale — upload it in the local Documentation Agent */}
+
+## Refunds
+
+When you refund an order in WooCommerce, Referly finds the matching sale and removes it, so no commission is owed on money you gave back. The affiliate's totals are recalculated straight away.
+
+This only happens while the commission is still within your payout window. Once that window has passed and the affiliate has been cleared for payout, the sale stays as it is — adjust it by hand if you want to claw it back. See [Refunds](/help-center/manage/rewards/refunds) and [Payout schedule](/help-center/manage/payouts/schedule).
+
+Cancelling an order without refunding it doesn't change anything in Referly.
+
+## Disconnecting
+
+There are two things to undo, depending on how far you went:
+
+- **To stop tracking**, deactivate the Referly plugin in your WordPress admin under **Plugins**.
+- **To remove your API keys**, open **Connect Integration** in Referly, select **WooCommerce**, and choose **Disconnect**. You can also revoke the key on the WooCommerce side under **WooCommerce**, then **Settings**, then **Advanced**, then **REST API**.
+
+Nothing you've already tracked is deleted — affiliates, referred customers, sales, and rewards all stay. Orders placed while the plugin is inactive are not recorded and won't be picked up later.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Clicks aren't being counted">
+    The plugin isn't running on the pages people land on. Check it's activated under **Plugins** in WordPress, then clear any caching plugin or CDN cache. Test with a private window so you're not reusing an old visit.
+  </Accordion>
+  <Accordion title="Orders appear in Referly with no affiliate attached">
+    Nothing on the order identified an affiliate. If the buyer arrived through a link, the referral was lost somewhere between landing and checkout — most often a cache serving a page from before the plugin was active, or the buyer clearing cookies. If they used a coupon, check that coupon is one Referly knows about and is assigned to an affiliate.
+  </Accordion>
+  <Accordion title="No orders are appearing at all">
+    Confirm the plugin is active and shows your program ID, and that your Referly plan is active. If you changed program or reinstalled WordPress, re-enter the program ID in the plugin settings.
+  </Accordion>
+  <Accordion title="Connecting the API keys fails">
+    Three usual causes: permalinks are set to **Plain** under **Settings**, then **Permalinks**; the key was created with **Read** permissions instead of **Read/Write**; or the website URL is wrong — it needs to include `https://` and match your store's real address, with no trailing path.
+  </Accordion>
+  <Accordion title="I can't pick products when building a commission plan">
+    That needs the API key connection from [Step 3](#step-3-connect-your-api-keys-for-product-based-commission). Once the keys are saved, your products become selectable in your commission plans.
+  </Accordion>
+  <Accordion title="A refund didn't remove the commission">
+    The sale had already passed your payout window, so it's left alone on purpose — the affiliate was already cleared to be paid. Adjust the sale or the reward by hand if you want it reversed.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Product-based commissions" icon="tags" href="/help-center/getting-started/commissions/product-based" arrow>
+    Pay different rates on different products.
+  </Card>
+  <Card title="Coupons and promo codes" icon="ticket" href="/help-center/engage/coupons/overview" arrow>
+    Let affiliates promote a code instead of a link.
+  </Card>
+  <Card title="WordPress" icon="wordpress" href="/help-center/integrations/wordpress" arrow>
+    Running WordPress with Stripe rather than WooCommerce.
+  </Card>
+  <Card title="Tracking methods" icon="crosshairs" href="/help-center/settings/program/tracking-methods" arrow>
+    Choose whether links, codes, or both credit your affiliates.
+  </Card>
+</Columns>

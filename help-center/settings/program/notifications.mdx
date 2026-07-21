@@ -1,6 +1,96 @@
 ---
 title: "Email and in-app notifications"
-description: "Choose what you and your affiliates are told about."
+description: "Choose which emails and in-app toasts Referly sends you about your affiliate program — new sales, referrals, sign-ups, payout batches, weekly summaries, and chat messages."
+keywords: ["email notifications", "in-app notifications", "affiliate program notifications", "payout failed notification", "weekly summary email", "new sale notification", "notification settings", "admin notifications"]
 ---
+A busy affiliate program generates a lot of events — sign-ups, referrals, sales, payouts — and you don't want to hear about all of them. Referly splits the decision in two: **email notifications** for the things worth interrupting your inbox, and **in-app notifications** for the things worth a quick slide-in toast while you're already in the dashboard.
 
-{/* TODO: Write this article. */}
+Both live under **Settings** → **Program details**, as **Email notifications** and **In-app notifications**.
+
+<Note>
+These settings control what **you** are told, not what your affiliates are told. Emails sent to affiliates — welcome messages, approval notices, sale alerts — are managed separately under your program's email settings.
+</Note>
+
+Every toggle on both pages saves the moment you flip it. There's no Save button to look for.
+
+## Email notifications
+
+Go to **Settings**, open **Program details**, and select **Email notifications**. The page is headed **Your Notifications** — "Emails sent to you about program activity".
+
+{/* TODO screenshot: email-notifications-page — upload it in the local Documentation Agent */}
+
+Each row is one kind of event with a switch beside it:
+
+| Notification | You're emailed when |
+| --- | --- |
+| **New Affiliate Sign Up** | Someone signs up to your program |
+| **New Referral** | An affiliate makes a referral |
+| **New Sale** | A sale is made in your program |
+| **New Payout Ready** | A payout is ready to be processed |
+| **Payout Batch Paid** | A payout batch is successfully paid |
+| **Payout Batch Failed** | A payout batch or payout fails |
+| **Weekly Summary** | Your weekly performance update is ready |
+| **Content Reward Submission** | An affiliate submits content for a content reward |
+| **New Chat Message** | You receive a new chat message |
+
+### Choosing what's worth an email
+
+Referly's defaults are deliberately quiet, and they're a good starting point. **Payout Batch Paid**, **Payout Batch Failed**, and **New Chat Message** are on; the activity notifications are off.
+
+The reasoning is worth borrowing. Email is best for things you must act on or must not miss:
+
+- **Keep the payout emails on.** **Payout Batch Failed** in particular is the one email you can't afford to miss — a failed batch means affiliates aren't paid and you probably won't notice from the dashboard.
+- **Turn on Weekly Summary** if you'd rather read one digest than watch the numbers daily. For most programs this is the single most useful email here.
+- **Leave the per-event emails off once you have volume.** **New Sale** and **New Referral** are genuinely exciting in the first weeks of a program, and unbearable at fifty sales a day. Watch them in the dashboard instead.
+- **Turn on New Affiliate Sign Up if you approve affiliates by hand.** If people are waiting on your approval to start promoting, knowing promptly matters. If you approve automatically, it's just noise.
+- **Turn on Content Reward Submission if you run content rewards**, since submissions sit waiting for your review.
+
+## In-app notifications
+
+Go to **Settings**, open **Program details**, and select **In-app notifications** — "Choose which notifications appear as slide-in toasts". These appear briefly in the corner of the dashboard while you're working.
+
+{/* TODO screenshot: in-app-notifications-page — upload it in the local Documentation Agent */}
+
+| Notification | Appears when |
+| --- | --- |
+| **New Sale** | A sale is made in your program |
+| **New Referral** | An affiliate makes a referral |
+| **New Affiliate** | Someone signs up to your program |
+| **Affiliate Application** | Someone applies to your program |
+| **Content Reward Submission** | An affiliate submits content for a content reward |
+| **Payout Ready** | A payout batch is ready for review |
+| **Payout Paid** | A payout batch is successfully paid |
+| **Payout Failed** | A payout batch or payout fails |
+| **Weekly Summary** | Your weekly performance summary is ready |
+| **New Chat Message** | You receive a new chat message |
+| **Added to Group Chat** | You are added to a group chat |
+
+These are all on by default, which suits most people. A toast costs you nothing when you're not in the dashboard and disappears on its own when you are, so the case for switching them off is much weaker than for email.
+
+The exception is a high-volume program. If **New Sale** toasts are firing constantly while you're trying to work, turn that one off and leave the rest — the sales are still in your dashboard whenever you want them.
+
+## How the two pages work together
+
+They're separate channels for the same events, so you can pick a different level of interruption for each. A sensible pattern for most programs:
+
+- **Email** for things that need you even when you're not logged in — failed payouts, the weekly summary, and chat messages from affiliates.
+- **In-app** for everything else, where seeing it while you're already working is enough.
+
+**New Chat Message** appears on both pages because it's one notification with two channels — turning off the email still leaves the in-app toast, and the other way round. If an affiliate messages you and you switch off both, nothing will prompt you to reply.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Payout settings" icon="wallet" href="/help-center/settings/program/payout-settings" arrow>
+    Set the schedule that drives your payout notifications.
+  </Card>
+  <Card title="General program settings" icon="sliders" href="/help-center/settings/program/general" arrow>
+    Decide whether affiliates and rewards are approved automatically.
+  </Card>
+  <Card title="Affiliate groups" icon="users" href="/help-center/settings/program/affiliate-groups" arrow>
+    Segment affiliates and give each group its own terms.
+  </Card>
+  <Card title="Fraud prevention" icon="shield" href="/help-center/settings/program/fraud-prevention" arrow>
+    Hold suspicious rewards for review before they're paid.
+  </Card>
+</Columns>

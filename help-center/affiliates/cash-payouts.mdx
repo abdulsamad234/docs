@@ -1,6 +1,123 @@
 ---
 title: "Cash payouts"
-description: "Set up Wise, PayPal, or a bank account."
+description: "Set up how you get paid as an affiliate: choose Wise, a local bank account, PayPal, or manual bank transfer, add your payout details, and connect a bank account for Referly payouts."
+keywords: ["affiliate cash payouts", "affiliate payout method", "Wise payout affiliate", "PayPal affiliate payout", "affiliate bank details", "connect bank account payouts", "payout email", "local bank account payout", "affiliate payout settings", "failed affiliate payout"]
 ---
+Your cash payout settings are where you tell a program how to send you money. Until they're filled in, your earnings still build up, but the program has no way to pay them out. This page walks through every method you might be offered and what each one asks for.
 
-{/* TODO: Write this article. */}
+Open **Settings** in the left sidebar of your affiliate portal, choose the **Payouts** tab, then **Cash Payouts**.
+
+<Note>
+  You won't see every method listed here. Each program decides which ones it offers, so your options depend on the program you're looking at. If you promote several programs, you may be paid a different way in each one.
+</Note>
+
+## Choose a payout method
+
+The **Cash Payout Method** panel shows the methods this program supports as cards. Select one, and the **Payout Details** panel underneath changes to ask for what that method needs.
+
+A pill in the top right of the panel tells you where you stand: **Required** means something is still missing, and **Complete** means the program has everything it needs to pay you.
+
+{/* TODO screenshot: cash-payout-method-cards — upload it in the local Documentation Agent */}
+
+### Wise
+
+Money arrives directly in your Wise account.
+
+You'll be asked for your **Cash Rewards Payout Email** — the email address on your Wise account — and a **Wise payout currency**. The currency defaults to the program's own currency, so change it only if you'd rather be paid in something else.
+
+### Local Bank Account
+
+Money reaches your normal bank account, sent through Wise.
+
+Start by picking your **Payout Currency**. Wise then asks for the exact details a bank in that currency needs, so the form looks different for a US dollar account than for a euro or Indian rupee one. You may also be asked to pick an **Account type** first, and to add the address the money is being sent to.
+
+This method doesn't ask for a payout email, since the money goes straight to the account you describe here.
+
+### PayPal Payouts
+
+Money is sent to your PayPal account. All you need to add is your **Cash Rewards Payout Email**, which has to be the email address your PayPal account uses.
+
+### Manual Bank Account
+
+The program collects your bank details and sends the transfer outside of Referly, using their own banking.
+
+Choose your **Country** first. The fields below it change to match how banks work there:
+
+- In the United States, an **ACH Routing Number** and **Account Number**.
+- In Canada, a **Transit Number**, **Institution Number**, and **Account Number**.
+- In the United Kingdom, a **Sort Code** and **Account Number**.
+- Across most of Europe, and anywhere without its own format, an **IBAN**.
+
+Some programs replace these with their own list of fields, so you might be asked for details specific to that company instead. Fill in everything marked with a red asterisk.
+
+You'll also be asked for your **Cash Rewards Payout Email** so the program can reach you about the transfer.
+
+{/* TODO screenshot: manual-bank-fields — upload it in the local Documentation Agent */}
+
+## Save your details
+
+Select **Save Changes** at the bottom of the page. The button stays inactive until you've actually changed something, so if you can't select it, your details are already saved.
+
+## Connect a bank account for Referly payouts
+
+Some programs let Referly send the money for them. In that case you won't see any method cards at all. Instead there's a single **Bank Account** card with a **Connect** button, and no **Save Changes** button, because your bank details are entered on a secure page rather than on this one.
+
+### Connect your account
+
+Select **Connect** to open **Connect your bank account**, then work through two short steps:
+
+<Steps>
+  <Step title="Country and profile type">
+    Pick the **Country** your bank account is in, and whether your **Profile Type** is **Individual** or **Company**. Select **Next**.
+  </Step>
+  <Step title="Check the requirements">
+    Read the **Bank account requirements**, tick the box confirming your account meets all of them, and select **Continue**. You're taken to a secure page to enter your bank details.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: connect-bank-account-flow — upload it in the local Documentation Agent */}
+
+<Warning>
+  Take the requirements list seriously — if your account doesn't meet them, payouts can be delayed or rejected. Your account has to be in your local currency, has to be a checking account rather than a savings account or debit card, and the account holder name has to match your affiliate account name.
+</Warning>
+
+### After you're connected
+
+Once it's set up, the card shows a green **Connected** badge and **Ready to receive payouts**, along with your country, profile type, payout currency, and the last four digits of the account. You're paid in your local currency, with a 1% currency conversion fee if your bank isn't in the US, EU, or UK.
+
+{/* TODO screenshot: bank-account-connected — upload it in the local Documentation Agent */}
+
+If you need to move to a different account, select **Disconnect** and connect the new one. You can't receive payouts while nothing is connected, so reconnect before your program's next payout date. See [How you get paid](/help-center/affiliates/payouts) for when that is.
+
+## If a payout fails
+
+A payout showing **Failed** on your [Payouts](/help-center/affiliates/payouts) page almost always means something in your details is off — a mistyped account number, an account that has since closed, or a name that doesn't match.
+
+Come back to this page, check every field carefully, save, and message the program through **Messages** in the left sidebar so they can send it again.
+
+## Use the same details across every program
+
+If you promote several programs, you don't have to type your bank details into each portal. Sign in to the Influencer dashboard at `influencers.referly.so`, open **Settings**, and set your payout details there once.
+
+When you save, you're asked whether to **Apply to all** your programs or keep the change to **Just this account**. Choosing to apply it copies your payout method, bank details, and invoice details to every program you've joined.
+
+{/* TODO screenshot: apply-to-all-programs — upload it in the local Documentation Agent */}
+
+If you'd rather not be asked each time, tick **Don't ask me again**, or set your preference under **Settings** on the Influencer dashboard to always apply changes everywhere, or never apply them.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="How you get paid" icon="wallet" href="/help-center/affiliates/payouts" arrow>
+    Follow a reward from referral to payout and see what each status means.
+  </Card>
+  <Card title="Non-cash payouts" icon="ticket" href="/help-center/affiliates/non-cash-payouts" arrow>
+    See how coupons and store credits reach you instead of money.
+  </Card>
+  <Card title="Invoice details" icon="file-invoice" href="/help-center/affiliates/invoice-details" arrow>
+    Add the details that appear on the invoices for your payouts.
+  </Card>
+  <Card title="My programs" icon="grid-2" href="/help-center/affiliates/my-programs" arrow>
+    Manage every affiliate program you've joined from one place.
+  </Card>
+</Columns>

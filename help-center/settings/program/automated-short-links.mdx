@@ -1,6 +1,78 @@
 ---
 title: "Automated short links"
-description: "Give affiliates short links automatically."
+description: "Give every affiliate a short, branded link automatically in Referly. Compare Referly short links on refurl.link or a custom domain with Shopify URL redirect short links, and choose the right type for your program."
+keywords: ["automated short links", "affiliate short links", "short link type", "refurl.link", "branded affiliate links", "shopify short links", "referly short links", "custom domain short links", "link shortener"]
 ---
+A normal affiliate link is long and full of tracking parameters. It works perfectly well, but it's awkward to read aloud, ugly in a video description, and easy to mangle when someone retypes it. Automated short links give every affiliate a clean, memorable link instead — something like `refurl.link/jane` or `yourstore.com/jane` — that redirects to the same place with the same tracking intact.
 
-{/* TODO: Write this article. */}
+The word "automated" is the important one. You don't create these links one at a time. Once you pick a type, Referly generates a short link for every affiliate automatically, including the ones who join next month.
+
+To choose your setup, go to **Settings**, open **Program details**, and select **Automated short links**.
+
+{/* TODO screenshot: short-link-type-selector — upload it in the local Documentation Agent */}
+
+## Pick a short link type
+
+**Short Link Type** offers three options:
+
+- **Disabled** — "No short links". Affiliates share their normal full-length links. This is where every program starts.
+- **Referly Short Links** — "Use refurl.link or a custom domain". Referly hosts the short links for you, either on its own `refurl.link` domain or on a domain you own.
+- **Shopify Short Links** — "Use Shopify URL redirects". The short links live on your Shopify store's own domain, created as redirects inside your store.
+
+Short links are a Business-plan feature, so on lower plans these options prompt you to upgrade.
+
+## Which one should you use?
+
+The honest answer is that it depends on one thing: whether you sell on Shopify and want the links to carry your store's domain.
+
+**Choose Shopify short links** if you run a Shopify store. Affiliates share links on your own domain — `yourstore.com/jane` — which is the most trustworthy-looking option a customer can click, because it's simply your store. It also unlocks Shopify-specific behavior, most notably automatically applying a discount code when the customer arrives. The trade-off is that it only works for Shopify stores and only points at your store.
+
+**Choose Referly short links** if you're not on Shopify, or if you'd rather run short links on a dedicated domain. You can use `refurl.link` with no setup at all, or connect a domain of your own like `links.yourbrand.com` for branded links. This works regardless of what you sell on or where your landing pages live.
+
+**Stay disabled** if your affiliates are mostly publishing links in places where nobody reads the URL anyway — an embedded newsletter link or a button on a page. Short links earn their keep when the URL is spoken, printed, or typed.
+
+The two options are alternatives, not a combination: selecting one turns the other off.
+
+<Note>
+If your program is managed by an agency, the **Referly Short Links** option may not appear — agencies can disable it for the programs they manage. If you try to save it anyway you'll be told **Your agency has disabled Referly short links for this program.** Shopify short links are unaffected.
+</Note>
+
+## Set up your choice
+
+Each type has its own setup, covered in full in its own article:
+
+<Columns cols={2}>
+  <Card title="Referly short links" icon="link" href="/help-center/settings/program/referly-short-links" arrow>
+    Use refurl.link, or connect and verify a custom domain of your own.
+  </Card>
+  <Card title="Shopify short links" icon="store" href="/help-center/settings/program/shopify-short-links" arrow>
+    Create redirects in your Shopify store, with optional auto-applied discount codes.
+  </Card>
+</Columns>
+
+## Turn short links off
+
+Select **Disabled** and save. Whichever type was running is switched off — and if you were using Shopify short links, the redirects that were created in your store are removed in the background, which can take up to ten minutes.
+
+Affiliates fall back to their normal full-length links, which never stop working. Short links sit on top of regular links rather than replacing them, so nothing already shared breaks when you change your setup. Bear in mind that a short link people have already published stops resolving once you turn it off, so give affiliates warning before switching a live program.
+
+## Save
+
+A **Save Changes** button appears at the bottom right once you've changed something. Nothing is applied until you select it.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Tracking methods" icon="crosshairs" href="/help-center/settings/program/tracking-methods" arrow>
+    Choose whether referrals are tracked by link, coupon code, or both.
+  </Card>
+  <Card title="General program settings" icon="sliders" href="/help-center/settings/program/general" arrow>
+    Set the landing pages your short links redirect to.
+  </Card>
+  <Card title="Cross-domain tracking" icon="arrows-left-right" href="/help-center/settings/program/cross-domain-tracking" arrow>
+    Keep attribution when visitors move between your domains.
+  </Card>
+  <Card title="Affiliate groups" icon="users" href="/help-center/settings/program/affiliate-groups" arrow>
+    Segment affiliates and give each group its own terms.
+  </Card>
+</Columns>

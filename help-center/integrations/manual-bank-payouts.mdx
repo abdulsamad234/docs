@@ -1,0 +1,306 @@
+---
+title: "Manual Bank account payouts"
+description: "Pay affiliates by manual bank transfer in Referly: collect bank details, export a batch CSV, make the transfers in your own bank, and mark the batch as paid. Setup, reconciliation, and troubleshooting."
+keywords: ["manual bank transfer payouts", "pay affiliates by bank transfer", "affiliate bank details", "export bank CSV", "mark batch as paid", "custom bank account fields", "SWIFT BIC affiliate payout", "IBAN affiliate payout", "self-managed affiliate payouts", "payout reconciliation"]
+---
+**Manual Bank Account** is the payout method for programs that would rather pay affiliates from their own bank. Referly collects each affiliate's bank details, groups the amounts into a batch, and gives you everything you need to make the transfers — but you make them yourself, in your own banking, and then tell Referly they're done.
+
+It's the only cash method with no third party in the middle. That's its strength and its cost: total control, no platform fee, no country restrictions, and no automation whatsoever.
+
+## What manual bank transfer can and can't do
+
+**What it does:**
+
+- Works **anywhere**. You choose the rails — a domestic transfer, a SEPA payment, a SWIFT wire, whatever your bank offers.
+- Costs you **nothing on top**. No integration fee, no service fee, no percentage. Just whatever your bank charges.
+- Collects exactly the details you need, because you decide which fields affiliates fill in.
+- Keeps the record straight: who's owed what, what they submitted, and what's been paid.
+- Needs **no setup with anyone else** — no account to open, no keys, no verification.
+
+**What it can't do:**
+
+- **It can't send money.** Every transfer is one you make by hand.
+- **It can't check the details are right.** Referly stores what the affiliate typed. There's no validation of an IBAN, no confirmation the account exists.
+- **It can't know when a transfer clears.** Referly has no view of your bank, so a payout stays open until you say otherwise.
+- **It can't run automatically.** No schedule will pay these for you.
+- **It can't run alongside Wise.** More on that below.
+
+## Wise has to be off first
+
+The **Manual Bank Account** card is greyed out whenever Wise is enabled, with a note explaining that manual bank account isn't available when Wise is on, because Wise already handles direct bank transfers.
+
+If you want to collect bank details and pay by hand, turn Wise off first. If you'd rather have bank transfers sent for you, use [Local bank account payouts](/help-center/integrations/wise-local-bank) instead — same destination, no manual work.
+
+## When to use this instead of the other methods
+
+| | Manual bank | Local bank (Wise) | Wise | PayPal | Referly Payouts |
+| --- | --- | --- | --- | --- | --- |
+| Who sends the money | You | Wise | Wise | PayPal | Referly |
+| Extra fee | None | Wise's fee | Wise's fee | PayPal's fee | Referly's service fee |
+| Setup effort | None | Wise account | Wise account | PayPal approval | Add a card |
+| Country coverage | Anywhere your bank reaches | Wise's list | Wise's list | 156+ countries | 178 countries |
+| Effort per batch | High | Low | Low | Very low | Very low |
+| Referly tracks it | Only what you tell it | Yes | Yes | Yes | Yes |
+
+Manual bank transfer makes sense when you have a handful of affiliates, when you're paying somewhere the other methods don't reach, when your finance team already runs a payment run you can add to, or when you're contractually required to pay from a specific account. Once you're paying more than a few people a month, one of the automated methods will save you real time. See [Payout methods](/help-center/manage/payouts/payout-methods).
+
+## Before you start
+
+<Steps>
+  <Step title="Wise is turned off on your program">
+    The manual bank option can't be enabled while Wise is on.
+  </Step>
+  <Step title="Admin access to your program">
+    You need to be able to open Program Settings.
+  </Step>
+  <Step title="Access to your business banking">
+    Including whatever approvals your bank requires for outbound payments.
+  </Step>
+  <Step title="A plan for handling bank details">
+    You're about to collect sensitive information from your affiliates. Decide who gets to see it before you start.
+  </Step>
+</Steps>
+
+## Step 1: Turn on Manual Bank Account
+
+<Steps>
+  <Step title="Open your payout settings">
+    Go to **Program Settings → Program details → Payout settings**. More on this page in [Payout settings](/help-center/settings/program/payout-settings).
+  </Step>
+  <Step title="Turn Wise off if it's on">
+    Otherwise the manual bank card stays greyed out.
+  </Step>
+  <Step title="Toggle the Manual Bank Account card on">
+    It's in the **Cash Payout Methods** section.
+  </Step>
+  <Step title="Save">
+    Affiliates will see it as an option next time they open their payout settings.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: manual-bank-account-card — upload it in the local Documentation Agent */}
+
+<Note>
+  You have to keep at least one cash method enabled. If manual bank transfer is your only one, every affiliate will be paid this way.
+</Note>
+
+## Step 2: Decide what details you need
+
+This is the part worth thinking about before your affiliates start filling forms in. Getting it wrong means chasing people for a missing SWIFT code the week you're trying to pay them.
+
+### The standard fields
+
+Once an affiliate picks a country, Referly shows the fields that country's banking system uses — an IBAN for most of Europe, a sort code and account number in the UK, an ACH routing number and account number in the US, a BSB number in Australia, institution and transit numbers in Canada, and bank code or branch code fields elsewhere.
+
+### Add your own fields
+
+If you need something the standard set doesn't cover, turn on **Custom Bank Account Fields** in your payout settings and add it. For each field you set:
+
+- **Field Title** — the label affiliates see, like `SWIFT / BIC` or `Bank Branch Address`.
+- **Placeholder Text** — the hint inside the empty box.
+- **Required field** — whether an affiliate can save without it.
+
+A live preview shows how it'll look. Full instructions are in [Custom bank account fields](/help-center/manage/payouts/custom-bank-fields).
+
+{/* TODO screenshot: custom-bank-fields-panel — upload it in the local Documentation Agent */}
+
+### What to collect for common destinations
+
+| Where you're paying | What you'll need |
+| --- | --- |
+| Same country as your bank | Account number plus the local code (sort code, routing number, BSB, and so on) |
+| Eurozone (SEPA) | IBAN, and the account holder's name exactly as the bank has it |
+| International wire | IBAN or account number, **SWIFT/BIC**, the bank's name and full address, and the beneficiary's address |
+| United States (ACH) | ACH routing number, account number, and whether it's checking or savings |
+| Canada | Institution number, transit number, and account number |
+
+<Info>
+  If you'll ever pay outside your own country, add a required **SWIFT / BIC** field and a **Bank address** field from the start. Wires get rejected without them, and collecting them retroactively from 40 affiliates is a bad week.
+</Info>
+
+## Step 3: Get your affiliates to submit their details
+
+Ask them to go to **Settings → Payouts → Cash payouts** in the affiliate portal and pick **Manual Bank Account**, described as "Submit bank details for manual transfer outside of Referly".
+
+They choose their **Country**, then fill in the bank fields for it, plus any custom fields you added. Required fields have to be completed before they can save.
+
+{/* TODO screenshot: affiliate-manual-bank-form — upload it in the local Documentation Agent */}
+
+<Warning>
+  Nothing checks these details. A transposed digit saves happily and only surfaces days later when your bank rejects the payment. Ask affiliates to copy the details from their bank statement or banking app rather than typing from memory.
+</Warning>
+
+## Pay a batch
+
+### Check who's missing details
+
+Open the batch. Referly flags affiliates who chose manual bank transfer but haven't submitted an account number or IBAN. They can't be paid — chase them or leave them for the next batch. See [Payout batches](/help-center/manage/payouts/batches).
+
+### Look at one affiliate's details
+
+Open any payout to see what that affiliate submitted, under a **Bank Account** section. Depending on what they gave you, you'll see rows like Holder, Bank, Account #, Routing #, SWIFT/BIC, IBAN, Sort Code, Branch Code, Institution #, Transit #, BSB, Type, Country, and Address.
+
+This is the quickest way to answer one affiliate's question without downloading anything.
+
+{/* TODO screenshot: payout-details-bank-account — upload it in the local Documentation Agent */}
+
+### Export the whole batch
+
+For an actual payment run, open the batch's **Actions** menu and choose **Export Bank CSV**. Select specific payouts first to export only those, or export the lot.
+
+The file contains, for each affiliate: their name, email, payout email, the amount and currency, and every bank detail they submitted — account holder, bank name, IBAN, account number, routing number, SWIFT/BIC, sort code, branch code, country, and account type — plus a **reference** in the form `Payout` followed by the payout's ID.
+
+That reference is the single most useful column in the file. Use it.
+
+{/* TODO screenshot: export-bank-csv — upload it in the local Documentation Agent */}
+
+<Warning>
+  This file contains your affiliates' full banking details. Don't email it, don't leave it in Downloads, and delete it once the payment run is done. See the security section below.
+</Warning>
+
+### Make the transfers in your bank
+
+<Steps>
+  <Step title="Upload the file or key in the payments">
+    Most business banking supports a bulk upload. You'll likely need to remap the columns to your bank's own template — worth setting up once and saving.
+  </Step>
+  <Step title="Put the reference on every payment">
+    Paste the reference from the CSV into your bank's payment reference field. This is what lets you match your statement back to Referly later.
+  </Step>
+  <Step title="Check the currency">
+    If you're paying someone in a currency other than your account's, your bank converts at its own rate and adds a fee. Confirm the affiliate receives the amount they're owed, not the amount minus charges.
+  </Step>
+  <Step title="Submit and get approval">
+    Many business accounts need a second person to approve a payment run. Build that into your timing.
+  </Step>
+</Steps>
+
+### Mark the batch as paid
+
+Referly has no way of knowing you've done any of this. Closing the batch is a manual step.
+
+<Steps>
+  <Step title="Wait until the money has actually left">
+    Not when you submitted it — when your bank confirms it's gone.
+  </Step>
+  <Step title="Open the Actions menu and choose Mark Batch as Paid">
+    A confirmation appears: "This will mark this payout batch and all payouts inside it as paid. This cannot be undone from the payouts list."
+  </Step>
+  <Step title="Confirm with Mark as paid">
+    The batch and every payout inside it are set to paid, and you get a confirmation notification.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: mark-batch-as-paid — upload it in the local Documentation Agent */}
+
+To close out only some of them, select those rows first and use **Mark as Paid** on the selection instead. You'll be warned it will mark all the payouts you selected as paid.
+
+<Warning>
+  There's no undo from the payouts list. Marking a batch paid before the money has left means your records say affiliates were paid when they weren't — and they'll see the payout as paid in their portal. Mark it after the transfers clear, not before.
+</Warning>
+
+## Reconciliation and record-keeping
+
+This method lives or dies on the reference field. A simple routine that works:
+
+<Steps>
+  <Step title="Export the CSV and keep it as your payment run record">
+    Store it somewhere access-controlled, named with the batch date.
+  </Step>
+  <Step title="Pay everything with the Referly reference attached">
+    So each line on your statement maps to exactly one payout.
+  </Step>
+  <Step title="Match your statement against the file">
+    Anything on the file that isn't on the statement didn't go out. Anything on the statement that isn't on the file needs explaining.
+  </Step>
+  <Step title="Mark only what actually cleared">
+    Use per-payout marking rather than closing the whole batch if some failed.
+  </Step>
+  <Step title="Keep the record with your accounts">
+    You're responsible for your own reporting on these payments — see [Tax and invoices](/help-center/manage/payouts/tax-and-invoices).
+  </Step>
+</Steps>
+
+## Partial payments and bounced transfers
+
+**Some transfers went, some didn't.** Don't mark the whole batch. Select just the rows that cleared and mark those as paid. The rest stay open, so it's obvious what's outstanding.
+
+**A transfer bounced back.** Banks reject payments for a wrong account number, a name that doesn't match the account, a missing SWIFT code on an international wire, or an account that's been closed. The money comes back to you, usually minus a fee.
+
+When that happens:
+
+<Steps>
+  <Step title="Leave that payout unpaid">
+    Or if you'd already marked it, note it so it doesn't get lost.
+  </Step>
+  <Step title="Tell the affiliate what your bank said">
+    The rejection reason usually points straight at the wrong field.
+  </Step>
+  <Step title="Have them correct their details">
+    In **Settings → Payouts → Cash payouts** in the affiliate portal.
+  </Step>
+  <Step title="Pay them again in the next run">
+    And decide who absorbs the bank's rejection fee — see below.
+  </Step>
+</Steps>
+
+See [Failed payouts](/help-center/manage/payouts/failed-payouts) for the wider picture.
+
+## What it costs
+
+There's no Referly fee and no integration fee on this method. What you do pay:
+
+- **Your bank's transfer fee.** Often free domestically, and a flat charge per international wire.
+- **Currency conversion.** If you pay in a currency other than your account's, your bank's exchange rate applies — usually worse than Wise's.
+- **Intermediary bank charges.** International wires can pass through correspondent banks that each take a cut, which is why an affiliate sometimes receives less than you sent.
+- **Rejection fees.** Some banks charge for a returned payment.
+
+Decide up front who absorbs these and tell your affiliates. If you're sending wires to people owed small amounts, the fees can be a meaningful share of the payout — that's usually the point at which [Local bank account payouts](/help-center/integrations/wise-local-bank) becomes cheaper as well as easier.
+
+## Looking after affiliates' bank details
+
+You're now holding banking information for everyone in your program. Some practical rules:
+
+- **Limit who can see it.** Anyone with access to your payouts area can view full bank details. Review who that is.
+- **Don't circulate the CSV.** Don't email it, don't put it in a shared chat, don't leave it in cloud storage that's open to the whole company.
+- **Delete exports when you're done.** Re-export next time rather than keeping old copies around.
+- **Only collect what you'll use.** Every custom field is more data to look after. Skip anything you don't need to make the payment.
+- **Handle changes carefully.** If an affiliate emails asking you to change their bank details, verify it's really them before paying to a new account. This is a common fraud.
+
+## Troubleshooting
+
+| What you see | What's wrong | What to do |
+| --- | --- | --- |
+| The Manual Bank Account card is greyed out | Wise is enabled | Turn Wise off, then enable manual bank transfer |
+| An affiliate is flagged as missing details | They haven't submitted an account number or IBAN | Ask them to complete **Settings → Payouts → Cash payouts** |
+| The export is missing a field you need | It wasn't collected | Add it under **Custom Bank Account Fields**, then ask affiliates to update their details |
+| Your bank rejects the upload | Column names or formats don't match your bank's template | Remap the CSV columns to your bank's format and save the mapping for next time |
+| A payment bounced back | Wrong details, name mismatch, closed account, or a missing SWIFT code on a wire | Get the reason from your bank, have the affiliate correct it, and pay again next run |
+| The affiliate says they received less than they're owed | Intermediary banks took charges, or your bank's conversion rate | Decide who absorbs these and consider paying via [Wise](/help-center/integrations/wise) instead |
+| You marked a batch paid by mistake | It can't be undone from the payouts list | Contact support at support@referly.so |
+| You can't tell which statement line is which payout | The reference wasn't included | Always paste the reference from the CSV into your bank's reference field |
+| The batch is still open after you paid | Referly can't see your bank | Use **Mark Batch as Paid**, or mark individual payouts if only some cleared |
+| Affiliates keep asking whether they've been paid | They see the payout status from Referly, which is whatever you last marked | Mark payouts promptly after transfers clear |
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Custom bank account fields" icon="building-columns" href="/help-center/manage/payouts/custom-bank-fields" arrow>
+    Collect the exact banking details you need from affiliates.
+  </Card>
+  <Card title="Export payouts" icon="file-arrow-down" href="/help-center/manage/payouts/export" arrow>
+    Download a batch as a CSV to pay outside Referly.
+  </Card>
+  <Card title="Local bank account payouts" icon="arrow-right-arrow-left" href="/help-center/integrations/wise-local-bank" arrow>
+    The same destination, sent for you instead of by hand.
+  </Card>
+  <Card title="Payout methods" icon="wallet" href="/help-center/manage/payouts/payout-methods" arrow>
+    Compare every way you can pay affiliates.
+  </Card>
+  <Card title="Payout batches" icon="layer-group" href="/help-center/manage/payouts/batches" arrow>
+    How batches are built, reviewed, and closed out.
+  </Card>
+  <Card title="Tax and invoices" icon="file-invoice" href="/help-center/manage/payouts/tax-and-invoices" arrow>
+    Your own reporting responsibilities on manual payments.
+  </Card>
+</Columns>

@@ -1,6 +1,223 @@
 ---
 title: "Pickaxe"
-description: "Track Pickaxe conversions."
+description: "Connect Pickaxe to Referly so paid portal subscriptions are credited to the referring affiliate. Add the tracking script to your Pickaxe Design tab header code and connect Stripe, and renewals, refunds and cancellations are tracked automatically."
+keywords: ["Pickaxe affiliate program", "Pickaxe Referly integration", "Pickaxe Studio affiliate tracking", "Pickaxe portal Stripe affiliate commission", "track Pickaxe subscriptions affiliates", "AI tool affiliate tracking", "Pickaxe custom header code", "pickaxe.co affiliate"]
 ---
+[Pickaxe](https://pickaxe.co/) lets you build AI tools and sell access to them through a portal, with payments handled by Stripe. Connecting it to Referly means someone who arrives on an affiliate link and then pays for a plan is credited to the affiliate who sent them, along with their renewals.
 
-{/* TODO: Write this article. */}
+This is the most straightforward integration Referly offers, and there's a good reason for it. Pickaxe already knows how to pass a referral through to Stripe, so all you do is put the Referly tracking script on your portal and connect Stripe. Everything after that happens on its own. There's no webhook to create in Pickaxe, no code to edit, and nothing to paste into a checkout.
+
+Plan about 10 minutes.
+
+{/* TODO screenshot: pickaxe-integration-card — upload it in the local Documentation Agent */}
+
+## What this integration can and can't track
+
+| What you want to track | Does it work? | Notes |
+| --- | --- | --- |
+| Link clicks and visits | Yes | From the tracking script on your portal |
+| Paid subscriptions | Yes, with the amount | Recorded as a sale with commission |
+| One-time payments for access | Yes, with the amount | Same as subscriptions |
+| Recurring renewals | Yes | Each renewal payment comes through Stripe |
+| Refunds | Yes | Referly recognises a refund and adjusts the commission |
+| Cancelled subscriptions | Yes | Referly knows when a subscription ends |
+| Free sign-ups to your portal | No | Nothing is recorded until a payment is made |
+| Free access groups | No | Same reason: no payment, no record |
+| Upgrades between paid plans | Yes, as a payment | Recorded as the payment it produces, not as a plan change |
+| Which tool inside your portal they used | No | Referly sees the payment, not the usage |
+
+<Info>
+  Because this integration runs through Stripe rather than a one-off notification, it handles the whole life of a customer: the first payment, every renewal, refunds, and cancellations. That's a genuine advantage over most of the other platform integrations, which only ever hear about the initial sale.
+</Info>
+
+## Before you start
+
+You'll need:
+
+- A live Referly program with at least one affiliate to test with. See [setting up your program](/help-center/getting-started/set-up-program/affiliate-program-setup) if you haven't got that far.
+- A Pickaxe portal with at least one paid access group set up.
+- A Stripe account already connected to Pickaxe, so you can charge for access.
+- Admin access to your Pickaxe portal's settings.
+
+Open the guide inside Referly first, because it has your program's own tracking script filled in. In your dashboard, open **Settings** from the left sidebar, select **Integrations**, find the **Pickaxe** card, and select **Instructions**.
+
+{/* TODO screenshot: pickaxe-instructions-dialog — upload it in the local Documentation Agent */}
+
+<Note>
+  Pickaxe has renamed things more than once, moving from `pickaxeproject.com` to `pickaxe.co` and using both "Studio" and "Portal" for the thing you sell access to. The tab names below match their current [user manual](https://pickaxe.co/post/pickaxe-user-manual-how-to-do-everything-in-pickaxe). If a label has shifted since, you're looking for the place that holds custom header code and the place that connects Stripe.
+</Note>
+
+## Add the Referly tracking script to your portal
+
+Unlike some platforms, Pickaxe lets you add your own code to the pages it hosts. That's what makes this integration so short: the script can live right where your customers actually are.
+
+Copy the script from **Step 1: Tracking clicks** in the instructions window. Your program's own identifier is already filled in where `YOUR_PROGRAM_ID` appears here:
+
+```html
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+There's also a **Using Google Tag Manager** tab in the instructions window if you'd rather load it that way:
+
+```html
+<script>
+  var pushLap = document.createElement('script');
+  pushLap.src = "https://referly.so/affiliate-tracker.js";
+  pushLap.setAttribute('data-affiliate', '');
+  pushLap.setAttribute('data-program-id', 'YOUR_PROGRAM_ID');
+  document.head.appendChild(pushLap);
+</script>
+```
+
+{/* TODO screenshot: pickaxe-tracking-script — upload it in the local Documentation Agent */}
+
+Now put it into Pickaxe:
+
+<Steps>
+  <Step title="Open your portal">
+    In Pickaxe, open the portal you sell access to.
+  </Step>
+  <Step title="Go to the Design tab">
+    Select the **Design** tab. Alongside the colours, fonts, and logo settings, this is where Pickaxe lets you add custom code.
+  </Step>
+  <Step title="Find the custom code section">
+    Look for the option to add **custom code** in the **header**. This is the same place people put analytics and ad tracking.
+  </Step>
+  <Step title="Paste the script and save">
+    Paste the tracking script into the header code box and save. Use the header rather than the footer, so tracking starts as early as possible in the page load.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: pickaxe-design-custom-code — upload it in the local Documentation Agent */}
+
+That's the only thing you add to Pickaxe. From here, when a referred visitor lands on your portal, the script quietly hands the referral to Pickaxe, and Pickaxe carries it into the Stripe checkout when they pay. You don't have to wire any of that up.
+
+### Where your affiliates should send traffic
+
+The script lives on your portal, so affiliate links should point at your portal.
+
+| Where affiliates link | Tracked? | Notes |
+| --- | --- | --- |
+| Your portal on `studio.pickaxe.co` | Yes | The script is in your Design tab, so it runs there |
+| Your portal on your own custom domain | Yes | Same thing, with your branding |
+| Your own website, which then links to your portal | Yes, if the script is on both | Add the script to your website as well, so the click is caught where it happens |
+| Your portal embedded inside another site | Test it first | Embeds behave differently, so run the end-to-end test before relying on it |
+
+<Warning>
+  If affiliates send traffic to your marketing site first and people click through to your portal from there, put the tracking script on your marketing site too. A visitor who is only recognised once they reach the portal is fine, but one who is never recognised at all can't be credited.
+</Warning>
+
+Affiliate links look like `https://your-portal-address/?ref=their-code`. Your affiliates get these from their own dashboard, so they don't need to build them by hand.
+
+## Connect Stripe to Referly
+
+Pickaxe takes payment through Stripe, and Stripe is where Referly reads your revenue from. Without this step you'll see clicks and nothing else.
+
+In the instructions window, go to **Step 2: Connect Stripe to start tracking sales and referrals** and select **Connect Stripe**. You'll be sent to Stripe to authorise the connection, then returned to Referly.
+
+{/* TODO screenshot: pickaxe-connect-stripe — upload it in the local Documentation Agent */}
+
+<Warning>
+  Use the same Stripe account that Pickaxe charges through. If Pickaxe is taking payments into one account and Referly is watching another, no payment will ever match a referral, and nothing will look obviously broken while you lose every commission.
+</Warning>
+
+To check which account Pickaxe uses, open the **Access** tab in Pickaxe, open the access group you charge for, and look at **Monetization and Upgrade**, where your Stripe connection is shown. Pickaxe's own walkthrough is [How to set up monetization in Pickaxe Studio with Stripe](https://pickaxe.co/post/how-to-set-up-monetization-in-pickaxe-studio-with-stripe).
+
+Referly also follows whichever Stripe mode your program is set to. If your program is in test mode, live payments won't be recorded, and the other way round. Worth checking before you test. For more on what Referly reads from Stripe, see [the Stripe integration](/help-center/integrations/stripe).
+
+## Test it end to end
+
+Run a real payment through before telling affiliates the integration is live.
+
+<Steps>
+  <Step title="Grab a real affiliate link">
+    Open **Affiliates** in the left sidebar of Referly, pick an affiliate, and copy their referral link.
+  </Step>
+  <Step title="Open it in a private window">
+    Use a private or incognito window so no old tracking interferes. Land on your portal and let the page finish loading. This is the moment the referral is recorded.
+  </Step>
+  <Step title="Sign up and pay for a plan">
+    Go through your normal sign-up and buy access to a paid group, using an email address you haven't used before. If you can, use a low-priced plan or a full-discount coupon rather than a live card charge.
+  </Step>
+  <Step title="Check Referly">
+    Open **Customers** in the left sidebar. The buyer should appear within a minute, credited to the affiliate whose link you used, with the amount they paid and its commission.
+  </Step>
+  <Step title="Check the amount and currency">
+    Compare the figure against what Stripe actually took. They should match.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: pickaxe-test-sale — upload it in the local Documentation Agent */}
+
+<Check>
+  When the test payment appears under **Customers** against the right affiliate with the right amount, you're done.
+</Check>
+
+Refund the test payment in Stripe and remove the test referral in Referly so your reports start clean.
+
+## How Referly decides who gets the credit
+
+When a visitor lands on your portal through an affiliate link, Referly records the click and stores it in their browser for the length of your cookie window. It also hands that referral to Pickaxe straight away, so Pickaxe has it ready.
+
+When the visitor pays, Pickaxe attaches the referral to the Stripe payment it creates. Referly, watching your connected Stripe account, sees the payment arrive with a referral on it and credits the affiliate behind it. Because the customer is now linked to that affiliate in Stripe, every renewal, refund, and cancellation that follows is matched up too.
+
+Once someone is credited to an affiliate, that credit stays with them. Later clicks from other affiliates don't take it over.
+
+## Limitations to be aware of
+
+- **Free sign-ups aren't recorded.** Nothing reaches Referly until a payment is made, so you can't pay affiliates per lead through this integration.
+- **The visitor must pay in the browser they clicked in.** Clicking on a phone and paying on a laptop won't match.
+- **The Stripe account has to be shared.** Pickaxe and Referly must be pointed at the same one.
+- **Usage inside your portal is invisible.** Referly sees payments, not which tools people used or how often.
+- **Plan upgrades appear as payments**, not as plan changes, so your reports show the money rather than the movement between tiers.
+- **Embedded portals need testing.** The tested setup is a portal hosted by Pickaxe or on your own custom domain. If you embed yours elsewhere, run the end-to-end test before relying on it.
+- **Ad blockers and strict privacy settings** stop the tracking script for a small share of visitors, as with any affiliate tool.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Clicks are counted but no sales ever appear">
+    Almost always the Stripe connection. Check that Referly is connected to the same Stripe account Pickaxe charges through, and that your program's test-or-live mode matches the payments you're expecting.
+  </Accordion>
+  <Accordion title="Nothing is tracked at all, not even clicks">
+    The script isn't running on your portal. Open the **Design** tab in Pickaxe, confirm the tracking script is in the header code box, and confirm you saved. Then load your portal with an affiliate link on the end and check that a click shows up in Referly.
+  </Accordion>
+  <Accordion title="Sales appear but aren't credited to any affiliate">
+    The payment reached Referly without a referral attached, which means the visitor wasn't recognised on the portal before they paid. Check the script is in the header rather than the footer, and that affiliates are linking to a page that has it.
+
+    If people arrive on your marketing site first and click through to the portal, the script needs to be on both.
+  </Accordion>
+  <Accordion title="The wrong affiliate got the credit">
+    The customer most likely visited on another affiliate's link earlier. The first affiliate to refer someone keeps the credit for the length of your cookie window. You can move a referral to a different affiliate from the customer's page, described in [managing referred customers](/help-center/manage/customers/overview).
+  </Accordion>
+  <Accordion title="Renewals aren't producing commission">
+    Check your commission settings rather than the integration. Recurring commission is something you turn on in your program, and it's covered in [the commissions overview](/help-center/getting-started/commissions/overview).
+  </Accordion>
+  <Accordion title="I refunded a customer but the commission is still there">
+    Refunds are recognised, but how the commission is handled depends on your settings and whether the reward has already been approved or paid out. See [handling refunds](/help-center/manage/rewards/refunds).
+  </Accordion>
+</AccordionGroup>
+
+Still stuck? [Book an integration call](https://www.referly.so/book-integration-call) and we'll go through your setup with you.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Stripe" icon="stripe" href="/help-center/integrations/stripe" arrow>
+    Connect the Stripe account Pickaxe charges through.
+  </Card>
+  <Card title="Commissions overview" icon="percent" href="/help-center/getting-started/commissions/overview" arrow>
+    Set recurring commission for subscription revenue.
+  </Card>
+  <Card title="Refunds" icon="rotate-left" href="/help-center/manage/rewards/refunds" arrow>
+    Handle commission on money you've given back.
+  </Card>
+  <Card title="All integrations" icon="puzzle-piece" href="/help-center/integrations/overview" arrow>
+    See every platform Referly connects to.
+  </Card>
+</Columns>

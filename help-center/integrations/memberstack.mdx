@@ -1,6 +1,363 @@
 ---
 title: "Memberstack"
-description: "Track Memberstack members."
+description: "Connect Memberstack to Referly: add the tracking script, create the pushlapaffiliateid custom field, pass the referral into Memberstack, connect Stripe, and add the member.updated webhook to credit affiliates for member sign-ups and paid memberships."
+keywords: ["Memberstack affiliate program", "Memberstack Referly integration", "Memberstack affiliate tracking", "Memberstack webhook member.updated", "pushlapaffiliateid custom field", "Webflow Memberstack affiliate tracking", "Memberstack Stripe affiliate commissions", "track Memberstack signups affiliates"]
 ---
+[Memberstack](https://www.memberstack.com/) handles logins, gated content, and paid memberships on your site, and it takes payments through Stripe. Connecting it to Referly means that when someone arrives from an affiliate link and becomes a member, that member is credited to the affiliate who sent them, and every payment they later make turns into commission.
 
-{/* TODO: Write this article. */}
+This is a two-part setup, and both parts matter. Referly's tracking script watches the visit and remembers which affiliate sent it. Memberstack tells Referly when a member signs up, so the two can be joined together. Payments come from your Stripe account. Set up only one part and you'll see clicks with no members, or members with no commission.
+
+Plan about 30 minutes. You'll be moving between three places: your Referly dashboard, your Memberstack dashboard, and wherever you edit your site's code (usually Webflow).
+
+{/* TODO screenshot: memberstack-integration-card — upload it in the local Documentation Agent */}
+
+## What this integration can and can't track
+
+Read this before you start, so you know what to expect in your reports.
+
+| What you want to track | Does it work? | Where it comes from |
+| --- | --- | --- |
+| Link clicks and visits | Yes | The Referly tracking script on your site |
+| Free member sign-ups | Yes | Memberstack, once the member is signed in on your site |
+| Members on a free plan or free trial | Yes, as a referred customer with no revenue yet | Memberstack |
+| Paid memberships and one-time payments | Yes | Your connected Stripe account |
+| Recurring monthly and yearly renewals | Yes | Your connected Stripe account |
+| Refunds and cancellations | Yes | Your connected Stripe account |
+| Coupon-based referrals with no link click | No | Not supported through Memberstack |
+| Members created by you in the Memberstack dashboard | No | The member never visits your site in a browser, so there's nothing to credit |
+| Members imported from a spreadsheet or created through Memberstack's admin tools | No | Same reason |
+| Plan upgrades and downgrades as separate events | No | Only the resulting payment is recorded |
+
+<Info>
+  The Memberstack side of this integration records the **sign-up** and nothing else. Every number with a currency attached to it comes from Stripe. That's why connecting Stripe is a required step, not an optional one.
+</Info>
+
+## Before you start
+
+You'll need:
+
+- A Referly program that's live, with at least one affiliate you can test with. If you haven't set that up yet, start with [setting up your program](/help-center/getting-started/set-up-program/affiliate-program-setup).
+- Admin access to your Memberstack dashboard.
+- Access to your site's custom code. On Webflow that means you need permission to edit **Site settings**.
+- A Stripe account already connected to Memberstack, with your membership plans and prices set up there.
+
+## Open the Memberstack instructions in Referly
+
+Everything you copy and paste in this guide is pre-filled with your program's own details inside Referly, so start there rather than typing values by hand.
+
+In your Referly dashboard, open **Settings** from the left sidebar, then select **Integrations**. Find the card titled **Memberstack With Stripe** and select **Instructions**.
+
+{/* TODO screenshot: memberstack-instructions-dialog — upload it in the local Documentation Agent */}
+
+Keep this window open in a browser tab for the rest of the setup. It contains your tracking script, your program's own webhook address, and the exact custom field name, all filled in for you. The card is marked **Medium** difficulty because it involves pasting code, but you don't need a developer for it.
+
+## Add the Referly tracking script to your site
+
+The tracking script is what notices that a visitor arrived from an affiliate link. It drops a small marker in their browser that lasts for the length of your cookie window, so a visitor who clicks today and signs up next week is still credited correctly.
+
+Copy the script from **Step 1: Tracking clicks** in the instructions window. It looks like this, with your own program's identifier already in place of `YOUR_PROGRAM_ID`:
+
+```html
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+The instructions window also has a **Using Google Tag Manager** tab if you prefer to load it that way:
+
+```html
+<script>
+  var pushLap = document.createElement('script');
+  pushLap.src = "https://referly.so/affiliate-tracker.js";
+  pushLap.setAttribute('data-affiliate', '');
+  pushLap.setAttribute('data-program-id', 'YOUR_PROGRAM_ID');
+  document.head.appendChild(pushLap);
+</script>
+```
+
+{/* TODO screenshot: tracking-script-copy — upload it in the local Documentation Agent */}
+
+Now paste it into your site. Pick the tab that matches how your site is built.
+
+<Tabs>
+  <Tab title="Webflow">
+    Most Memberstack sites are built in Webflow. Add the script site-wide, not page by page, because affiliates link to all sorts of pages.
+
+    <Steps>
+      <Step title="Open your site settings">
+        In the Webflow Designer, open **Site settings**, then go to the **Custom code** tab.
+      </Step>
+      <Step title="Paste into Head code">
+        Paste the script into the **Head code** field. Don't add any `html`, `head`, or `body` tags around it, as Webflow warns that this breaks the page layout.
+      </Step>
+      <Step title="Save and publish">
+        Save your changes, then publish the whole site. Custom code only runs on the published site, never in the Designer preview.
+      </Step>
+    </Steps>
+
+    Webflow's own walkthrough is [Custom code in head and body tags](https://help.webflow.com/hc/en-us/articles/33961357265299-Custom-code-in-head-and-body-tags).
+  </Tab>
+  <Tab title="Any other site">
+    Paste the script into the `head` section of every page, ideally through whatever site-wide template or layout file your site uses so you only have to do it once. If you use a page builder, look for a setting named "header scripts", "custom code", or "head code".
+
+    It has to be on every page an affiliate might link to, and on your sign-up page. If it's missing from the page where the visitor lands, that visit is never counted.
+  </Tab>
+  <Tab title="Google Tag Manager">
+    Create a new **Custom HTML** tag, paste in the Google Tag Manager version of the snippet, and set the trigger to **All Pages** (or **Initialization - All Pages** so it runs as early as possible). Publish the container.
+
+    Test in preview mode first: if consent management blocks the tag on first visit, referral clicks will go uncounted.
+  </Tab>
+</Tabs>
+
+<Warning>
+  Add the script to every domain your affiliates send traffic to. If your marketing site and your members area sit on different domains, both need it.
+</Warning>
+
+## Create the custom field in Memberstack
+
+Memberstack needs somewhere to store which affiliate sent a member. That's what this field is for. The name has to match exactly, in all lowercase with no spaces or dashes, or Referly won't find it.
+
+<Steps>
+  <Step title="Open Custom Fields">
+    In your Memberstack dashboard, go to **Members**, then select **Custom Fields** at the top of the page.
+  </Step>
+  <Step title="Add a custom field">
+    Select **Add a custom field** and enter this as the field name:
+
+    ```text
+    pushlapaffiliateid
+    ```
+  </Step>
+  <Step title="Hide it from your members">
+    Set **Hide from Pre-built UI** to **Yes**. This is a behind-the-scenes value, and there's no reason for members to see or edit it on their profile. If your version of the dashboard doesn't show that option on the field itself, scroll to the bottom of the Custom Fields panel, open **Pre-built UI Settings**, and select the eye icon next to the field to hide it.
+  </Step>
+  <Step title="Save">
+    Save the field. It now appears as a column you can show on your **Members** page, which is handy later for checking that values are actually landing.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: memberstack-custom-field — upload it in the local Documentation Agent */}
+
+<Note>
+  Keep the name exactly as written above. `pushLapAffiliateId`, `pushlap_affiliate_id`, and `pushlapaffiliateID` all fail silently: Memberstack accepts them, but Referly never sees the value and no referral is created.
+</Note>
+
+For more on how Memberstack stores this kind of data, see their article on [Custom Fields and Inputs](https://docs.memberstack.com/hc/en-us/articles/7389502579355-Custom-Fields-Inputs).
+
+## Pass the referral into Memberstack
+
+This is the piece that joins the two systems. When someone lands on your site from an affiliate link, the Referly script works out who referred them. This next snippet takes that answer and writes it into the member's `pushlapaffiliateid` field as soon as they're signed in.
+
+Copy this from **Step 3: Send Affiliate ID to Memberstack** in the instructions window, and paste it into your site the same way you pasted the tracking script, on every page that has Memberstack on it:
+
+```html
+<script>
+  function injectPushLapAffiliateId() {
+    const pushLapAffiliateId = window.affiliateId;
+    if (!pushLapAffiliateId) return;
+
+    const memberstack = window.$memberstackDom;
+
+    memberstack.onAuthChange(async (member) => {
+      if (
+        member &&
+        member.data?.customFields?.pushlapaffiliateid !== pushLapAffiliateId
+      ) {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        try {
+          await window.$memberstackDom.updateMember({
+            customFields: { pushlapaffiliateid: pushLapAffiliateId },
+          });
+        } catch (error) {}
+      }
+    });
+
+    memberstack.getCurrentMember().then((member) => {
+      if (
+        member?.data &&
+        member.data?.customFields?.pushlapaffiliateid !== pushLapAffiliateId
+      ) {
+        memberstack
+          .updateMember({
+            customFields: { pushlapaffiliateid: pushLapAffiliateId },
+          })
+          .catch(() => {});
+      }
+    });
+  }
+
+  window.addEventListener("affiliate_referral_ready", injectPushLapAffiliateId);
+</script>
+```
+
+Two things to get right:
+
+- **Order matters.** This snippet has to load after both the Referly tracking script and the Memberstack script, so put it last in your **Head code** field, underneath the tracking script. It waits for Referly to finish working out the referral before it does anything, and it does nothing at all for visitors who didn't come from an affiliate link.
+- **The Memberstack script must be present.** This uses Memberstack's own front-end tools to update the member. On Webflow, Memberstack adds its script for you when the integration is enabled. On a custom site, make sure you've installed Memberstack's DOM package first, following their [Vanilla JS guide](https://docs.memberstack.com/hc/en-us/articles/11217223809819-Vanilla-JS-Guide).
+
+<Note>
+  This uses Memberstack 2.0. If you're still on Memberstack 1.0, the member tools this relies on don't exist and the snippet won't run. Memberstack has a [guide to converting 1.0 code to 2.0](https://docs.memberstack.com/hc/en-us/articles/7253211946523-Converting-Memberstack-1-0-Code-to-2-0-Code).
+</Note>
+
+The short delay in the snippet is deliberate. Memberstack takes a moment to finish creating a brand new member, and writing to the field too early would fail. Leave it in.
+
+## Connect Stripe to Referly
+
+Memberstack takes payments through Stripe, which means Referly reads your revenue from Stripe directly. Without this step you'll see referred members appear with no money attached to them, and your affiliates earn nothing.
+
+In the instructions window, go to **Step 4: Connect Stripe** and select **Connect Stripe**. You'll be sent to Stripe to authorise the connection, then returned to Referly.
+
+{/* TODO screenshot: connect-stripe — upload it in the local Documentation Agent */}
+
+Use the same Stripe account that Memberstack is connected to. If Memberstack is charging through one Stripe account and Referly is watching a different one, no payment will ever match a referral. For the full picture on what Referly reads from Stripe, see [the Stripe integration](/help-center/integrations/stripe).
+
+<Warning>
+  Referly follows whichever Stripe mode your program is set to. If your program is in test mode, live payments won't be recorded, and if it's in live mode, test payments won't be either. Check this before you start testing.
+</Warning>
+
+## Add the Referly webhook in Memberstack
+
+The last connection to make: Memberstack has to tell Referly when a member's referral information has been filled in.
+
+<Steps>
+  <Step title="Open Webhooks">
+    In your Memberstack dashboard, select **Dev Tools** in the side menu, then **Webhooks**.
+  </Step>
+  <Step title="Add an endpoint">
+    Select **Add Endpoint** (in some versions it reads **Add New Endpoint**).
+  </Step>
+  <Step title="Paste your address">
+    Copy the address shown under **Step 5** in the Referly instructions window and paste it into the **Endpoint URL** field. It's unique to your program and looks like this:
+
+    ```text
+    https://www.referly.so/api/webhooks/memberstack?program_id=YOUR_PROGRAM_ID
+    ```
+
+    Copy it from Referly rather than typing it. The part after `program_id=` is what tells Referly which program the members belong to, and one wrong character means nothing gets recorded.
+  </Step>
+  <Step title="Name it">
+    In the description field, enter `Referly Integration` so you recognise it later.
+  </Step>
+  <Step title="Choose the event">
+    Scroll to **Message Filtering** and select this one event:
+
+    ```text
+    member.updated
+    ```
+
+    Leave everything else unselected. Referly ignores other events, and sending them only adds noise.
+  </Step>
+  <Step title="Save the endpoint">
+    Save it. Memberstack starts sending events immediately.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: memberstack-webhook-endpoint — upload it in the local Documentation Agent */}
+
+<Note>
+  `member.updated` is the right event, not `member.created`. A brand new member exists for a moment before the referral is written into their profile, so it's the update, not the creation, that carries the information Referly needs.
+</Note>
+
+Memberstack's own reference is their [Webhooks article](https://docs.memberstack.com/hc/en-us/articles/7329156946587-Webhooks), which also has a built-in tester you can use to inspect what's being sent.
+
+## Test it end to end
+
+Don't take it on trust. Run one real referral through the whole path before you tell your affiliates it's live.
+
+<Steps>
+  <Step title="Get a real affiliate link">
+    Open **Affiliates** in the left sidebar, choose any affiliate, and copy their referral link. It looks like `https://your-site.com/?ref=their-code`.
+  </Step>
+  <Step title="Open it in a clean browser">
+    Use a private or incognito window so no old tracking data interferes. Visit the link and wait for the page to fully load.
+  </Step>
+  <Step title="Sign up as a new member">
+    Go through your normal Memberstack sign-up, using an email address you haven't used before. Stay on the site after signing up and give it a few seconds.
+  </Step>
+  <Step title="Check the member in Memberstack">
+    In your Memberstack dashboard, open **Members** and find the member you just created. Show the `pushlapaffiliateid` column, or open the member's profile. There should be a value in that field. If it's empty, the connection between your site and Memberstack isn't working, and nothing further will happen.
+  </Step>
+  <Step title="Check the referral in Referly">
+    In Referly, open **Customers** from the left sidebar. Your test member should appear there within a minute or so, credited to the affiliate whose link you used, with **Memberstack** shown as the source.
+  </Step>
+  <Step title="Make a test payment">
+    Buy a paid membership with the same member. Once Stripe processes it, the amount and its commission appear against that same customer, and the affiliate's balance goes up.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: test-referral-in-customers — upload it in the local Documentation Agent */}
+
+<Check>
+  When your test member appears under **Customers** with the right affiliate next to them, and a payment shows up against them afterwards, the integration is working end to end.
+</Check>
+
+Once you're happy, delete the test member in Memberstack and remove the test referral in Referly so your reports stay clean.
+
+## How Referly decides who gets the credit
+
+Useful to understand when you're looking at an unexpected result.
+
+When a visitor arrives on an affiliate link, Referly records that click and remembers it in their browser for the length of your cookie window. When they sign up, the snippet on your site writes that specific click into their Memberstack profile, and Memberstack passes it to Referly. Referly then looks up that exact click and credits the affiliate behind it.
+
+If the click can't be found, Referly falls back to matching the value against your affiliates' referral codes and credits whoever owns that code. That fallback is what keeps things working when a visitor clears their cookies mid-visit or takes an unusual path through your site.
+
+Referly also stores the member's Stripe customer reference at this point. That's the thread that connects every later payment, renewal, and refund back to the same referral, without needing Memberstack to tell it anything else.
+
+Once a member is credited to an affiliate, that credit sticks. Later clicks from other affiliates don't take it over.
+
+## Limitations to be aware of
+
+- **A member must exist in a browser to be tracked.** Members you create yourself in the Memberstack dashboard, import from a file, or create through Memberstack's admin tools never pass through your site, so there's nothing to attribute. Add those referrals by hand instead, following [adding a sale](/help-center/manage/customers/add-a-sale).
+- **The visitor has to sign up on the device they clicked from.** Someone who clicks on their phone and signs up on their laptop won't be matched.
+- **No revenue comes from Memberstack.** Sign-ups arrive with no value attached. All amounts, renewals, and refunds come from Stripe, which is why the Stripe connection is required.
+- **Plan changes aren't recorded as events.** If a member moves from a free plan to a paid one, Referly sees the payment, not the plan change.
+- **Free-plan members show as referred customers with no revenue.** That's correct behaviour, and it's how you measure sign-up volume per affiliate before anyone pays.
+- **Ad blockers and strict privacy settings can block the tracking script.** A small share of clicks will always go uncounted for this reason, whatever tool you use.
+- **Coupon-based tracking isn't available here.** Someone who never clicks a link and only uses a code won't be matched through Memberstack. If you rely on codes, see [coupons and promo codes](/help-center/engage/coupons/overview).
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The custom field stays empty in Memberstack">
+    Almost always one of three things. Check that the field is named exactly `pushlapaffiliateid` in lowercase. Check that both snippets are on the page where the member signs up, and that the referral snippet comes after the tracking script. Then check that you published your site after adding them, since custom code doesn't run in the Webflow Designer preview.
+
+    Also make sure you actually arrived on an affiliate link in that browser session. Without one, the snippet correctly does nothing.
+  </Accordion>
+  <Accordion title="The field is filled in but no referral appears in Referly">
+    The webhook is the likely culprit. In Memberstack, open **Dev Tools**, then **Webhooks**, and check your endpoint: confirm the address matches the one in the Referly instructions window exactly, and that `member.updated` is selected under **Message Filtering**. Memberstack keeps a log of recent deliveries there, so you can see whether anything was sent and what came back.
+  </Accordion>
+  <Accordion title="Referrals appear but with no revenue">
+    Stripe isn't connected, or it's the wrong Stripe account. Go back to **Step 4: Connect Stripe** in the instructions window and connect the same account Memberstack charges through. Also check whether your program is in test mode while your payments are live, or the other way round.
+  </Accordion>
+  <Accordion title="Clicks are counted but no members are ever created">
+    The tracking script is working and the referral snippet isn't. Check that Memberstack's own script is loading on the same pages, and that your site is on Memberstack 2.0 rather than 1.0.
+  </Accordion>
+  <Accordion title="The wrong affiliate got the credit">
+    Check whether the customer had visited on another affiliate's link earlier. The first affiliate to refer someone keeps the credit for the length of your cookie window. You can move a referral to a different affiliate from the customer's own page, described in [managing referred customers](/help-center/manage/customers/overview).
+  </Accordion>
+  <Accordion title="Everything worked in testing and then stopped">
+    The usual cause is a site republish that dropped the custom code, or a change to your Webflow **Head code**. Re-check both snippets are still there, and that nothing was pasted above them that fails and stops the rest from running.
+  </Accordion>
+</AccordionGroup>
+
+If you're still stuck, our team can look at your setup with you. [Book an integration call](https://www.referly.so/book-integration-call) and we'll go through it together.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Stripe" icon="stripe" href="/help-center/integrations/stripe" arrow>
+    Connect the Stripe account Memberstack charges through.
+  </Card>
+  <Card title="All integrations" icon="puzzle-piece" href="/help-center/integrations/overview" arrow>
+    See every platform Referly connects to.
+  </Card>
+  <Card title="Universal integration" icon="code" href="/help-center/integrations/universal" arrow>
+    Track a platform that isn't listed.
+  </Card>
+  <Card title="Managing referred customers" icon="users" href="/help-center/manage/customers/overview" arrow>
+    Review, edit, and reassign the referrals that come in.
+  </Card>
+</Columns>

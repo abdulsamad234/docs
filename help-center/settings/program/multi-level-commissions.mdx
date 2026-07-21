@@ -1,6 +1,81 @@
 ---
 title: "Multi-level commissions"
-description: "Pay affiliates on the affiliates they recruit."
+description: "Set up multi-level commissions in Referly so affiliates earn on sales made by affiliates they recruited. Covers the enable switch, Level 0, Level 1 and Level 2 upline rates, how the rate is calculated, and what it costs you."
+keywords: ["multi-level commissions", "multi-tier affiliate commissions", "MLM affiliate program", "upline commission", "second upline", "affiliate recruits affiliate", "downline affiliates", "two-tier affiliate program", "affiliate team commission"]
 ---
+Your affiliates know other people who'd be good affiliates. Multi-level commissions give them a reason to actually introduce them: when someone they recruited makes a sale, they earn a slice of it too. Your program starts recruiting on your behalf, which is usually cheaper and warmer than recruiting cold.
 
-{/* TODO: Write this article. */}
+To set it up, go to **Settings**, open **Program details**, and select **Multi-level commissions**.
+
+{/* TODO screenshot: mlm-page-overview — upload it in the local Documentation Agent */}
+
+## Turn it on
+
+At the top of the page is **Enable Multi-Level Marketing Commissions**, with a line explaining it: "When enabled, affiliates can refer other affiliates to your program to become part of their 'team' and earn a commission when they make sales."
+
+It's off until you turn it on, and the rest of the page stays hidden until you do. Multi-level commissions are a paid feature — on a plan that doesn't include it, selecting the switch opens an upgrade prompt rather than turning it on.
+
+## Understand the levels before you set rates
+
+Referly describes the chain in levels, and reading them in order is the fastest way to understand what you're about to pay.
+
+{/* TODO screenshot: mlm-levels — upload it in the local Documentation Agent */}
+
+**Level 0**, badged **Direct Referrer**, is "The affiliate who directly referred the customer" — the person who actually made the sale. There's nothing to set here. Their rate shows as **(Commission Plan Rate)** because they earn whatever their commission plan already says they earn. This level exists on the page purely to show you where the chain starts.
+
+**Level 1**, badged **Upline**, is "The affiliate who referred the Level 0 affiliate" — the person who brought the seller into your program.
+
+**Level 2**, badged **Second Upline**, is "The affiliate who referred the Level 1 affiliate" — one more step up the chain.
+
+Two upline levels is the maximum. Once you've added both, the button to add another disappears.
+
+## Add a level and set its rate
+
+Select **Add Level 1**. A card appears with a **Rate** field and a `%` suffix, starting at 5%. Add a second and the button becomes **Add Level 2**, working the same way. The trash icon on a card removes that level; removing Level 1 removes Level 2 with it, since there can't be a second upline without a first.
+
+{/* TODO screenshot: mlm-add-level — upload it in the local Documentation Agent */}
+
+Now the part that catches people out.
+
+<Warning>
+The rate is a percentage of **what the selling affiliate earned**, not a percentage of the sale. If your commission plan pays 20% and a referred customer spends $100, the seller earns $20 — and a Level 1 rate of 5% pays their upline 5% of that $20, which is $1. It is not 5% of $100.
+</Warning>
+
+## Know what it costs you
+
+Multi-level payouts are additional money you pay out. They don't come out of the selling affiliate's commission — Referly is explicit about this on the page: "You're not taking away from C's earnings. These commissions are additional payments from you to reward your affiliate network growth. So make sure you structure it in a way where you're still profitable after all the commissions are paid out."
+
+So it's worth doing the arithmetic before you save. Using the example above, a $100 sale with a 20% base rate, 5% at Level 1, and 5% at Level 2 costs you $20 + $1 + $1 = $22 rather than $20. That's a modest premium for a recruiting channel that runs itself, but it stacks up across every sale, and it's on top of your existing margin, not carved out of it.
+
+The page includes a worked **Example Scenario** along the same lines: Affiliate A refers Affiliate B, Affiliate B refers Affiliate C, Affiliate C makes a sale — and both B and A earn a percentage of C's commission on top of what C earns.
+
+{/* TODO screenshot: mlm-explanation-panel — upload it in the local Documentation Agent */}
+
+## How affiliates recruit
+
+Once the feature is on, affiliates can refer other people into your program and those recruits become part of their team. Anyone who joins through an affiliate is linked to them from then on, which is what lets Referly work out who sits at Level 1 and Level 2 when a sale comes in.
+
+Because the chain is built at sign-up, turning multi-level commissions on doesn't retroactively rearrange your existing affiliates into teams — it starts paying on the relationships Referly can see.
+
+## Save
+
+A **Save Changes** button appears at the bottom right once you've changed anything. Select it and you'll see **Multi-level commission settings saved successfully**. If you don't see the button, there's nothing pending.
+
+Turning the main switch back off stops multi-level payouts without you having to delete the levels you configured.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Commission plans" icon="percent" href="/help-center/getting-started/commissions/overview" arrow>
+    Set the base rate that every multi-level payout is calculated from.
+  </Card>
+  <Card title="General program settings" icon="sliders" href="/help-center/settings/program/general" arrow>
+    Your program's default plan, currency, and approval rules.
+  </Card>
+  <Card title="Affiliate groups" icon="users" href="/help-center/settings/program/affiliate-groups" arrow>
+    Give different segments of affiliates their own terms.
+  </Card>
+  <Card title="Payout settings" icon="wallet" href="/help-center/settings/program/payout-settings" arrow>
+    Decide when all these earnings actually get paid out.
+  </Card>
+</Columns>

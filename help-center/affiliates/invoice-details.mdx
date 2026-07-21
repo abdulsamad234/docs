@@ -1,6 +1,112 @@
 ---
 title: "Invoice details"
-description: "Provide the details your invoices need."
+description: "Add the billing and tax details that appear on your affiliate payout invoices: entity type, billing address, EU VAT number with VIES verification, Tax ID, and how VAT is applied."
+keywords: ["affiliate invoice details", "self-billing invoice affiliate", "affiliate VAT number", "VIES verification", "reverse charge affiliate commission", "affiliate tax ID", "download payout invoice", "affiliate billing address", "EU VAT affiliate payout"]
 ---
+When a program pays you, it produces an invoice for that payout on your behalf. Your invoice details are what goes on it: who you are, where you're based, and your tax number if you have one. Filling them in once keeps your paperwork clean and lets the program work out the right tax treatment for your commission.
 
-{/* TODO: Write this article. */}
+Open **Settings** in the left sidebar of your affiliate portal, choose the **Payouts** tab, then **Invoice Details**.
+
+<Note>
+  Some programs require these details before they'll pay you at all. Others don't. Filling them in is worth doing either way, since the invoice is your own record of what you earned.
+</Note>
+
+## Choose your entity type
+
+The first panel, **Entity Type**, asks whether you're operating as an **Individual** or a **Business**. Pick the one that matches how you actually invoice.
+
+This isn't only a label on the invoice. It changes how tax is applied to your payouts, so choose it before you fill in anything else.
+
+{/* TODO screenshot: invoice-entity-type — upload it in the local Documentation Agent */}
+
+## Fill in your billing information
+
+The **Billing Information** panel is your address and contact details as they should appear on an invoice. Every field marked with a red asterisk has to be filled in before you can save:
+
+- **Email on invoice** — where invoices and billing messages are sent. It can be different from the email you sign in with.
+- **Name or Company Name** — your own name if you chose Individual, or your registered company name if you chose Business.
+- **Address**, **City**, **State/Province**, and **ZIP/Postal Code** — your billing address.
+- **Country** — pick from the list. This decides your tax treatment, so make sure it's the country you're actually based in.
+
+{/* TODO screenshot: invoice-billing-information — upload it in the local Documentation Agent */}
+
+Select **Save Changes** at the bottom. If anything required is still empty, you'll be told to fill in all required fields rather than the page saving quietly.
+
+## Add your tax number
+
+What you see next depends on where you and the program are based.
+
+### VAT Number
+
+If you or the program are in the EU, a **VAT Number** panel appears. Enter your number starting with the two-letter country code, for example `NL123456789B01`.
+
+As you type, the number is checked against the EU VIES registry:
+
+- A **green tick** means it was found and verified.
+- An **amber warning** means the format doesn't look right, the number isn't in the registry, or the registry couldn't be reached. Hover the warning to see which, and use the retry button next to it to check again.
+
+{/* TODO screenshot: vat-number-vies-check — upload it in the local Documentation Agent */}
+
+If you selected **Business** and your country is in the EU, a VAT number is required — you won't be able to save without one. As an **Individual**, you can leave it blank.
+
+### Tax ID
+
+If neither you nor the program are in the EU, you'll see a **Tax ID** panel instead. It's optional, and adding your tax identification number here puts it on your invoices.
+
+## How tax is worked out
+
+You don't calculate anything yourself. The treatment comes from three things: the program's country, your country, and whether you're an Individual or a Business.
+
+When the program is based in the EU:
+
+| Your situation | What happens |
+| --- | --- |
+| **Individual**, anywhere | No VAT applies. |
+| **Business** in the same country as the program | That country's standard VAT rate is added on top of your commission. |
+| **Business** in a different EU country | VAT is reverse charged, so 0% is added and the invoice notes Article 196 of the VAT Directive. This is why an EU business needs a valid VAT number. |
+| **Business** outside the EU | The payout is outside the scope of EU VAT. |
+
+When the program is based outside the EU, no EU VAT is worked out on your commission.
+
+<Note>
+  This makes invoicing easier — it isn't tax advice. Check with your accountant that the treatment matches your own obligations.
+</Note>
+
+## Download an invoice for a payout
+
+Open **Payouts** in the left sidebar and select a cash payout, then the **Payout Details** tab. Under **Payout breakdown** you'll see the commission, any VAT, any fees, and the total, followed by **Download Invoice** to save it as a PDF.
+
+The details on that invoice are the ones from this page, exactly as they were when the payout was made — so fill them in before your first payout rather than after.
+
+{/* TODO screenshot: payout-invoice-download — upload it in the local Documentation Agent */}
+
+Invoices are produced for cash payouts. Coupons and store credits don't generate one. See [Non-cash payouts](/help-center/affiliates/non-cash-payouts).
+
+## If your details are missing
+
+When a program requires invoice information and yours is incomplete, you'll be prompted to finish it, and your payouts wait until you do. Your earnings aren't lost while you sort it out — they keep building up and are picked up by a later payout once your details are saved.
+
+The two things most often missing are a **State/Province** in countries that don't normally use one (put your region or city there rather than leaving it empty) and a **VAT Number** for an EU business.
+
+## Use the same details in every program
+
+If you promote several programs, you don't have to retype all of this in each portal. Sign in to the Influencer dashboard at `influencers.referly.so`, open **Settings**, and fill your invoice details in once.
+
+When you save, you're asked whether to **Apply to all** your programs or keep the change to **Just this account**. Applying it copies your entity type, billing information, and tax number to every program you've joined. See [Cash payouts](/help-center/affiliates/cash-payouts) for more on how that prompt works.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="How you get paid" icon="wallet" href="/help-center/affiliates/payouts" arrow>
+    Follow a reward from referral to payout and see what each status means.
+  </Card>
+  <Card title="Cash payouts" icon="banknote" href="/help-center/affiliates/cash-payouts" arrow>
+    Choose how you receive money and add your payment details.
+  </Card>
+  <Card title="Non-cash payouts" icon="ticket" href="/help-center/affiliates/non-cash-payouts" arrow>
+    See how coupons and store credits reach you instead of money.
+  </Card>
+  <Card title="My programs" icon="grid-2" href="/help-center/affiliates/my-programs" arrow>
+    Manage every affiliate program you've joined from one place.
+  </Card>
+</Columns>

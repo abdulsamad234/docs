@@ -1,6 +1,331 @@
 ---
 title: "Quickstart"
-description: "Install tracking and record your first sale."
+description: "Install Referly affiliate tracking, verify a click is attributed, and record your first sale from your server or the browser — with troubleshooting for the common failures."
+keywords: ["Referly quickstart", "install affiliate tracking script", "affiliate-tracker.js", "track referral link", "report a sale API", "conversion tracking setup", "createPushLapSale", "affiliate attribution"]
 ---
+This guide takes you from nothing to a tracked click and a recorded sale. It should take about
+fifteen minutes.
 
-{/* TODO: Write this article. */}
+By the end you will have installed the tracking script, watched Referly attribute a visit to an
+affiliate, and reported a conversion that shows up in your dashboard with a commission attached.
+
+<Info>
+  **Before you start** you need a Referly account with a program created, and at least one affiliate
+  in it (create one yourself from the dashboard — you can use your own email). Reporting sales
+  through the API also requires the Business plan.
+</Info>
+
+## 1. Get your program ID
+
+Your program ID identifies which program a click belongs to. It is safe to expose — it goes in a
+public script tag.
+
+In your dashboard, open your program and find the tracking script section. It shows a snippet with
+your program ID already filled in:
+
+```html
+<script
+  src="https://www.referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async
+></script>
+```
+
+Copy that snippet — you will paste it in the next step.
+
+## 2. Install the tracking script
+
+Add the snippet to **every page** of your site, not just the landing page. The script needs to run
+wherever a referred visitor might land, and again wherever they convert.
+
+<CodeGroup>
+
+```html Standard
+<script
+  src="https://www.referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async
+></script>
+```
+
+```html Google Tag Manager
+<script>
+  var pushLap = document.createElement("script");
+  pushLap.src = "https://www.referly.so/affiliate-tracker.js";
+  pushLap.setAttribute("data-affiliate", "");
+  pushLap.setAttribute("data-program-id", "YOUR_PROGRAM_ID");
+  document.head.appendChild(pushLap);
+</script>
+```
+
+```jsx Next.js
+import Script from "next/script";
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <Script
+          src="https://www.referly.so/affiliate-tracker.js"
+          data-affiliate=""
+          data-program-id={process.env.NEXT_PUBLIC_REFERLY_PROGRAM_ID}
+          strategy="afterInteractive"
+        />
+      </body>
+    </html>
+  );
+}
+```
+
+</CodeGroup>
+
+The two attributes matter: `data-affiliate` is how the script finds itself in the page, and
+`data-program-id` tells it which program to record against. Omit either and the script exits
+silently without tracking anything.
+
+The script is deliberately lazy. If the URL has no referral parameter and the visitor has no stored
+referral, it makes no network requests at all — so it costs nothing on your normal organic traffic.
+
+## 3. Record your first click
+
+Grab an affiliate's referral link from your dashboard, or build one yourself. By default the
+referral parameter is `ref`:
+
+```
+https://your-site.com/?ref=AFFILIATE_CODE
+```
+
+Open that URL in a browser. The script sees the parameter, creates a click, and stores the result
+for 60 days by default.
+
+<Note>
+  `ref` is only the default. Your program's URL parameter is configurable — `via`, `partner`, `aff`,
+  and around forty others are supported. The script reads your program's setting at runtime, so it
+  only reacts to the one parameter your program is configured for. See
+  [URL parameters](/developer-documentation/tracking/url-parameters).
+</Note>
+
+Now confirm it worked. In the browser console on your site, run:
+
+```js
+getPushLapAffiliateInfo();
+// { ref: "AFFILIATE_CODE", clickId: "12345", storageType: "cookies" }
+```
+
+`ref` is the affiliate's code and `clickId` is the click Referly just created. If both are present,
+attribution is working. Navigate to another page on your site and run it again — the values should
+survive, because they are stored in a cookie (with `localStorage` as a fallback).
+
+The click also appears in your dashboard under your program's click data within a few seconds.
+
+## 4. Read the referral from your own code
+
+The script resolves attribution asynchronously, so reading `window.affiliateRef` at the top of your
+bundle will usually give you `null`. Wait for the event instead:
+
+```js
+window.addEventListener("affiliate_referral_ready", function () {
+  const { ref, clickId } = getPushLapAffiliateInfo();
+
+  if (ref) {
+    // Stash these on your signup form, checkout session, or user record
+    document.querySelector("#referral-code").value = ref;
+    document.querySelector("#click-id").value = clickId;
+  }
+});
+```
+
+Two events are dispatched, and the difference matters:
+
+| Event | Fires when | Use it for |
+| --- | --- | --- |
+| `affiliate_referral_ready` | The script has finished, whether or not a referral was found | Reading final attribution state |
+| `affiliate_id_ready` | A click was created, carrying `detail.ref` and `detail.clickId` | Reacting only when there is a referral |
+
+Passing the referral into your own signup flow is what makes server-side reporting possible later —
+your backend needs to know which affiliate to credit.
+
+## 5. Record your first conversion
+
+A click only becomes revenue when you tell Referly the visitor converted. Pick one of these three —
+you do not need more than one.
+
+<Tabs>
+
+<Tab title="Integration (no code)">
+
+If you take payments through Stripe, Shopify, WooCommerce, Paddle, Chargebee, Polar, or PayPal,
+connect the integration and Referly reports payments for you. This is the most reliable option
+because it reads charges from the payment processor itself.
+
+<Card title="Browse integrations" icon="plug" href="/developer-documentation/integrations/overview" horizontal>
+  Connect your payment platform and skip the conversion code entirely.
+</Card>
+
+</Tab>
+
+<Tab title="From your server (recommended)">
+
+Post the sale from your backend once the charge has succeeded. Your server knows the real amount
+and cannot be blocked by an ad blocker or a visitor closing the tab.
+
+```bash
+curl -X POST https://www.referly.so/api/v1/sales \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "customer@example.com",
+    "name": "Jane Doe",
+    "totalEarned": 99.00,
+    "externalId": "ch_3Q8xVe2eZvKYlo2C0abcdefg"
+  }'
+```
+
+`totalEarned` is required. To identify who to credit, send **one** of `email`, `referralId` (the
+referral ID, affiliate link, or affiliate ID), or `promoCode`. Referly finds the referral, applies
+the affiliate's commission plan, and creates the commission for you.
+
+Always send `externalId` — your own charge or order ID. It is what makes the request safe to retry
+without creating a duplicate sale. See
+[Idempotency](/developer-documentation/server-side/idempotency).
+
+If the customer has never been recorded as a referral before, create one first with the affiliate
+who referred them:
+
+```bash
+curl -X POST https://www.referly.so/api/v1/referrals \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Jane Doe",
+    "email": "customer@example.com",
+    "referredUserExternalId": "user_8891",
+    "affiliateId": "AFFILIATE_CODE"
+  }'
+```
+
+<Card title="Reporting sales" icon="server" href="/developer-documentation/server-side/reporting-sales" horizontal>
+  Every field, plus how refunds, tax, shipping, and per-product commissions work.
+</Card>
+
+</Tab>
+
+<Tab title="From the browser">
+
+Quickest to ship. Call the helper on your confirmation page, after the payment has gone through:
+
+```js
+createPushLapSale({
+  email: "customer@example.com",
+  name: "Jane Doe",
+  amount: 99.0,
+  userId: "user_8891",
+});
+```
+
+`email` and `amount` are both required. The call returns `null` immediately and sends nothing if
+there is no stored referral — which is the correct behaviour, since an unreferred customer should
+not produce a commission.
+
+There is also `createPushLapEmail(email, name)` for capturing a lead before any payment, and
+`pushLapTrackAddToCart(options)` for ecommerce funnels.
+
+<Warning>
+  Browser-side reporting is visible to the customer and can be blocked, skipped, or tampered with.
+  Use it for lead capture and low-risk funnels; report real revenue from your server.
+</Warning>
+
+</Tab>
+
+</Tabs>
+
+## 6. Confirm the sale landed
+
+Open your dashboard and check, in order:
+
+<Steps>
+  <Step title="The referral exists">
+    The customer appears in your referred customers list, linked to the right affiliate.
+  </Step>
+  <Step title="The sale is attached">
+    The sale shows against that referral with the amount you sent.
+  </Step>
+  <Step title="A commission was created">
+    The affiliate has a new commission. Its status depends on your program's approval and hold
+    settings — pending is normal and does not mean anything failed.
+  </Step>
+</Steps>
+
+If all three are there, your integration works end to end.
+
+## Troubleshooting
+
+<AccordionGroup>
+
+<Accordion title="getPushLapAffiliateInfo is not defined">
+  The script has not loaded. Check that the tag is present in the rendered HTML (not just your
+  source), that `data-affiliate` is on the tag, and that nothing in your CSP blocks
+  `www.referly.so`. If you load it with `async`, the function will not exist until the script
+  arrives — call it from the `affiliate_referral_ready` listener instead of at page load.
+</Accordion>
+
+<Accordion title="No click is created when I visit the referral link">
+  The most common cause is a parameter mismatch: your program is configured for a different URL
+  parameter than the one in your link. Check your program's URL parameter setting and make sure the
+  link uses exactly that one. Also confirm the affiliate code is real and belongs to this program —
+  an unknown code produces no click.
+</Accordion>
+
+<Accordion title="Attribution disappears when the visitor moves between domains">
+  Cookies do not cross domains. If your marketing site and your app are on different domains, the
+  script decorates outbound links with handoff parameters so attribution survives the jump, but the
+  script has to be installed on both ends. See
+  [Cross-domain tracking](/developer-documentation/tracking/cross-domain-tracking).
+</Accordion>
+
+<Accordion title="createPushLapSale returns null">
+  There is no referral stored in the browser, so the helper deliberately does nothing. Confirm
+  `getPushLapAffiliateInfo()` returns a `ref` on the same page. This also happens when checkout is
+  hosted on a domain that never saw the referral — in that case report the sale from your server
+  instead.
+</Accordion>
+
+<Accordion title="The API returns 401 or 403">
+  `401` means the bearer token is missing or unrecognised — check for a stray space or a truncated
+  key. `403` with `User does not have API access` means the program is not on a plan that includes
+  the API. See [Authentication](/developer-documentation/api/authentication).
+</Accordion>
+
+<Accordion title="The API returns 429">
+  You have hit a rate limit. Sales are the strictest endpoint because each one triggers attribution
+  and commission calculation, so bulk backfills need to be paced. Wait and retry rather than
+  looping. See [Rate limits](/developer-documentation/api/rate-limits).
+</Accordion>
+
+<Accordion title="I need to see what the script is actually doing">
+  The tracking script logs its decisions to the browser console, but only when debug logging is
+  turned on for your program. Enable it from your program settings, reload, and you will see each
+  step it takes. See [Debug mode](/developer-documentation/tracking/debug-mode).
+</Accordion>
+
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Core concepts" icon="diagram-project" href="/developer-documentation/getting-started/core-concepts">
+    How clicks, referrals, sales, commissions, and payouts relate.
+  </Card>
+  <Card title="JavaScript API reference" icon="code" href="/developer-documentation/tracking/javascript-api/reference">
+    Every function, global, and event the tracking script exposes.
+  </Card>
+  <Card title="Reporting sales" icon="server" href="/developer-documentation/server-side/reporting-sales">
+    The full server-side conversion flow, including refunds.
+  </Card>
+  <Card title="Webhooks" icon="webhook" href="/developer-documentation/webhooks/introduction">
+    Get told when referrals, sales, and commissions change.
+  </Card>
+</Columns>

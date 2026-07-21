@@ -1,6 +1,111 @@
 ---
 title: "Globals"
-description: "The values the script puts on the window."
+description: "Reference for the Referly tracking script globals: window.affiliateRef and window.affiliateId, their types and lifecycle, when they are safe to read, and why getPushLapAffiliateInfo is the preferred way to read them."
+keywords: ["window.affiliateRef", "window.affiliateId", "Referly globals", "affiliate tracking click ID", "getPushLapAffiliateInfo", "affiliate referral code javascript", "Referly JavaScript API globals", "affiliate tracking cookies localStorage"]
 ---
+The [tracking script](/developer-documentation/tracking/install-the-snippet) has no namespace. Everything it exposes sits directly on `window`, and two of those values hold the current visitor's attribution state.
 
-{/* TODO: Write this article. */}
+| Global | Type | What it holds |
+| --- | --- | --- |
+| `window.affiliateRef` | `string` or `null` | The referral code from the affiliate link |
+| `window.affiliateId` | `string` or `null` | The ID of the recorded click |
+| `window.createPushLapEmail` | `function` | [Record a referred customer](/developer-documentation/tracking/javascript-api/reference) |
+| `window.createPushLapSale` | `function` | [Record a sale](/developer-documentation/tracking/javascript-api/reference) |
+| `window.pushLapTrackAddToCart` | `function` | [Record an add-to-cart](/developer-documentation/tracking/javascript-api/reference) |
+| `window.getPushLapAffiliateInfo` | `function` | Read the two values above safely |
+
+<Warning>
+  Despite its name, `window.affiliateId` is **not** an affiliate's ID. It is the click ID. The affiliate is identified by `window.affiliateRef`. Getting these the wrong way round is the most common mistake when wiring up custom tracking.
+</Warning>
+
+## window.affiliateRef
+
+The referral code that identified the affiliate — the value of `?ref=` in the link, or of whichever URL parameter your program is configured to use.
+
+```js
+window.affiliateRef; // "ada" or null
+```
+
+It is `null` for any visitor who did not arrive from an affiliate link and has no referral stored from an earlier visit. The three capture functions all return early when it is `null`, which is why you can call them unconditionally.
+
+## window.affiliateId
+
+The ID of the click Referly recorded for this visitor. It is the value to attach to a sale you [report from your server](/developer-documentation/server-side/reporting-sales), and the value [add-to-cart tracking](/developer-documentation/tracking/javascript-api/reference) requires.
+
+```js
+window.affiliateId; // "48211" or null
+```
+
+### It briefly holds the wrong value
+
+On a fresh click the script sets `window.affiliateId` to the **referral code** as a placeholder, sends the click to Referly, and then overwrites it with the real click ID once the response comes back.
+
+There is a window of a few hundred milliseconds where `window.affiliateId` and `window.affiliateRef` hold the same value. If you read it in that window and store it — in a hidden form field, a checkout session, your own analytics — you will save a referral code where a click ID belongs, and the sale will not match up later.
+
+Wait for [`affiliate_id_ready`](/developer-documentation/tracking/javascript-api/events) before reading it. That event carries the final click ID on its `detail` and fires only once the value is settled.
+
+```js
+window.addEventListener("affiliate_id_ready", function (event) {
+  saveClickId(event.detail.clickId);
+});
+```
+
+## Prefer getPushLapAffiliateInfo
+
+Reading the globals directly works, but `getPushLapAffiliateInfo()` is the better habit. It returns both values in one object, normalises anything falsy to `null`, and tells you which storage the script is using:
+
+```js
+const info = window.getPushLapAffiliateInfo();
+// { ref: "ada", clickId: "48211", storageType: "cookies" }
+```
+
+Guard the call itself, because the script loads asynchronously and the function may not exist yet:
+
+```js
+if (typeof window.getPushLapAffiliateInfo === "function") {
+  const info = window.getPushLapAffiliateInfo();
+}
+```
+
+## null and undefined mean different things
+
+The script sets both globals to `null` early in its run, before it reads storage or touches the network. So a `null` value means "the script is running and has not found a referral yet, or there is none".
+
+`undefined` means the script never got that far. That happens when it cannot resolve a program ID — the snippet is missing its `data-program-id` attribute and there is no `programId` query parameter on the URL. If you see `undefined` in the console, fix the snippet before debugging anything else.
+
+Neither value is a readiness signal. Use the [events](/developer-documentation/tracking/javascript-api/events) for that.
+
+## They last one page load
+
+Both globals are set fresh on every page load. They are not written to `window` and left there across navigations — a full page load starts from `null` and the script repopulates them.
+
+What persists is the underlying storage. For a program with ID `abc123`, the script keeps the referral code and click ID under `abc123_affiliate_ref` and `abc123_affiliate_referral`, in cookies where cookies are available and in local storage where they are not. The `storageType` field on `getPushLapAffiliateInfo()` tells you which is in use. Scoping the keys by program ID means one browser can carry referrals for several programs at once.
+
+Read [Cookies and storage](/developer-documentation/tracking/cookies-and-storage) for the cookie window, the local storage fallback, and what happens when a visitor clears their browser data.
+
+<Note>
+  In a single-page app, a client-side route change does not re-run the script, so the globals keep their values as the user navigates. They are refreshed only on a real page load.
+</Note>
+
+## Names reserved by Referly
+
+`affiliateRef`, `affiliateId`, and the four `PushLap` function names are unnamespaced globals. Treat all six as reserved on any page carrying the snippet — assigning to them yourself will break attribution, and reading a value your own code wrote will silently corrupt it.
+
+The script also merges the click ID into `window.PickaxeStudioConfig` when it is present, so [Pickaxe](/help-center/integrations/pickaxe) apps pick up attribution without extra work. Leave that object alone unless you are configuring Pickaxe.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="JavaScript API reference" icon="code" href="/developer-documentation/tracking/javascript-api/reference">
+    The functions the script exposes and how to call them.
+  </Card>
+  <Card title="Events" icon="bolt" href="/developer-documentation/tracking/javascript-api/events">
+    When the values become safe to read.
+  </Card>
+  <Card title="Cookies and storage" icon="cookie" href="/developer-documentation/tracking/cookies-and-storage">
+    Where the referral is kept between page loads.
+  </Card>
+  <Card title="Click data" icon="mouse-pointer" href="/developer-documentation/tracking/click-data">
+    What Referly records with each click.
+  </Card>
+</Columns>

@@ -1,6 +1,162 @@
 ---
 title: "Attribution and the cookie window"
-description: "How Referly decides which affiliate gets credit."
+description: "How Referly attributes affiliate conversions: click-based attribution, last-click-wins precedence, the cookie window and its 60-day default, sliding expiry, Safari ITP limits, and moving the click ID server-side for long sales cycles."
+keywords: ["affiliate attribution", "cookie window", "last click attribution", "Referly attribution model", "affiliate cookie duration", "click ID attribution", "window.affiliateId", "attribution window affiliate program", "Safari ITP attribution", "server-side affiliate attribution"]
 ---
+Attribution is the question every affiliate program has to answer: a sale just happened, so who gets paid for it? Referly answers it with a **click**. When a visitor arrives from an affiliate link, a click record is created and its ID is stored in their browser. Every conversion that follows carries that click ID, and the click knows which affiliate it belongs to.
 
-{/* TODO: Write this article. */}
+That indirection matters. Conversions aren't attached to an affiliate, they're attached to a specific visit — which is what lets you trace a payout back to the exact link, campaign, and moment that produced it.
+
+## The click is the unit of attribution
+
+On a qualifying landing, the tracker records a click and receives an ID for it. Two values then exist for the rest of the visitor's window:
+
+| Value | What it is |
+| --- | --- |
+| `window.affiliateRef` | The affiliate's referral code, as it appeared in the URL |
+| `window.affiliateId` | The **click ID** for this visit |
+
+Despite the name, `window.affiliateId` is not an affiliate identifier — it's the click ID. Both are sent with every conversion you report from the browser, and both are stored so they survive navigation and return visits. See [cookies and storage](/developer-documentation/tracking/cookies-and-storage) for where they live.
+
+<Note>
+  Between the moment the tracker finds a referral code and the moment the click request comes back, `window.affiliateId` briefly holds the referral code rather than a click ID. Wait for the `affiliate_id_ready` or `affiliate_referral_ready` event before reading it, and you'll never see that intermediate state.
+</Note>
+
+## Precedence: which affiliate wins
+
+Every page load, the tracker compares what's in the URL against what's already stored. These are the exact outcomes.
+
+### No referral anywhere
+
+No recognised parameter in the URL and nothing in storage: the tracker stops before making a single request. The visitor is unattributed, and any conversion you report is recorded without an affiliate.
+
+### A returning visitor with no new link
+
+Stored attribution exists and the URL carries no referral parameter. The stored values are reused as-is and their expiry is pushed forward. No new click is recorded — returning to your site is not a new referral.
+
+### The same affiliate's link, clicked again
+
+The URL carries the same code that's already stored. Referly records an **additional, non-unique click**: your affiliate gets credit for the repeat visit in their click counts without it being counted as a new unique visitor. `window.affiliateId` updates to the new click ID, and that newer click is what subsequent conversions attach to.
+
+### A different affiliate's link
+
+The URL carries a different code from the one stored. A fresh click is recorded for the new affiliate and **both stored values are overwritten**.
+
+This is last-click-wins, and it's absolute: if a visitor clicks Jane's link on Monday and Sam's on Wednesday, Sam owns every conversion from Wednesday onward. There is no split credit, no first-click option, and no lookback comparison.
+
+### A parameter that doesn't match your program
+
+The URL has a parameter from Referly's recognised list, but not the one your program is configured to use. It's ignored for attribution. If storage already held a referral, that referral survives untouched. See [URL parameters](/developer-documentation/tracking/url-parameters).
+
+### Something went wrong
+
+If the click request fails, the tracker clears both stored values and resets the globals to `null` rather than leaving partial state behind. The visitor is unattributed until they click an affiliate link again.
+
+## The cookie window
+
+The cookie window is how long a click stays eligible to earn a commission. You set it per program, in days, under **Cookie Duration** in your campaign settings — described there as how many days the visitor has to convert for the commission to go to the affiliate.
+
+{/* TODO screenshot: cookie-duration-setting — upload it in the local Documentation Agent */}
+
+Three things to know about how it's applied.
+
+### It falls back to 60 days
+
+The tracker fetches your configured window as part of your program configuration when it records a click. If that request fails — network error, ad blocker, an outage — it uses **60 days** rather than dropping the attribution. A failure degrades to a sensible default instead of losing the referral.
+
+### It slides
+
+The window is refreshed, not fixed. Each time a returning visitor with stored attribution loads a page, the expiry is written forward from that moment. A visitor who reads your blog every week never ages out, even on a short window.
+
+On the fast return path — a return visit with no referral parameter in the URL — the refresh happens before your program configuration is fetched, so it uses the 60-day default. If your configured window is shorter than 60 days, engaged returning visitors effectively get the longer one.
+
+### The browser has the final say
+
+Your configured window is an upper bound the browser is free to ignore. Safari's Intelligent Tracking Prevention caps script-written cookies at 7 days and clears local storage after 7 days without site interaction; Firefox applies comparable limits in strict mode. A 90-day window is genuinely 90 days in Chrome and roughly 7 in Safari. Nothing on the client side can change that — see [cookies and storage](/developer-documentation/tracking/cookies-and-storage).
+
+## What client-side attribution cannot do
+
+Being honest about the boundaries saves a lot of debugging:
+
+- **One browser only.** Attribution lives in the browser that clicked the link. Click on a phone, buy on a laptop, and the sale is unattributed.
+- **One registrable domain only**, unless you've set up [cross-domain tracking](/developer-documentation/tracking/cross-domain-tracking). Subdomains of the same domain do share it.
+- **Cleared data means cleared attribution.** Clearing site data, using a different browser profile, or converting in a private window all reset it.
+- **No storage, no memory.** If both cookies and local storage are unavailable, every page view is a first visit.
+- **Nothing happens off-browser.** A renewal charged by your billing system months later, an order placed by your support team, a purchase over the phone — none of these run your page, so none of them see the click.
+
+## How conversions consume attribution
+
+Everything downstream reads the same two values.
+
+<CodeGroup>
+
+```js Sign-up
+window.addEventListener("affiliate_referral_ready", () => {
+  // Sends affiliateRef and the click ID automatically.
+  // Returns null and records nothing when there's no attribution.
+  window.createPushLapEmail("customer@example.com", "Jamie Lee");
+});
+```
+
+```js Sale
+window.createPushLapSale({
+  email: "customer@example.com",
+  amount: 4900,
+  name: "Jamie Lee",
+  userId: "usr_123",
+});
+```
+
+```js Read it yourself
+const info = window.getPushLapAffiliateInfo();
+// { ref: "jane", clickId: "84213", storageType: "cookies" }
+```
+
+</CodeGroup>
+
+Each of these returns `null` and sends nothing when there is no attribution, so it's safe to call them unconditionally on every sign-up and every checkout. Full signatures are in the [JavaScript API reference](/developer-documentation/tracking/javascript-api/reference).
+
+Platform integrations work the same way underneath. On Shopify, the click ID is written onto the visitor's cart as an attribute so it travels through checkout and arrives with the order — which is why a Shopify sale can be attributed even though the checkout pages aren't yours.
+
+## Moving the click ID server-side
+
+Client-side attribution ends when the browser forgets. If your conversions happen later than that — a trial that converts in week three, a subscription that renews annually, an invoice paid by bank transfer, a sales-assisted deal — capture the click ID while you still have it and let your backend carry it from there.
+
+The pattern is the same everywhere:
+
+<Steps>
+  <Step title="Capture at sign-up">
+    When the user creates an account, read `window.getPushLapAffiliateInfo()` and send `ref` and `clickId` to your backend along with the registration.
+  </Step>
+  <Step title="Store it on the user">
+    Persist both on your user or account record. This is now your durable copy — it doesn't expire, doesn't depend on a browser, and survives a device switch.
+  </Step>
+  <Step title="Report conversions from your backend">
+    When revenue actually happens, report it with the stored click ID from your server instead of from the page. See [reporting sales](/developer-documentation/server-side/reporting-sales).
+  </Step>
+</Steps>
+
+This is the recommended setup for any SaaS with a trial, any business with recurring billing, and anyone whose typical time-to-purchase is longer than a week. Browser-side reporting stays useful for immediate conversions; the two coexist happily, and [idempotency keys](/developer-documentation/server-side/idempotency) stop a conversion being counted twice if both fire.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="URL parameters" icon="link" href="/developer-documentation/tracking/url-parameters">
+    How a referral code is matched in the first place.
+  </Card>
+  <Card title="Cookies and storage" icon="cookie" href="/developer-documentation/tracking/cookies-and-storage">
+    Where attribution is kept and what erases it.
+  </Card>
+  <Card title="Cross-domain tracking" icon="arrow-right-arrow-left" href="/developer-documentation/tracking/cross-domain-tracking">
+    Carrying attribution between separate domains.
+  </Card>
+  <Card title="JavaScript API" icon="code" href="/developer-documentation/tracking/javascript-api/reference">
+    The functions that consume attribution.
+  </Card>
+  <Card title="Server-side tracking" icon="server" href="/developer-documentation/server-side/overview">
+    Reporting conversions that outlive the browser.
+  </Card>
+  <Card title="Debug mode" icon="bug" href="/developer-documentation/tracking/debug-mode">
+    Watch the tracker choose a branch in real time.
+  </Card>
+</Columns>

@@ -1,6 +1,510 @@
 ---
 title: "Make"
-description: "Build scenarios with Referly."
+description: "Connect Referly to Make (Integromat): all 22 modules, what Make can and can't track, step-by-step scenario setup, passing the affiliate ID from your site, a full field reference, operations and limits, and troubleshooting."
+keywords: ["Referly Make integration", "Make.com affiliate program", "Integromat affiliate tracking", "Push Lap Growth Make app", "Watch Created Sale module", "Create a Sale Make module", "Make scenario affiliate commission", "connect Referly to Make", "Make vs Zapier affiliate", "Make an API Call Referly"]
 ---
+Make (formerly Integromat) connects Referly to more than 2,400 other apps on a visual canvas, where each step is a module you drag onto the screen and join with a line. Referly can start a scenario when an affiliate, a referred customer, or a sale appears, and other modules can write those records back into Referly when something happens in your checkout, your form tool, or your course platform.
 
-{/* TODO: Write this article. */}
+This guide covers the whole thing end to end, including the parts that happen on Make's side. If you're deciding between the two automation platforms, there's a comparison further down and a matching [Zapier guide](/help-center/integrations/zapier).
+
+<Warning>
+  In Make, the Referly app is still listed under its former name, **Push Lap Growth**. Searching for "Referly" in Make's app picker won't find it. Search for `Push Lap Growth` instead.
+</Warning>
+
+<Info>
+  Make is part of Referly's API access, which is included on the **Business** and **Agency** plans and isn't available during a free trial. On other plans the connection will be refused. See [API access](/help-center/billing/api-access).
+</Info>
+
+## What Referly can do in Make
+
+The app has 22 modules in four groups.
+
+### Triggers
+
+A trigger module starts a scenario. Referly has nine, and they're all named "Watch":
+
+| Module | Runs when |
+| --- | --- |
+| Watch Created Affiliate | Someone joins your program |
+| Watch Updated Affiliate | An affiliate's details, commission rate, or status change |
+| Watch Deleted Affiliate | You remove an affiliate |
+| Watch Created Referral | A referred customer is recorded for the first time |
+| Watch Updated Referral | A referred customer's details or plan change |
+| Watch Deleted Referral | You remove a referred customer |
+| Watch Created Sale | A sale is credited to an affiliate |
+| Watch Updated Sale | A sale's amount or commission is changed |
+| Watch Deleted Sale | You remove a sale |
+
+These run no matter where the event came from. A sale recorded by your [Stripe](/help-center/integrations/stripe) or [Shopify](/help-center/integrations/shopify) connection, one you added by hand, and one created by another scenario all start **Watch Created Sale** in exactly the same way. Referly pushes the event to Make as it happens rather than waiting to be asked, so you can set the scenario to run **Immediately**.
+
+### Action modules
+
+| Module | What it does |
+| --- | --- |
+| Create an Affiliate | Adds an affiliate, with a link and commission rate |
+| Update an Affiliate | Changes an existing affiliate's details or status |
+| Delete an Affiliate | Removes an affiliate permanently |
+| Create a Referral | Records a referred customer and attaches them to an affiliate |
+| Update a Referral | Changes a referred customer's details or plan |
+| Delete a Referral | Removes a referred customer permanently |
+| Create a Sale | Records a sale and works out the commission automatically |
+| Update a Sale | Changes a sale's amount, or overrides the commission |
+| Delete a Sale | Removes a sale permanently |
+
+### Search modules
+
+A search finds records and hands them to the modules that follow. It changes nothing.
+
+| Module | Finds by |
+| --- | --- |
+| Search Affiliates | Affiliate ID, affiliate link, or email |
+| Search Referrals | Referral ID, email, external user ID, affiliate ID, or affiliate email |
+| Search Sales | Sale ID, external sale ID, external invoice ID, referral ID, affiliate ID, or affiliate email |
+
+Each search has a **Limit** field that caps how many records come back — 10 by default. Leave every other field empty and the search returns records from your whole program, up to the limit.
+
+### Make an API Call
+
+This module sends a request of your choosing to Referly using the connection you've already made. It's the escape hatch for anything the other modules don't cover, and it's the main reason to prefer Make over Zapier for an unusual job.
+
+<Note>
+  **Make an API Call** is the only module that needs someone comfortable reading the [API reference](/api-reference/introduction). Everything else is point and click.
+</Note>
+
+## What Make can and can't track
+
+| Thing you want to track | Through Make? |
+| --- | --- |
+| Clicks on affiliate links | **No.** Clicks are only recorded by the tracking script and the link redirect. There's no click module and no way to record a click from a scenario. |
+| Affiliate sign-ups | **Yes**, both directions |
+| Referred customers (sign-ups) | **Yes**, both directions |
+| Free trials | **Yes**, as a referred customer. Referly has no separate free-trial record — record the trial as a referral now, and record the sale later when they pay. |
+| Sales and conversions | **Yes**, both directions |
+| Commission amounts | **Read only.** Referly calculates commission when a sale is recorded. You can read it and override the rate on a sale, but you can't approve or reject commissions from a scenario. |
+| Payouts | **No.** There's no payout module. Handle payouts in [payouts](/help-center/manage/payouts/overview). |
+| Coupons and promo codes | Not as their own modules, but reachable through **Make an API Call**. |
+| Leaderboards, bonuses, milestones | **No.** |
+
+Two limits that catch people out:
+
+Make can't work out attribution for you. When a scenario creates a referral or a sale, you have to tell it which affiliate to credit. There's a section below on getting that value out of your website.
+
+Make can't record a zero-value sale. **Create a Sale** needs a total amount above zero. To mark a customer as referred without money changing hands, use **Create a Referral** instead.
+
+## Make or Zapier?
+
+Both reach the same Referly features, with two real differences.
+
+| | Make | Zapier |
+| --- | --- | --- |
+| Reaching the rest of Referly | **Make an API Call** covers coupons, promo codes, and anything else | Limited to the built-in actions |
+| Search results | Returns a list, with a limit you set | Returns one record |
+| Branching, looping, error handling | Built in and visual | Available, less flexible |
+| Number of connected apps | Around 2,400 | More than 8,000 |
+| Learning curve | Steeper — you build on a canvas | Gentler — a linear list of steps |
+
+Pick Make if you need branching logic, batches of records, or a part of Referly the standard modules don't reach. Pick [Zapier](/help-center/integrations/zapier) if you want one thing to happen after another and you'd rather not learn a canvas. Before either, check whether Referly already has a direct connection to your platform in [all integrations](/help-center/integrations/overview) — a direct connection handles attribution, refunds, and recurring payments better than any scenario can.
+
+## Before you start
+
+<Steps>
+  <Step title="Check your plan">
+    You need a **Business** or **Agency** plan. Free trials don't include API access.
+  </Step>
+  <Step title="Have an affiliate program set up">
+    You'll pick which program to connect. If you haven't created one yet, see [set up your program](/help-center/getting-started/set-up-program/affiliate-program-setup).
+  </Step>
+  <Step title="Install the tracking script">
+    Not needed if you only want Referly to start scenarios. It is needed if you want Make to record referrals or sales, because the script is what captures which affiliate sent the visitor. See [install the snippet](/developer-documentation/tracking/install-the-snippet).
+  </Step>
+</Steps>
+
+## Step 1: Create a Make account
+
+Skip this if you already have one.
+
+<Steps>
+  <Step title="Go to make.com">
+    Open `make.com` and select **Get started free**.
+  </Step>
+  <Step title="Fill in the sign-up form">
+    Make asks for your email, a password, your name, your country, and a **Hosting Region**.
+  </Step>
+  <Step title="Choose your hosting region carefully">
+    The region decides which data centre stores your scenario data, and **it can't be changed afterwards**. Pick the one closest to you, or the one your own privacy policy requires.
+  </Step>
+  <Step title="Confirm your email">
+    Follow the link Make emails you, and you'll land on your dashboard.
+  </Step>
+</Steps>
+
+<Note>
+  Make's free plan gives you a monthly allowance of operations and a limited number of active scenarios, and it won't run a scheduled scenario more often than every 15 minutes. One operation is spent each time a module runs, so a three-module scenario costs three operations per run. Make's [pricing](https://www.make.com/en/pricing) page has the current numbers.
+</Note>
+
+## Step 2: Create a scenario
+
+<Steps>
+  <Step title="Open Scenarios">
+    Select **Scenarios** in the left sidebar.
+  </Step>
+  <Step title="Start a new one">
+    Select **Create a new scenario** at the top right. An empty canvas opens with a single large **+** in the middle.
+  </Step>
+  <Step title="Add the first module">
+    Select the **+**, type `Push Lap Growth` in the search box, and select the app.
+  </Step>
+  <Step title="Pick the module">
+    Choose the module you want from the list — the Watch modules are at the top under Triggers.
+
+    {/* TODO screenshot: make-module-picker — upload it in the local Documentation Agent */}
+  </Step>
+  <Step title="Name the scenario">
+    Select the scenario name at the top left, which starts as "Integration…", and give it something you'll recognise in six months.
+  </Step>
+</Steps>
+
+## Step 3: Connect Referly to Make
+
+You make the connection the first time you add a Referly module. Make opens a Referly window where you approve it.
+
+<Steps>
+  <Step title="Select Create a connection">
+    In the module's settings panel, next to **Connection**, select **Create a connection**.
+  </Step>
+  <Step title="Name the connection">
+    Give it a name that includes the program, like `Referly — Main program`. This matters if you run several programs.
+  </Step>
+  <Step title="Select Save">
+    A Referly window opens. Log in with your Referly account if you aren't already logged in.
+  </Step>
+  <Step title="Choose the program">
+    Every program on your account appears as a card with its name and domain. Select **Connect** on the one you want.
+
+    {/* TODO screenshot: choose-program — upload it in the local Documentation Agent */}
+  </Step>
+  <Step title="Confirm">
+    A dialog explains that the connection will be able to react to your program's events and make changes to your program. Select **Continue**.
+
+    {/* TODO screenshot: connect-confirm-dialog — upload it in the local Documentation Agent */}
+  </Step>
+  <Step title="Back to Make">
+    The window closes and the connection appears in the module, ready to use in every other Referly module in your account.
+  </Step>
+</Steps>
+
+<Note>
+  The approval screen and the confirmation dialog both say "Zapier" rather than "Make". You're in the right place — both automation platforms share the same approval screen. Nothing about the connection you're making is specific to Zapier.
+</Note>
+
+<Warning>
+  A connection covers exactly one affiliate program. If you run several, create a separate connection for each and name them clearly. Connections made this way don't appear on your [API keys](/help-center/settings/advanced/api-keys) screen.
+</Warning>
+
+You can also check what's available from Referly's side: open **Settings** from the left sidebar, go to **Integrations**, and select the **Make** card.
+
+{/* TODO screenshot: integrations-make-card — upload it in the local Documentation Agent */}
+
+## Step 4: Build a scenario that starts in Referly
+
+The simpler direction — something happens in Referly, another app reacts.
+
+<Steps>
+  <Step title="Add the Watch module">
+    Add a Referly module and choose one of the Watch triggers, such as **Watch Created Sale**. Select **OK**.
+  </Step>
+  <Step title="Add the module that reacts">
+    Select the **+** on the right of the trigger, pick the app that should react, and choose its module.
+  </Step>
+  <Step title="Map the fields">
+    Select a field in the second module and a panel appears listing everything the Referly trigger provides — the affiliate's name, the customer's email, the sale amount, the commission earned. Select a value to drop it in. You can mix them with your own text.
+
+    {/* TODO screenshot: make-map-fields — upload it in the local Documentation Agent */}
+  </Step>
+  <Step title="Run it once">
+    Select **Run once** at the bottom left. Make waits for a real event, so create one in Referly — record a test sale, or add a test affiliate.
+  </Step>
+  <Step title="Check the bubbles">
+    A numbered bubble appears above each module when it runs. Select one to see exactly what went in and what came out.
+
+    {/* TODO screenshot: make-run-once-bubbles — upload it in the local Documentation Agent */}
+  </Step>
+  <Step title="Schedule and activate">
+    Select the clock control at the bottom left, which reads **Every 15 minutes** by default. Choose **Immediately** so the scenario runs the moment the event happens. Select **OK**, then **Save**, then switch the scenario toggle to **ON**.
+
+    {/* TODO screenshot: make-schedule-activate — upload it in the local Documentation Agent */}
+  </Step>
+</Steps>
+
+<Check>
+  A scenario only handles events that happen after you switch it on. Anything from before is ignored.
+</Check>
+
+## Step 5: Send data into Referly
+
+The other direction takes one extra piece of work: telling Referly which affiliate deserves the credit.
+
+### Get the affiliate ID out of your website
+
+When a visitor arrives from an affiliate link like `yourwebsite.com/?ref=janedoe`, the tracking script stores who sent them and puts two values on the page for you to use:
+
+- `window.affiliateId` — the ID of that specific click. The most accurate value, because it ties the sale to one visit.
+- `window.affiliateRef` — the affiliate's link name, `janedoe` in the example above.
+
+Referly accepts either one in the affiliate fields, so use whichever your other tool can carry.
+
+Getting that value into your trigger app happens outside Referly, and how you do it depends on the tool:
+
+- **Forms** (Typeform, Jotform, Gravity Forms, HubSpot forms and similar) — add a hidden field and set its value from `window.affiliateId` when the page loads. All of these document hidden fields; search their help centre for "hidden field".
+- **Checkout and billing tools** — most let you attach your own reference or metadata to a customer or an order. Put the value there.
+- **Course and membership platforms** — look for custom fields on the member record.
+
+<Warning>
+  If the affiliate value never reaches your trigger, Make has nothing to credit and the module fails. Test this before building the rest: go through your own sign-up or checkout using a real affiliate link, then check the value appears in the trigger's output bubble.
+</Warning>
+
+Your trigger app's support team is the right place to ask how to carry a value from the page into the trigger — they'll have a guide for it.
+
+### Record a referral or a free trial
+
+Use this when someone signs up, starts a trial, or books a demo, and no money has been taken.
+
+<Steps>
+  <Step title="Add the module">
+    Add a Referly module and choose **Create a Referral**.
+  </Step>
+  <Step title="Fill in who the customer is">
+    Map **Referral Name** and **Referral Email** from the trigger. Both are required.
+  </Step>
+  <Step title="Add your own reference">
+    The external user ID is required. Use whatever your other tool calls its customer or user ID, so you can match the two systems up later.
+  </Step>
+  <Step title="Say which affiliate to credit">
+    Put the click ID or affiliate link name into **Affiliate ID**. If your trigger carries the affiliate's own email address instead, use the affiliate email field.
+  </Step>
+  <Step title="Add the plan, if it helps">
+    The plan field is a free-text label like `Pro trial` that shows on the customer's record. Leave it blank and Referly stores `N/A`.
+  </Step>
+  <Step title="Run once and check">
+    Select **Run once**, then confirm the customer appears under [referred customers](/help-center/manage/customers/overview) with the right affiliate against them.
+  </Step>
+</Steps>
+
+### Record a sale
+
+Use this when money is actually taken. Referly works out the commission itself.
+
+<Steps>
+  <Step title="Add the module">
+    Add a Referly module and choose **Create a Sale**.
+  </Step>
+  <Step title="Fill in the customer and amount">
+    Map **Customer Name**, **Customer Email**, and **Total Amount**. All three are required, and the amount has to be above zero.
+  </Step>
+  <Step title="Say which affiliate or customer to credit">
+    The **Affiliate ID** field is more flexible than its name suggests. It accepts an existing referred customer's ID, a click ID, an affiliate link name, or an affiliate ID.
+
+    If this is the first time you're recording anything for this customer, put the click ID or affiliate link name here. Referly creates the referred customer, attaches them to the affiliate, and then records the sale.
+
+    If the customer was already recorded as a referral, you can leave it blank — Referly matches on **Customer Email** and credits the affiliate they're already attached to.
+  </Step>
+  <Step title="Add your invoice reference">
+    The external invoice ID is optional but worth filling in. It's how you'll match a Referly sale back to the order in your billing tool when something looks wrong.
+  </Step>
+  <Step title="Override the rate, only if you need to">
+    The commission rate field replaces the affiliate's usual rate for this one sale. Leave it blank and Referly uses the affiliate's own rate, or the rate from their [commission plan](/help-center/getting-started/commissions/overview).
+  </Step>
+  <Step title="Run once and check">
+    Select **Run once**, then confirm the sale and its commission appear on the affiliate's record.
+  </Step>
+</Steps>
+
+<Note>
+  Recurring payments need one scenario run per payment. Point the trigger at your billing tool's "payment succeeded" or "invoice paid" event rather than "subscription created", and Referly keeps paying commission for as long as the affiliate's commission plan allows.
+</Note>
+
+## Example: post to Slack when a sale comes in
+
+A good first scenario, because nothing can go wrong in Referly.
+
+1. **Trigger** — Push Lap Growth, **Watch Created Sale**.
+2. **Module 2** — Slack, **Create a Message**.
+3. In the message text, mix your own words with values from the trigger: the affiliate's first name, the customer's name, the sale total, and the commission earned.
+4. **Run once**, then set the schedule to **Immediately**, save, and switch it **ON**.
+
+## Example: only welcome affiliates who are already approved
+
+This one shows why people choose Make — the filter sits on the line between two modules.
+
+1. **Trigger** — Push Lap Growth, **Watch Created Affiliate**.
+2. Select the line leaving the trigger, then **Set up a filter**. Give it a name and a condition: the affiliate's status equals `active`.
+3. **Module 2** — your email tool, its "add or update subscriber" module. Map the affiliate's email, first name, last name, and affiliate link.
+4. **Run once**, then schedule and switch it **ON**.
+
+Affiliates still waiting for approval flow into the scenario, fail the filter, and go no further.
+
+<Note>
+  If you use Klaviyo, Mailchimp, MailerLite, or Brevo, Referly can add affiliates to a list without Make at all. See [email integrations](/help-center/engage/emails/integrations) — a direct connection is more reliable and spends no operations.
+</Note>
+
+## Example: record a sale from a checkout Referly doesn't support natively
+
+1. Make sure the tracking script is on your site and the affiliate value reaches your checkout, as described above.
+2. **Trigger** — your checkout tool, its "new payment" or "order paid" module.
+3. **Module 2** — Push Lap Growth, **Search Referrals**, looking the customer up by email. This tells you whether they're already known.
+4. **Module 3** — Push Lap Growth, **Create a Sale**. Map the customer's name, email, and amount, and put the affiliate value into **Affiliate ID**.
+5. **Run once** with a real, small purchase, then schedule and switch it **ON**.
+
+## Module reference
+
+Required fields are marked. Everything else is optional. Field names read slightly differently between modules, so match on meaning rather than exact wording.
+
+### Create an Affiliate
+
+| Field | Notes |
+| --- | --- |
+| First name **(required)** | |
+| Last name **(required)** | |
+| Email **(required)** | Must be unique within the program. The module fails if the affiliate already exists. |
+| Commission rate | Leave blank to use the program's default. Filling it in detaches the affiliate from their commission plan's rate. |
+| Affiliate link | The link name, like `janedoe`. Leave blank and Referly generates one from the email. Fails if the name is taken. |
+| Affiliate status | `active` or `inactive`. Leave blank and your program's approval setting decides. |
+
+An affiliate created this way gets the welcome email if they end up active, and gets any automatic promo codes your program creates.
+
+### Update an Affiliate
+
+Takes the affiliate's ID or email to identify them, plus any of first name, last name, email, commission rate, affiliate link, and status. Adding an affiliate link that's already in use fails rather than replacing it.
+
+### Create a Referral
+
+| Field | Notes |
+| --- | --- |
+| Referral Name **(required)** | |
+| Referral Email **(required)** | |
+| External user ID **(required)** | Your own reference for the customer |
+| Affiliate ID | Click ID, affiliate link name, or affiliate ID |
+| Affiliate email | Use instead of Affiliate ID |
+| Plan | Free text, defaults to `N/A` |
+| Status | |
+
+You must fill in either the affiliate ID or the affiliate email.
+
+### Update a Referral
+
+Takes the referral's ID, plus any of name, email, external user ID, plan, and status.
+
+### Create a Sale
+
+| Field | Notes |
+| --- | --- |
+| Total Amount **(required)** | Must be above zero |
+| Customer Name **(required)** | Falls back to the existing referral's name when you match an existing customer |
+| Customer Email **(required)** | Also used to match an existing referred customer |
+| Affiliate ID | Referral ID, click ID, affiliate link name, or affiliate ID |
+| External invoice ID | Your invoice or order reference |
+| Commission rate | Replaces the affiliate's rate for this sale only |
+
+### Update a Sale
+
+Takes the sale's ID, plus any of customer name, customer email, total amount, external invoice ID, external sale ID, commission rate, and commission earned. Setting the commission earned fixes the amount directly and ignores the rate.
+
+### Delete an Affiliate, Delete a Referral, Delete a Sale
+
+Each takes the record's ID. Deletions can't be undone, so put a filter in front of the module if there's any chance of a mis-mapped value reaching it.
+
+### Search Affiliates, Search Referrals, Search Sales
+
+| Module | Fields you can search on |
+| --- | --- |
+| Search Affiliates | Affiliate ID or link, email |
+| Search Referrals | Referral ID or email, affiliate email, affiliate ID, external user ID |
+| Search Sales | Sale ID, affiliate email, affiliate ID, referral ID, external sale ID, external invoice ID |
+
+All three have a **Limit** field, which is 10 unless you change it. Each record found becomes its own bundle, so the modules after a search run once per record — worth remembering when you're counting operations.
+
+### What Referly sends when a Watch module runs
+
+Affiliate triggers hand over the affiliate's name, email, status, commission rate, affiliate links, promo codes, totals for referrals, clicks, revenue and commission earned, and their commission plan and tier.
+
+Referral triggers hand over the customer's name and email, your external user ID, their status and plan, total revenue and total commission generated, the landing page they arrived on, and a nested block with the affiliate's details.
+
+Sale triggers hand over the amount, commission rate, commission earned, your external invoice and sale references, the products bought, whether a payout has been created, and nested blocks with the affiliate and the referred customer.
+
+The three delete triggers only hand over the record's ID — the record is already gone, so there's nothing else to send.
+
+## Testing your scenario
+
+- **Test with a real affiliate link.** Open your site through `yourwebsite.com/?ref=` plus a real affiliate's link name in a private browsing window, then sign up or check out as a customer would. It's the only way to know the affiliate value is being carried through.
+- **Read the bubbles.** After **Run once**, the numbered bubble above each module shows exactly what went in and came out. When a module fails, the error appears here first.
+- **Check both sides.** Look at the affiliate in Referly and confirm the referral or sale is on their record with the right commission.
+- **Use the History tab.** Once the scenario is on, open it and select **History** to see every run, when it happened, and how many operations it spent.
+- **Turn on Store incomplete executions.** In the scenario settings, this keeps failed runs so you can fix the problem and retry them instead of losing the data. Worth having on for anything that records sales.
+- **Delete your test records.** Test referrals and sales count towards your plan's limits and skew your reporting.
+
+## Limits to plan around
+
+**How often a scenario can write to Referly.** To keep things fast for everyone, Referly limits how many requests a connection can make: 100 a minute for reading, 30 a minute for creating, updating, or deleting, and 20 every fifteen minutes for anything to do with sales. Going over doesn't break the connection, but it does mean Make is the wrong tool for importing thousands of historical records. Use the [import tools](/help-center/manage/customers/import) instead.
+
+**Your Referly plan's limits.** Affiliates and referred customers created by a scenario count towards the same limits as ones created any other way. Once you're at the limit, the module fails with a message saying so.
+
+**Make's operations.** Every module run spends one operation, including searches that return nothing. A search that returns 10 records makes every module after it run 10 times, so a scenario that looks cheap can be expensive. Watch the operation count in **History**.
+
+**One program per connection.** A connection can't reach across programs.
+
+**No two-way syncing.** Two scenarios pointed at each other will loop. If you create affiliates in Referly from another tool and also push Referly affiliates back to it, add a filter so each scenario ignores records that came from the other one.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="I can't find Referly in Make's app picker">
+    Search for `Push Lap Growth`, Referly's former name. That's still how the app is listed.
+  </Accordion>
+  <Accordion title="The connection is refused when I try to create it">
+    Your plan doesn't include API access, or your trial hasn't converted to a paid plan yet. Check [API access](/help-center/billing/api-access) and try again.
+  </Accordion>
+  <Accordion title="The approval screen says Zapier, not Make">
+    That's expected — both platforms share the same approval screen. Carry on and select **Continue**.
+  </Accordion>
+  <Accordion title="Create a Referral fails with an affiliate error">
+    The value in **Affiliate ID** doesn't match any affiliate, click, or affiliate link in the connected program. Open the module's input bubble and look at what was actually sent — most often the hidden field on your form arrived empty because the visitor didn't come through an affiliate link.
+  </Accordion>
+  <Accordion title="Create a Sale fails saying an amount is required">
+    **Total Amount** was empty or zero. Some checkout tools send the amount in cents, or as text with a currency symbol. Put a **Tools** module in front to turn it into a plain number.
+  </Accordion>
+  <Accordion title="The sale was recorded but no commission was given">
+    The sale wasn't tied to an affiliate. That happens when the affiliate field was blank and the customer's email doesn't match a referred customer already in Referly. Check the email matches exactly, or fill the affiliate field in on the next run.
+  </Accordion>
+  <Accordion title="Create an Affiliate says the affiliate already exists">
+    Someone with that email is already in this program. Use **Update an Affiliate** instead, or put **Search Affiliates** in front with a filter so the create module only runs when nothing was found.
+  </Accordion>
+  <Accordion title="The scenario turned itself off">
+    Make deactivates a scenario after repeated errors, and a scenario with an instant trigger can switch off on the first one. Open **History**, find the failed run, fix the cause, then switch it back **ON**.
+  </Accordion>
+  <Accordion title="The same sale is recorded twice">
+    Both a direct integration and your scenario are recording it. If Stripe or Shopify is connected to Referly directly, that connection already records the sale. Turn one of them off.
+  </Accordion>
+</AccordionGroup>
+
+## Disconnect Referly from Make
+
+Disconnecting is done on Make's side. Open your profile menu, go to **Connections**, find the Referly connection, and delete it. Every scenario using it stops working immediately, so check which ones depend on it first.
+
+Make connections don't appear on your [API keys](/help-center/settings/advanced/api-keys) screen, so there's nothing to remove in Referly afterwards.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Zapier" icon="bolt" href="/help-center/integrations/zapier" arrow>
+    The same jobs, on a simpler platform with more apps.
+  </Card>
+  <Card title="All integrations" icon="grid-2" href="/help-center/integrations/overview" arrow>
+    Check for a direct connection before building a scenario.
+  </Card>
+  <Card title="API keys" icon="key" href="/help-center/settings/advanced/api-keys" arrow>
+    For custom integrations built by a developer.
+  </Card>
+  <Card title="Install the tracking script" icon="code" href="/developer-documentation/tracking/install-the-snippet" arrow>
+    Required before Make can attribute anything.
+  </Card>
+</Columns>

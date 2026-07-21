@@ -300,6 +300,8 @@
                   "help-center/settings/program/tracking-methods",
                   "help-center/settings/program/cross-domain-tracking",
                   "help-center/settings/program/automated-short-links",
+                  "help-center/settings/program/referly-short-links",
+                  "help-center/settings/program/shopify-short-links",
                   "help-center/settings/program/payout-settings",
                   "help-center/settings/program/tax-management",
                   "help-center/settings/program/notifications"
@@ -399,8 +401,10 @@
                 "group": "Payouts",
                 "pages": [
                   "help-center/integrations/wise",
+                  "help-center/integrations/wise-local-bank",
                   "help-center/integrations/paypal",
-                  "help-center/integrations/referly-payouts"
+                  "help-center/integrations/referly-payouts",
+                  "help-center/integrations/manual-bank-payouts"
                 ]
               }
             ]
@@ -435,8 +439,10 @@
                 "pages": [
                   "help-center/affiliates/portal-overview",
                   "help-center/affiliates/sign-up",
+                  "help-center/affiliates/join-a-program",
                   "help-center/affiliates/onboarding",
-                  "help-center/affiliates/profile"
+                  "help-center/affiliates/profile",
+                  "help-center/affiliates/social-accounts"
                 ]
               },
               {
@@ -447,7 +453,8 @@
                   "help-center/affiliates/assets",
                   "help-center/affiliates/content-rewards",
                   "help-center/affiliates/performance-bonuses",
-                  "help-center/affiliates/leaderboards"
+                  "help-center/affiliates/leaderboards",
+                  "help-center/affiliates/contests"
                 ]
               },
               {
