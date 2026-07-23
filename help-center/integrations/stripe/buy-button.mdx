@@ -95,7 +95,7 @@ The tracking script records clicks and remembers which affiliate sent each visit
 
 Open **Integrations** from the left sidebar, find the **Stripe Buy Button** card, and select it. The guide that opens has your script already filled in with your program's ID.
 
-{/* TODO screenshot: integrations-buy-button-card — upload it in the local Documentation Agent */}
+![integrations-buy-button-card](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784769075526-508247-final-integrations-buy-button-card-1784769075363.png)
 
 Copy that snippet and paste it into the `head` section of every page on your site — especially any page with a buy button. It looks like this:
 
@@ -122,7 +122,9 @@ Connecting Stripe is what lets Referly hear about payments. You don't create API
   <Step title="Open the connect dialog">
     On the **Integrations** page, select **Connect Integration** at the top right, then choose **Stripe**.
 
-    {/* TODO screenshot: connect-stripe-picker — upload it in the local Documentation Agent */}
+    
+![connect-stripe-picker](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784769072567-327540-final-connect-stripe-picker-1784769072437.png)
+
   </Step>
   <Step title="Choose live or test">
     Select **Connect Stripe Account** for your real account, or **Connect Test Mode** to connect a sandbox first. Testing first is the safer order.
@@ -133,7 +135,11 @@ Connecting Stripe is what lets Referly hear about payments. You don't create API
   <Step title="Confirm the connection">
     Back in Referly, the Stripe panel shows a green **Connected** badge with your account name, or a yellow **Test Mode** badge for a sandbox.
 
-    {/* TODO screenshot: stripe-live-test-badges — upload it in the local Documentation Agent */}
+    
+![stripe-live-test-badges](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784816980769-347168-final-stripe-live-test-badges-1784816980702.png)
+
+![stripe-live-test-badges](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784816981453-780621-final-stripe-live-test-badges-1784816981385.png)
+
   </Step>
 </Steps>
 
@@ -147,7 +153,7 @@ This is the piece that does the work. It waits for the referral identifier, then
 
 Copy it from the **Stripe Buy Button** guide on the **Integrations** page and paste it into the `head` section, **after** the tracking script from Step 2. Order matters — the snippet needs the tracking script to have loaded first.
 
-{/* TODO screenshot: buy-button-snippet-step — upload it in the local Documentation Agent */}
+![buy-button-snippet-step](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784816977987-576814-final-buy-button-snippet-step-1784816977674.png)
 
 ```html
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -309,7 +315,9 @@ Test before you send a single affiliate link out, with your Stripe connection sh
   <Step title="Confirm it in Referly">
     Open **Referrals** in the left sidebar — the customer should be listed against the right affiliate. Then open **Rewards** to see the commission.
 
-    {/* TODO screenshot: referral-from-buy-button — upload it in the local Documentation Agent */}
+    
+![referral-from-buy-button](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784769079462-986618-final-referral-from-buy-button-1784769078739.png)
+
   </Step>
 </Steps>
 

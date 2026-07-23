@@ -93,7 +93,7 @@ The tracking script records clicks and remembers which affiliate sent each visit
 
 Open **Integrations** from the left sidebar, find the **Stripe Pricing Table** card, and select it. The guide that opens has your script already filled in with your program's ID.
 
-{/* TODO screenshot: integrations-pricing-table-card — upload it in the local Documentation Agent */}
+![integrations-pricing-table-card](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784769061719-563525-final-integrations-pricing-table-card-1784769061555.png)
 
 Copy that snippet and paste it into the `head` section of every page on your site — especially your pricing page. It looks like this:
 
@@ -120,7 +120,9 @@ Connecting Stripe is what lets Referly hear about payments. You don't create API
   <Step title="Open the connect dialog">
     On the **Integrations** page, select **Connect Integration** at the top right, then choose **Stripe**.
 
-    {/* TODO screenshot: connect-stripe-dialog — upload it in the local Documentation Agent */}
+    
+![connect-stripe-dialog](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784769058298-44044-final-connect-stripe-dialog-1784769058176.png)
+
   </Step>
   <Step title="Choose live or test">
     Select **Connect Stripe Account** for your real account, or **Connect Test Mode** to connect a sandbox first. Testing first is the safer order.
@@ -131,7 +133,11 @@ Connecting Stripe is what lets Referly hear about payments. You don't create API
   <Step title="Confirm the connection">
     Back in Referly, the Stripe panel shows a green **Connected** badge with your account name, or a yellow **Test Mode** badge for a sandbox.
 
-    {/* TODO screenshot: stripe-badges-live-test — upload it in the local Documentation Agent */}
+    
+![stripe-badges-live-test](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784816992954-168831-final-stripe-badges-live-test-1784816992889.png)
+
+![stripe-badges-live-test](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784816993533-54934-final-stripe-badges-live-test-1784816993471.png)
+
   </Step>
 </Steps>
 
@@ -145,7 +151,7 @@ This is the piece that does the work. It waits for the referral identifier, then
 
 Copy it from the **Stripe Pricing Table** guide on the **Integrations** page and paste it into the `head` section, **after** the tracking script from Step 2. Order matters — the snippet needs the tracking script to have loaded first.
 
-{/* TODO screenshot: pricing-table-snippet-step — upload it in the local Documentation Agent */}
+![pricing-table-snippet-step](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784816991805-542776-final-pricing-table-snippet-step-1784816991427.png)
 
 ```html
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -307,7 +313,9 @@ Test before you send a single affiliate link out, with your Stripe connection sh
   <Step title="Confirm it in Referly">
     Open **Referrals** in the left sidebar — the customer should be listed against the right affiliate with the plan name filled in. Then open **Rewards** to see the commission.
 
-    {/* TODO screenshot: referral-from-pricing-table — upload it in the local Documentation Agent */}
+    
+![referral-from-pricing-table](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784769066084-941308-final-referral-from-pricing-table-1784769065266.png)
+
   </Step>
 </Steps>
 

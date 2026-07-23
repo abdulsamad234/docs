@@ -9,7 +9,7 @@ This is a two-part setup, and both parts matter. Referly's tracking script watch
 
 Plan about 30 minutes. You'll be moving between three places: your Referly dashboard, your Memberstack dashboard, and wherever you edit your site's code (usually Webflow).
 
-{/* TODO screenshot: memberstack-integration-card — upload it in the local Documentation Agent */}
+![memberstack-integration-card](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784768871807-12560-final-memberstack-integration-card-1784768871615.png)
 
 ## What this integration can and can't track
 
@@ -47,7 +47,7 @@ Everything you copy and paste in this guide is pre-filled with your program's ow
 
 In your Referly dashboard, open **Settings** from the left sidebar, then select **Integrations**. Find the card titled **Memberstack With Stripe** and select **Instructions**.
 
-{/* TODO screenshot: memberstack-instructions-dialog — upload it in the local Documentation Agent */}
+![memberstack-instructions-dialog](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784768868956-873850-final-memberstack-instructions-dialog-1784768868530.png)
 
 Keep this window open in a browser tab for the rest of the setup. It contains your tracking script, your program's own webhook address, and the exact custom field name, all filled in for you. The card is marked **Medium** difficulty because it involves pasting code, but you don't need a developer for it.
 
@@ -78,7 +78,7 @@ The instructions window also has a **Using Google Tag Manager** tab if you prefe
 </script>
 ```
 
-{/* TODO screenshot: tracking-script-copy — upload it in the local Documentation Agent */}
+![tracking-script-copy](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784768875057-554450-final-tracking-script-copy-1784768874937.png)
 
 Now paste it into your site. Pick the tab that matches how your site is built.
 
@@ -210,7 +210,7 @@ Memberstack takes payments through Stripe, which means Referly reads your revenu
 
 In the instructions window, go to **Step 4: Connect Stripe** and select **Connect Stripe**. You'll be sent to Stripe to authorise the connection, then returned to Referly.
 
-{/* TODO screenshot: connect-stripe — upload it in the local Documentation Agent */}
+![connect-stripe](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784768865238-246676-final-connect-stripe-1784768865171.png)
 
 Use the same Stripe account that Memberstack is connected to. If Memberstack is charging through one Stripe account and Referly is watching a different one, no payment will ever match a referral. For the full picture on what Referly reads from Stripe, see [the Stripe integration](/help-center/integrations/stripe).
 
@@ -288,7 +288,7 @@ Don't take it on trust. Run one real referral through the whole path before you 
   </Step>
 </Steps>
 
-{/* TODO screenshot: test-referral-in-customers — upload it in the local Documentation Agent */}
+![test-referral-in-customers](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784820031184-729111-final-test-referral-in-customers-1784820030833.png)
 
 <Check>
   When your test member appears under **Customers** with the right affiliate next to them, and a payment shows up against them afterwards, the integration is working end to end.

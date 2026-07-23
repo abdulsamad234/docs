@@ -11,7 +11,7 @@ It does one job well. When a visitor who arrived from an affiliate link submits 
   This integration tracks **referrals and sign-ups only**. It never records revenue. If you need affiliates paid on sales, you'll pair this with an integration that handles payments, or use one of the developer options at the end of this article. The section on tracking sales explains how to choose.
 </Warning>
 
-{/* TODO screenshot: universal-integration-card — upload it in the local Documentation Agent */}
+![universal-integration-card](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784771017951-561300-final-universal-integration-card-1784771017864.png)
 
 ## When this is the right choice
 
@@ -52,7 +52,7 @@ You'll need:
 
 Open the guide in Referly first, because both snippets come with your program's own details filled in. In your dashboard, open **Settings** from the left sidebar, select **Integrations**, find the **Universal Forms Integration** card, and select **Instructions**.
 
-{/* TODO screenshot: universal-instructions-dialog — upload it in the local Documentation Agent */}
+![universal-instructions-dialog](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784771015237-719218-final-universal-instructions-dialog-1784771014905.png)
 
 ## Add the Referly tracking script
 
@@ -81,7 +81,7 @@ There's a **Using Google Tag Manager** tab too, if you'd rather load it that way
 </script>
 ```
 
-{/* TODO screenshot: universal-tracking-script — upload it in the local Documentation Agent */}
+![universal-tracking-script](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784771047208-366923-final-universal-tracking-script-1784771047098.png)
 
 Paste it into the `head` section of your site, site-wide if you can, so it's there wherever an affiliate sends someone. Where that setting lives depends on your platform: look for "custom code", "header scripts", "head code", or "tracking code" in your site settings. On WordPress, see [the WordPress guide](/help-center/integrations/wordpress) for four different ways to do it.
 
@@ -136,7 +136,7 @@ This is the piece that does the actual work. Copy it from **Step 2: Track Referr
 </script>
 ```
 
-{/* TODO screenshot: universal-form-script — upload it in the local Documentation Agent */}
+![universal-form-script](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784771009046-596886-final-universal-form-script-1784771008791.png)
 
 You don't have to configure it, name your fields a particular way, or point it at a specific form. It looks at every form on the page and finds the email field on its own, matching any field marked as an email field or with "email" anywhere in its name. It does the same for a name field, and passes the name along when it finds one.
 
@@ -196,7 +196,7 @@ If you work with an ad network or partner platform that reports conversions back
   </Step>
 </Steps>
 
-{/* TODO screenshot: universal-test-referral — upload it in the local Documentation Agent */}
+![universal-test-referral](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784771022002-60201-final-universal-test-referral-1784771021488.png)
 
 <Check>
   When the click appears **and** the form submission shows up under **Customers** against the right affiliate, the integration is working.

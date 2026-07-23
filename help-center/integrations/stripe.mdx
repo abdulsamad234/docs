@@ -80,7 +80,7 @@ The snippet looks like this, with your own program ID in place of the placeholde
 
 For everything the script does and how attribution is decided, see [Install the snippet](/developer-documentation/tracking/install-the-snippet) and [Tracking methods](/help-center/settings/program/tracking-methods).
 
-{/* TODO screenshot: integration-instructions-page — upload it in the local Documentation Agent */}
+![integration-instructions-page](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784770895295-284718-final-integration-instructions-page-1784770894740.png)
 
 ## Step 2: Connect your Stripe account
 
@@ -104,15 +104,15 @@ Connecting is a single approval — you don't create API keys, and you don't add
   </Step>
 </Steps>
 
-{/* TODO screenshot: choose-integration-dialog — upload it in the local Documentation Agent */}
+![choose-integration-dialog](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784770872005-878799-final-choose-integration-dialog-1784770871869.png)
 
-{/* TODO screenshot: connect-stripe-flow — upload it in the local Documentation Agent */}
+<video controls width="100%" src="https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784812548523-821796-Stripe-integration.mp4" />
 
 ### Check that it connected
 
 Open **Connect Integration** again and select **Stripe**. A green **Connected** badge appears at the top with your Stripe account's display name — the same name Stripe shows in its own dashboard. If you connected in test mode, the badge is yellow and reads **Test Mode** instead.
 
-{/* TODO screenshot: stripe-connected-badge — upload it in the local Documentation Agent */}
+![stripe-connected-badge](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784804424175-671274-final-stripe-connected-badge-1784804423941.png)
 
 If you see the message that the Stripe account is already linked to another campaign, that account is connected to a different Referly program. Disconnect it there first, or connect a different Stripe account.
 
@@ -145,7 +145,7 @@ You don't need all three. Pick the guide that matches how you take payments, and
 | Affiliates share discount codes instead of links | [Stripe coupon codes](/help-center/integrations/stripe/coupon-codes) | No checkout changes at all — the code itself identifies the affiliate. |
 | You use WordPress with Stripe | [WordPress](/help-center/integrations/wordpress) | The WordPress-specific version of the snippet method. |
 
-{/* TODO screenshot: stripe-guide-cards — upload it in the local Documentation Agent */}
+![stripe-guide-cards](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784812555255-831413-SCR-20260723-ohbz.png)
 
 <Note>
   When a payment carries **both** an affiliate's coupon code and a link reference, the **coupon code wins**. This is deliberate: if the customer typed an affiliate's code at checkout, that affiliate gets the credit.
@@ -191,9 +191,11 @@ Rehearse in test mode. It takes ten minutes and catches the two mistakes almost 
 
 {/* TODO screenshot: stripe-payment-client-reference-id — upload it in the local Documentation Agent */}
 
-{/* TODO screenshot: stripe-customer-metadata — upload it in the local Documentation Agent */}
+![stripe-customer-metadata](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784812825525-724540-SCR-20260723-okar.png)
 
-{/* TODO screenshot: referly-customer-and-sale — upload it in the local Documentation Agent */}
+![referly-customer-and-sale](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784770882134-379044-final-referly-customer-and-sale-1784770881276.png)
+
+![referly-customer-and-sale](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784770891620-107345-final-referly-customer-and-sale-1784770890836.png)
 
 <Warning>
   Test data doesn't carry over to live mode. Test customers and test sales stay in Referly after you switch — delete them from your **Customers** and **Sales** pages so they don't distort your reporting.
@@ -246,7 +248,7 @@ Disconnecting does not delete anything you've already tracked — your referred 
 
 To move to a different Stripe account, disconnect first and then connect the new one. A single Stripe account can only ever be linked to one Referly program.
 
-{/* TODO screenshot: disconnect-stripe — upload it in the local Documentation Agent */}
+![disconnect-stripe](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784804450778-175410-final-disconnect-stripe-1784804450637.png)
 
 ## Troubleshooting
 

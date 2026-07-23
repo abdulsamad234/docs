@@ -63,7 +63,9 @@ Nothing about coupons works until Stripe is connected, because Referly creates a
   <Step title="Open the connect dialog">
     Open **Integrations** from the left sidebar, select **Connect Integration** at the top right, then choose **Stripe**.
 
-    {/* TODO screenshot: coupons-connect-stripe — upload it in the local Documentation Agent */}
+    
+![coupons-connect-stripe](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784771290393-945379-final-coupons-connect-stripe-1784771290152.png)
+
   </Step>
   <Step title="Choose live or test">
     Select **Connect Stripe Account** for your real account, or **Connect Test Mode** to connect a sandbox first.
@@ -74,7 +76,11 @@ Nothing about coupons works until Stripe is connected, because Referly creates a
   <Step title="Confirm the connection">
     Back in Referly, the Stripe panel shows a green **Connected** badge with your account name, or a yellow **Test Mode** badge for a sandbox.
 
-    {/* TODO screenshot: coupons-stripe-badges — upload it in the local Documentation Agent */}
+    
+![coupons-stripe-badges](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784817012713-456552-final-coupons-stripe-badges-1784817012625.png)
+
+![coupons-stripe-badges](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784817013438-710275-final-coupons-stripe-badges-1784817013362.png)
+
   </Step>
 </Steps>
 
@@ -92,7 +98,7 @@ This is the hands-off route. You set the customer discount once in your program 
 
 Referly builds each one in your connected Stripe account as a coupon plus a matching customer-facing code, so the codes are real Stripe codes that work at your checkout with no extra setup.
 
-{/* TODO screenshot: auto-generated-code-on-affiliate — upload it in the local Documentation Agent */}
+![auto-generated-code-on-affiliate](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784771265616-692686-final-auto-generated-code-on-affiliate-1784771265486.png)
 
 The discount is set to apply to every invoice, not only the first — so a customer who subscribes with a code keeps their discount on every renewal, and the affiliate keeps earning on every renewal too.
 
@@ -119,7 +125,9 @@ Use this when you want different discounts for different affiliates, or when you
   <Step title="Bring the codes into Referly">
     Open **Coupons** from the left sidebar and select **Sync Coupons**, then choose **Stripe**. Your codes are pulled in with their discounts and redemption counts.
 
-    {/* TODO screenshot: sync-coupons-from-stripe — upload it in the local Documentation Agent */}
+    
+![sync-coupons-from-stripe](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784817015452-752849-final-sync-coupons-from-stripe-1784817015273.png)
+
   </Step>
   <Step title="Assign a code to an affiliate">
     Open the code in Referly and attach it to the affiliate who'll promote it. This is what tells Referly who to pay. See [creating coupons](/help-center/engage/coupons/create) and [promotional codes](/help-center/engage/coupons/promotional-codes).
@@ -162,7 +170,7 @@ This step is optional. Coupon tracking works with nothing installed on your site
 
 If you want both, open **Integrations**, find the **Stripe Coupon Codes** card, and copy the script from the guide into the `head` section of your pages:
 
-{/* TODO screenshot: integrations-coupon-codes-card — upload it in the local Documentation Agent */}
+![integrations-coupon-codes-card](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784771293370-533121-final-integrations-coupon-codes-card-1784771293287.png)
 
 ```html
 <script
@@ -219,7 +227,9 @@ Test before you hand a code to a single affiliate, with your Stripe connection s
   <Step title="Confirm it in Referly">
     Open **Referrals** in the left sidebar — the customer should be listed against the affiliate who owns the code. Then open **Rewards** to see the commission.
 
-    {/* TODO screenshot: referral-attributed-by-coupon — upload it in the local Documentation Agent */}
+    
+![referral-attributed-by-coupon](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784771297437-242114-final-referral-attributed-by-coupon-1784771296920.png)
+
   </Step>
   <Step title="Check the redemption count moved">
     Back on the **Coupons** page, the code's usage count should have gone up.

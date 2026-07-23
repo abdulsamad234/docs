@@ -7,7 +7,7 @@ keywords: ["Cal.com affiliate tracking", "Cal.com Referly integration", "track C
 
 Referly ships **two separate Cal.com setups**, and picking the right one is the first decision you make. They work differently, they're configured differently, and running both on the same meeting type will double-count your bookings.
 
-{/* TODO screenshot: cal-integration-cards — upload it in the local Documentation Agent */}
+![cal-integration-cards](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784769052043-305766-final-cal-integration-cards-1784769051732.png)
 
 ## Which of the two setups you need
 
@@ -95,7 +95,7 @@ Copy it from **Step 1: Tracking clicks** in whichever instructions window you op
 </script>
 ```
 
-{/* TODO screenshot: cal-tracking-script — upload it in the local Documentation Agent */}
+![cal-tracking-script](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784816985984-660003-final-cal-tracking-script-1784816985782.png)
 
 Paste it into the `head` section of your site, site-wide if you can. On Webflow that's **Site settings**, then the **Custom code** tab, then **Head code**, followed by publishing. On WordPress, look for a "header scripts" setting in your theme or a header-and-footer plugin. In Google Tag Manager, use a **Custom HTML** tag firing on **All Pages**.
 
@@ -168,7 +168,7 @@ Replace `INSERT_YOUR_NS_HERE` with your namespace, and note that `YOUR_PROGRAM_I
 </script>
 ```
 
-{/* TODO screenshot: cal-referral-script — upload it in the local Documentation Agent */}
+![cal-referral-script](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784816984704-453773-final-cal-referral-script-1784816984350.png)
 
 What this does, in plain terms: the moment someone finishes booking inside your embed, it tells Referly which booking was made and which affiliate referred the visitor. Referly then looks the booking up with Cal.com to get the attendee's name and email, and records the referral. Bookings by visitors who didn't arrive on an affiliate link are ignored, so your organic bookings stay untouched.
 
@@ -268,7 +268,7 @@ And the floating button version, which differs only in the middle:
     });
 ```
 
-{/* TODO screenshot: cal-payment-embed-code — upload it in the local Documentation Agent */}
+![cal-payment-embed-code](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784816982545-506454-final-cal-payment-embed-code-1784816982207.png)
 
 Four things to carry across from your own generated code, or the embed will break:
 
@@ -354,7 +354,7 @@ Do this before telling any affiliate the integration is live.
   </Step>
 </Steps>
 
-{/* TODO screenshot: cal-test-booking — upload it in the local Documentation Agent */}
+![cal-test-booking](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784817292612-191414-final-cal-test-booking-1784817292316.png)
 
 <Check>
   When the test booking appears once under **Customers** against the right affiliate, with the right amount if you charged for it, you're done.

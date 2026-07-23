@@ -83,7 +83,7 @@ The tracking script records clicks and remembers which affiliate sent each visit
 
 Open **Integrations** from the left sidebar, find the **Stripe Payment Links** card, and select it. The guide that opens has your script already filled in with your program's ID.
 
-{/* TODO screenshot: integrations-payment-links-card — upload it in the local Documentation Agent */}
+![integrations-payment-links-card](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784768878070-764937-final-integrations-payment-links-card-1784768877904.png)
 
 Copy that snippet and paste it into the `head` section of every page on your site — especially any page with a payment link on it. It looks like this:
 
@@ -110,7 +110,9 @@ Connecting Stripe is what lets Referly hear about payments. You don't create API
   <Step title="Open the connect dialog">
     On the **Integrations** page, select **Connect Integration** at the top right, then choose **Stripe**.
 
-    {/* TODO screenshot: connect-integration-stripe — upload it in the local Documentation Agent */}
+    
+![connect-integration-stripe](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784770951679-767373-final-connect-integration-stripe-1784770951549.png)
+
   </Step>
   <Step title="Choose live or test">
     Select **Connect Stripe Account** for your real account, or **Connect Test Mode** to connect a sandbox first. Testing first is the safer order.
@@ -121,7 +123,11 @@ Connecting Stripe is what lets Referly hear about payments. You don't create API
   <Step title="Confirm the connection">
     Back in Referly, the Stripe panel shows a green **Connected** badge with your account name, or a yellow **Test Mode** badge for a sandbox.
 
-    {/* TODO screenshot: stripe-connection-badges — upload it in the local Documentation Agent */}
+    
+![stripe-connection-badges](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784820124169-68126-final-stripe-connection-badges-1784820124118.png)
+
+![stripe-connection-badges](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784820125897-961544-final-stripe-connection-badges-1784820125829.png)
+
   </Step>
 </Steps>
 
@@ -135,7 +141,7 @@ This is the piece that does the actual work. It watches for the referral identif
 
 Copy it from the **Stripe Payment Links** guide on the **Integrations** page and paste it into the `head` section, **after** the tracking script from Step 2. Order matters — the snippet needs the tracking script to have loaded first.
 
-{/* TODO screenshot: payment-links-snippet-step — upload it in the local Documentation Agent */}
+![payment-links-snippet-step](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784768881244-31849-final-payment-links-snippet-step-1784768881042.png)
 
 ```html
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -275,7 +281,9 @@ Test before you send a single affiliate link out, with your Stripe connection sh
   <Step title="Confirm it in Referly">
     Open **Referrals** in the left sidebar — the customer should be listed against the right affiliate. Then open **Rewards** to see the commission.
 
-    {/* TODO screenshot: referral-from-payment-link — upload it in the local Documentation Agent */}
+    
+![referral-from-payment-link](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784770955696-338296-final-referral-from-payment-link-1784770955393.png)
+
   </Step>
 </Steps>
 

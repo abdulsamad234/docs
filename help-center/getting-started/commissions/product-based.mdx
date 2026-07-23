@@ -1,22 +1,40 @@
 ---
 title: "Product-based commissions"
-description: "Pay affiliates a different commission rate per product, service, or Shopify collection in Referly by adding a Product condition to a custom commission plan. The base plan is a single flat rate, so product-based rates need a custom plan."
-keywords: ["product-based commission", "per-product commission rate", "commission by product", "Shopify collection commission", "custom commission plan", "Product condition", "commission conditions", "different rate per product", "affiliate commission per product", "Referly commission plan"]
+description: "Restrict your Referly base commission plan to specific products, or use a custom commission plan with Product conditions to pay a different rate per product, service, or Shopify collection."
+keywords: ["product-based commission", "restrict commission to products", "per-product commission rate", "commission by product", "Shopify collection commission", "custom commission plan", "Product condition", "base commission plan products", "different rate per product", "Referly commission plan"]
 ---
-Most programs pay one commission rate on every sale. But sometimes you want to pay more on a high-margin product, less on a discounted one, or a special rate on a single service or Shopify collection. This guide shows you how to pay a different rate depending on what a customer buys.
+Most programs pay one commission rate on every sale. But sometimes you want to pay only on certain products, or pay more on a high-margin product and less on a discounted one. Referly handles those two jobs in two different places, and it helps to know which one you need before you start.
 
-If you have been hunting for a per-product rate on your main commission settings and can't find one, that's expected. Product-based rates live in a **custom commission plan**, not the base plan. Here's why, and how to set one up.
+- **Pay on some products but not others?** Your **Base Commission Plan** can do that on its own.
+- **Pay a different rate depending on which product was bought?** That needs a **custom commission plan**.
 
-## Why product rates need a custom commission plan
+Here's how each one works.
 
-Your program has one **Base Commission Plan**, set under **Program Settings** &rarr; **Program Details** &rarr; **General**. It is deliberately simple: a single **Commission Type** (percentage or flat) and one **Commission Rate** that applies to every referred sale. There is no place on it to say "pay this rate for this product" because it is one rate for everything.
+## Limit your base plan to certain products
 
-![base-plan-flat-rate](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784635416463-183670-SCR-20260721-nhsp.png)
+Your program has one **Base Commission Plan**, set under **Program Settings** &rarr; **Program Details** &rarr; **General**. It has a single **Commission Type** (percentage or flat) and one **Commission Rate**, and it does have a product field: **Customer buys any of these products/plans**.
 
-To pay by product, you create a **custom commission plan**. Custom plans let you add **conditions** that check what was bought and pay a different reward when they match. That's the piece the base plan doesn't have.
+![base-plan-product-field](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784771713811-191295-final-base-plan-product-field-1784771713598.png)
+
+That field is a filter, not a rate picker. It decides *whether* the commission is paid, not *how much*:
+
+- **Leave it blank** and the commission applies to every referred purchase, whatever the customer bought. This is the default.
+- **Add one or more products** and the commission is paid only when the purchase includes something on your list. If the customer buys anything that isn't on the list, the affiliate earns nothing on that sale.
+
+<Warning>
+  Filling this in is stricter than it looks. There is no fallback rate behind it &mdash; a sale that doesn't match your product list pays no commission at all, rather than dropping back to a lower rate. If you want unlisted products to still earn something, use a custom commission plan instead.
+</Warning>
+
+The field appears when your base plan gives a **Cash Reward** and pays when a **Customer Makes a Payment**. It searches the same connected integrations described in the next section.
+
+## Why different rates per product need a custom plan
+
+The base plan has one **Commission Rate**, so it can't pay 20% on one product and 10% on another. It's one rate, with an optional product filter in front of it.
+
+To pay by product, you create a **custom commission plan**. Custom plans let you add several rates in one plan, each with its own **conditions** that check what was bought, plus a default rate for everything else. That's the piece the base plan doesn't have.
 
 <Info>
-  A custom commission plan can hold several rates at once, each with its own product condition, plus a default rate for everything else. So one plan can cover all your product-based rules.
+  A custom plan is also the safer choice when you want unmatched products to still earn a normal rate, since its **Default** commission catches everything your product rules don't.
 </Info>
 
 ## Connect where you sell
@@ -36,7 +54,7 @@ You don't strictly need an integration to build the rule, but without one you'd 
 
 Open **Program Settings** &rarr; **Program Details** &rarr; **Commission Plans**. At the top you'll see your **Base Commission Plan** with a **Default Plan** badge. To make a new plan, select **Add Commission Plan**.
 
-![add-commission-plan-button](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784635423999-150006-SCR-20260721-nfbu.png)
+![add-commission-plan-button](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784771710042-113624-final-add-commission-plan-button-1784771709675.png)
 
 The plan builder opens. It has three parts:
 
@@ -44,7 +62,7 @@ The plan builder opens. It has three parts:
 - A **Conditions** panel on the left, where you decide when a commission applies.
 - A **Reward** panel on the right, where you set what the affiliate earns when it applies.
 
-![commission-conditions-reward](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784635435329-520853-SCR-20260721-nhge.jpeg)
+![commission-conditions-reward](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784771751649-819467-final-commission-conditions-reward-1784771750186.png)
 
 Give the plan a name so you can recognize it later, then move to the commission you want to attach the product rate to.
 
@@ -66,7 +84,7 @@ In its **Conditions** panel, select **Add condition**. Two dropdowns appear:
   </Step>
 </Steps>
 
-![product-condition-build](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784635454111-923675-Product-based-plan.gif)
+{/* TODO screenshot: product-condition-build — upload it in the local Documentation Agent */}
 
 ## Search and select your products
 
@@ -78,7 +96,7 @@ A search box appears below the condition. Start typing a product name and Referl
 
 Under the box, a **Connected integrations** banner confirms where products are coming from, with a **Manage integrations** button. If you haven't connected anything yet, it reads **No product integration connected** and offers a **Connect Integration** button &mdash; you can still type product IDs manually in the meantime.
 
-![connected-integrations-banner](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784635478453-467280-SCR-20260721-nioz.png)
+![connected-integrations-banner](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784817007585-933607-final-connected-integrations-banner-1784817007377.png)
 
 ## Set the reward for those products
 
