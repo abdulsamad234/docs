@@ -67,3 +67,12 @@
 #content-area {
   max-width: 45rem;
 }
+
+/* Screenshots and videos. Mintlify ships no corner styling for content images
+ * or a bare <video>, so both render square. Round them here rather than per-tag,
+ * so every image and clip in the docs matches without remembering to add a
+ * class. Radius matches the navbar button above; change them together. */
+#content-area img,
+#content-area video {
+  border-radius: 0.75rem;
+}

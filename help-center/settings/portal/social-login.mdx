@@ -7,7 +7,7 @@ Social login lets your affiliates sign in and sign up with their Google account 
 
 To find it, open **Settings** from the left sidebar, go to **Affiliate Portal**, then select **Social Login**.
 
-{/* TODO screenshot: social-login-overview — upload it in the local Documentation Agent */}
+![social-login-overview](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784764636774-403194-SCR-20260723-djfy.png)
 
 <Info>
   Social login is available on the **Business plan** or higher. On lower plans the settings appear locked. See [plans and features](/help-center/billing/plans-and-features) for what each plan includes.
@@ -19,7 +19,7 @@ Google login uses your **own** Google credentials, so the sign-in screen and con
 
 At the top of the page is a **Google** row with a switch on the right. Turn the switch on to open the setup panel underneath. Nothing is live for your affiliates until you add your credentials and save.
 
-{/* TODO screenshot: google-enable-switch — upload it in the local Documentation Agent */}
+![google-enable-switch](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784764641432-430457-SCR-20260723-djkq.png)
 
 When Google login is on, the **Client ID** and **Client Secret** fields are both required. You can't save until they're filled in. The next section explains where those values come from.
 
@@ -42,7 +42,7 @@ Your Client ID and Client Secret come from the [Google Cloud Console](https://co
   </Step>
 </Steps>
 
-{/* TODO screenshot: google-credentials-fields — upload it in the local Documentation Agent */}
+![google-credentials-fields](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784764647406-157774-SCR-20260723-djps.png)
 
 For Google's own walkthrough, see their guide on [using OAuth 2.0 for web server applications](https://developers.google.com/identity/protocols/oauth2/web-server#prerequisites).
 
@@ -50,7 +50,7 @@ For Google's own walkthrough, see their guide on [using OAuth 2.0 for web server
 
 Google needs to know where to send affiliates back to after they sign in. Referly generates that address for you as the **Authorized Redirect URL** on the Social Login page.
 
-{/* TODO screenshot: redirect-url-copy — upload it in the local Documentation Agent */}
+![redirect-url-copy](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784764652246-873095-SCR-20260723-djug.png)
 
 Select the copy button next to the **Authorized Redirect URL** field. Then, back in the Google Cloud Console, open your OAuth client under **APIs & Services** then **Credentials**, and paste the URL into the **Authorized redirect URIs** field. Save it in Google.
 
@@ -62,7 +62,7 @@ Select the copy button next to the **Authorized Redirect URL** field. Then, back
 
 The **Always show account selector prompt** switch controls what happens when an affiliate already has a Google account signed in on their device.
 
-{/* TODO screenshot: account-selector-toggle — upload it in the local Documentation Agent */}
+![account-selector-toggle](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784764656874-86897-SCR-20260723-djzi.png)
 
 Leave it off and Google signs them in with their current account automatically for the smoothest experience. Turn it on and Google always asks them to pick which account to use, even when they only have one. This is useful for affiliates who share a computer or run more than one Google account.
 
@@ -80,7 +80,7 @@ If the button stays greyed out, your Client ID or Client Secret is still empty. 
 
 Once it's on, affiliates see a **Login with Google** button on the login page and a **Sign up with Google** button on the sign-up page, above the usual email and password form.
 
-{/* TODO screenshot: affiliate-google-button — upload it in the local Documentation Agent */}
+![affiliate-google-button](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784764661465-40790-SCR-20260723-dkvv.png)
 
 Social login sits alongside email and password, it doesn't replace it. Affiliates can still use whichever they prefer, and someone who signs up with Google can keep using Google every time they come back. To change how the rest of these pages look, see [setting up login and sign up](/help-center/settings/portal/login-and-sign-up).
 
