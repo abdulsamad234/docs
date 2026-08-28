@@ -352,7 +352,8 @@
                   "help-center/integrations/chargebee",
                   "help-center/integrations/polar",
                   "help-center/integrations/zylvie",
-                  "help-center/integrations/ecwid"
+                  "help-center/integrations/ecwid",
+                  "help-center/integrations/creem"
                 ],
                 "expanded": false
               },
@@ -392,6 +393,8 @@
                   "help-center/integrations/cal-com",
                   "help-center/integrations/skillplate",
                   "help-center/integrations/pickaxe",
+                  "help-center/integrations/boomerangme",
+                  "help-center/integrations/brilliant-directories",
                   "help-center/integrations/wordpress",
                   "help-center/integrations/universal"
                 ],

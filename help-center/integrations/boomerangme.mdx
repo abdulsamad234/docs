@@ -1,0 +1,154 @@
+---
+title: "BoomerangMe"
+description: "Connect BoomerangMe to Referly to credit affiliates for paid sign-ups. Add the tracking script, capture the customer's email on your form, and connect Stripe so subscriptions, renewals and refunds are attributed automatically."
+keywords: ["BoomerangMe affiliate program", "BoomerangMe Referly integration", "loyalty app affiliate tracking", "BoomerangMe Stripe affiliate commission", "track BoomerangMe sign-ups affiliates", "digital loyalty card affiliate tracking"]
+---
+
+[BoomerangMe](https://boomerangme.biz/) is a digital loyalty platform that you run on your own site and charge for through Stripe. Connecting it to Referly means that when someone arrives on an affiliate link and then pays for a plan, the affiliate who sent them is credited, along with the renewals that follow.
+
+The integration has three parts: a tracking script that recognises the visitor, a small form-capture script that records their email when they sign up, and your Stripe connection so Referly can read the payment. Once those are in place, everything else happens on its own — there's no webhook to build in BoomerangMe.
+
+Plan about 15 minutes.
+
+## What this integration can and can't track
+
+| What you want to track | Does it work? | Notes |
+| --- | --- | --- |
+| Link clicks and visits | Yes | From the tracking script on your site |
+| Email sign-ups | Yes | Captured from your sign-up form |
+| Paid subscriptions | Yes, with the amount | Recorded as a sale with commission |
+| Recurring renewals | Yes | Each renewal payment comes through Stripe |
+| Refunds | Yes | Referly recognises a refund and adjusts the commission |
+| Cancelled subscriptions | Yes | Referly knows when a subscription ends |
+| Free-only accounts that never pay | Lead only | Recorded as a referred sign-up, no sale until a payment is made |
+
+<Info>
+  Because the sale side of this integration runs through Stripe, it handles the whole life of a customer: the first payment, every renewal, refunds, and cancellations — not just the initial sale.
+</Info>
+
+## Before you start
+
+You'll need:
+
+- A live Referly program with at least one affiliate to test with. See [setting up your program](/help-center/getting-started/set-up-program/affiliate-program-setup) if you haven't got that far.
+- A BoomerangMe site you can edit the page code on (the `<head>` and the page that holds your sign-up form).
+- A Stripe account that BoomerangMe charges through.
+
+Open the guide inside Referly first, because it has your program's own tracking script filled in. In your dashboard, open **Settings** from the left sidebar, select **Integrations**, find the **BoomerangMe** card, and select **Instructions**.
+
+## Step 1: Add the Referly tracking script
+
+Copy the script from **Step 1** of the instructions window and paste it into your site's `<head>` tag so tracking starts as early as possible. Your program's own identifier is already filled in where `YOUR_PROGRAM_ID` appears here:
+
+```html
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+<Warning>
+  If affiliates send traffic to a marketing site first and people click through to your BoomerangMe pages, put the tracking script on both. A visitor who is never recognised can't be credited.
+</Warning>
+
+## Step 2: Connect Stripe
+
+BoomerangMe takes payment through Stripe, and Stripe is where Referly reads your revenue from. Without this step you'll see clicks and sign-ups but no sales.
+
+In the instructions window, go to **Step 2: Connect Stripe** and select **Connect Stripe**. You'll be sent to Stripe to authorise the connection, then returned to Referly.
+
+<Warning>
+  Use the same Stripe account BoomerangMe charges through, and make sure your program's test-or-live mode matches the payments you expect. If the two accounts differ, no payment will ever match a referral.
+</Warning>
+
+## Step 3: Capture sign-ups and sales
+
+Add this script to the page where users sign up or enter their email. Make sure the Step 1 script is present on that page too. Paste this just before the closing `</body>` tag:
+
+```html
+<script>
+  function handleFormSubmit(event) {
+    var form = event.target;
+    var emailInput =
+      form.querySelector('input[type="email"]') ||
+      form.querySelector('input[name="email"]');
+    if (emailInput && emailInput.value) {
+      window.createPushLapEmail(emailInput.value);
+    }
+  }
+
+  function attachListeners() {
+    var forms = document.querySelectorAll('form');
+    forms.forEach(function (form) {
+      form.addEventListener('submit', handleFormSubmit);
+    });
+  }
+
+  window.addEventListener('affiliate_referral_ready', attachListeners);
+</script>
+```
+
+This listens for any form submission on the page and hands the email to Referly, so the referred sign-up is recorded. When that customer later pays through Stripe, the payment is matched to them and credited to the affiliate.
+
+## Test it end to end
+
+Run a real sign-up and payment through before telling affiliates the integration is live.
+
+<Steps>
+  <Step title="Grab a real affiliate link">
+    Open **Affiliates** in the left sidebar of Referly, pick an affiliate, and copy their referral link.
+  </Step>
+  <Step title="Open it in a private window">
+    Use a private or incognito window so no old tracking interferes. Land on your site and let the page finish loading.
+  </Step>
+  <Step title="Sign up and pay">
+    Go through your normal sign-up with a fresh email address, then buy a paid plan. Use a low-priced plan or a full-discount coupon rather than a live card charge if you can.
+  </Step>
+  <Step title="Check Referly">
+    Open **Customers** in the left sidebar. The buyer should appear within a minute, credited to the affiliate whose link you used, with the amount they paid and its commission.
+  </Step>
+</Steps>
+
+<Check>
+  When the test payment appears under **Customers** against the right affiliate with the right amount, you're done.
+</Check>
+
+Refund the test payment in Stripe and remove the test referral in Referly so your reports start clean.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Clicks are counted but no sales ever appear">
+    Almost always the Stripe connection. Check that Referly is connected to the same Stripe account BoomerangMe charges through, and that your program's test-or-live mode matches the payments you're expecting.
+  </Accordion>
+  <Accordion title="Nothing is tracked at all, not even clicks">
+    The Step 1 script isn't running. Confirm it's in the `<head>` of the pages affiliates send traffic to, then load one with an affiliate link on the end and check a click shows up in Referly.
+  </Accordion>
+  <Accordion title="Sign-ups aren't being recorded">
+    The Step 3 script needs to be on the same page as your sign-up form, and that page also needs the Step 1 script. Confirm your form has an email input the script can find (`type="email"` or `name="email"`).
+  </Accordion>
+  <Accordion title="The wrong affiliate got the credit">
+    The customer most likely visited on another affiliate's link earlier. The first affiliate to refer someone keeps the credit for the length of your cookie window. You can move a referral from the customer's page, described in [managing referred customers](/help-center/manage/customers/overview).
+  </Accordion>
+</AccordionGroup>
+
+Still stuck? [Book an integration call](https://www.referly.so/book-integration-call) and we'll go through your setup with you.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Stripe" icon="stripe" href="/help-center/integrations/stripe" arrow>
+    Connect the Stripe account BoomerangMe charges through.
+  </Card>
+  <Card title="Universal forms integration" icon="wpforms" href="/help-center/integrations/universal" arrow>
+    The general form-capture pattern this integration builds on.
+  </Card>
+  <Card title="Commissions overview" icon="percent" href="/help-center/getting-started/commissions/overview" arrow>
+    Set recurring commission for subscription revenue.
+  </Card>
+  <Card title="All integrations" icon="puzzle-piece" href="/help-center/integrations/overview" arrow>
+    See every platform Referly connects to.
+  </Card>
+</Columns>

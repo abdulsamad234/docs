@@ -1,0 +1,311 @@
+---
+title: "Creem"
+description: "Connect Creem to Referly to track affiliate clicks, sales, subscription renewals, trials, discount code sales, refunds and chargebacks. Step-by-step webhook, API key, tracking script and checkout metadata setup."
+keywords: ["creem affiliate tracking", "creem affiliate program", "referly creem integration", "creem webhook affiliate", "creem referly_ref metadata", "creem checkout api affiliate", "creem payment link affiliate", "creem discount code affiliate", "creem subscription commission", "creem refund affiliate commission", "creem test mode affiliate tracking"]
+---
+Creem hosts your checkout on its own domain, which makes affiliate tracking slightly different from a checkout that runs on your site. Referly handles it with three pieces: a tracking script that records the click, one small change that carries the referral into the Creem checkout, and a webhook that reports every payment back to Referly.
+
+Once it's set up, sales, subscription renewals, trials, refunds and chargebacks all arrive on that single webhook, and affiliate discount codes are credited even when nobody clicked a link.
+
+![Referly and Creem connected by sync arrows](/images/integrations/creem/hero.png)
+
+## What the Creem integration can and can't do
+
+| What you want to track | Does Creem cover it? |
+| --- | --- |
+| **Clicks on affiliate links** | Yes, once the tracking script is on your site ([Step 5](#step-5-install-the-tracking-script-on-your-site)). |
+| **One-time sales** | Yes — a completed Creem checkout that carries a referral becomes a sale credited to that affiliate. |
+| **Subscription renewals** | Yes — Creem carries checkout metadata onto the subscription, so every renewal payment credits the same affiliate at the amount actually charged. |
+| **Free trials** | Yes, as a referral. The person is recorded when the trial starts, and commission is only earned once a real payment goes through. |
+| **Discount code sales** | Yes — a checkout that used an affiliate's Creem discount code is credited to that affiliate, with no click and no link involved. |
+| **Product-level detail** | Yes — the product on the order comes across with its name and price, so [product-based commissions](/help-center/getting-started/commissions/product-based) work. |
+| **Sales in other currencies** | Yes — the amount is converted into your program's currency before commission is worked out. |
+| **Tax** | Yes — tax comes across as its own figure, so commission can be worked out on the amount before tax. |
+| **Refunds** | Yes — the sale is marked refunded and the commission is clawed back. See [Refunds and chargebacks](#refunds-and-chargebacks). |
+| **Chargebacks** | Yes — a dispute is treated like a refund and reverses the commission. |
+| **Sales with no referral and no code** | Recorded, but unattributed. The customer and revenue still show up in Referly so your numbers match Creem; no affiliate is credited. |
+| **Sign-ups with no payment** | No — Creem only reports checkouts and payments. Use the [Universal integration](/help-center/integrations/universal) to track leads. |
+| **Test mode and live at the same time** | No — a connection uses one API key, so it points at one environment. |
+| **Two Creem accounts on one program** | No — and the same Creem API key can't be connected to two Referly programs. |
+
+## Before you start
+
+You'll need:
+
+- **Admin access to your Creem account**, so you can create a webhook and an API key.
+- **The ability to add code to your website**, or someone who can. Every setup needs the tracking script, and payment-link setups need one extra line.
+- **Your Referly program open.** Go to your program, then **Settings**, then **Integrations**, and choose **Creem**. Your webhook address is shown there, already filled in with your program's details.
+
+<Tip>
+  Do the whole thing in Creem's test mode first. A test API key starts with `creem_test_` and connects exactly the same way, so you can watch a full checkout land in Referly before any real money moves.
+</Tip>
+
+## Step 1: Set your commission structure
+
+Before you connect anything, decide what an affiliate earns. In your program setup, open the commission step and set a percentage or a flat amount, paid on **purchase**.
+
+![Referly's program setup showing the commission structure step with the purchase trigger selected](/images/integrations/creem/create-program.png)
+
+Two settings are worth getting right now:
+
+- **Commission structure** — a percentage or a fixed amount per sale. You can add rates for individual Creem products later, once Creem is connected and Referly can read your product list.
+- **Payout hold** — how long a commission is held before it can be paid out. This doubles as your refund window: a refund inside that window claws the commission back automatically.
+
+## Step 2: Open the Creem integration in Referly
+
+In Referly, open your program, go to **Settings**, then **Integrations**, and choose **Creem**.
+
+The dialog shows your program's own **Webhook URL** at the top, plus the two fields you'll fill in shortly. Copy the webhook URL and keep this dialog open — you'll come back to it in Step 4.
+
+![Referly's Creem connect dialog with the webhook URL, an API key field and a webhook signing secret field](/images/integrations/creem/connect-dialog.png)
+
+Your webhook URL looks like this, with your own program ID on the end:
+
+```text Webhook URL
+https://www.referly.so/api/webhooks/creem?program_id=YOUR_PROGRAM_ID
+```
+
+## Step 3: Add the webhook in Creem
+
+This is what tells Referly that a payment happened.
+
+<Steps>
+  <Step title="Open your webhook settings">
+    In your Creem dashboard, go to **Settings**, then **Webhooks**, and click **Add Webhook**.
+  </Step>
+  <Step title="Name it and paste the URL">
+    Give it a name you'll recognise later, such as "Referly", and paste the webhook URL you copied in Step 2.
+  </Step>
+  <Step title="Select every event">
+    Use **Select All** so every event type is ticked. Referly ignores the ones it doesn't need.
+  </Step>
+  <Step title="Create it and copy the signing secret">
+    Click **Create**, then copy the webhook's **signing secret**. You'll paste it into Referly in Step 4. It's shown on the webhook itself in Creem.
+  </Step>
+</Steps>
+
+![Creem's Add Webhook form with the Referly webhook URL pasted and every event type selected](/images/integrations/creem/webhook-events.png)
+
+<Warning>
+  Select every event. A partial selection is accepted without any complaint and then quietly drops sales or refunds — it's the most common reason tracking goes silent. If something isn't being tracked later, check this first.
+</Warning>
+
+## Step 4: Create an API key and connect
+
+Referly uses an API key to check the connection is valid, read your product list for product-based commission rules, and manage discount codes for affiliates.
+
+### Create the key in Creem
+
+In Creem, go to **Settings**, then **API Keys**, and create a key. Grant it:
+
+| Permission | When you need it |
+| --- | --- |
+| **Products: Read** | Always. Referly uses it to validate the connection and list your products. |
+| **Discounts: Read & Write** | Only if you want Referly to create and sync affiliate discount codes. |
+| **Customers: Read & Write** | Only if you reward affiliates with Creem customer credits. |
+
+Full access works too, if you'd rather not pick individual permissions.
+
+![Creem's New API key dialog, naming the key and granting its permissions](/images/integrations/creem/api-key-permissions.png)
+
+Use a live key for real tracking. A key starting with `creem_test_` connects the same way and tracks Creem test-mode purchases instead.
+
+### Paste both values into Referly
+
+Back in the Creem dialog from Step 2:
+
+1. Paste the **API key** you just created.
+2. Paste the **Webhook signing secret** from Step 3, including its prefix.
+3. Click **Connect**.
+
+Referly checks the key against Creem before saving, so you find out immediately if something is wrong. Once it's connected you'll see a green **Connected** badge, and an amber **Test mode** badge if you used a test key — so there's never any guessing about which environment you're pointed at.
+
+![Referly's Creem dialog in the connected state showing a green Connected badge and an amber Test mode badge](/images/integrations/creem/connected.png)
+
+## Step 5: Install the tracking script on your site
+
+The tracking script recognises visitors who arrived from an affiliate link, records the click, and remembers who referred them until they buy.
+
+Copy the snippet from your Referly dashboard — it comes pre-filled with your program ID — and paste it inside the `head` section of your website, on every page.
+
+![Referly's tracking script panel with the copyable script snippet](/images/integrations/creem/tracking-script.png)
+
+```html Tracking script
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+Once it's running, the referral is available on the page as `window.affiliateId`, which is what the next step uses.
+
+## Step 6: Carry the referral into the Creem checkout
+
+This is the step that connects a click to a sale. Skip it and link-based sales arrive with no affiliate attached — though discount code sales still work, because the code identifies the affiliate on its own.
+
+Referly reads the referral from a checkout field called `referly_ref`. Pick whichever method matches how you sell.
+
+<Tabs>
+  <Tab title="Payment links">
+    Add this line to the pages where people click your Creem payment links, **after** the tracking script and before the closing `body` tag. It finds Creem payment links on the page and attaches the referral to them once it's known.
+
+    ```html Payment link snippet
+    <script async src="https://www.referly.so/creem-integration-snippet.js"></script>
+    ```
+
+    Nothing else to configure. The snippet only acts when the visitor actually arrived from an affiliate link, and it leaves links untouched for everyone else.
+
+    To check it's working, open one of your pages through an affiliate link, wait a second or two for the page to settle, then hover a Creem payment link and look at the address — it should now carry the referral. Checking your page source won't show it, because the snippet runs after the page loads.
+  </Tab>
+  <Tab title="Checkout API">
+    If you create checkout sessions on your own server, read the referral in the browser with `window.affiliateId`, send it along with the rest of your checkout request, and pass it to Creem as `referly_ref` metadata.
+
+    ```json Checkout request
+    {
+      "product_id": "prod_your_product",
+      "success_url": "https://yoursite.com/success",
+      "metadata": { "referly_ref": "THE_ID_FROM_YOUR_FRONTEND" }
+    }
+    ```
+
+    A full server-side example is in your Referly dashboard under the **Checkout API** tab of the Creem guide, ready to copy.
+  </Tab>
+</Tabs>
+
+<Note>
+  Referly uses `referly_ref`, not `creem_ref`. Creem reserves `creem_ref` for its own built-in affiliate feature, so the two can run side by side without clashing.
+</Note>
+
+Creem copies checkout metadata onto the subscription, so renewals keep crediting the same affiliate without you doing anything extra.
+
+{/* TODO screenshot: creem-wizard-methods, upload it in the local Documentation Agent */}
+
+## How Referly decides who gets credit
+
+When a payment arrives, Referly looks for the affiliate in this order:
+
+1. **The referral in the checkout** — the `referly_ref` value carried in from Step 6.
+2. **The discount code used at checkout** — if the code belongs to one of your affiliates, that affiliate is credited.
+3. **Neither** — the customer and the revenue are still recorded so your Referly numbers match Creem, but no affiliate is credited and no commission is created.
+
+Which of the first two Referly will accept depends on your program's [tracking methods](/help-center/settings/program/tracking-methods) — links, codes, or both.
+
+## Step 7: Test it end to end
+
+Do this once before you go live. It takes a few minutes and it's the only way to be sure every piece is connected.
+
+<Steps>
+  <Step title="Connect with a test key">
+    Use a `creem_test_` API key so you're working in Creem's test mode. Referly shows the amber **Test mode** badge when you are.
+  </Step>
+  <Step title="Visit your site through an affiliate link">
+    Use a real affiliate link from your program. This is what sets the referral in your browser.
+  </Step>
+  <Step title="Buy something through your Creem checkout">
+    Use Creem's test card, `4111 1111 1111 1111`, with any future expiry date.
+  </Step>
+  <Step title="Check the sale in Referly">
+    The referral and the sale should appear against the right affiliate, with the commission calculated from your rate.
+  </Step>
+  <Step title="Refund it in Creem">
+    Refund the test order from your Creem dashboard, then check Referly again — the sale should be marked refunded and the commission taken back off.
+  </Step>
+  <Step title="Swap in your live key">
+    Disconnect, then reconnect with your live API key and the signing secret of a webhook created on your live account.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: creem-sale-in-referly, upload it in the local Documentation Agent */}
+
+## What gets tracked automatically
+
+Once you're connected, all of this happens without any further work:
+
+| What happens in Creem | What Referly does |
+| --- | --- |
+| A checkout completes | Records the sale and credits the commission |
+| A subscription renews | Records another sale at the amount actually charged, and credits recurring commission |
+| A free trial starts | Records the referral; no commission until the first real payment |
+| A subscription is cancelled, expires or goes unpaid | Updates the referral's status so your reporting stays accurate |
+| An order is refunded | Marks the sale refunded and claws the commission back |
+| A chargeback is raised | Treated like a refund; the commission is reversed |
+| A checkout uses an affiliate's discount code | Credits that affiliate, with no link click needed |
+
+Every sale is recorded against its Creem order, so a webhook retry or a manual resend from Creem won't count the same sale twice.
+
+## Affiliate discount codes
+
+If you granted **Discounts: Read & Write** on your API key, Referly can give each affiliate their own Creem discount code. A customer who types that code at checkout is credited to that affiliate, which is useful for affiliates who promote on video or in person where links are awkward.
+
+Codes are created in Creem when an affiliate joins your program, and automatic code generation is available on Business plans and up.
+
+<Warning>
+  A code created without a product limit is pinned to the products that existed in your Creem account when it was created. If you add products later, set a product limit on your codes, or recreate them after your catalogue changes.
+</Warning>
+
+See [Coupons and promo codes](/help-center/engage/coupons/overview) for the full picture.
+
+## Refunds and chargebacks
+
+When an order is refunded in Creem, Referly finds the matching sale, marks it refunded, and takes the commission back off, so you don't pay out on money you returned. A chargeback is handled the same way.
+
+Two things to know:
+
+- **A partial refund reverses the whole commission**, not a proportional slice of it.
+- **This applies while the commission is still on hold.** Once your payout hold period has passed and the affiliate has been cleared for payout, the sale is left alone — adjust it by hand if you want it reversed.
+
+See [Refunds](/help-center/manage/rewards/refunds) and [Reward holds](/help-center/manage/rewards/holds).
+
+## Disconnecting
+
+There are two parts, and you usually want both:
+
+- **To stop tracking**, delete the Referly webhook in your Creem dashboard under **Settings**, then **Webhooks**. Nothing reaches Referly after that.
+- **To remove your key**, open the Creem dialog in Referly and choose **Disconnect**.
+
+Nothing already tracked is deleted. Sales made while the webhook is gone are not recorded and can't be picked up later — add them by hand with [Add a sale](/help-center/manage/customers/add-a-sale) if you need to.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Nothing is appearing in Referly">
+    Check the webhook's event selection first — a webhook saved with only some events ticked fails quietly, and this is the most common cause. Open the webhook in Creem and confirm every event is ticked. Then confirm the webhook URL is the one from your Referly dialog, including the program ID on the end.
+  </Accordion>
+  <Accordion title="Sales are tracked but no affiliate is credited">
+    The referral isn't reaching the checkout. Open a recent order in Creem and look for `referly_ref` in its metadata. If it's missing, the problem is Step 6: check that both the tracking script and the payment-link snippet are on the page where people click your payment links, and that you tested through a real affiliate link.
+  </Accordion>
+  <Accordion title="The referral isn't on my payment links">
+    The snippet runs a moment after the page loads, so check the link's address after the page has settled rather than in your page source. Make sure the snippet comes after the tracking script, and remember it does nothing for a visitor who didn't arrive from an affiliate link.
+  </Accordion>
+  <Accordion title="Connecting fails or the key is rejected">
+    Referly validates the key against Creem before saving. Check that the key has at least **Products: Read**, that you copied it in full, and that you're not connecting a key already used on another Referly program — one Creem key can only be connected to one program.
+  </Accordion>
+  <Accordion title="Everything stopped working after I changed the webhook">
+    Deleting and recreating a webhook in Creem gives you a new signing secret. Paste the new secret into the Referly dialog, otherwise deliveries fail their signature check and nothing is recorded.
+  </Accordion>
+  <Accordion title="Discount code sales aren't being credited">
+    Check that discount-code tracking is switched on for your program under [tracking methods](/help-center/settings/program/tracking-methods), and that the code is one Referly knows about and has assigned to an affiliate. Codes created directly in Creem aren't linked to anyone until you connect them in Referly.
+  </Accordion>
+  <Accordion title="I'm seeing test purchases in my live numbers">
+    You're connected with a `creem_test_` key. Referly shows the amber **Test mode** badge when that's the case — disconnect and reconnect with your live key.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Coupons and promo codes" icon="ticket" href="/help-center/engage/coupons/overview" arrow>
+    Give each affiliate their own Creem discount code.
+  </Card>
+  <Card title="Product-based commissions" icon="tags" href="/help-center/getting-started/commissions/product-based" arrow>
+    Pay different rates on different Creem products.
+  </Card>
+  <Card title="Tracking methods" icon="crosshairs" href="/help-center/settings/program/tracking-methods" arrow>
+    Choose whether links, codes, or both credit your affiliates.
+  </Card>
+  <Card title="All integrations" icon="plug" href="/help-center/integrations/overview" arrow>
+    See every platform Referly connects to.
+  </Card>
+</Columns>

@@ -1,0 +1,176 @@
+---
+title: "Brilliant Directories"
+description: "Connect Brilliant Directories to Referly to credit affiliates for paid member sign-ups. Add the tracking script through Design Settings, add a conversion-tracking snippet through the Widget Manager, and connect Stripe so upgrades and renewals are attributed automatically."
+keywords: ["Brilliant Directories affiliate program", "Brilliant Directories Referly integration", "directory site affiliate tracking", "Brilliant Directories Stripe affiliate commission", "membership directory affiliate tracking", "track directory member upgrades affiliates"]
+---
+
+[Brilliant Directories](https://www.brilliantdirectories.com/) is a platform for building membership directory websites, with paid member plans handled through Stripe. Connecting it to Referly means someone who arrives on an affiliate link and then upgrades to a paid membership is credited to the affiliate who sent them, along with their renewals.
+
+Brilliant Directories lets you add your own code in two places — the site head, and a conversion-tracking widget — which is exactly what this integration needs. You add the Referly tracking script to the head, drop a sale-tracking snippet into the conversion widget, and connect Stripe.
+
+Plan about 20 minutes.
+
+## What this integration can and can't track
+
+| What you want to track | Does it work? | Notes |
+| --- | --- | --- |
+| Link clicks and visits | Yes | From the tracking script in Design Settings |
+| Free member sign-ups | Yes | Fired from the conversion-tracking widget |
+| Paid membership upgrades | Yes, with the amount | Recorded as a sale with commission |
+| Recurring renewals | Yes | Each renewal payment comes through Stripe |
+| Refunds | Yes | Referly recognises a refund and adjusts the commission |
+| Cancelled memberships | Yes | Referly knows when a subscription ends |
+
+<Info>
+  The sale side runs through Stripe, so it covers the whole life of a member: the first upgrade, every renewal, refunds, and cancellations.
+</Info>
+
+## Before you start
+
+You'll need:
+
+- A live Referly program with at least one affiliate to test with. See [setting up your program](/help-center/getting-started/set-up-program/affiliate-program-setup) if you haven't got that far.
+- Admin access to your Brilliant Directories site.
+- A Stripe account your directory charges memberships through.
+
+Open the guide inside Referly first, because it has your program's own tracking script filled in. In your dashboard, open **Settings** from the left sidebar, select **Integrations**, find the **Brilliant Directories** card, and select **Instructions**.
+
+## Step 1: Add the Referly tracking script
+
+Copy the script from **Step 1** of the instructions window. Your program's own identifier is already filled in where `YOUR_PROGRAM_ID` appears here:
+
+```html
+<script
+  src="https://referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_PROGRAM_ID"
+  async>
+</script>
+```
+
+Now put it into Brilliant Directories:
+
+<Steps>
+  <Step title="Open your site's admin panel">
+    Go to your Brilliant Directories admin panel and select your website.
+  </Step>
+  <Step title="Go to Design Settings">
+    Open **Design Settings → Custom CSS/HEAD**. This is where Brilliant Directories lets you add code to every page's `<head>`.
+  </Step>
+  <Step title="Paste the script and save">
+    Paste the tracking script in and save. Using the head means tracking starts as early as possible in the page load.
+  </Step>
+</Steps>
+
+<Warning>
+  If affiliates send traffic to a marketing site first and people click through to your directory, put the tracking script on both. A visitor who is never recognised can't be credited.
+</Warning>
+
+## Step 2: Connect Stripe
+
+Brilliant Directories charges memberships through Stripe, and Stripe is where Referly reads your revenue from. Without this step you'll see clicks and sign-ups but no sales.
+
+In the instructions window, go to **Step 2: Connect Stripe** and select **Connect Stripe**. You'll be sent to Stripe to authorise the connection, then returned to Referly.
+
+<Warning>
+  Use the same Stripe account your directory charges through, and make sure your program's test-or-live mode matches the payments you expect.
+</Warning>
+
+## Step 3: Add the conversion-tracking snippet
+
+Brilliant Directories fires a conversion-tracking widget when a member signs up or upgrades. That's where Referly's sale snippet goes, so it can record the sign-up and the payment with the member's real details.
+
+<Steps>
+  <Step title="Open your site's admin panel">
+    Go to your Brilliant Directories admin panel and select your website.
+  </Step>
+  <Step title="Open the Widget Manager">
+    Go to **Toolbox → Widget Manager**.
+  </Step>
+  <Step title="Find the conversion tracking widget">
+    Search for the widget **Bootstrap Theme - Conversion Tracking Codes**.
+  </Step>
+  <Step title="Customize it">
+    Click **Actions → Customize**.
+  </Step>
+  <Step title="Find the tracking placeholder">
+    In the HTML section, find the line that reads *Enter Conversion Tracking Codes To Track Sign Ups & Upgraded Members Below ******* --&gt;*.
+  </Step>
+  <Step title="Paste the snippet below and save">
+    Paste the code below beneath that line and save.
+  </Step>
+</Steps>
+
+```html
+<script>
+  window.createPushLapSale({
+    userId: '<?php echo $conversion_tracking['user_id']; ?>',
+    amount: <?php echo $conversion_tracking['amount']; ?>,
+    name: '<?php echo $conversion_tracking['full_name']; ?>',
+    email: '<?php echo $conversion_tracking['email']; ?>'
+  });
+</script>
+```
+
+The PHP placeholders are filled in by Brilliant Directories at the moment a member converts, so Referly receives the real user, amount, name, and email. The payment is then matched to the referred visitor and credited to the affiliate.
+
+## Test it end to end
+
+Run a real sign-up and upgrade through before telling affiliates the integration is live.
+
+<Steps>
+  <Step title="Grab a real affiliate link">
+    Open **Affiliates** in the left sidebar of Referly, pick an affiliate, and copy their referral link.
+  </Step>
+  <Step title="Open it in a private window">
+    Use a private or incognito window so no old tracking interferes. Land on your directory and let the page finish loading.
+  </Step>
+  <Step title="Sign up and upgrade">
+    Register a new member with a fresh email address, then upgrade to a paid plan. Use a low-priced plan or a full-discount coupon rather than a live card charge if you can.
+  </Step>
+  <Step title="Check Referly">
+    Open **Customers** in the left sidebar. The member should appear within a minute, credited to the affiliate whose link you used, with the amount they paid and its commission.
+  </Step>
+</Steps>
+
+<Check>
+  When the test upgrade appears under **Customers** against the right affiliate with the right amount, you're done.
+</Check>
+
+Refund the test payment in Stripe and remove the test referral in Referly so your reports start clean.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Clicks are counted but no sales ever appear">
+    Almost always the Stripe connection. Check that Referly is connected to the same Stripe account your directory charges through, and that your program's test-or-live mode matches the payments you're expecting.
+  </Accordion>
+  <Accordion title="Nothing is tracked at all, not even clicks">
+    The Step 1 script isn't running. Confirm it's saved in **Design Settings → Custom CSS/HEAD**, then load a page with an affiliate link on the end and check a click shows up in Referly.
+  </Accordion>
+  <Accordion title="Sign-ups or upgrades aren't being recorded">
+    The Step 3 snippet needs to be in the **Bootstrap Theme - Conversion Tracking Codes** widget, beneath the placeholder line. Confirm you saved the widget after pasting it.
+  </Accordion>
+  <Accordion title="The wrong affiliate got the credit">
+    The member most likely visited on another affiliate's link earlier. The first affiliate to refer someone keeps the credit for the length of your cookie window. You can move a referral from the customer's page, described in [managing referred customers](/help-center/manage/customers/overview).
+  </Accordion>
+</AccordionGroup>
+
+Still stuck? [Book an integration call](https://www.referly.so/book-integration-call) and we'll go through your setup with you.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Stripe" icon="stripe" href="/help-center/integrations/stripe" arrow>
+    Connect the Stripe account your directory charges through.
+  </Card>
+  <Card title="Universal forms integration" icon="wpforms" href="/help-center/integrations/universal" arrow>
+    The general form-capture pattern this integration builds on.
+  </Card>
+  <Card title="Commissions overview" icon="percent" href="/help-center/getting-started/commissions/overview" arrow>
+    Set recurring commission for membership revenue.
+  </Card>
+  <Card title="All integrations" icon="puzzle-piece" href="/help-center/integrations/overview" arrow>
+    See every platform Referly connects to.
+  </Card>
+</Columns>
