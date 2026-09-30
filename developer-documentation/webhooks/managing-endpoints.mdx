@@ -5,7 +5,7 @@ keywords: ["Referly webhook endpoint", "create webhook endpoint", "webhook signi
 ---
 An endpoint is one URL that Referly delivers to, plus the list of event types it is subscribed to and
 its own signing secret. Endpoints belong to a single affiliate program, and you manage them in your
-dashboard rather than through the API.
+dashboard. You can also automate endpoint creation, updates, deletion, signing-secret rotation and testing with the [webhook management API](/developer-documentation/api/webhooks).
 
 Open your campaign, go to **Settings**, then **Advanced**, then **Webhooks**. The screen has three
 tabs: **Endpoints** (the URLs you deliver to), **Event Catalog** (what each event type contains), and
@@ -175,7 +175,7 @@ secret per request, usually by giving each program its own path such as
 
 <Columns cols={2}>
   <Card title="Event types" icon="list" href="/developer-documentation/webhooks/event-types">
-    All fifteen events and exactly what triggers each one.
+    Legacy and operational API events and what triggers each one.
   </Card>
   <Card title="Payload structure" icon="brackets-curly" href="/developer-documentation/webhooks/payload-structure">
     Field-by-field reference for every object you can receive.

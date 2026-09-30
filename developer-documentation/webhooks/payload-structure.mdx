@@ -3,8 +3,9 @@ title: "Payload structure"
 description: "Reference for the JSON structure of Referly webhook payloads: the event and body envelope, svix headers, and every field on sale, referral, affiliate, coupon, and promo code events, with full examples."
 keywords: ["Referly webhook payload", "webhook JSON structure", "sale.created payload", "affiliate.created payload", "referral.created payload", "webhook body fields", "svix headers", "commissionEarned", "affiliateLinks", "webhook delete event", "affiliate webhook schema"]
 ---
-Every Referly webhook delivery is the same shape: a `POST` carrying a JSON object with two keys. This
-page documents that envelope, then the fields inside each of the five object families.
+Legacy Referly events use a `POST` carrying `event` and `body`. This page documents that envelope and the fields inside the five legacy object families.
+
+Operational API lifecycle events use a separate envelope: `id`, `programId`, `type`, `schemaVersion`, `createdAt` and `data`. Route those events by `type` and deduplicate by the stable `id`. See [operational webhook payloads](/developer-documentation/api/webhooks#operational-event-payloads). Both formats use the same Svix signature verification.
 
 For what causes each event to fire, see [Event types](/developer-documentation/webhooks/event-types).
 
@@ -46,7 +47,7 @@ The body is always UTF-8 JSON. Verify the signature against the **raw** bytes be
   contains only `id`.
 </ResponseField>
 
-There is no `data`, no `previous_attributes`, and no envelope-level timestamp — use `svix-timestamp`
+In the legacy envelope there is no `data`, no `previous_attributes`, and no envelope-level timestamp — use `svix-timestamp`
 or the object's own `createdAt`.
 
 ## Field conventions

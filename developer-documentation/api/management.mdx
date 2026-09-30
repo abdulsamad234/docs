@@ -1,0 +1,100 @@
+---
+title: "Programs, plans and groups"
+description: "Provision programs, manage commission plans and assign affiliates to groups through the API."
+---
+
+## Operations
+
+| Method | Path                                 | Scope                    | Behavior                                                      |
+| ------ | ------------------------------------ | ------------------------ | ------------------------------------------------------------- |
+| POST   | `/programs`                          | `programs:write`         | Create an independent program owned by the account            |
+| PATCH  | `/programs/{id}`                     | `programs:write`         | Update selected program settings/default commission plan      |
+| POST   | `/groups`                            | `groups:write`           | Create an affiliate group                                     |
+| PATCH  | `/groups/{id}`                       | `groups:write`           | Update name/color/default plan                                |
+| DELETE | `/groups/{id}`                       | `groups:write`           | Delete a group only after removing all references             |
+| POST   | `/commission-plans`                  | `commission-plans:write` | Create a plan with rules, amounts and after-period schedules  |
+| PATCH  | `/commission-plans/{id}`             | `commission-plans:write` | Update plan settings and supplied child collections           |
+| DELETE | `/commission-plans/{id}`             | `commission-plans:write` | Delete an unassigned plan without referral/invitation history |
+| POST   | `/commission-plans/{id}/archive`     | `commission-plans:write` | Deactivate an unassigned plan, preserving historical links    |
+| GET    | `/groups/{id}/members`               | `groups:read`            | Cursor-paginated group members                                |
+| POST   | `/groups/{id}/members`               | `groups:write`           | Assign an explicit list of up to 100 affiliates atomically    |
+| PUT    | `/groups/{id}/members/{affiliateId}` | `groups:write`           | Assign/move one affiliate to the group                        |
+| DELETE | `/groups/{id}/members/{affiliateId}` | `groups:write`           | Remove that affiliate from the specified group                |
+
+See the [endpoint reference](/api-reference/programs/create) for complete request schemas and the [common API rules](/developer-documentation/api/overview) for authentication, errors and retries.
+
+All writes accept an optional `Idempotency-Key`. Without one, retrying a create may create another resource. Creates return 201; other operations return 200. Missing resources and cross-program references return 404; incompatible state returns 409. Unknown body fields are rejected, including ownership, entitlement, integration credentials and payment-exemption fields.
+
+## Program provisioning and selection
+
+```http
+POST /api/v1/programs
+Authorization: Bearer <key>
+Idempotency-Key: create-program-2026-001
+Content-Type: application/json
+
+{"name":"Acme Partners","websiteUrl":"https://acme.example","currency":"USD"}
+```
+
+Creation is blocked when the authenticated program has an `agencyId`, returning HTTP 403 with code `agency_program_creation_disabled` and message `contact support to create a new affiliate program`. This applies even when account API access or payment exemptions are enabled.
+
+Creation otherwise checks account API access and the account's program limit under an owner-level lock. It creates a unique generated portal subdomain, a base URL, standard affiliate onboarding and enabled platform languages. Integration setup remains incomplete. The new program is independent: agency membership, agency domain registration, custom domains, exemptions, payment integrations and billing subscriptions are not copied. No logos are fetched, emails sent or money charged by provisioning.
+
+The creating API key receives a grant for this new program. Subsequent core API calls select it using `X-Program-Id: <new-program-id>`. Without the header, the key retains its original program context. The grant applies only to the exact creating key, retains its scopes, and is rejected if the program changes owner. It grants no access to pre-existing sibling programs. Revocation/expiry and API entitlements remain enforced. GET `/programs` describes the selected program; it is not an account-wide listing. Legacy APIs outside the core OpenAPI inventory still require their usual program key.
+
+PATCH accepts `name`, `currency`, `cookieDuration`, `daysToPayout`, `minPayoutThreshold`, base commission rate/type, payment/month limits, purchase/signup trigger and `defaultCommissionPlanId`. For newly created programs, select the program with `X-Program-Id` before PATCH. Currency changes are rejected once sales, commissions or payouts exist. Signup base commissions require FLAT amounts; percentage rates cannot exceed 100.
+
+A program default must be an active plan owned by that program and outside an affiliate group. Group defaults must be active plans belonging to that exact group. Default changes also update the corresponding tier-1 plan reference; they do not bulk-reassign affiliates with existing plan assignments or recalculate historical commissions.
+
+## Commission-plan management
+
+Example with a conditional amount and a later rate:
+
+```json
+{
+  "name": "Partner plan",
+  "commissionType": "PERCENTAGE",
+  "commissionRate": 20,
+  "paymentTrigger": "PURCHASE",
+  "amounts": [
+    {
+      "commissionType": "PERCENTAGE",
+      "commissionRate": 25,
+      "numberOfPayments": 3,
+      "ruleGroups": [
+        {
+          "groupCondition": "ALL",
+          "rules": [
+            {
+              "ruleType": "ORDER_AMOUNT",
+              "condition": "GREATER_THAN",
+              "value": "100"
+            }
+          ]
+        }
+      ],
+      "afterPeriods": [{ "commissionType": "PERCENTAGE", "commissionRate": 10 }]
+    }
+  ]
+}
+```
+
+Top-level fields cover the base reward, optional group assignment at creation, cash/non-cash settings, approval settings, rule groups, alternative amounts and after-period schedules. Nested collections use array order as their priority/order. `0` payment/month limits mean unlimited, consistent with existing plans. Cash signup rewards require FLAT rates throughout. Existing non-cash payout coupons must belong to the selected program and be valid payout coupons; inline coupon-provider creation is not included.
+
+PATCH validates the effective plan after merging existing fields with supplied fields. Omitted collections are preserved. Supplied `ruleGroups`, `amounts` or `afterPeriods` replace that entire collection atomically; `[]` clears it. Replacing `amounts` replaces their nested rules/schedules and generates new child IDs. A metadata-only PATCH preserves child IDs and schedules. A plan's group is fixed through this API; create a separate plan to change its group ownership.
+
+The read representation uses database resource names (`commissionRuleGroups`, `commissionAmounts`, `commissionAfterPeriods`), while writes use `ruleGroups`, `amounts`, `afterPeriods`. Read responses expose non-cash settings and nested amount schedules; they omit signup secrets. Updates affect future commission evaluation and do not rewrite existing commissions or payout history.
+
+Rule `value` is a JSON-encoded string because the existing evaluator parses JSON. ORDER_AMOUNT uses a JSON number and GREATER_THAN/LESS_THAN. PRODUCT and COUPON_USED use nonempty ID arrays and ANY/IS/NONE. PRODUCT also accepts the structured `{ "products": [...], "collections": [{ "id": "...", "integrationType": "SHOPIFY" }] }` representation. STATEMENT_DESCRIPTION uses a string array with CONTAINS. LANDING_PAGE uses a string array with IS/IS_NOT/CONTAINS/DOES_NOT_CONTAIN. Unsupported combinations, including MEDIUM (not implemented by the evaluator), are rejected. Referenced coupons must belong to the program.
+
+Plan creation respects the effective subscription: unsubscribed accounts cannot create plans; Starter allows four and Growth ten under the current dashboard policy; payment-exempt programs bypass these limits. Deletion and archiving reject active affiliate, tier and default assignments. Referenced historical plans can be archived after removing current assignments, retaining referral/invitation history. Archiving does not fulfill or revoke non-cash rewards.
+
+## Groups and membership
+
+Group creation accepts a name and optional six-digit hex color. Business or higher is required unless payment-exempt. AppSumo requires tier 8 or higher and is limited to two groups, matching the dashboard. Group deletion rejects remaining references, including affiliates, plans, tiers, assets, rule bindings, widget defaults, marketplace listings, invitations and chat bindings.
+
+Bulk membership body: `{ "affiliateIds": ["affiliate-1", "affiliate-2"] }`. IDs must be unique; maximum 100. The API validates all IDs in the selected program before updating anything. Assignment moves each affiliate from their previous group. Removal requires current membership in the specified group, preventing a stale request from removing an affiliate from a different group.
+
+Assignments choose the highest qualifying group tier, falling back to program tiers when the group has neither tiers nor a default plan, using existing referral/revenue conditions. The group default plan takes precedence over the program default when no selected tier supplies a plan. Removal uses program tiers/defaults and clears stale group tier assignments. Affiliates exempt from tier changes keep their explicit plan and tier while their group changes.
+
+Changes reconcile group chat membership after commit, and queue a durable internal reconciliation task for retry. This task is processed even without a webhook subscription and is never delivered as a merchant webhook. The existing chat reconciler may produce its normal membership system events. This API does not send campaign or invitation messages.

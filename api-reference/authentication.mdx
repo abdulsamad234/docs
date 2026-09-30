@@ -1,51 +1,21 @@
 ---
 title: "Authentication"
-description: "Generate an API key from your dashboard and authorize your Referly API requests with a Bearer token."
-keywords: ["API key", "authentication", "bearer token", "Referly API"]
+description: "Authorize requests with a scoped API key and select the program for operational endpoints."
 ---
 
-<Note>
-  The API is a premium feature that's only available to users who have an active
-  Business Plan. [See Pricing Page](https://referly.so/pricing)
-</Note>
+Create a key in **Settings → Advanced → API Keys → Generate New Key**. Choose **Full access**, **Read only**, or **Custom permissions**, optionally set an expiry, then generate and copy the key.
 
-To use this API, you need to have created your Affiliate Program and entered all necessary details.
-
-All API endpoints are authenticated using Bearer tokens, this requires you to have completed creating your Affiliate Program. Here's how you create an Auth Token:
-
-Step 1. Click on `API Keys` on your dashboard sidebar:
-
-<img
-  className="block"
-  src="/images/step-1.png"
-  alt="The API Keys item in the Referly dashboard sidebar"
-/>
-
-Step 2. Click on `Generate New API Key +`:
-
-<img
-  className="block"
-  src="/images/step-2.png"
-  alt="The Generate New API Key button in the Referly dashboard"
-/>
-
-Step 3. Click the copy icon to copy your Auth Token:
-
-<img
-  className="block"
-  src="/images/step-3.png"
-  alt="Copying the generated auth token in the Referly dashboard"
-/>
-
-Step 4. Add your Auth Token to your API requests:
-
-```json
-{
-  "Authorization": "Bearer <YOUR_TOKEN>"
-}
+```bash
+curl https://www.referly.so/api/v1/programs \
+  -H "Authorization: Bearer $REFERLY_API_KEY"
 ```
 
+Each endpoint lists its required scope. Read and write permissions are independent; full access uses `*`. Existing keys retain their access. Expired, revoked and deleted keys are rejected. Account and agency API access restrictions still apply.
+
+Requests default to the key's original program. Operational endpoints accept `X-Program-Id` for a program provisioned by that exact key. This does not grant account-wide access. Legacy affiliate, referral, sale, link, coupon and promotional-code endpoints continue to use their usual program key.
+
+See [authentication and permissions](/developer-documentation/api/authentication) for all scopes, expiry, program selection and rotation, and [common API rules](/developer-documentation/api/overview) for pagination, retries and errors.
+
 <Warning>
-  Your API key grants full access to your program. Keep it on your server and never expose it in
-  client-side code.
+Keep API keys on your server. Do not put them in frontend code, public repositories or query strings.
 </Warning>

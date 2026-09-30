@@ -1,0 +1,47 @@
+---
+title: "Operational API"
+description: "Manage programs, commissions, payouts, analytics and webhooks with scoped API keys."
+---
+
+Use the REST API to configure programs and commission plans, manage group membership, review commissions, reconcile cash balances, record external payouts, query analytics, and manage webhook delivery.
+
+The base URL is `https://www.referly.so/api/v1`. Send `Authorization: Bearer YOUR_API_KEY` and, for JSON bodies, `Content-Type: application/json`.
+
+| Guide | What you can do |
+| --- | --- |
+| [Management](/developer-documentation/api/management) | Provision programs, configure groups and commission plans, assign members |
+| [Finance](/developer-documentation/api/finance) | Review commissions, create adjustments, read balances and payouts, record manual settlement |
+| [Analytics](/developer-documentation/api/analytics) | Read totals, time series, breakdowns and the conversion funnel |
+| [Webhooks](/developer-documentation/api/webhooks) | Manage destinations, signing secrets, tests, delivery history and replay |
+
+## Permissions and program selection
+
+Keys have resource-specific read and write permissions and optional expiry. Read and write scopes are independent. See [authentication](/developer-documentation/api/authentication).
+
+Requests default to the key's original program. On operational endpoints, `X-Program-Id` can select a program created by that exact key. It does not grant access to other existing programs in your account. Legacy affiliate, referral, sale, link, coupon and promotional-code endpoints continue to use their usual program key.
+
+## Pagination
+
+List operations return `data` and `nextCursor`. Send `limit` from 1 to 100 (default 50), then pass the returned cursor in the next request. Stop when `nextCursor` is `null`.
+
+```json
+{ "data": [], "nextCursor": null }
+```
+
+Database lists sort by ascending ID and reflect live data. Analytics breakdowns use offset cursors; webhook lists use provider cursors. Treat returned cursors as opaque. These are not snapshot exports.
+
+For `GET /payout-batches`, explicitly send `pagination=cursor`. Omitting it preserves the legacy latest-50 array. Other legacy list responses are unchanged.
+
+## Retry writes safely
+
+Operational writes accept an optional `Idempotency-Key`: 8–200 printable ASCII characters, with no spaces. Keep the same key, method, path and validated payload when retrying a request. A completed operation returns its saved result; using its key for a different request returns `409 idempotency_conflict`. Keys are unique within the selected program across routes.
+
+Without a key, retrying configuration creates or webhook operations can repeat the operation. Commission adjustments also deduplicate on `sourceReference`, and manual settlement checks the batch's recorded state and payment details.
+
+Concurrent operations can return `409`; retry with backoff and the original request. Webhook mutations can remain pending while a 90-second provider-call lease is active. Reconcile unusually old unresolved provider operations before retrying them.
+
+Legacy sale reporting still deduplicates using `externalId` or `externalInvoiceId`. See [sale idempotency](/developer-documentation/server-side/idempotency).
+
+## Responses and errors
+
+Operational responses carry `X-Request-Id`; normal success and error responses use `Cache-Control: no-store`. JSON bodies are limited to 64 KiB. Unknown mutation fields are rejected. See [errors](/developer-documentation/api/errors) and [rate limits](/developer-documentation/api/rate-limits).

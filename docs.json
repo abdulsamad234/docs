@@ -547,7 +547,12 @@
           {
             "group": "API",
             "pages": [
+              "developer-documentation/api/overview",
               "developer-documentation/api/authentication",
+              "developer-documentation/api/management",
+              "developer-documentation/api/finance",
+              "developer-documentation/api/analytics",
+              "developer-documentation/api/webhooks",
               "developer-documentation/api/rate-limits",
               "developer-documentation/api/errors"
             ]
@@ -676,6 +681,111 @@
               "api-reference/promotional-codes/create",
               "api-reference/promotional-codes/delete",
               "api-reference/promotional-codes/update"
+            ]
+          },
+          {
+            "group": "Commission Endpoints",
+            "pages": [
+              "api-reference/commissions/list",
+              "api-reference/commissions/get",
+              "api-reference/commissions/approve",
+              "api-reference/commissions/hold",
+              "api-reference/commissions/reject"
+            ]
+          },
+          {
+            "group": "Commission Adjustment Endpoints",
+            "pages": [
+              "api-reference/commission-adjustments/list",
+              "api-reference/commission-adjustments/create",
+              "api-reference/commission-adjustments/get"
+            ]
+          },
+          {
+            "group": "Balance Endpoints",
+            "pages": [
+              "api-reference/balances/list",
+              "api-reference/balances/affiliate"
+            ]
+          },
+          {
+            "group": "Payout Endpoints",
+            "pages": [
+              "api-reference/payouts/list",
+              "api-reference/payouts/get"
+            ]
+          },
+          {
+            "group": "Payout Batch Endpoints",
+            "pages": [
+              "api-reference/payout-batches/list",
+              "api-reference/payout-batches/get",
+              "api-reference/payout-batches/mark-paid",
+              "api-reference/payout-batches/legacy-mark-paid"
+            ]
+          },
+          {
+            "group": "Program Endpoints",
+            "pages": [
+              "api-reference/programs/list",
+              "api-reference/programs/create",
+              "api-reference/programs/get",
+              "api-reference/programs/update"
+            ]
+          },
+          {
+            "group": "Groups and Membership",
+            "pages": [
+              "api-reference/groups/list",
+              "api-reference/groups/create",
+              "api-reference/groups/get",
+              "api-reference/groups/update",
+              "api-reference/groups/delete",
+              "api-reference/groups/list-members",
+              "api-reference/groups/assign-members",
+              "api-reference/groups/assign-member",
+              "api-reference/groups/remove-member"
+            ]
+          },
+          {
+            "group": "Commission Plan Endpoints",
+            "pages": [
+              "api-reference/commission-plans/list",
+              "api-reference/commission-plans/create",
+              "api-reference/commission-plans/get",
+              "api-reference/commission-plans/update",
+              "api-reference/commission-plans/delete",
+              "api-reference/commission-plans/archive"
+            ]
+          },
+          {
+            "group": "Analytics Endpoints",
+            "pages": [
+              "api-reference/analytics/overview",
+              "api-reference/analytics/timeseries",
+              "api-reference/analytics/funnel",
+              "api-reference/analytics/breakdowns"
+            ]
+          },
+          {
+            "group": "Webhook Endpoints",
+            "pages": [
+              "api-reference/webhook-endpoints/list",
+              "api-reference/webhook-endpoints/create",
+              "api-reference/webhook-endpoints/get",
+              "api-reference/webhook-endpoints/update",
+              "api-reference/webhook-endpoints/delete",
+              "api-reference/webhook-endpoints/rotate-secret",
+              "api-reference/webhook-endpoints/test",
+              "api-reference/webhook-endpoints/secret"
+            ]
+          },
+          {
+            "group": "Webhook Deliveries",
+            "pages": [
+              "api-reference/webhook-deliveries/list",
+              "api-reference/webhook-deliveries/get",
+              "api-reference/webhook-deliveries/replay"
             ]
           }
         ]

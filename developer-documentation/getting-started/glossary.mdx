@@ -28,9 +28,10 @@ is deprecated. See [Affiliates and referral links](/api-reference/affiliate-link
 `DEACTIVATED`, or `BANNED`. Only `ACTIVE` affiliates earn; deactivated and banned affiliates have
 their commissions put on hold rather than deleted.
 
-**API key** — the bearer token that authenticates REST API requests. Generated from **API Keys** in
-your dashboard sidebar, scoped to one program, and carrying full read and write access — which is
-why it belongs on your server only. See [Authentication](/developer-documentation/api/authentication).
+**API key** — the bearer token that authenticates REST API requests. Generated in **Settings →
+Advanced → API Keys**, with full access, read-only or custom permissions and an optional expiry.
+Requests default to its original program; operational endpoints can also select a program created
+by that exact key. Keep it server-side. See [Authentication](/developer-documentation/api/authentication).
 
 **Attribution** — deciding which affiliate gets credit for a conversion. Referly resolves it from
 the referral stored in the browser, the identifier you send with a sale, or the promotional code
