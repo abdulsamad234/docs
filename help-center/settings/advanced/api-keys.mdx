@@ -15,13 +15,15 @@ To find your keys, open **Settings** from the left sidebar, go to **Advanced**, 
 
 ## What a key gives access to
 
-A key gives full read and write access to one affiliate program. Whoever holds it can list and create affiliates, record sales and referrals, manage links, and create coupons and promo codes — everything you can do on those screens in the dashboard.
+Choose **Full access**, **Read only**, or **Custom permissions** when creating a key. Custom permissions let you select read and write access separately for resources such as sales, commissions, analytics and webhooks. Write access does not automatically include read access. Existing keys keep their permissions.
 
-There are no partial permissions. A key is either valid for the whole program or it doesn't work at all, so treat it like a password to that program.
+Give each integration the permissions it needs. See the [permission reference](/developer-documentation/api/authentication#resource-permissions) for the complete list.
 
 ## Generate a key
 
-Select **Generate New Key** at the bottom right. The new key appears in the list straight away, with the date you created it underneath.
+Select **Generate New Key** at the bottom right. Choose a permission preset, or select at least one permission under **Custom permissions**. Optionally set a future expiry date and time in your local time zone, then generate the key. The list shows its permissions and expiry status.
+
+A key without an expiry stays valid until deleted or revoked. An expired key stops authorizing requests, so replace it in the integration before its expiry.
 
 {/* TODO screenshot: generate-key — upload it in the local Documentation Agent */}
 
@@ -38,12 +40,12 @@ Select **Copy** on the key's card to put it on your clipboard, then paste it whe
 Unlike some services, Referly keeps your key visible on this screen, so you can come back and copy it again later. That also means anyone who can open your dashboard can read it.
 
 <Warning>
-  Keep your key on a server or in a password manager. Never put it in a public repository, a browser script, a support ticket, or anywhere your website visitors could see it. Anyone with the key can change data in your program.
+  Keep your key on a server or in a password manager. Never put it in a public repository, a browser script, a support ticket, or anywhere your website visitors could see it. Anyone with the key can use the permissions you granted it.
 </Warning>
 
 ## Each key belongs to one program
 
-A key is tied to the affiliate program it was created in. If you run several programs, switch to each one and generate its own key — a key from one program won't return or change anything in another.
+A key defaults to the affiliate program it was created in. For existing programs, switch to each one and generate its own key. If an integration creates a new program through the API, that exact key can also select the new program on operational endpoints. See [program selection](/developer-documentation/api/authentication#select-a-program).
 
 The same applies the other way round: deleting a program's key has no effect on your other programs.
 

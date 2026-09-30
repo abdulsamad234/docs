@@ -1,6 +1,6 @@
 ---
 title: "Referly API Reference"
-description: "The Referly REST API lets you read and write affiliates, referrals, sales, links, coupons, and promotional codes, and attribute commissions from your own systems."
+description: "The Referly REST API covers affiliates, sales, program management, commissions, balances, payouts, analytics and webhooks."
 keywords:
   [
     "Referly API",
@@ -12,8 +12,7 @@ keywords:
   ]
 ---
 
-The Referly API lets you track payments and attribute commissions from your own systems. Everything
-you can do with affiliates, referrals, and sales in the dashboard, you can do here.
+The Referly API lets you report sales, manage affiliates and program configuration, review commissions, reconcile balances and payouts, query analytics, and manage webhook delivery. Start with the [operational API guide](/developer-documentation/api/overview) for permissions, pagination and safe retries.
 
 <Note>
   The API is a premium feature that's only available to users who have an active
@@ -68,6 +67,15 @@ curl https://www.referly.so/api/v1/affiliates \
     The customer-facing codes tied to a coupon.
   </Card>
 </Columns>
+
+## Program operations
+
+- [Programs, commission plans and group membership](/developer-documentation/api/management)
+- [Commissions, adjustments, balances and payouts](/developer-documentation/api/finance)
+- [Analytics](/developer-documentation/api/analytics)
+- [Webhook endpoints, delivery history and replay](/developer-documentation/api/webhooks)
+
+Manual payout settlement records a payment made outside Referly; it does not transfer funds.
 
 ## Concepts
 

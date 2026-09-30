@@ -1,6 +1,24 @@
 ---
 title: "Rate limits"
-description: "Request limits and the headers that report them."
+description: "Request limits, response headers and backoff for Referly API integrations."
 ---
 
-{/* TODO: Write this article. */}
+| Request category | Limit |
+| --- | --- |
+| Reads | 100 per minute |
+| Writes: POST, PUT, PATCH, DELETE | 30 per minute |
+| Legacy sales endpoints | 20 per 15 minutes |
+
+Operational limits are counted per API key, resource permission and HTTP method. Requests to multiple paths within the same resource can share a limit. Legacy routes use their existing endpoint and method counters. Selecting another program with the same key does not create a new operational rate-limit allowance.
+
+Successful rate-limited responses include:
+
+| Header | Meaning |
+| --- | --- |
+| `X-RateLimit-Limit` | Maximum requests in the window |
+| `X-RateLimit-Remaining` | Requests remaining |
+| `X-RateLimit-Reset` | Window reset time, as Unix seconds |
+
+A throttled response returns HTTP `429` and `Retry-After` in seconds. Wait at least that long before retrying, then add backoff and jitter if throttling continues. Do not retry immediately in a tight loop.
+
+For writes, keep the original [idempotency key](/developer-documentation/api/overview#retry-writes-safely) when retrying. For legacy sales, retain the original [external identifiers](/developer-documentation/server-side/idempotency). Spread imports over time and use cursor pagination when reading large lists.
