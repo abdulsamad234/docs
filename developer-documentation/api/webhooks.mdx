@@ -1,0 +1,28 @@
+---
+title: "Webhook management API"
+description: "Create destinations, retrieve signing secrets, inspect delivery history and replay events."
+---
+
+Use [webhook endpoint operations](/api-reference/webhook-endpoints/list) and [delivery operations](/api-reference/webhook-deliveries/list) to automate webhook setup. API and webhook entitlements must both allow access.
+
+Endpoint reads require `webhook-endpoints:read`; writes and signing-secret retrieval require `webhook-endpoints:write`. Delivery reads require `webhook-deliveries:read`; replay requires `webhook-deliveries:write`.
+
+
+Create a destination with `{ "url": "https://example.com/referly", "events": ["commission.updated"], "description": "Finance", "disabled": false }`. PATCH accepts any nonempty subset of those fields. URLs must resolve to public addresses and use HTTPS port 443 without credentials or fragments. Provider network protections remain responsible for DNS changes at delivery time.
+
+Rotate or delete with an empty JSON body. Rotation returns confirmation; retrieve the secret separately using the write-scoped secret route. Signing secrets are not stored in idempotency responses. Test with `{ "eventType": "commission.updated" }`. Test payloads are explicitly synthetic and do not create commissions or payouts. Endpoint-specific channels isolate tests to their destination.
+
+`/webhook-deliveries/{id}` uses a **message ID**, not an attempt ID. Detail returns the message plus paginated attempts. List without `endpointId` returns messages; list with `endpointId` returns attempts containing the associated message IDs. Optional numeric `status` (0–3) uses Svix attempt status semantics and requires `endpointId` on list requests. Replay accepts `{ "endpointId": "..." }`, validates both resources in the authenticated program, and resends the same message.
+
+New lifecycle events are `commission.created`, `commission.updated`, `commission.adjusted`, `payout.paid`, and `payout-batch.paid`. They are emitted by these new API financial mutations, not universally by every older dashboard/integration mutation. Existing webhook event behavior remains separate. New event types are registered when first subscribed or tested.
+
+
+## Management events
+
+API management operations also emit `program.created`, `program.updated`, `group.created`, `group.updated`, `group.deleted`, `group.membership.updated`, `commission-plan.created`, `commission-plan.updated`, and `commission-plan.deleted`. These describe API-originated changes; do not assume every dashboard action emits them. A program-creation event belongs to the provisioning request’s selected program; its data identifies the newly created program.
+
+## Operational event payloads
+
+Operational lifecycle events use `type` for routing, unlike the legacy events that use `event`. Their envelope contains `id`, `programId`, `type`, `schemaVersion`, `createdAt`, and `data`. Delivery is at least once: deduplicate by the stable payload `id`. Events are queued after a successful mutation and may arrive later; failed dispatches retry with increasing delays capped at one hour.
+
+Use the existing [signature verification](/developer-documentation/webhooks/verifying-signatures) before processing either event format. Endpoint tests are synthetic and must not be used as evidence of a real financial transaction.

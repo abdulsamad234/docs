@@ -1,0 +1,28 @@
+---
+title: "Analytics API"
+description: "Query program totals, time series, dimension breakdowns and conversion funnels."
+---
+
+All analytics endpoints require `analytics:read` and use the selected program.
+
+| Endpoint | Result |
+| --- | --- |
+| [GET /analytics/overview](/api-reference/analytics/overview) | Metric totals |
+| [GET /analytics/timeseries](/api-reference/analytics/timeseries) | Daily or monthly buckets |
+| [GET /analytics/breakdowns](/api-reference/analytics/breakdowns) | Paginated dimension and metric breakdown |
+| [GET /analytics/funnel](/api-reference/analytics/funnel) | Program-configured conversion funnel |
+
+
+Supply ISO timestamps `start` and `end`; start is inclusive and end exclusive. Maximum range is 366 days. `timezone` is an IANA zone (default UTC). Filters: `affiliateId`, `groupId`, `linkId`, and `clicks=all|unique`. Overview, funnel and series reuse dashboard calculation helpers rather than introducing a second metric definition.
+
+Time series accepts `granularity=day|month`, limited to 93 buckets. Bucket boundaries respect timezone daylight-saving transitions; first and last buckets can be partial. Larger daily ranges should be split or requested monthly.
+
+Breakdowns accept `metric=clicks|referrals|revenue|commission`, plus `dimension=affiliate|group|affiliateLink|trafficSource|utmSource|utmMedium|utmCampaign|utmTerm|utmContent|country|continent|device|browser|os`. Supply `limit` and the returned offset `cursor`. Data changes between pages can shift offsets; use a fixed historical range for reconciliation.
+
+
+```bash
+curl "https://www.referly.so/api/v1/analytics/timeseries?start=2026-09-01T00:00:00Z&end=2026-09-08T00:00:00Z&timezone=Africa%2FLagos&granularity=day" \
+  -H "Authorization: Bearer $REFERLY_API_KEY"
+```
+
+Responses include `start`, `end`, `timezone`, `currency`, `endExclusive: true` and `data`. Time series also includes `granularity`; breakdowns include `metric`, `dimension` and `nextCursor`.

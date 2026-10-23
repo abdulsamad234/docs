@@ -1,6 +1,45 @@
 ---
 title: "Errors"
-description: "Error responses and what they mean."
+description: "Understand operational error codes, validation failures, legacy errors and retry behavior."
 ---
 
-{/* TODO: Write this article. */}
+Operational endpoints return a structured error and an `X-Request-Id` response header:
+
+```json
+{
+  "error": {
+    "code": "insufficient_scope",
+    "message": "Requires commissions:write",
+    "requestId": "request-id"
+  }
+}
+```
+
+Validation errors can also include `error.details`, with field paths and validation messages. Keep the request ID when asking support to investigate.
+
+| Status | Meaning | Next step |
+| --- | --- | --- |
+| 400 | Malformed JSON | Correct the request body |
+| 401 | Missing, invalid, expired or revoked credentials | Check or replace the key |
+| 403 | Missing scope, disabled entitlement or prohibited operation | Check permissions and account access |
+| 404 | Missing resource or a resource outside the selected program | Check the ID and program selection |
+| 409 | State, concurrency or idempotency conflict | Inspect the code before retrying |
+| 413 | Body exceeds 64 KiB | Reduce the request body |
+| 422 | Invalid body or query parameters | Correct the fields reported in the error |
+| 429 | Rate limit exceeded | Wait for `Retry-After` |
+| 500 | Internal failure | Retry with backoff and the same idempotency key |
+| 502 | Webhook provider request failed | Retry with the same idempotency key |
+
+## Conflicts
+
+`concurrent_request` and `operation_pending` can be retried with backoff using the same request. `idempotency_conflict` means the key was already used for a different method, path or payload; repeating it unchanged will not fix the conflict.
+
+Finance conflicts include `commission_locked`, `clawback_immutable`, `reversal_exceeds_commission`, `source_reference_conflict`, `batch_locked`, `nonpositive_payout` and `settlement_conflict`. Resolve the underlying state or reconcile the existing operation before sending a new write. See [finance behavior](/developer-documentation/api/finance).
+
+Program creation from an agency-managed program returns `403 agency_program_creation_disabled` with the message `contact support to create a new affiliate program`.
+
+## Legacy errors and rate limits
+
+Existing affiliate, referral, sale, link, coupon and promotional-code endpoints retain their legacy formats, often `{ "error": "message" }`. Rate-limit responses also keep the limiter's string error and rate metadata, rather than the operational error envelope. Integrations using both endpoint families should support both shapes.
+
+A legacy sale request returning `null` or a duplicate-related `400` needs reconciliation by its external identifier. See [sale idempotency](/developer-documentation/server-side/idempotency).

@@ -1,0 +1,48 @@
+---
+title: "Commissions, balances and payouts"
+description: "Review commissions, create signed adjustments, reconcile balances and record externally paid batches."
+---
+
+Use [commission endpoints](/api-reference/commissions/list), [adjustments](/api-reference/commission-adjustments/create), [balances](/api-reference/balances/list), [payouts](/api-reference/payouts/list), and [payout batches](/api-reference/payout-batches/list) to reconcile your program. See the [common API rules](/developer-documentation/api/overview) for permissions and retries.
+
+## Commission review
+
+Commission list filters: `affiliateId`, `saleId`, `payoutId`, `status` (`ACCEPTED`, `ON_HOLD`, `DECLINED`), `start`, `end`, `updatedAfter`. Start/end apply to creation time and are inclusive. Commission IDs are positive integers. A review request is `{ "reason": "Finance review completed" }`. Paid, manually paid or payout-assigned commissions cannot be reviewed. Holds use `MANUAL_HOLD`. A refunded sale's commission cannot be approved. Entries with adjustment history cannot be reviewed; use a compensating adjustment.
+
+## Commission adjustments
+
+Adjustment creation example for `POST /commission-adjustments`:
+
+```json
+{
+  "affiliateId": "affiliate-id",
+  "originalCommissionId": 123,
+  "amount": -12.5,
+  "currency": "USD",
+  "reason": "Partial commission reversal",
+  "sourceReference": "refund-123"
+}
+```
+
+Amounts must be nonzero and use the program's currency in major units, with up to six decimal places and absolute value no greater than one billion. Send the currency as its three-letter uppercase code. Decimal adjustment amounts serialize as strings on reads. Negative adjustments require an accepted, non-refunded cash original belonging to the same affiliate/program. Total negative adjustments cannot exceed that original. Positive adjustments may omit the original reference. The required `sourceReference` deduplicates adjustments within a program, with or without a header. Matching details return the existing adjustment; different details return 409 `source_reference_conflict`.
+
+An adjustment creates a separate accepted cash commission and a zero-revenue `ADJUSTMENT` sale, using the same payout mechanism as bonuses but displayed separately as an Adjustment. It does not edit the original sale, original commission or a paid payout snapshot. Negative entries inherit the original commission's eligibility date so a new holding period does not postpone the debit. Adjustment entries participate in existing payout calculations. Full sale refunds with adjustment history are rejected by the shared refund helper to prevent a second reversal; reconcile them using further adjustments. These are commission adjustments, not customer payment refunds.
+
+## Payouts and balances
+
+Payout list filters: `affiliateId`, `payoutBatchId`, `status` (`PENDING`, `PROCESSING`, `PAID`, `FAILED`). Amounts reuse the existing VAT-aware payout calculator: unsubmitted payouts use live commissions; submitted/paid/manual payouts use their stored amounts.
+
+Balances are cash-only: `held` is on hold; `pending` is accepted but inside the holding period; `payable` includes eligible unbatched earnings and unsubmitted payouts; `processing` includes locked, unpaid payouts; `paid` includes paid payouts and unbatched manually paid commissions. Negative adjustments can reduce balances. `meetsMinimumThreshold` checks the program threshold only. `paymentReadiness: "not_evaluated"` explicitly does not certify bank details, provider onboarding, provider minimums or transfer availability.
+
+## Record an external payment
+
+`POST /payout-batches/{id}/mark-paid` accepts `{ "paymentReference": "bank-reference", "paidAt": "2026-09-14T12:00:00Z" }`; omit `paidAt` for now. The date cannot be in the future on the new route. Eligible cash batches are `READY`, `FAILED`, `WAITING_FOR_PAYOUT_INTEGRATION`, or `WAITING_FOR_PAYMENT`. Referly-managed transfers, already submitted/locked payouts, nonpositive payouts and inconsistent ownership are rejected. Batch, payout snapshots and commission flags change atomically. This endpoint records an external payment; it sends no funds.
+
+Legacy `GET /payout-batches` still returns its latest-50 array; `?id=...` still returns detail. Opt into cursor pagination with `pagination=cursor`. Legacy `PATCH /payout-batches` with `{ "id": "...", "action": "mark_paid" }` is preserved and uses the same transactional settlement logic. The legacy route also uses batch state to prevent duplicate settlement without a header. Unsafe batch states are now rejected rather than silently marked paid.
+
+
+Matching settlement retries do not repeat payout events. A different payment reference or explicit payment date returns `409 settlement_conflict`. Repeated commission decisions already in the requested reviewable state do not emit another event.
+
+## Clawback entries
+
+Existing clawbacks reduce payable cash immediately, without waiting through a new holding period. They are immutable: the review and adjustment endpoints reject clawback entries. The public API does not provide a clawback-creation endpoint. A commission adjustment is a separate accounting operation and is not a customer payment refund.

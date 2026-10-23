@@ -94,7 +94,9 @@ families are in [Payload structure](/developer-documentation/webhooks/payload-st
 
 ## What you can subscribe to
 
-There are fifteen event types, in five families. Each family fires on create, update, and delete:
+The legacy event catalog has fifteen event types in five families. Each family fires on create, update, and delete. The [operational API](/developer-documentation/api/webhooks) adds lifecycle events for programs, groups, commission plans, commissions and payouts with a separate payload envelope.
+
+Legacy families:
 
 | Family | Event types |
 | --- | --- |
@@ -227,8 +229,9 @@ def referly_webhook():
 
 </CodeGroup>
 
-Branch on `event.event` from there — the string is always `family.action`, so a `switch` on the
-event type is usually all the routing you need.
+Route legacy events using `event.event`. Operational lifecycle events use `event.type` and a
+separate [payload envelope](/developer-documentation/api/webhooks#operational-event-payloads).
+Deduplicate operational events by their stable payload `id`.
 
 ## Where endpoints are configured
 
@@ -269,7 +272,7 @@ and the non-technical version lives in the
     Create, edit, disable, and delete the URLs Referly sends to.
   </Card>
   <Card title="Event types" icon="list" href="/developer-documentation/webhooks/event-types">
-    All fifteen events and exactly what triggers each one.
+    Legacy and operational API events and what triggers each one.
   </Card>
   <Card title="Payload structure" icon="brackets-curly" href="/developer-documentation/webhooks/payload-structure">
     Field-by-field reference for every object you can receive.

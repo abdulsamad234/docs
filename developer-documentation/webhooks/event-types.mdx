@@ -1,9 +1,9 @@
 ---
 title: "Event types"
-description: "All fifteen Referly webhook event types and what triggers them: affiliate.created, referral.updated, sale.created, sale.deleted, coupon and promocode events, plus which ones your integration actually needs."
+description: "Referly legacy and operational API webhook event types and what triggers them: affiliate.created, referral.updated, sale.created, sale.deleted, coupon and promocode events, plus which ones your integration actually needs."
 keywords: ["Referly webhook events", "webhook event types", "sale.created", "sale.deleted", "affiliate.created", "affiliate.updated", "referral.created", "referral.updated", "promocode webhook", "coupon webhook", "affiliate program event types", "webhook event catalog"]
 ---
-Referly emits fifteen event types, covering five object families in your program. Every endpoint
+Referly emits legacy events for five object families, plus operational API events for programs, groups, commission plans, commissions and payouts. Every endpoint
 subscribes to its own subset via the **Events** checklist — see
 [Manage endpoints](/developer-documentation/webhooks/managing-endpoints).
 
@@ -12,13 +12,12 @@ This page is about *what fires each event*. For the fields inside the payload, s
 
 ## Naming convention
 
-Every event type is `family.action`, lowercase, with exactly one dot:
+Legacy event types use `family.action`:
 
 - **Families:** `affiliate`, `referral`, `sale`, `coupon`, `promocode`
 - **Actions:** `created`, `updated`, `deleted`
 
-The value arrives in the payload's `event` key, so a `switch` on that string is usually all the
-routing your handler needs.
+Legacy events use the payload's `event` key. Operational lifecycle events use `type`, including `group.membership.updated`; route each envelope accordingly.
 
 <Warning>
   The promo code family is `promocode`, not `promotional_code` or `promotional-code` — even though
@@ -45,6 +44,29 @@ routing your handler needs.
 | `promocode.created` | A customer-facing code is issued against a coupon |
 | `promocode.updated` | A promotional code is edited |
 | `promocode.deleted` | A promotional code is removed |
+
+## Operational API events
+
+These events describe successful API-originated changes. They are not emitted universally by older dashboard or integration operations.
+
+| Event type | Fires when |
+| --- | --- |
+| `program.created` | An API request provisions a program |
+| `program.updated` | An API request updates program settings |
+| `group.created` | An API request creates a group |
+| `group.updated` | An API request updates a group |
+| `group.deleted` | An API request deletes a group |
+| `group.membership.updated` | An API request changes group membership |
+| `commission-plan.created` | An API request creates a commission plan |
+| `commission-plan.updated` | An API request updates or archives a commission plan |
+| `commission-plan.deleted` | An API request deletes a commission plan |
+| `commission.created` | An API adjustment creates a commission entry |
+| `commission.updated` | An API request changes a commission review decision |
+| `commission.adjusted` | An API request creates a commission adjustment |
+| `payout.paid` | API manual settlement records a payout as paid |
+| `payout-batch.paid` | API manual settlement records a batch as paid |
+
+Their payload uses `id`, `programId`, `type`, `schemaVersion`, `createdAt` and `data`. Delivery is at least once; deduplicate by `id`. See [webhook management](/developer-documentation/api/webhooks) for subscriptions, tests, replay and program-creation event ownership.
 
 ## Affiliate events
 

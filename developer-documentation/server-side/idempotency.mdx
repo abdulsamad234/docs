@@ -5,7 +5,7 @@ keywords: ["idempotency", "duplicate sales", "externalId", "externalInvoiceId", 
 ---
 Anything that reports sales over a network will eventually report the same sale twice. A payment provider redelivers a webhook, a job queue replays a message, a deploy restarts a worker mid-batch, someone re-runs a backfill script. Without a way to recognise the repeat, each one becomes another sale and another commission on the same money.
 
-Referly has no `Idempotency-Key` header. Deduplication works off the identifiers you already have — the charge ID, the invoice ID, the order number from the system that owns the payment.
+The legacy sales endpoint deduplicates using your payment identifiers: the charge ID, invoice ID or order number. It does not use the `Idempotency-Key` header. New [operational API writes](/developer-documentation/api/overview#retry-writes-safely) do accept that header; the rules below apply to sale reporting.
 
 ## The two identifiers
 
