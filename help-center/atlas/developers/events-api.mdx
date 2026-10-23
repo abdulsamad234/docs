@@ -1,0 +1,264 @@
+---
+title: "Events API"
+description: "Send Lead, CompleteRegistration, StartTrial, Subscribe and Purchase events to Referly Atlas from your server, Zapier or Make with POST /api/atlas/v1/events: authentication, request fields, batches of up to 50, result statuses, error codes, rate limits, deduplication and examples."
+keywords: ["Atlas Events API", "POST /api/atlas/v1/events", "server-side conversions", "Atlas API token", "Zapier webhook Atlas", "Make HTTP module Atlas", "Lead event API", "StartTrial event", "Subscribe event", "Purchase event API"]
+---
+One request records a conversion that happened outside the browser: a lead your CRM qualified, a sign up, a trial or subscription your billing started, or an order your backend created. Referly Atlas writes it to the store's ledger, matches it to the visit behind it when it can, and forwards it to the store's pixels like any other event.
+
+```bash
+POST https://www.referly.so/api/atlas/v1/events
+```
+
+Browser events are the [tracker's](/help-center/atlas/developers/tracker-js-api) job, and Stripe, Paddle, Chargebee, Creem, Polar and the other billing integrations send these conversions on their own once connected (see [Connect your data](/help-center/atlas/setup/connect-your-data)). Use this endpoint for everything else.
+
+## Endpoint and authentication
+
+Send JSON with a Bearer token in the `Authorization` header. Two kinds of token work:
+
+- The store's **Atlas API token**, generated in **Store settings** under **Tracking and connection**, **API token**. It starts with `atl_` and is shown once. This is the token to use from your own server and from Zapier or Make.
+- A Referly **REST API key** or **Zapier API key** of the program the store belongs to. Atlas resolves the store from the key.
+
+Optional headers:
+
+| Header | Purpose |
+| --- | --- |
+| `X-Referly-Program` | The store id you expect the token to belong to. When it does not match, the request is refused with `403 Token does not belong to this program`. Useful when one server holds tokens for several stores. |
+| `X-Referly-Source` | A word such as `zapier` or `make`, so the conversion is labelled with that source in Atlas. Requests from Zapier's and Make's own user agents are labelled automatically; everything else shows as REST API. |
+
+The store must be live. A store that is not tracking yet, or has been disabled, answers `403 Atlas is not enabled for this program`.
+
+## Request body
+
+Send one event object, or up to 50 of them under `events`:
+
+```json
+{
+  "events": [
+    { "event": "Lead", "id": "lead_7f3a", "email": "jane@example.com" },
+    { "event": "Purchase", "id": "1001", "value": 129, "currency": "USD", "email": "jane@example.com" }
+  ]
+}
+```
+
+<ParamField body="event" type="string" required>
+  `Lead`, `CompleteRegistration`, `StartTrial`, `Subscribe` or `Purchase`. Aliases are accepted after lowercasing and dropping anything that is not a letter: `generatelead`; `signup`, `register`, `registration`; `trial`, `trialstarted`; `subscription`, `subscriptionstarted`; `order`, `sale`. So `Sign up` and `sign_up` both mean `CompleteRegistration`.
+</ParamField>
+
+<ParamField body="id" type="string">
+  Your id for this conversion, up to 191 characters. **Required for `Purchase`** (your order id). For the other events it is optional: without it Atlas uses `userId`, then `email`, as the id, so one person gets one lead, one sign up and so on. Numbers are accepted and stored as strings.
+</ParamField>
+
+<ParamField body="email" type="string">
+  The person's email, up to 320 characters. Trimmed; matching ignores case.
+</ParamField>
+
+<ParamField body="phone" type="string">
+  The person's phone number, up to 64 characters, ideally in international format.
+</ParamField>
+
+<ParamField body="firstName" type="string">
+  Up to 128 characters.
+</ParamField>
+
+<ParamField body="lastName" type="string">
+  Up to 128 characters.
+</ParamField>
+
+<ParamField body="userId" type="string">
+  Your customer id, up to 128 characters. Stored as the external id, and used as the conversion id when `id` is missing.
+</ParamField>
+
+<ParamField body="visitorId" type="string">
+  The Atlas visitor id from `referlyAtlas.getVisitorId()` in the browser, saved at sign up. It is the surest way to tie the event to the ad click.
+</ParamField>
+
+<ParamField body="value" type="number">
+  The amount, zero or more. **Required for `Purchase`.** Strings that parse as numbers are accepted.
+</ParamField>
+
+<ParamField body="currency" type="string">
+  Three-letter code. A `Purchase` without one uses the store's currency, or USD when the store has none. Other events may carry no currency.
+</ParamField>
+
+<ParamField body="occurredAt" type="string | number">
+  When it happened: an ISO 8601 string, epoch seconds or epoch milliseconds. Anything more than 5 minutes in the future or older than 90 days is replaced by the time of the request.
+</ParamField>
+
+<ParamField body="ip" type="string">
+  The person's IP address, taken from your web request. Your server's own IP is never used in its place.
+</ParamField>
+
+<ParamField body="userAgent" type="string">
+  The person's browser user agent, up to 1024 characters.
+</ParamField>
+
+<ParamField body="url" type="string">
+  The page the conversion happened on, up to 2048 characters.
+</ParamField>
+
+<ParamField body="country" type="string">
+  The person's country as a two-letter code. Stored with the conversion, and used as the billing country of a purchase.
+</ParamField>
+
+<ParamField body="details" type="object">
+  Anything you want to see next to the conversion in Atlas, for example `{ "plan": "Pro" }`.
+</ParamField>
+
+<ParamField body="test" type="boolean">
+  `true` records a test: it shows in Live activity with the Test status and stays out of reports and destinations.
+</ParamField>
+
+Unknown fields are ignored.
+
+## Responses and errors
+
+A processed request returns `200` with one result per event, in order:
+
+```json
+{
+  "ok": true,
+  "results": [
+    { "event": "Lead", "id": "lead_7f3a", "status": "recorded", "conversionId": "cnv_8a1f" },
+    { "event": "Purchase", "id": "1001", "status": "merged", "orderId": "ord_3c77" }
+  ]
+}
+```
+
+| `status` | Meaning |
+| --- | --- |
+| `recorded` | A new conversion or order was written. |
+| `merged` | It matched a conversion or order Atlas already had (the same id, or the same person and type within 24 hours) and was merged into it. See [Duplicates and merging](#duplicates-and-merging). |
+| `ignored` | Atlas wrote nothing for it. |
+| `rejected` | The event failed validation and `error` says why. The other events in the batch are still processed. |
+
+Per-event `rejected` messages:
+
+| `error` | Fix |
+| --- | --- |
+| `Unknown event. Use Lead, CompleteRegistration, StartTrial, Subscribe or Purchase.` | Check `event` against the names and aliases above. |
+| `Purchase needs an id (your order id)` | Send your order id in `id`. |
+| `Purchase needs a value` | Send the order total in `value`. |
+| `Send an id, userId or email so the conversion can be deduplicated` | Send at least one of the three. |
+
+`ok` is `true` when at least one event was not rejected. A request with a single event that is rejected comes back `400`; a batch always comes back `200`, so read `results` rather than the status code.
+
+Request-level errors return `{ "ok": false, "error": "..." }`:
+
+| Status | `error` | Cause |
+| --- | --- | --- |
+| `400` | `Invalid event payload` | The body is not valid JSON, or a field has the wrong type or a negative value. `issues` lists up to five problems. |
+| `401` | `Unauthorized` | No Bearer token. |
+| `401` | `Invalid Atlas token` | The token is unknown or was regenerated. |
+| `403` | `Token does not belong to this program` | `X-Referly-Program` names another store. |
+| `403` | `Atlas is not enabled for this program` | The store is not live. Finish its setup or choose a plan. |
+| `429` | `Too many requests. Please slow down.` | Rate limit; see below. |
+
+## Rate limits
+
+600 requests per minute per token. A batch counts as one request, so up to 30,000 events a minute fit under the limit. Above it the endpoint answers `429 Too many requests. Please slow down.`: wait a few seconds and send the batch again.
+
+Retries are safe. A repeated event with the same `id` is merged, not duplicated.
+
+## Duplicates and merging
+
+Atlas deduplicates so that a retried request, a browser event and a server event for the same thing end up as one row:
+
+- **Purchase**: the order id (`id`) is the key. A second `Purchase` with the same id is merged into the first (`merged`). A purchase the tracker recorded in the browser waits 60 seconds for your server's copy and takes its value and time.
+- **Lead, CompleteRegistration, StartTrial, Subscribe**: the key is `id`, or `userId` or `email` when `id` is missing. On top of that, the same person and the same type within 24 hours merge into one conversion, whatever the ids: the server copy wins the value and the time. A conversion first seen in the browser waits 60 seconds for the server copy.
+
+So you can send the same conversion from the tracker (for an immediate pixel event with the browser's cookies) and from your server (for the trusted value) without counting it twice. Send the same `id` in both places, plus the `visitorId` from the browser, and the two are stitched. See [How duplicates are merged](/help-center/atlas/conversions#how-duplicates-are-merged).
+
+Each pixel also refuses to send the same event twice within 48 hours; those show as Deduped in Live activity.
+
+## Examples
+
+<CodeGroup>
+
+```bash curl
+curl -X POST https://www.referly.so/api/atlas/v1/events \
+  -H "Authorization: Bearer atl_YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event": "StartTrial",
+    "id": "sub_1Q8xVe",
+    "userId": "user_123",
+    "email": "jane@example.com",
+    "value": 0,
+    "currency": "USD",
+    "occurredAt": "2026-10-21T09:30:00Z"
+  }'
+```
+
+```js Node.js
+const res = await fetch("https://www.referly.so/api/atlas/v1/events", {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${process.env.ATLAS_API_TOKEN}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    events: [
+      {
+        event: "CompleteRegistration",
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        visitorId: user.referlyVisitorId, // saved from referlyAtlas.getVisitorId() at sign up
+        ip: req.ip,
+        userAgent: req.headers["user-agent"],
+      },
+      {
+        event: "Purchase",
+        id: order.id,
+        value: order.total,
+        currency: order.currency,
+        email: user.email,
+        userId: user.id,
+      },
+    ],
+  }),
+});
+
+const { ok, results } = await res.json();
+for (const r of results) {
+  if (r.status === "rejected") console.error(r.event, r.error);
+}
+```
+
+```python Python
+import os
+import requests
+
+res = requests.post(
+    "https://www.referly.so/api/atlas/v1/events",
+    headers={"Authorization": f"Bearer {os.environ['ATLAS_API_TOKEN']}"},
+    json={"event": "Lead", "id": lead.id, "email": lead.email, "details": {"plan": "Pro"}},
+)
+for r in res.json()["results"]:
+    print(r["status"], r.get("error"))
+```
+
+</CodeGroup>
+
+### Zapier
+
+Use the **Webhooks by Zapier** action with the **POST** event (or **Custom Request**):
+
+- **URL**: `https://www.referly.so/api/atlas/v1/events`
+- **Payload Type**: `json`
+- **Data**: one row per field, for example `event` set to `Lead`, `id` mapped to the record id from your trigger, `email` mapped to the email from your trigger, then `value` and `currency` when you have them.
+- **Headers**: `Authorization` set to `Bearer atl_YOUR_TOKEN`, and `Content-Type` set to `application/json`.
+
+Conversions sent this way carry the Zapier source in Atlas. The same URL, header and body appear in the wizard under **Connect your data**, **Zapier**.
+
+### Make
+
+Add the **HTTP** module, **Make a request**:
+
+- **URL**: `https://www.referly.so/api/atlas/v1/events`
+- **Method**: `POST`
+- **Headers**: `Authorization` with the value `Bearer atl_YOUR_TOKEN`
+- **Body type**: `Raw`, with **Content type** `JSON (application/json)`
+- **Request content**: the JSON event, mapping fields from the previous module, for example the record id into `id` and the email into `email`.
+
+Conversions sent from Make carry the Make source in Atlas.

@@ -1,0 +1,106 @@
+---
+title: "Metrics"
+description: "Reference for every Referly Atlas Ad center metric: the formula behind ROAS, Blended ROAS (MER), AER, CPA, AOV, CTR, CPC, CPM, frequency, conversion rate, funnel counts, platform-reported numbers, video metrics, creative scores and audience shares, and whether each comes from Atlas or the ad platform."
+keywords: ["roas formula", "blended roas mer formula", "ad efficiency ratio", "cpa formula", "aov formula", "ctr cpc cpm", "thumbstop rate", "hold rate", "new customer roas", "ad metrics reference"]
+---
+Every number in the Ad center comes from one of two places. **Atlas** metrics are built from the orders and visits your store tracked, matched to the last paid click in the 7 days before the order. **Platform** metrics are reported by Meta, Google Ads or TikTok about their own delivery and are synced as is. Most ratios mix the two: spend from the platform, revenue from your store.
+
+A few rules apply everywhere:
+
+- **Revenue** means attributed revenue minus refunds, using the amount paid at order time. Refunded and cancelled orders drop out, partial refunds are netted, and test orders never count.
+- **Attributed orders** are paid orders tied to a paid click within the 7-day lookback. How the match is made is on the [dashboard](/help-center/atlas/ad-center/dashboard#how-revenue-is-matched-to-ads) page.
+- Spend arrives in the ad account's currency and is converted to the store currency with that day's rate.
+- A ratio shows **-** when its divisor is 0. Changes against the previous period read **new** when the previous value was 0.
+- Hover any card title or column header in the app for the same definition.
+
+## Spend and return
+
+| Metric | Formula | Source |
+| --- | --- | --- |
+| **Spend** | Ad spend reported by the platform, converted to the store currency with that day's rate. | Platform |
+| **Revenue** | Attributed revenue minus refunds, amount paid at order time. | Atlas |
+| **ROAS** | Revenue ÷ Spend. | Atlas and platform |
+| **Blended ROAS (MER)** | All store revenue minus refunds (ads, organic, email, affiliates, direct) ÷ all ad spend of the store. Always the whole store: channel, ad account and campaign filters do not change it. | Atlas and platform |
+| **Ad Efficiency Ratio (AER)** | Spend ÷ Revenue, the inverse of ROAS, shown as a ratio. | Atlas and platform |
+| **AOV** | Revenue ÷ attributed orders. | Atlas |
+| **CPA** | Spend ÷ attributed orders. | Atlas and platform |
+| **Purchases** | Attributed orders (paid orders; refunds are tracked separately). | Atlas |
+| **Refunds** | Refunded amount on attributed orders, on the order's date. | Atlas |
+| **New customers** | Attributed orders from first-time customers. | Atlas |
+| **New customer revenue** | Revenue from first-time customers. | Atlas |
+| **NC CPA** | Spend ÷ new-customer orders. | Atlas and platform |
+| **NC ROAS** | New-customer revenue ÷ Spend. | Atlas and platform |
+
+**ROAS** counts only the revenue Atlas attributes to ads, so it responds to the channels, ad accounts and campaigns you select. **Blended ROAS (MER)** is the one metric that ignores the selection, which makes it the right number for "is advertising paying for itself overall".
+
+## Traffic
+
+| Metric | Formula | Source |
+| --- | --- | --- |
+| **Clicks** | Clicks reported by the platform. | Platform |
+| **Impressions** | Impressions reported by the platform. | Platform |
+| **Reach** | People reached, as reported by the platform. Google Ads does not report reach. | Platform |
+| **CTR** | Clicks ÷ Impressions × 100. | Platform |
+| **CPC** | Spend ÷ Clicks. | Platform |
+| **CPM** | Spend ÷ Impressions × 1,000. | Platform |
+| **Frequency** | Impressions ÷ Reach. Google Ads does not report reach, so its rows show **-**. | Platform |
+| **Cost per 1K reached** | Spend ÷ Reach × 1,000. Not available for Google Ads. | Platform |
+
+## Funnel
+
+Funnel counts come from the visits Atlas attributed to the row: a session lands on the same campaign, ad set and ad that a purchase from it would.
+
+| Metric | Formula | Source |
+| --- | --- | --- |
+| **Sessions** | Sessions attributed to this row. | Atlas |
+| **Page Views** | Page views from attributed sessions. | Atlas |
+| **View content** | Product views from attributed sessions. | Atlas |
+| **Add to Cart (ATC)** | Add-to-cart events from attributed sessions. | Atlas |
+| **Cost per Add to Cart** | Spend ÷ add-to-cart events. | Atlas and platform |
+| **ATC rate** | Add-to-cart events ÷ Sessions × 100. | Atlas |
+| **Initiate Checkout (IC)** | Checkout-started events from attributed sessions. | Atlas |
+| **IC rate** | Checkout-started events ÷ Sessions × 100. | Atlas |
+| **Conversion Rate (CVR)** | Attributed orders ÷ platform clicks × 100. | Atlas and platform |
+
+## Platform-reported numbers
+
+These three columns let you compare what the platform claims with what Atlas tracked. The platform uses its own attribution (its own windows, view-through and modelled conversions), so they are usually higher than the Atlas figures beside them.
+
+| Metric | Formula | Source |
+| --- | --- | --- |
+| **Conversions** | Purchases the platform reports with its own attribution. | Platform |
+| **Platform revenue** | Purchase value the platform claims. | Platform |
+| **Platform ROAS** | Platform-reported revenue ÷ Spend. | Platform |
+
+For the same comparison per pixel, see the platform columns of [Reporting](/help-center/atlas/reports/reporting).
+
+## Video and creative
+
+Video metrics are null where the platform did not report them, for example image ads.
+
+| Metric | Formula | Source |
+| --- | --- | --- |
+| **Thumbstop rate** | 3-second views (Meta), 2-second views (TikTok) or 25% views (Google Ads) ÷ Impressions × 100. | Platform |
+| **Hold rate** | ThruPlay views (Meta), TrueView views (Google Ads) or 6-second views (TikTok) ÷ Impressions × 100. | Platform |
+| **25% video views (P25)** | Video plays that reached 25% of the video. | Platform |
+| **50% video views (P50)** | Video plays that reached 50% of the video. | Platform |
+| **75% video views (P75)** | Video plays that reached 75% of the video. | Platform |
+| **100% video views (P100)** | Video plays that reached the end of the video. | Platform |
+| **Average watch time** | Seconds watched per video play. Not reported by Google Ads. | Platform |
+| **Outbound CTR** | Outbound clicks ÷ Impressions × 100. Outbound clicks are reported by Meta only. | Platform |
+| **Hook score** | Percentile rank of the thumbstop rate against the other creatives of the same platform, ad account and campaign. | Atlas, from platform data |
+| **Watch score** | Percentile rank built from hold views, full views and average watch time against the same peers. | Atlas, from platform data |
+| **Click score** | Percentile rank of outbound CTR (Meta) or CTR (Google Ads, TikTok), plus clicks per 6-second view on TikTok, against the same peers. | Atlas, from platform data |
+| **Overall score** | Weighted percentile rank: results 50% (ROAS, CPA, conversion rate, AOV, cost per add to cart), traffic 25% (CTR, CPM, CPC, frequency), engagement 25% (Hook, Watch, Click). | Atlas and platform |
+
+The four scores only appear in the [Creative center](/help-center/atlas/ad-center/creative-center#scores), run from 0 to 100, read 60 when a creative has no peers, and cannot be used in custom metrics.
+
+## Audience
+
+The audience shares come from Meta's Advantage+ shopping audience breakdown and are shares of impressions. They are empty for Google Ads, TikTok and Meta campaigns that are not Advantage+ shopping.
+
+| Metric | Formula | Source |
+| --- | --- | --- |
+| **New audience** | Impressions served to people who have not bought from you before ÷ all impressions × 100. | Platform |
+| **Engaged audience** | Impressions served to people who engaged with your business but have not bought yet ÷ all impressions × 100. | Platform |
+| **Existing customers** | Impressions served to existing customers ÷ all impressions × 100. | Platform |

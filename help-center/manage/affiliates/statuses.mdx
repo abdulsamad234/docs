@@ -1,7 +1,7 @@
 ---
 title: "Affiliate statuses"
-description: "What each affiliate status means in Referly — active, pending, invited, declined, deactivated, and banned — and how affiliates move between them."
-keywords: ["affiliate status", "pending affiliate", "active affiliate", "invited affiliate", "declined affiliate", "deactivated affiliate", "banned affiliate", "affiliate approval status", "referly affiliate statuses"]
+description: "What each affiliate status means in Referly (active, onboarding, pending, invited, declined, deactivated, and banned) and how affiliates move between them."
+keywords: ["affiliate status", "pending affiliate", "active affiliate", "onboarding affiliate", "affiliate onboarding status", "invited affiliate", "declined affiliate", "deactivated affiliate", "banned affiliate", "affiliate approval status", "referly affiliate statuses"]
 ---
 Every affiliate in your program carries a **status** — a quick label that tells you where they stand. It's how you tell an approved partner apart from someone still waiting to be reviewed, and it decides whether that person can actually promote you and earn.
 
@@ -27,6 +27,27 @@ The affiliate has applied but hasn't been approved yet. They can't promote or ea
   Affiliates only wait in **Pending** if you've switched off automatic approval. With auto-approval on — the default — new affiliates skip straight to **Active**. See [Manually approve or decline applications](/help-center/getting-started/recruit/approve-or-decline).
 </Note>
 
+### Onboarding
+
+The affiliate has signed up but hasn't finished your [onboarding](/help-center/settings/portal/onboarding) yet, the short guided flow new affiliates go through right after they join. You only see this status when onboarding is turned on for your program. Onboarding shows as an indigo badge.
+
+![The affiliates list with three affiliates in the Onboarding status, one Invited and one Active, shown in the Status column](/images/help-center/manage/onboarding-status.png)
+
+An affiliate shows as **Onboarding** from the moment they sign up until one of these happens:
+
+- They finish the last onboarding step.
+- They select **Skip onboarding** (only possible if you allow skipping).
+- You turn off **Enable onboarding** in your onboarding settings. Every Onboarding badge then switches back to the affiliate's real status.
+
+After that, their badge changes to **Active**, or to **Pending** if you review applications yourself.
+
+**Onboarding** is a label to help you see who's still getting set up. It isn't a separate status, and your affiliates never see it. Underneath, the affiliate is still **Active** or **Pending**, and that real status is what counts:
+
+- You can approve or reject a pending affiliate while they're still onboarding. The **Approve Affiliate** and **Reject Affiliate** buttons still appear on their detail page, and the bulk **Approve** action works for them too. Their badge stays **Onboarding** until they finish or skip.
+- Only active and pending affiliates can show as Onboarding. Invited, declined, deactivated, and banned affiliates always show their own status.
+
+When onboarding is turned on, the **Filter** panel gets an extra **Onboarding** status option with its own count. Affiliates still onboarding are counted only there, so the **Approved** (active) and **Pending** counts include only affiliates who have finished or skipped onboarding.
+
 ### Invited
 
 You've sent this person an invitation to join your program, but they haven't accepted and finished signing up yet. They're on your list so you can keep track of who's been asked, but they aren't promoting or earning until they accept and their account becomes active. Invited shows as a blue badge. See [Invite affiliates](/help-center/getting-started/recruit/invite-affiliates).
@@ -47,6 +68,8 @@ The affiliate has been removed from your program for a reason — usually someth
 
 Statuses aren't fixed — they change as you manage your program:
 
+- **Signed up → Onboarding**: with onboarding turned on, a new affiliate shows as Onboarding while they work through it.
+- **Onboarding → Active or Pending**: they finish or skip onboarding (or you turn onboarding off), and their real status shows again.
 - **Invited → Active**: the person accepts your invitation and finishes signing up.
 - **Pending → Active**: you approve their application (or auto-approval does it for you).
 - **Pending → Declined**: you reject their application.
@@ -58,7 +81,7 @@ You can change most of these one affiliate at a time from their detail page, or 
 
 ## Only active affiliates promote and earn
 
-The simplest way to think about status: **only active affiliates can promote and earn.** Everyone else — pending, invited, declined, deactivated, or banned — has links that don't track and can't earn commissions, whether they're waiting to get in or have been removed. Keeping an eye on status is how you know exactly who's live in your program at any moment.
+The simplest way to think about status: **only active affiliates can promote and earn.** Everyone else — pending, invited, declined, deactivated, or banned — has links that don't track and can't earn commissions, whether they're waiting to get in or have been removed. An affiliate showing **Onboarding** follows the rules of their real status underneath, active or pending. Keeping an eye on status is how you know exactly who's live in your program at any moment.
 
 ## Related
 

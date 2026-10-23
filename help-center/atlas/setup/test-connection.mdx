@@ -1,0 +1,119 @@
+---
+title: "Test your connection"
+description: "Run Test connection in Referly Atlas to check the tracking script or app embed, tracked events, the order webhook and every destination, read the results, and use the setup checklist to see what is left."
+keywords: ["Atlas test connection", "tracking script not seen", "no events received yet", "order webhook waiting", "destinations answered", "Atlas setup checklist", "first events Atlas", "test event pixel", "Atlas connection status", "Referly Atlas troubleshooting"]
+---
+**Test connection** is the one-button health check for a store in Referly Atlas. It looks at whether your site has loaded the tracker recently, whether events and orders have arrived, and whether every pixel you added answers a test event. Run it after setup, after changing a pixel's credentials, and whenever a report looks emptier than it should.
+
+This page shows where the button lives, what each of its four checks means, and what to do when one fails.
+
+## Where to find it
+
+In the left sidebar, open **Store settings** and pick the store (the stores are listed on the left of the settings page). Scroll to **Tracking and connection**. The section opens with status tiles that describe the connection as it stands, followed by the **Test connection** button.
+
+![Connection status tiles for a Shopify store: App embed seen, Web pixel registered, last pixel event, last order webhook and destinations, with the Test connection button](/images/atlas/setup/test-connection--status-tiles.png)
+
+The tiles are:
+
+| Tile | What it shows |
+| --- | --- |
+| **Tracking script** (or **App embed** on Shopify) | Whether a page of your site has loaded the tracker, and when it was last seen. |
+| **Pixel token** (or **Web pixel** on Shopify) | Whether the store's token exists, or the web pixel is registered on Shopify. |
+| **Last pixel event** | When the last event from your site reached Atlas. |
+| **Last order webhook** | When the last order came in from your platform or data connection. |
+| **Destinations** | How many pixels are connected to this store. |
+
+![Connection status tiles of a store that has not reported yet: Tracking script not seen yet, Last pixel event none yet, Last order webhook waiting for the first order, 1 destination connected](/images/atlas/setup/test-connection--status-tiles-pending.png)
+
+The store wizard runs part of the same test: the **Verify** button on its tracking step checks the script and adds an events line under the address field. The settings page is where you get all four checks and the per-pixel answers.
+
+## The four checks
+
+Select **Test connection**. Atlas runs these four checks and lists them with a pass, a wait or a fail:
+
+| Check | Passes when | When it does not pass |
+| --- | --- | --- |
+| **Tracking script** (custom sites and WooCommerce) or **Theme app embed** (Shopify) | A page load from your site reached Atlas within the last 7 days. | **No page load from your site yet. Open your store in a browser and run the test again.** |
+| **Tracked events** (custom sites and WooCommerce) or **Web pixel events** (Shopify) | At least one event from your site has been received. | **No events received yet.** |
+| **Order webhook** | An order has arrived from Shopify, the WooCommerce plugin or your data connection. Shows the time of the last one. | **Waiting for your first order.** This is a wait, not a failure. |
+| **Destinations** | Every enabled pixel accepted a test event. Shows how many answered, for example **3 of 3 destinations answered.** | **Add a destination to send test events.** when the store has no pixel, or a list of the pixels that failed with the platform's error. |
+
+The destination check sends a real test event to each pixel, the same as **Send test event** on a pixel row. Each platform has 10 seconds to answer; a pixel that is switched off is not tested.
+
+## Reading the results
+
+![Test connection results showing the Destinations check with each pixel's answer, one of them failing with a Klaviyo key mismatch](/images/atlas/setup/test-connection--results.png)
+
+- **All four pass**: the store is healthy. If reports still look thin, the gap is usually consent, filters or dedupe rather than the connection. [Live activity](/help-center/atlas/reports/live-activity) shows which.
+- **Order webhook is waiting** on a store with no orders yet: normal. The store sits in **Awaiting data** until the first order and switches to **Running** on its own.
+- **Destinations lists a failure**: the pixel's answer names the problem, for example a key that does not match the pixel id. Open **Pixels and destinations**, select **Edit** on that pixel, fix the credential and run the test again. Each platform's guide under [Pixels](/help-center/atlas/pixels#platform-guides) says where to find the right values.
+- **Tracking script fails but events pass** (or the other way round): one of the two sources has gone quiet. A script that is no longer seen after a site redesign, or a Shopify embed switched off, are the usual causes.
+
+The test events also appear in [Live activity](/help-center/atlas/reports/live-activity) with the **Test** status (**Test passed** or **Test failed**), so you can open the platform's response there.
+
+## How long the first events take
+
+Right after setup, Atlas is honest about the timing: first events usually show within 15 to 30 minutes, and full coverage within 24 to 48 hours. In practice:
+
+- **Page loads** count as soon as someone (including you) opens your site with the tracker on it. Open your store in a normal browser window, browse a product, and run the test again.
+- **Events** (product views, adds to cart, checkouts) follow the first visits. Browser events are forwarded only to pixels that want them, and consent rules may skip them; the incoming row still counts for the check.
+- **Orders** arrive with the first paid order (or created order, for an external checkout). A purchase sent from the browser waits 60 seconds for the matching order from your platform before it is sent on.
+- **Pixels** answer within seconds. What you see on the platform's side (Events Manager, Events API diagnostics) can take longer to update.
+
+A store that has finished its wizard but has no active plan waits instead: nothing is sent until you choose a plan. See [Store statuses](/help-center/atlas/statuses#store-statuses).
+
+## The setup checklist
+
+While a store is not fully live, the top bar shows a **Complete your setup** pill. Open it for the **Let's set up Atlas** checklist, five steps that tick themselves as you go:
+
+![The setup checklist with its five steps](/images/atlas/setup/setup--checklist.png)
+
+| Step | Counts as done when |
+| --- | --- |
+| **Choose a plan** (or start your free trial) | Your Atlas plan is on trial or active. |
+| **Add your store** | The store's tracking is connected: the script or embed was verified or marked, or any page view, pixel event or order has arrived. A **Disconnected** store does not count. |
+| **Add a destination** | The store has at least one pixel switched on. |
+| **Connect an ad account** | An ad account is connected for the store in the Ad center. |
+| **Receive your first order** (or **first conversion** for SaaS, courses and marketplaces) | An order or a conversion has been recorded. |
+
+Clicking a step takes you where it is done: **Billing**, the store wizard, **Pixels and destinations**, **Ad accounts** or **Live activity**. The checklist follows the store the page shows; on **All stores** it follows the business's most set-up store, so the list always describes one store going live. Choose **Hide checklist** to put it away for good.
+
+## If a check fails
+
+<AccordionGroup>
+  <Accordion title="Tracking script: No page load from your site yet">
+    Nothing from your site has reached Atlas in 7 days. Open your site in a browser and reload a page, then test again. If the check still fails, the tag is missing or carries another store's ID: rerun **Verify** in the wizard's tracking step (see [Add the tracking script](/help-center/atlas/setup/tracking-script#step-4-verify)). On WooCommerce, clear your caching plugin; on a site that runs the tracker through Google Tag Manager, confirm the container is published.
+  </Accordion>
+  <Accordion title="Theme app embed: No page load from your site yet">
+    The **Referly Affiliate Tracker** embed is off in your live theme, or your storefront is password protected. Open the theme editor, switch the embed on under **App embeds**, save, then open your storefront and test again. See [Connect a Shopify store](/help-center/atlas/setup/shopify#step-2-turn-on-the-app-embed).
+  </Accordion>
+  <Accordion title="Tracked events or Web pixel events: No events received yet">
+    The tracker loads but has not reported an event. Browse a product page and add something to the cart, then test again. On Shopify, check that **Turn on Atlas pixel** was run in the wizard; the **Web pixel** tile should read registered. A store still in **Draft** starts tracking only after the setup is finished.
+  </Accordion>
+  <Accordion title="Order webhook is still waiting after real orders">
+    On Shopify with a third-party checkout, set **Type of checkout** to **External checkout (3rd party)** so orders are recorded when they are created. On WooCommerce, confirm the token was saved with **Verify and Save** and that the plugin is 2.1.0 or later. On a custom site, orders come from your data connection or your own purchase events. Orders placed while **Test mode** is on are recorded as tests and do not satisfy this check.
+  </Accordion>
+  <Accordion title="A destination failed">
+    Read the error on the pixel's line: it comes from the platform. A wrong access token, a pixel id that does not match the key, or a conversion label that does not exist are the usual answers. Edit the pixel under **Pixels and destinations** and test again. If the line says the test timed out, the platform did not answer within 10 seconds; try once more before changing anything.
+  </Accordion>
+  <Accordion title="Everything passes but reports are empty">
+    The connection is fine, so look at what happens after an event arrives. In [Live activity](/help-center/atlas/reports/live-activity), rows marked **Skipped**, **Filtered** or **Deduped** explain themselves; **Test** rows never reach reporting; and a **Paused** store records but does not send. The [Troubleshooting](/help-center/atlas/troubleshooting) page walks through each case.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Live activity" icon="bolt" href="/help-center/atlas/reports/live-activity" arrow>
+    Watch events and test deliveries arrive in real time.
+  </Card>
+  <Card title="Store settings" icon="sliders" href="/help-center/atlas/settings/store-settings" arrow>
+    Tracking and connection, test mode and the API token.
+  </Card>
+  <Card title="Pixels and destinations" icon="share-nodes" href="/help-center/atlas/pixels" arrow>
+    Add, edit and test the pixels that failed.
+  </Card>
+  <Card title="Troubleshooting" icon="wrench" href="/help-center/atlas/troubleshooting" arrow>
+    No events, failing tests, pixels in error and more.
+  </Card>
+</Columns>

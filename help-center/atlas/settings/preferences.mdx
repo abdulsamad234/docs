@@ -1,0 +1,58 @@
+---
+title: "Preferences"
+description: "Account-wide Referly Atlas preferences: the time zone that sets the day boundary in reports and the weekly email, the display currency for revenue and spend, and the weekly report, delivery failure and usage warning emails sent to the account owner."
+keywords: ["Atlas preferences", "report time zone", "display currency", "weekly report email", "usage warnings", "delivery failures email", "email notifications", "Atlas account settings"]
+---
+Preferences apply to your whole Referly Atlas account: "Applies to every business and store on this account." They set the time zone and currency your reports are read in, and which emails the account owner receives. Anything that belongs to one store (its currency, time zone, attribution and consent) lives in [Store settings](/help-center/atlas/settings/store-settings) instead.
+
+To open them, go to **Settings** in the left sidebar and pick **Preferences**. Change a field, then press **Save** in the **Unsaved changes** bar. You see **Preferences saved.** when the change goes through.
+
+![Preferences page](/images/atlas/settings/preferences--page.png)
+
+## Time zone
+
+The first field under **Reporting**. "Days in reports and the weekly email start at midnight in this time zone." Pick any time zone from the list; the default is UTC.
+
+A day in your reports runs from midnight to midnight in this zone, so presets such as Yesterday or Last 7 days cover the hours you see on your own clock. [Date ranges](/help-center/atlas/reports/date-ranges#time-zone) covers how the presets and the comparison period are built.
+
+Each store also has its own time zone in [Store settings](/help-center/atlas/settings/store-settings#currency-and-time-zone). When you look at one store, its days follow that store's time zone. The **All stores** view follows the stores' time zone as long as they all share one, and falls back to the time zone you pick here when they differ. The weekly report email covers Monday to Sunday in each store's own time zone.
+
+## Display currency
+
+"Revenue and spend are converted for display only. Plan usage is always counted in USD."
+
+| Option | What you see |
+| --- | --- |
+| **Store currency (default)** | Each store's reports stay in that store's own currency. When the stores of a business use different currencies, the **All stores** view shows amounts in USD. |
+| A currency from the list, for example **USD - US Dollar** | When the stores of a business use different currencies, the **All stores** view converts revenue and spend into this currency. A single store, or stores that share one currency, keep that currency. |
+
+When amounts are converted, Reporting shows a note such as "Amounts in USD, converted from EUR" with an **Exchange rates** hover card: "Ad spend converts from each ad account's currency, sales from each store's." Nothing stored changes, and the tracked revenue your plan is measured on is always counted in USD, whatever you pick here. See [Billing](/help-center/atlas/settings/billing#tracked-revenue-and-the-usage-meter).
+
+## Email notifications
+
+"Sent to the account owner's email address." Three switches, each on by default:
+
+| Switch | Helper text | What arrives |
+| --- | --- | --- |
+| **Weekly report** | "A Monday summary of tracked revenue, orders and ad performance." | One email every Monday for each store with a connected ad account, with the subject "Ad center weekly report for" the store and the week it covers. |
+| **Delivery failures** | "An email when a pixel keeps rejecting events, so you can fix its token." | This switch controls emails about a pixel that keeps rejecting events. |
+| **Usage warnings** | "An email at 80% and 100% of your plan's tracked revenue band." | "Atlas: you are at 80% of your tracked revenue band" and "Atlas: you have passed your tracked revenue band this month". |
+
+The weekly report needs an ad account: a store without one is left out, however the switch is set. Turn a switch off to stop that email; the other two keep arriving. These emails always go to the account owner, not to admins or members.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Store settings" icon="store" href="/help-center/atlas/settings/store-settings" arrow>
+    Per-store currency, time zone, attribution and consent.
+  </Card>
+  <Card title="Billing" icon="credit-card" href="/help-center/atlas/settings/billing" arrow>
+    Plans, the tracked revenue band and the usage meter behind the warnings.
+  </Card>
+  <Card title="Date ranges" icon="calendar" href="/help-center/atlas/reports/date-ranges" arrow>
+    Presets, the comparison period and how days are cut.
+  </Card>
+  <Card title="Ad center dashboard" icon="chart-line" href="/help-center/atlas/ad-center/dashboard" arrow>
+    The spend and revenue numbers the weekly report sums up.
+  </Card>
+</Columns>

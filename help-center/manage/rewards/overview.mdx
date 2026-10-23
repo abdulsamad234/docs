@@ -1,7 +1,7 @@
 ---
 title: "Rewards overview"
-description: "Learn how the Rewards page in Referly works: review every commission your affiliates earn, read each column, understand reward and payout statuses, filter and search, and approve, pay, refund, or export rewards."
-keywords: ["referly rewards", "affiliate rewards", "affiliate commissions", "review rewards", "reward status", "rewards page", "commission list", "approve rewards", "affiliate earnings", "manage rewards"]
+description: "Learn how the Rewards page in Referly works: review every commission your affiliates earn, read each column and source, understand reward and payout statuses, filter and search, and approve, mark as paid with proof, refund, or export rewards."
+keywords: ["referly rewards", "affiliate rewards", "affiliate commissions", "review rewards", "reward status", "rewards page", "commission list", "approve rewards", "mark reward as paid", "payment proof", "affiliate earnings", "manage rewards"]
 ---
 A reward is what an affiliate earns for sending you business. Most rewards come from a referred sale — someone clicks an affiliate's link, buys, and the affiliate earns a commission — but a reward can also be a bonus you hand out or a payment for content an affiliate created. The **Rewards** page is where every one of these lands, so you can see what's been earned, check it's right, approve it, and get it ready to pay.
 
@@ -23,8 +23,8 @@ Each row is a single reward. The columns break down where it came from and where
 - **Affiliate** — who earned it. A tag here can mark an affiliate as a **Downline** or **Original Referrer** when you run [multi-level commissions](/help-center/settings/program/multi-level-commissions).
 - **Revenue** — how much the sale itself was worth.
 - **Reward** — what the affiliate earns from it. This can be cash, a coupon, or credits, depending on the plan.
-- **Type** — whether the reward came from a **Sign Up**, a **Purchase**, a **Bonus**, or a **Content reward**.
-- **Source** — how the sale reached Referly, such as an integration or an **Imported** upload.
+- **Type** — whether the reward came from a **Sign Up**, a **Purchase**, a **Bonus**, or **Content Rewards**. When a content reward is linked to a submission, its badge is underlined with dots: select it to open that submission in the **Review submission** panel. See [Review submissions](/help-center/gamify/content-rewards/submissions).
+- **Source** — how the sale reached Referly, such as an integration (for example **Stripe**, **Polar**, **Creem**, **Ecwid**, or **Sharetribe**) or an **Imported** upload. Hover the badge to see which integration tracked the sale. For a content reward, this shows **Social Media** or **Manual Submission** instead, and you can select it to open the submission too.
 - **Date** — when it was recorded.
 - **Payout** — whether the money has gone out yet (see below).
 - **Status** — where the reward stands with you (see below).
@@ -52,6 +52,8 @@ Status and payout are two different things. A reward can be **Accepted** but not
 - **Payout Created** — added to a payout batch that's being processed.
 - **Paid** — the money has gone out.
 
+If someone on your team marked a reward (or the payout or batch it was in) as paid by hand, its **Paid** label is underlined with dots. Hover it to see who marked it and when, then select **View proof** to see the payment proof they uploaded.
+
 How rewards turn into money is covered in the [Payouts overview](/help-center/manage/payouts/overview).
 
 ## Find a specific reward
@@ -69,7 +71,7 @@ Select any row to open the reward's detail panel. It has two tabs:
 - **Details** — the date, the type, the commission plan behind it, and the revenue, with the reward amount, affiliate, and payout status in the side panel.
 - **Calculation** — a step-by-step trace of exactly how the amount was worked out. See [How a reward was calculated](/help-center/manage/rewards/calculation).
 
-{/* TODO screenshot: reward-detail-panel — upload it in the local Documentation Agent */}
+{/* TODO screenshot: reward-detail-panel, upload it in the local Documentation Agent */}
 
 ## Act on a reward
 
@@ -78,6 +80,11 @@ Each row has a menu with the actions for that single reward: **Mark as paid** or
 To handle many at once, tick the checkboxes on the rows you want. A bar appears with the number selected and the actions you can apply to all of them: **Create Payout**, and — under the overflow menu — **Export**, **Accept rewards**, **Reject rewards**, **Mark as paid**, **Mark as unpaid**, **Mark as refunded**, and **Delete rewards**.
 
 ![bulk-actions-bar](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784732386094-237550-SCR-20260722-ptec.png)
+
+A few things to know about marking rewards as paid or unpaid:
+
+- **Mark as paid** asks you to upload a payment proof, such as a bank transfer receipt or PayPal confirmation, before the reward is marked as paid. When you mark several rewards at once, one proof is attached to all of them. See [Mark payouts as paid](/help-center/manage/payouts/mark-as-paid).
+- **Mark as unpaid** only works on rewards that were marked as paid on their own. If a reward was paid as part of a payout, the option is greyed out. Hover it to see why, and select **Go to payout batch →** to open the batch. If that payout or batch was marked as paid by hand, you can mark it as unpaid there. In bulk, **Mark as unpaid** skips rewards that were paid through a payout.
 
 Each of these has its own page below with the full detail.
 

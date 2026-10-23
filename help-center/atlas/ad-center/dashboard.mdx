@@ -1,0 +1,114 @@
+---
+title: "Ad center dashboard"
+description: "Read the Referly Atlas Ad center dashboard: ROAS, Blended ROAS (MER), spend, revenue, CPA and the other metric cards, custom metrics, the trend card, and how revenue from your store is matched to ad clicks. Also how often spend syncs and how to export."
+keywords: ["ad center dashboard", "roas dashboard", "blended roas mer", "ad spend vs revenue", "custom ad metric", "ad trend chart", "last paid click attribution", "ad spend sync", "export ad metrics", "referly atlas ad center"]
+---
+The Ad center dashboard shows **Ad spend beside the revenue your store tracked.** Spend comes from the ad accounts you connected; revenue and orders come from your store, matched to the last paid click. Everything on the page follows the channels, ad accounts and date range you choose at the top.
+
+![Ad center dashboard with the selectors, toolbar and metric cards](/images/atlas/ad-center/ad-center-dashboard--page.png)
+
+Before anything shows here you need at least one connected ad account. Without one, the page shows **Connect an ad account**; see [Connect ad accounts](/help-center/atlas/ad-center/connect-ad-accounts).
+
+## Choose channels and ad accounts
+
+Two selectors in the top left decide what the numbers cover.
+
+**Channels** lists every connected ad account grouped by platform, with a checkbox each. Pick **All channels** or tick the accounts you want. An account that is not healthy carries a hint next to its name: **Sync paused**, **Needs reconnecting**, **Sync failing** or **Waiting for the first sync**. **Add channel** takes you to the Ad accounts page, and **Clear all** unticks everything.
+
+![Channels selector listing the connected ad accounts with checkboxes](/images/atlas/ad-center/ad-center-dashboard--channels.png)
+
+**Ad accounts** goes deeper. It opens a tree with a search box (**Search accounts, campaigns, ad sets, or ads**), **Select all** and **Clear all**, and one expandable row per account showing its campaign count. Expand an account to tick individual campaigns, expand a campaign for its ad sets, and expand an ad set for its ads: **Ads load when you expand an ad set.** Use it to put one campaign or one ad on the cards.
+
+![Ad accounts filter tree with search, Select all and Clear all](/images/atlas/ad-center/ad-center-dashboard--ad-accounts-tree.png)
+
+If nothing is ticked in either selector, the page shows **No ad accounts selected** with a one-click way to select them all. The store picker above the page works as usual: with **All stores** selected, the dashboard sums the connected accounts of every store in the business. The date range in the top bar applies here as on every other page; see [Date ranges](/help-center/atlas/reports/date-ranges).
+
+## The metric cards
+
+The dashboard has 19 cards, in this order: **ROAS**, **Blended ROAS (MER)**, **Ad Efficiency Ratio**, **Spend**, **Revenue**, **AOV**, **CPA**, **Purchases**, **Clicks**, **Impressions**, **Page Views**, **CTR**, **CPM**, **Frequency**, **Conversion Rate**, **Add to Cart**, **Cost per Add to Cart**, **Initiate Checkout** and **CPC**, followed by any custom metrics you created.
+
+![Metric cards on the Ad center dashboard with their change and trend line](/images/atlas/ad-center/ad-center-dashboard--metric-cards.png)
+
+Each card shows the value for the selected range, the change against the previous period, and a small trend line. Hover a card's title for its definition. A few rules apply to every card:
+
+- A ratio shows **-** when its divisor is 0, for example ROAS with no spend.
+- The change reads **new** when the previous period's value was 0.
+- Comparison is always on. Hover the change to see what it is compared with, for example **Compared with Sep 1 to Sep 8, the same dates last month.** How the previous period is chosen is explained in [Date ranges](/help-center/atlas/reports/date-ranges).
+- **Blended ROAS (MER)** is the one card that ignores your channel, ad account and campaign selection: it is always all revenue of the store minus refunds, divided by all of its ad spend.
+
+The formula behind every card is on the [Metrics](/help-center/atlas/ad-center/metrics) page.
+
+Select **Metrics** in the toolbar to choose which cards show. The chooser has a switch per card and **Create custom metric** at the top; your choice is remembered for you.
+
+![Metrics chooser with Create custom metric and a switch per card](/images/atlas/ad-center/ad-center-dashboard--metrics-chooser.png)
+
+## Create a custom metric
+
+A custom metric combines two metrics, or a metric and a number, into a card of its own. In **Metrics**, select **Create custom metric**.
+
+<Steps>
+  <Step title="Name it">
+    Type a **Metric name**, such as **Profit per order**. Names are limited to 40 characters and must be unique.
+  </Step>
+  <Step title="Build the formula">
+    Pick the first **Metric**, a **Condition** (**+**, **−**, **×** or **÷**), and the second **Metric**. In either field you can search the metrics or type a number instead. The preview under the fields shows the formula as you go.
+  </Step>
+  <Step title="Save">
+    Select the save button. The new card appears after the standard ones and becomes available as a mode in the trend card.
+  </Step>
+</Steps>
+
+Two limits: at least one side of the formula has to be a metric, and you can keep up to 20 custom metrics. **Blended ROAS (MER)** and the creative scores cannot be used as operands. To change a metric later, open it again from the chooser: the same dialog opens as **Edit custom metric**.
+
+## The trend card
+
+Under the cards, the trend card plots the range day by day, with the previous period drawn as dotted lines. Its mode selector offers **Spend & revenue** (the default, both lines on one chart), **ROAS**, **Purchases**, **CPA**, **CTR**, and every custom metric you created. Ranges up to 90 days are plotted daily; longer ranges are grouped by week.
+
+![Trend card showing Revenue and Spend day by day with the previous period dotted](/images/atlas/ad-center/ad-center-dashboard--trend-card.png)
+
+## How revenue is matched to ads
+
+The page note says it in one line: **Revenue and orders come from your store, matched to the last paid click. Spend comes from your ad accounts.** In more detail:
+
+1. For each paid order, Atlas looks for the last paid click in the 7 days before the order: a click id from Meta, Google or TikTok, or a visit whose source is one of those platforms.
+2. That click is matched to a campaign, ad set and ad. Ids win: the `utm_id`, `adset_id` and `ad_id` values your tracking templates add. When ids are missing, Atlas matches by name (`utm_campaign`, `utm_content`, `utm_term`) against the synced campaign, ad set and ad names.
+3. If the platform is known but neither ids nor names match a synced entity, the order lands in an **Unmapped** row for that platform. If there is no paid click inside the 7 days, it is **Unattributed**. Both rows are explained on the [Campaigns](/help-center/atlas/ad-center/campaigns#unmapped-and-unattributed-rows) page.
+
+**Revenue** on the cards is attributed revenue minus refunds, using the amount paid at order time. Refunded and cancelled orders drop out, partial refunds are netted, and test orders never count.
+
+<Note>
+  This 7-day window is specific to the Ad center. The [Reporting](/help-center/atlas/reports/reporting) page uses your store's attribution window from [Store settings](/help-center/atlas/settings/store-settings#attribution) instead, so the two pages can credit the same order differently.
+</Note>
+
+The surest way to get clean matches is to paste the tracking templates into each ads manager; the **Mapping health** card on the Ad accounts page tells you how many of your paid clicks carry ids. See [UTM tagging](/help-center/atlas/reports/utm-tagging).
+
+## Refresh and update times
+
+Spend syncs from each ad account every hour, and the dashboard rebuilds itself every 15 minutes. **Updated 6 min ago** in the toolbar tells you when the numbers on screen were built. Select **Refresh** to rebuild them now; it also re-syncs any account whose last sync is more than 10 minutes old.
+
+Right after you connect your first account, a banner reads **Your first numbers are on the way. Spend syncs every hour and the Ad center refreshes every 15 minutes.** The 90-day history import that runs behind it is described in [What syncs and how often](/help-center/atlas/ad-center/connect-ad-accounts#what-syncs-and-how-often).
+
+Every Monday, stores with an ad account also get an email, **Ad center weekly report for your store** with the dates covered. Turn it on or off under **Weekly report** in [Preferences](/help-center/atlas/settings/preferences).
+
+The currency selector in the toolbar changes the currency the cards are shown in. Spend converts from each ad account's currency and sales from each store's, with the rate of each day.
+
+## Export
+
+Select **Export** in the toolbar to download the dashboard for the current channels, ad accounts and date range. Three formats are offered: **CSV**, **JSON for AI** and **Markdown for AI**. The last two are shaped for pasting into an AI assistant. Atlas confirms with **Export ready** and the file downloads.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Connect ad accounts" icon="plug" href="/help-center/atlas/ad-center/connect-ad-accounts" arrow>
+    Bring in the accounts the dashboard reads from.
+  </Card>
+  <Card title="Campaigns" icon="table" href="/help-center/atlas/ad-center/campaigns" arrow>
+    The same numbers per campaign, ad set and ad.
+  </Card>
+  <Card title="Metrics" icon="calculator" href="/help-center/atlas/ad-center/metrics" arrow>
+    The formula and source behind every card.
+  </Card>
+  <Card title="Date ranges" icon="calendar" href="/help-center/atlas/reports/date-ranges" arrow>
+    How the range and the comparison period work.
+  </Card>
+</Columns>

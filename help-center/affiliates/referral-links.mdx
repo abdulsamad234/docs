@@ -1,7 +1,7 @@
 ---
 title: "Your referral links"
-description: "Find, copy and share your Referly referral link as an affiliate. Learn about landing pages, short links, QR codes, custom link names, deep links, tracking tags and how clicks get credited to you."
-keywords: ["affiliate referral link", "Referly affiliate portal", "copy referral link", "affiliate short link", "referral link QR code", "create my own affiliate link", "affiliate deep link", "referral tracking cookie", "influencer dashboard referral links", "affiliate link stats"]
+description: "Find, copy and share your Referly referral link as an affiliate. Learn about landing pages, short links, QR codes, creating and renaming links, connecting a link to a landing page or promo code, deep links and tracking."
+keywords: ["affiliate referral link", "Referly affiliate portal", "copy referral link", "affiliate short link", "referral link QR code", "create my own affiliate link", "affiliate deep link", "referral tracking cookie", "influencer dashboard referral links", "affiliate link stats", "connect link to promo code"]
 ---
 Your referral link is how you get paid. When someone opens it, the program records the visit against your name, and any purchase that follows becomes a commission for you.
 
@@ -57,7 +57,7 @@ The first icon copies the address to your clipboard. You'll see a **Link copied!
 
 If the program has short links turned on, an eye icon appears between the copy and QR buttons. Select it to swap the row between the short version and the full one, and select it again to swap back.
 
-{/* TODO screenshot: short-link-toggle — upload it in the local Documentation Agent */}
+{/* TODO screenshot: short-link-toggle, upload it in the local Documentation Agent */}
 
 Short links are tidier for bios, captions and printed material, and they track exactly the same way. Use the full version when you want to add your own tracking tags, which is covered further down.
 
@@ -83,16 +83,25 @@ This is the reason to keep more than one link. Give each channel its own, and th
 
 ## Create your own links
 
-Some programs let you make and name your own links. If yours does, a **Create Link** button sits at the top right of the **Affiliate Links** page. If you can't see it, the program manages links for you, and you can ask them to add one.
+Some programs let you make and name your own links. If yours does, a **Create New Link** button sits at the top right of the **Affiliate Links** page (in the **Promote** window, the same button is called **Create Link**). If you can't see it, the program manages links for you, and you can ask them to add one.
 
 ![create-link-form](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784821149397-655023-final-create-link-form-1784821149177.png)
 
+{/* TODO screenshot: link-connect-choice, upload it in the local Documentation Agent */}
+
 <Steps>
-  <Step title="Select Create Link">
+  <Step title="Select Create New Link">
     A **New Link Slug** field opens underneath.
   </Step>
   <Step title="Type a name">
     Use letters, numbers and hyphens only, like `youtube` or `spring-sale`. Anything else is stripped out as you type. Pick something you'll recognise in a few months, because this is the name that shows next to your stats.
+  </Step>
+  <Step title="Choose what the link connects to">
+    You'll only see this if the brand uses Shopify short links. Under **Connect this link to**, pick one:
+
+    - **Default** keeps it a regular link to the brand's main landing page.
+    - **Landing page** points the link at one specific page, which you choose from the list. You can have one link per landing page, so if you already have one for that page you'll see **You already have a link connected to this landing page.**
+    - **Promo code** connects one of your codes to the link. The link follows that code's landing page, so the discount can be applied for the customer automatically at checkout. Only codes from the brand's Shopify store are listed.
   </Step>
   <Step title="Select Save">
     Your new link appears in the list straight away, with an address for every landing page the program offers.
@@ -101,8 +110,15 @@ Some programs let you make and name your own links. If yours does, a **Create Li
 
 To rename a link, select the pencil icon next to it, change the name and select **Save**. To remove one, select the trash icon. You'll always keep at least one link, so the trash icon is hidden when you only have a single one.
 
+If the link is connected to a promo code you're allowed to rename (one you created, or one the program lets affiliates edit), a **Connected promo code** window opens when you save. Its switch, **Also change the promo code to** your new link name, is on by default:
+
+- **On:** both the link and the promo code are renamed. Hyphens are left out of the code, because codes use letters and numbers only.
+- **Off:** only the link changes, and the promo code stays the same.
+
+Select **Save** to finish, or **Cancel** to go back.
+
 <Warning>
-  Renaming or deleting a link breaks every copy of it you've already posted. Visits through the old address stop being credited to you. If a link is live anywhere, create a new one instead and leave the old one alone.
+  Renaming or deleting a link breaks every copy of it you've already posted. Visits through the old address stop being credited to you, and if you rename a connected promo code along with it, expect the old code to stop working at checkout too. If a link is live anywhere, create a new one instead and leave the old one alone.
 </Warning>
 
 ## Send people to a specific page

@@ -1,7 +1,7 @@
 ---
 title: "Manual Bank account payouts"
-description: "Pay affiliates by manual bank transfer in Referly: collect bank details, export a batch CSV, make the transfers in your own bank, and mark the batch as paid. Setup, reconciliation, and troubleshooting."
-keywords: ["manual bank transfer payouts", "pay affiliates by bank transfer", "affiliate bank details", "export bank CSV", "mark batch as paid", "custom bank account fields", "SWIFT BIC affiliate payout", "IBAN affiliate payout", "self-managed affiliate payouts", "payout reconciliation"]
+description: "Pay affiliates by manual bank transfer in Referly: collect bank details, export a batch CSV, make the transfers in your own bank, and mark the batch as paid with a payment proof. Setup, reconciliation, and troubleshooting."
+keywords: ["manual bank transfer payouts", "pay affiliates by bank transfer", "affiliate bank details", "export bank CSV", "mark batch as paid", "custom bank account fields", "SWIFT BIC affiliate payout", "IBAN affiliate payout", "self-managed affiliate payouts", "payout reconciliation", "payment proof", "mark batch as unpaid"]
 ---
 **Manual Bank Account** is the payout method for programs that would rather pay affiliates from their own bank. Referly collects each affiliate's bank details, groups the amounts into a batch, and gives you everything you need to make the transfers — but you make them yourself, in your own banking, and then tell Referly they're done.
 
@@ -104,7 +104,7 @@ If you need something the standard set doesn't cover, turn on **Custom Bank Acco
 - **Placeholder Text** — the hint inside the empty box.
 - **Required field** — whether an affiliate can save without it.
 
-A live preview shows how it'll look. Full instructions are in [Custom bank account fields](/help-center/manage/payouts/custom-bank-fields).
+A live preview shows how it'll look. When custom fields are on, affiliates see your fields in place of the standard ones for their country, so include every detail you need to make the transfer. Custom bank account fields need the **Business plan** or higher. Full instructions are in [Custom bank account fields](/help-center/manage/payouts/custom-bank-fields).
 
 ![custom-bank-fields-panel](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784816991955-211573-final-custom-bank-fields-panel-1784816991634.png)
 
@@ -124,9 +124,9 @@ A live preview shows how it'll look. Full instructions are in [Custom bank accou
 
 ## Step 3: Get your affiliates to submit their details
 
-Ask them to go to **Settings → Payouts → Cash payouts** in the affiliate portal and pick **Manual Bank Account**, described as "Submit bank details for manual transfer outside of Referly".
+Ask them to go to **Settings → Payouts → Cash payouts** in the affiliate portal and pick **Manual Bank Account**, described as "Submit bank details for manual transfer outside of Referly". New affiliates can also enter their bank details in the payout step of onboarding when they choose bank transfer.
 
-They choose their **Country**, then fill in the bank fields for it, plus any custom fields you added. Required fields have to be completed before they can save.
+They choose their **Country**, then fill in the bank fields for it, or the custom fields you added if you've turned them on. Required fields have to be completed before they can save.
 
 ![affiliate-manual-bank-form](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784816990766-348255-final-affiliate-manual-bank-form-1784816990429.png)
 
@@ -181,27 +181,31 @@ That reference is the single most useful column in the file. Use it.
 
 ### Mark the batch as paid
 
-Referly has no way of knowing you've done any of this. Closing the batch is a manual step.
+Referly has no way of knowing you've done any of this. Closing the batch is a manual step, and you'll need a proof of payment to do it.
 
 <Steps>
   <Step title="Wait until the money has actually left">
     Not when you submitted it — when your bank confirms it's gone.
   </Step>
-  <Step title="Open the Actions menu and choose Mark Batch as Paid">
-    A confirmation appears: "This will mark this payout batch and all payouts inside it as paid. This cannot be undone from the payouts list."
+  <Step title="Select Mark as Paid">
+    Bank transfer batches show **Mark as Paid** at the top of the batch, where other batches show **Pay Now**. You can also open the **Actions** menu and choose **Mark Batch as Paid**.
   </Step>
-  <Step title="Confirm with Mark as paid">
-    The batch and every payout inside it are set to paid, and you get a confirmation notification.
+  <Step title="Upload payment proof">
+    In the **Upload payment proof** window, add a screenshot or document that proves the payout was made, for example the transfer receipt from your bank. Drag it in or click to upload. PNG, JPEG, WebP, and PDF files up to 10MB are accepted. Then select **Upload & mark as paid**. The batch and every payout inside it are set to paid.
   </Step>
 </Steps>
 
-![mark-batch-as-paid](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784816995296-580500-final-mark-batch-as-paid-1784816995179.png)
+![The Upload payment proof dialog that opens when you mark a manual bank transfer batch as paid](/images/help-center/integrations/mark-batch-as-paid-v2.png)
 
-To close out only some of them, select those rows first and use **Mark as Paid** on the selection instead. You'll be warned it will mark all the payouts you selected as paid.
+To close out only some of them, select those rows first and use **Mark as Paid** on the selection instead. You'll upload a payment proof in the same way.
+
+Paid batches and payouts that you marked by hand show who marked them and when, and you can open the proof again later.
 
 <Warning>
-  There's no undo from the payouts list. Marking a batch paid before the money has left means your records say affiliates were paid when they weren't — and they'll see the payout as paid in their portal. Mark it after the transfers clear, not before.
+  Mark a batch as paid only after the transfers clear. Once it's marked, affiliates see the payout as paid in their portal, even if the money hasn't arrived yet.
 </Warning>
+
+If you marked something as paid by mistake, you can undo it. Open the batch's **Actions** menu and choose **Mark Batch as Unpaid**, or open a single payout and select **Mark as Unpaid**. The batch or payout goes back to unpaid, and the uploaded payment proof is removed. See [Mark payouts as paid](/help-center/manage/payouts/mark-as-paid) for the details.
 
 ## Reconciliation and record-keeping
 
@@ -235,7 +239,7 @@ When that happens:
 
 <Steps>
   <Step title="Leave that payout unpaid">
-    Or if you'd already marked it, note it so it doesn't get lost.
+    Or, if you'd already marked it as paid, open the payout and select **Mark as Unpaid** so it shows as outstanding again.
   </Step>
   <Step title="Tell the affiliate what your bank said">
     The rejection reason usually points straight at the wrong field.
@@ -281,9 +285,9 @@ You're now holding banking information for everyone in your program. Some practi
 | Your bank rejects the upload | Column names or formats don't match your bank's template | Remap the CSV columns to your bank's format and save the mapping for next time |
 | A payment bounced back | Wrong details, name mismatch, closed account, or a missing SWIFT code on a wire | Get the reason from your bank, have the affiliate correct it, and pay again next run |
 | The affiliate says they received less than they're owed | Intermediary banks took charges, or your bank's conversion rate | Decide who absorbs these and consider paying via [Wise](/help-center/integrations/wise) instead |
-| You marked a batch paid by mistake | It can't be undone from the payouts list | Contact support at support@referly.so |
+| You marked a batch paid by mistake | It was marked before the transfers cleared | Open the batch's **Actions** menu and choose **Mark Batch as Unpaid**, or select **Mark as Unpaid** on a single payout |
 | You can't tell which statement line is which payout | The reference wasn't included | Always paste the reference from the CSV into your bank's reference field |
-| The batch is still open after you paid | Referly can't see your bank | Use **Mark Batch as Paid**, or mark individual payouts if only some cleared |
+| The batch is still open after you paid | Referly can't see your bank | Select **Mark as Paid** and upload your payment proof, or mark individual payouts if only some cleared |
 | Affiliates keep asking whether they've been paid | They see the payout status from Referly, which is whatever you last marked | Mark payouts promptly after transfers clear |
 
 ## Related

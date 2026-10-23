@@ -1,0 +1,106 @@
+---
+title: "Team"
+description: "Invite people to a Referly Atlas business as an Admin or a Member, limit members to the stores you pick, accept an invitation, change roles and store access, remove members, resend or revoke pending invitations, and see how seats are counted across your businesses."
+keywords: ["Atlas team", "invite team members", "admin role", "member role", "store access", "team invitation", "pending invitations", "team seats", "remove team member", "Atlas business team"]
+---
+Every business in Referly Atlas has its own team. The owner and the admins decide who can open it and which stores each person sees. This team is separate from the team of your affiliate program in Referly: inviting someone here gives them Atlas only.
+
+To open it, go to **Settings** in the left sidebar and pick **Team**. Two tabs sit on the left: **Members**, which lists everyone in the business, and **Invitations**, which lists the invitations nobody has accepted yet.
+
+![Team members page](/images/atlas/settings/team--members.png)
+
+## Roles
+
+| Role | What they can open |
+| --- | --- |
+| **Owner** | "Owns the account and its Atlas plan." The owner opens everything in every business, cannot be removed and cannot leave. |
+| **Admin** | "Every store, store settings, billing and this team" |
+| **Member** | "Only the stores you pick". Members see no settings, billing or team pages. |
+
+Admins always open every store, so store access is a member-only setting. Only the owner and admins can invite people, change roles or remove members.
+
+## Invite people
+
+<Steps>
+  <Step title="Open the dialog">
+    Press **Invite people**, top right of the **People in** card. The dialog is titled **Invite people to** your business: "They get an email with a link to join this business in Referly Atlas." Under it a line shows your seats, for example "3 of 10 seats in use, 7 left."
+  </Step>
+  <Step title="Add email addresses">
+    Type or paste addresses into **Email addresses**. A comma, a space or Enter separates them. One batch takes up to 20 addresses.
+  </Step>
+  <Step title="Pick a role">
+    Under **Role**, choose **Admin** or **Member**.
+  </Step>
+  <Step title="Pick stores for a member">
+    For a member, **Stores they can open** appears. Tick at least one store.
+  </Step>
+  <Step title="Send">
+    Press **Send invitations**. Each person gets an email whose subject names who invited them and the business, "on Referly Atlas". The link works for 7 days.
+  </Step>
+</Steps>
+
+![Invite people dialog](/images/atlas/settings/team--invite-dialog.png)
+
+If something is missing you see "Add at least one email address" or "Pick at least one store for a member". Without an active Atlas plan the dialog reads "Choose an Atlas plan to invite your team." When every seat is taken it reads "Upgrade to invite more people." and sending fails with "Your plan includes 10 team seats (0 left). Upgrade to invite more people." See [Seats](#seats).
+
+## Accept an invitation
+
+The link in the email opens the **Team invitation** page. It names who invited you and to which business, shows the role, the address the invitation was sent to and, for a member, the stores you can open: "As an admin you open every store, the settings, billing and the team." or "As a member you open these 2 stores."
+
+- **Not signed in yet**: "Create your Referly Atlas account to join" the business, "or sign in if you already have one." Press **Create account** or **Sign in**. Use the address the invitation was sent to; an invitation only works for that address.
+- **Signed in with another address**: press **Sign out**, then sign in with the invited address.
+- **Accept invitation** adds you to the business: "You are in", and the business opens. **Decline** leaves everything as it was: "Nothing was changed. If this was a mistake, ask to be invited again."
+
+An old link shows "This invitation has expired": "Invitations last 7 days." Ask the person who invited you to resend it. A revoked or already used link shows "This invitation link is not valid".
+
+## Manage members
+
+The **Members** tab lists the owner first, then every member with a role pill and the stores they open.
+
+| Action | Where | What happens |
+| --- | --- | --- |
+| Change a role | The role dropdown on the member's row: **Admin** or **Member** | "Role updated". You cannot change your own role. |
+| Change store access | **Edit access** on a member's row | The **Edit store access** dialog: "Which stores" the member "can open in this business." Tick stores and confirm; you see "Access updated". A member with no stores "can open nothing until you add one." Admins show **All stores** instead. |
+| Remove someone | **Remove from business** on their row | "They lose access to every store of this business right away. You can invite them again later." You see "Removed from the business". |
+| Leave yourself | **Leave business** at the bottom of the list (admins and members, not the owner) | "You lose access to its stores right away. An admin can invite you again later." |
+
+When nobody else has joined yet the tab reads "Nobody else is in this business yet. Invite the people who run your ads or manage your stores. Admins open everything; members open only the stores you pick."
+
+## Pending invitations
+
+The **Invitations** tab: "Invitations you send show here until they are accepted. Each link works for 7 days; resend one to give it 7 more." Each row shows the address, the role, the stores and how long the link has left: "Expires in 6 days", "Expires today" or an **Expired** pill ("The link stopped working. Resend to give it 7 more days.").
+
+- **Resend invitation** creates a fresh link, sends the email again and restarts the 7 days: "Invitation sent again".
+- **Revoke invitation** cancels it: "Invitation revoked". The link stops working and the seat is freed.
+
+An expired invitation stays in the list until you resend or revoke it. When nothing is pending the tab reads "No pending invitations".
+
+## Seats
+
+The pill next to **People in** reads, for example, **3 of 10 seats**: "Your plan includes 10 seats across your businesses: the owner, every member and every pending invitation." Expired invitations do not count. Seats are shared by every business on the account, not counted per business.
+
+| Plan | Seats |
+| --- | --- |
+| Starter | 3 |
+| Growth | 10 |
+| Scale | 25 |
+| Enterprise | 100 |
+
+To free a seat, revoke a pending invitation or remove a member. To add seats, move to a bigger plan in [Billing](/help-center/atlas/settings/billing#stores-ad-accounts-and-seats).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Billing" icon="credit-card" href="/help-center/atlas/settings/billing" arrow>
+    Seats, stores and ad accounts per plan, and how to change plan.
+  </Card>
+  <Card title="Businesses and stores" icon="store" href="/help-center/atlas/businesses-and-stores" arrow>
+    How businesses group stores, and how to switch between them.
+  </Card>
+  <Card title="Create your account" icon="user-plus" href="/help-center/atlas/create-your-account#if-you-were-invited-to-a-business" arrow>
+    What to do when you were invited before you had an account.
+  </Card>
+  <Card title="Store settings" icon="sliders" href="/help-center/atlas/settings/store-settings" arrow>
+    The per-store settings admins can change and members cannot.
+  </Card>
+</Columns>

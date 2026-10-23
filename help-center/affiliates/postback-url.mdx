@@ -1,7 +1,7 @@
 ---
 title: "Postback URL"
-description: "Send Referly referral and sale events straight into your own tracker. Set up your affiliate postback URL, pass your click ID with rsubID, and use macros to send commission, sale and referral data."
-keywords: ["affiliate postback url", "postback tracking affiliate", "s2s postback", "server to server postback", "rsubID click id", "wecantrack referly", "affiliate conversion tracking", "postback macros", "voluum affiliate postback", "media buyer affiliate tracking"]
+description: "Send Referly referral and sale events into your own tracker. Set up your affiliate postback URL, pass your click ID with rsubID, use macros, and follow the WecanTrack, AnyTrack and RedTrack setup guides."
+keywords: ["affiliate postback url", "postback tracking affiliate", "s2s postback", "server to server postback", "rsubID click id", "wecantrack referly", "affiliate conversion tracking", "postback macros", "voluum affiliate postback", "media buyer affiliate tracking", "anytrack postback", "redtrack postback", "postback guide"]
 ---
 If you run paid traffic, you probably track clicks and conversions in your own platform — WeCanTrack, Voluum, RedTrack or something similar. A postback URL closes that loop: when one of your referrals or sales lands in Referly, Referly calls your tracker and tells it what happened, so your own reports show the conversion next to the ad spend that produced it.
 
@@ -9,9 +9,9 @@ This is optional. If you're not running a tracker, you can skip this page entire
 
 ## Find the page
 
-In the affiliate portal, go to **Settings**, open the **Advanced** tab, and select **Postback URL**.
+In the affiliate portal, go to **Settings**, open the **Advanced** tab, and select **Postback URL**. Next to it is **Postback Guide**, with setup instructions for popular trackers (see [Use the Postback Guide](#use-the-postback-guide)).
 
-![postback-page](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784819078819-686621-final-postback-page-1784819078276.png)
+![The Postback URL page under Settings and Advanced, with Postback Guide next to it, the Postback URL template box and the Available macros list](/images/help-center/affiliates/postback-page-v2.png)
 
 The page is per program. A postback URL you save with one brand doesn't carry over to another — set it up separately in each program you want events from.
 
@@ -19,7 +19,7 @@ The page is per program. A postback URL you save with one brand doesn't carry ov
 
 Generate a postback URL in your tracking platform, paste it into the **Postback URL template** box, and select **Save Postback URL**. You'll see **Postback URL saved** when it's stored.
 
-{/* TODO screenshot: save-postback — upload it in the local Documentation Agent */}
+![The Your tracking endpoint card with a postback URL template saved, using the click_id and commission_amount macros](/images/help-center/affiliates/save-postback.png)
 
 Two rules for the URL itself:
 
@@ -29,8 +29,10 @@ Two rules for the URL itself:
 A typical URL looks like this:
 
 ```text
-https://api.wecantrack.com/postback/v1/your-token?commission_amount={commission_amount}&advertiser_name={advertiser_name}&sub_id_1={extClickid}
+https://api.wecantrack.com/postback/v1/your-token?transaction_id={sale_id}&sale_amount={sale_amount}&commission_amount={commission_amount}&currency_id={currency}&status={approval_status}&advertiser_id={program_id}&advertiser_name={program_name}&product_title={product_names}&order_date={sale_created_at}&sub_id_1={extClickid}
 ```
+
+This is the same example you'll see in the empty box on the page, with your tracker's own token in place of `your-token`.
 
 To turn postbacks off again, clear the box and save.
 
@@ -98,15 +100,44 @@ Because both events hit the same URL, use `{event}` to tell them apart on your e
 
 Referly calls your URL as a normal web request and follows redirects. It gives up after ten seconds, so if your endpoint is slow to answer you may lose events — point the postback at your tracker's own endpoint rather than something that does heavy work before responding.
 
-## Set it up with WeCanTrack
+## Use the Postback Guide
 
-The page has a built-in guide for WeCanTrack specifically. Select the amber **Follow these instructions to effectively set up postback on WecanTrack** button to open it.
+The **Postback Guide** page, next to **Postback URL** under **Settings** and **Advanced**, has step-by-step guides for three tracking platforms that support server-to-server postbacks: **WecanTrack**, **AnyTrack** and **RedTrack**. Select a card, or its **Instructions** button, to open that guide. The example links in each guide are built from your own referral links, so you can copy them as they are.
 
-![wecantrack-guide](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784817595100-351451-final-wecantrack-guide-1784817594787.png)
+![The Postback Guide page next to Postback URL, with cards for WecanTrack, AnyTrack and RedTrack, each with an Instructions button](/images/help-center/affiliates/postback-guide-tab.png)
 
-It walks through connecting a custom integration under **Affiliate Networks**, creating an account and generating a postback URL, connecting your website, and — the important step — making sure your click ID placeholder is carried in a parameter named `rsubID`. You then bring the generated URL back to this page and save it.
+Every guide includes the same key step: copy the postback URL your tracker generates, paste it into **Postback URL template** on the **Postback URL** page, and select **Save Postback URL**. What changes from one tracker to the next is the click ID value you add to your referral link as `rsubID`:
 
-The same shape works for any other tracker. Generate the postback URL there, make sure your click ID reaches Referly as `rsubID`, and map their parameters to Referly's macros.
+| Tracker | Add this to your referral link |
+| --- | --- |
+| WecanTrack | `&rsubID={wct_click_id}` |
+| AnyTrack | `&rsubID=--CLICK-ID--` |
+| RedTrack | `&rsubID={clickid}` |
+
+### Set it up with WeCanTrack
+
+1. In WecanTrack, under **Data sources**, select **Affiliate Networks** and choose **Referly** (type it in the search bar to find it quickly).
+2. Select **Create Account** and give it any name, then select **Create Postback URL**. Keep the URL it generates for the last step.
+3. Under **Data sources**, select **Websites** and add your website if it isn't set up yet.
+4. Tag your referral links. WecanTrack lets you choose a **Click ID placeholder**, and whichever you use has to be carried in `rsubID`. With the default placeholder, add `&rsubID={wct_click_id}` to the end of your link.
+5. Paste the generated postback URL on the **Postback URL** page and save it.
+
+### Set it up with AnyTrack
+
+1. Create a property in AnyTrack if you don't have one, with your website URL, timezone and reporting currency. Use the same currency as the program.
+2. Install the AnyTrack tag on your website, add UTM tracking parameters to your ads and connect your ad account. The guide links to AnyTrack's own instructions for each.
+3. Tag your referral links by adding `&rsubID=--CLICK-ID--` to the end.
+4. In AnyTrack, go to **Integrations**, install **Custom Integrations** to set up Referly as a conversion source, and map the macros from the **Postback URL** page to AnyTrack's placeholders.
+5. Select **Save** in AnyTrack to generate the postback URL, then paste it on the **Postback URL** page and save it.
+
+### Set it up with RedTrack
+
+1. Add a custom tracking domain in RedTrack: point a CNAME record at your RedTrack default domain, then add it under **Tools** and **Domains** and turn on the free SSL option.
+2. Connect Referly as an offer source (new, from scratch). Set the clickId macro to `{extClickid}` and the sum macro to `{commission_amount}`, then paste the postback URL RedTrack generates on the **Postback URL** page and save it.
+3. Under **Offers**, create a new offer, choose the offer source from the previous step, and use your referral link as the offer URL with `&rsubID={clickid}` added to the end.
+4. Set up your traffic channels, add a landing page if you have one, and create your tracking campaign. The guide links to RedTrack's help for each.
+
+Any other tracker works the same way: generate the postback URL there, make sure your click ID reaches Referly as `rsubID`, and map their parameters to Referly's macros.
 
 ## Conversions aren't reaching your tracker
 

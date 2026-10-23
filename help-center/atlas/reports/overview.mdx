@@ -1,0 +1,137 @@
+---
+title: "Overview"
+description: "Read the Referly Atlas Overview page: pick a store or all stores, see which stores need attention, compare revenue, orders and average order value with the previous period, and check conversions, recent orders, tracking health and recent deliveries."
+keywords: ["Atlas overview", "ad tracking dashboard", "revenue orders average order value", "stores need attention", "tracking health", "matched orders", "recent deliveries", "Referly Atlas impact", "conversions leads sign ups"]
+---
+
+**Overview** is the first page of Referly Atlas and the one you will open most. It shows what your stores earned in the selected date range, how that compares with the period before, which conversions came in, and whether events are reaching your ad platforms. Open it from **Overview** in the left sidebar.
+
+Every number on the page follows the date range control in the top right. [Date ranges and comparison](/help-center/atlas/reports/date-ranges) lists the presets and explains how the comparison period is chosen.
+
+## Pick a store
+
+The store picker sits at the top left of the page, in front of the title. Choose **All stores** to see the whole business, or pick one store to see that store on its own. With **All stores** selected the subtitle reads **Business overview** with the number of stores; with one store it reads **Store overview** and the store's status badge appears next to its name.
+
+![Atlas Overview for a business with all stores selected, showing the stores that need attention and the revenue, orders and average order value cards](/images/atlas/reports/reports-overview--all-stores.png)
+
+When a business has many stores, a **Find a store** box at the top of the picker lets you type a name instead of scrolling.
+
+![Store overview of a SaaS business with the Running badge, the Revenue, Sales and Average order value cards, the Conversions tiles and the Recent sales table](/images/atlas/reports/reports-overview--one-store.png)
+
+[Businesses and stores](/help-center/atlas/businesses-and-stores) explains how businesses and stores fit together and how to switch between businesses.
+
+## Stores that need attention
+
+With **All stores** selected, a card at the top lists every store that is not running: stores with setup to finish, paused stores, stores under review, disconnected stores and stores still waiting for their first order. The card is titled with the count, for example **3 stores need attention**, and reads "Finish the setup or reconnect them to keep sending events." Each row shows the store and its status badge.
+
+![The stores need attention card listing paused, reviewing, disconnected, awaiting data and draft stores](/images/atlas/reports/reports-overview--needs-attention.png)
+
+When the business has a single store that is not running yet, the same card points at it.
+
+![Overview of a business whose only store is Pending connection](/images/atlas/reports/reports-overview--needs-attention-pending.png)
+
+With one store selected, the card is replaced by a banner for that store's status: **Waiting for your first order**, **This store is paused**, **Finish the setup**, **Shopify connection required** or **Connection lost** (with a **Connect now** button that reopens the store wizard), **We're reviewing your store** or **This store is disabled**.
+
+![Connection required banner on the Overview of a draft store, with the Connect now button](/images/atlas/reports/reports-overview--banner-draft.png)
+
+What each status means, and how to get a store back to **Running**, is in [Store statuses](/help-center/atlas/statuses#store-statuses).
+
+## Revenue, orders and average order value
+
+Three cards show the money side of the selected range:
+
+| Card | What it counts |
+|---|---|
+| **Revenue** | Paid orders net of refunds. The card's tooltip names the currency. |
+| **Orders** | Paid and partially refunded orders. Test orders never count. For a business whose type is not an ecommerce store, this card is labelled **Sales**. |
+| **Average order value** | The average value of those orders. |
+
+Each card has a chart for the range, with the previous period drawn behind it as a dashed gray line, and a badge with the change against that period. Hover the badge to see which dates it compares, for example "Compared with Sep 1 to Sep 8, the same dates last month." When there is nothing to compare, the card says so under the value, such as "No revenue in the previous period".
+
+![Revenue, Orders and Average order value cards with charts and the previous period line](/images/atlas/reports/reports-overview--metric-cards.png)
+
+Refunded and cancelled orders are left out, partial refunds are netted, and orders placed while [test mode](/help-center/atlas/settings/store-settings#testing) is on never count.
+
+## Conversions
+
+The **Conversions** section has one tile per conversion type: **Leads**, **Sign ups**, **Trials started** and **Subscriptions**. Each tile shows the count for the range, a sparkline with the previous period behind it, and the total value sent with those conversions ("in value") when there is one. Each tile also carries a short note on where that conversion comes from, for example "Trials started, from your billing platform or your site."
+
+![Conversions section with Leads and Sign ups tiles and the By campaign link](/images/atlas/reports/reports-overview--conversions.png)
+
+**By campaign** on the right opens [Reporting](/help-center/atlas/reports/reporting), where the same conversions are split by campaign, ad set and ad.
+
+For a SaaS or lead generation business with no orders yet, the Conversions tiles come first and the money cards sit below them.
+
+![Conversions tiles on the Overview of a SaaS store](/images/atlas/reports/reports-overview--conversions-first.png)
+
+[Conversions](/help-center/atlas/conversions) explains how to send leads, sign ups, trials and subscriptions to Atlas.
+
+## Recent orders and the Match column
+
+The ledger at the bottom of the page lists the latest orders and conversions. It has two tabs, **Orders** (or **Sales**) and **Conversions**, and is titled **Recent orders**, **Recent sales** or **Recent conversions** to match. With **All stores** selected a **Store** column is added.
+
+| Column | What it shows |
+|---|---|
+| **Order** | The order number. Orders recorded in test mode carry a pill whose tooltip reads "Test order: never counted in revenue". |
+| **Store** | The store the order belongs to (All stores only). |
+| **Date** | When the order was placed. |
+| **Customer** | Who bought. |
+| **Total** | The order total. |
+| **Attribution** | Last click: the campaign, ad set and ad of the visitor's last session that carried a campaign. Click it to open Reporting on that campaign. |
+| **Customer type** | **New** when this is the customer's first order at the store, **Returning** when they bought here before. |
+| **Match** | How the order was tied to a visitor, and how confident the match is. |
+
+![Recent orders table with Order, Store, Date, Customer, Total and Attribution columns](/images/atlas/reports/reports-overview--recent-orders.png)
+
+The **Match** column is the quickest way to see whether your tracking is doing its job. Atlas can tie an order to a visit through a cart attribute, a cart token, the visitor cookie, an email address or phone number, a Shopify or Stripe customer, a customer id or a fingerprint. An order with **No match** arrived without any of these, so it cannot be attributed to a campaign. Every match type is described in [Match types](/help-center/atlas/statuses#match-types), and [How it works](/help-center/atlas/how-it-works#how-an-order-is-matched-to-a-visit) explains the matching itself.
+
+## Tracking health
+
+On the right, the **Tracking health** card gives four numbers for the range:
+
+| Number | Meaning |
+|---|---|
+| **Events sent** | Accepted by your destinations. |
+| **Delivery success** | Sent out of sent plus failed. |
+| **Matched orders** | Tied to a visitor session. |
+| **New customers** | Orders from a first purchase. |
+
+![Tracking health card with Events sent, Delivery success, Matched orders and New customers](/images/atlas/reports/reports-overview--tracking-health.png)
+
+Each number is a shortcut. **Events sent** opens [Live activity](/help-center/atlas/reports/live-activity) filtered on sent deliveries, **Delivery success** opens it filtered on failed deliveries, and **Matched orders** and **New customers** open Reporting.
+
+A delivery success well below 100% means a destination is rejecting events. Open the failed deliveries and read the platform's response; [Troubleshooting](/help-center/atlas/troubleshooting#a-pixel-shows-error) covers the usual causes.
+
+## Recent deliveries and the impact card
+
+**Recent deliveries** shows the last five deliveries to your destinations with their status (**Sent**, **Failed**, **Retrying** or **Test**), so you can tell at a glance whether events are flowing right now. Open [Live activity](/help-center/atlas/reports/live-activity) for the full feed.
+
+Below it, **Referly Atlas impact** shows what Atlas adds beyond a browser pixel:
+
+| Metric | What it means |
+|---|---|
+| **Recovered revenue** | Paid-ad orders tied to a visitor session that carried no platform click id, so a pixel alone would not have claimed them. |
+| **ROAS improvement** | Revenue of the paid-ad orders Atlas attributed, divided by ad spend. The "without Atlas" figure leaves out the orders that carried no click id. |
+| **Cost per result** | Ad spend divided by those orders, with and without the orders that carried no click id. Lower is better. |
+| **Matched without a cookie** | Orders tied to a visitor by email, customer id or fingerprint. |
+
+![Tracking health, Recent deliveries and Referly Atlas impact cards on the Overview page](/images/atlas/reports/reports-overview--health-cards.png)
+
+Spend comes from your ad accounts, so the card stays empty until you [connect an ad account](/help-center/atlas/ad-center/connect-ad-accounts) in Ad center. Until then it reads "Connect an ad account in Ad center to compare."
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Reporting" icon="table" href="/help-center/atlas/reports/reporting" arrow>
+    Conversions by campaign, ad set and ad, next to what each platform reported.
+  </Card>
+  <Card title="Live activity" icon="bolt" href="/help-center/atlas/reports/live-activity" arrow>
+    Watch events reach Atlas and your destinations as they happen.
+  </Card>
+  <Card title="Date ranges and comparison" icon="calendar" href="/help-center/atlas/reports/date-ranges" arrow>
+    Presets, one range for every page, and how the comparison period is picked.
+  </Card>
+  <Card title="Store statuses" icon="circle-check" href="/help-center/atlas/statuses#store-statuses" arrow>
+    What Running, Paused, Reviewing and the other statuses mean.
+  </Card>
+</Columns>

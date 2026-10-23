@@ -1,0 +1,90 @@
+---
+title: "Edit a coupon"
+description: "Edit an existing coupon in Referly. See what you can change on Stripe, Shopify, WooCommerce, Polar, Creem, Ecwid and API coupons, update the products a coupon covers, and save your changes with Update."
+keywords: ["edit coupon", "change coupon discount", "update coupon expiry", "edit Stripe coupon", "edit Shopify discount", "coupon product limit", "referly edit coupon", "change redemption limit"]
+---
+Offers change. After you [create](/help-center/engage/coupons/create) or [sync](/help-center/engage/coupons/sync) a coupon, you can open it and change its discount, duration, expiry, redemption limit or products. What you can change depends on the platform the coupon lives on, because each platform has its own rules about changing a discount after it's created.
+
+## Open a coupon
+
+Open your campaign, select **Coupons** in the left sidebar, then select the coupon in your library. The coupon page shows the same settings you filled in when you created it.
+
+Settings your platform doesn't let you change are greyed out. When that happens, a short amber note under the **Percentage** / **Flat Rate** switch explains why.
+
+![A Stripe coupon's page with the Coupon Name field, the greyed-out Discount Type, Percentage Off and Duration settings, and the amber note under the Percentage and Flat Rate switch](/images/help-center/engage/edit-coupon-page.png)
+
+## What you can change on each platform
+
+| Platform | What you can change after creating the coupon |
+| --- | --- |
+| **Stripe** | The coupon name only. |
+| **Shopify** | Everything except the duration. |
+| **WooCommerce** | Everything. **Multiple Months** isn't offered as a duration. |
+| **Polar** | Everything, until one of the coupon's codes is redeemed. After that, the discount amount and the months duration are locked. |
+| **Creem** | Everything, until one of the coupon's codes is redeemed. After that, the discount amount and the months duration are locked. |
+| **Ecwid** | Everything except the duration. |
+| **API** | Everything except a product limit, which API coupons don't have. |
+
+"Everything" means the coupon name, the discount type and amount, the duration, the **Expiry Date**, **Maximum Redemptions** and the product limit.
+
+For Stripe, Shopify, WooCommerce, Polar and Ecwid coupons, Referly makes the same change on your platform when you save. API coupons live only in Referly, so there's nothing to sync.
+
+<Note>
+  Stripe only allows renaming a coupon after it's created. To change the discount, duration, expiry, redemption limit or products of a Stripe coupon, create a new coupon instead.
+</Note>
+
+![The Discount Type switch of a Stripe coupon, greyed out, with the amber note that Stripe only allows renaming a coupon after creation](/images/help-center/engage/edit-coupon-stripe-note.png)
+
+<Warning>
+  For Creem coupons, your changes are saved on the coupon in Referly, but the discount codes that already exist in your Creem store keep their original settings.
+</Warning>
+
+<Warning>
+  On Ecwid, coupons are either single-use or unlimited. If you set **Maximum Redemptions** above 1, Referly tracks the limit in your reporting, but your Ecwid checkout doesn't enforce it.
+</Warning>
+
+## Change the products a coupon covers
+
+Turn on **Limit to specific products**, then search for the products you want in the box below it. The box says **Search products...**, or **Search products or collections...** for Shopify coupons, where collections are marked **(collection)** in the list. If nothing matches what you type, you'll see **No products found**.
+
+To let the coupon apply to the whole order again, turn **Limit to specific products** off.
+
+For more on what a product limit does, see [Restrict a code](/help-center/engage/coupons/restrictions#limit-to-specific-products).
+
+## Save your changes
+
+Select **Update** at the bottom right of the coupon page. You'll see **Coupon updated successfully** once it's saved.
+
+If something needs fixing first, Referly tells you what and doesn't save:
+
+- **Please enter a coupon name**: the name is empty.
+- **Please enter a valid discount amount**: the discount is empty or zero.
+- **Percentage discount cannot exceed 100%**: lower the percentage.
+- **Please enter the number of months for the discount duration**: you picked **Multiple Months** but left the number of months empty.
+- **Please select at least one product, or turn off the product limit**: **Limit to specific products** is on but no product is picked.
+
+## How coupon changes affect your codes
+
+Each code on a coupon can have its own expiry date and redemption limit. The coupon page keeps them in line with the coupon's own settings:
+
+- If you move the coupon's **Expiry Date** earlier, any code with a later expiry date is moved back to the new date.
+- If you lower the coupon's **Maximum Redemptions**, any code with a higher limit is lowered to match.
+
+To change a code itself, rather than the coupon, see [Rename a code](/help-center/engage/coupons/promotional-codes#rename-a-code).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Create a coupon" icon="ticket" href="/help-center/engage/coupons/create" arrow>
+    Set up a new coupon when your platform won't let you change the old one.
+  </Card>
+  <Card title="Promotional codes" icon="tag" href="/help-center/engage/coupons/promotional-codes" arrow>
+    Add, rename, or turn off the codes customers type.
+  </Card>
+  <Card title="Restrict a code" icon="lock" href="/help-center/engage/coupons/restrictions" arrow>
+    Limit a code by product, order value, or expiry.
+  </Card>
+  <Card title="Connect a coupon source" icon="plug" href="/help-center/engage/coupons/connect-a-source" arrow>
+    See which platforms Referly can build coupons on.
+  </Card>
+</Columns>

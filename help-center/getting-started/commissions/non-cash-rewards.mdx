@@ -1,7 +1,7 @@
 ---
 title: "Non-cash rewards"
-description: "Reward affiliates with coupons or credits instead of cash in Referly. Learn how to switch a commission plan to Non-Cash, set up a coupon or credit reward, choose when affiliates earn it, cap earnings, and fulfil each reward at payout."
-keywords: ["non-cash rewards", "affiliate coupon reward", "store credit reward", "reward affiliates without cash", "coupon commission", "affiliate credits", "Referly non-cash", "commission plan reward type", "Shopify store credit affiliate", "Stripe credit reward", "reward affiliates with credits"]
+description: "Reward affiliates with coupons or credits instead of cash in Referly. Switch a commission plan to Non-Cash, create coupons in Shopify, Stripe, WooCommerce, Creem or Ecwid, give store credit, set when affiliates earn it, cap earnings, and see how each reward is fulfilled."
+keywords: ["non-cash rewards", "affiliate coupon reward", "store credit reward", "reward affiliates without cash", "coupon commission", "affiliate credits", "Referly non-cash", "commission plan reward type", "Shopify store credit affiliate", "Stripe credit reward", "reward affiliates with credits", "Creem discount code reward", "Ecwid coupon reward", "Creem customer credits"]
 ---
 Not every affiliate program pays in cash. Some reward affiliates with a discount coupon, others with store credit or points they can spend with you. Referly calls this a **non-cash reward**, and you set it up right inside a commission plan, the same place you'd set a cash commission.
 
@@ -11,7 +11,7 @@ This guide covers the non-cash side of a commission plan: how to turn it on, the
 
 Non-cash rewards are a setting on a commission plan, not a separate feature. Both your **Base Commission Plan** and any **custom commission plan** can use them, and the setup is identical in each. You'll find plans under **Program Settings → Program details → Commission Plans**. Open a plan (or select **Add Commission Plan**) to reach the editor.
 
-Non-cash rewards are a paid feature. On a free or inactive plan the **Non-Cash** option is locked and shows an upgrade prompt. To use it, upgrade from that prompt or from [billing and plans](/help-center/billing/plans-and-features). Cash commissions stay available on every plan.
+Non-cash rewards are part of the **Business** plan and every plan above it. You can also unlock them on any plan with the **Gamify add-on**. Without either, the **Non-Cash** option is locked and shows an upgrade prompt. If you're on a free trial of one of those plans, the option unlocks once you start your paid plan. To get access, upgrade from that prompt, or see [billing and plans](/help-center/billing/plans-and-features) and [add-ons](/help-center/billing/add-ons). Cash commissions stay available on every plan.
 
 ## Switch a plan to non-cash
 
@@ -45,12 +45,14 @@ With **Coupon** selected, you decide where the coupon comes from and what discou
 
 Under **Coupon Source**, pick where Referly should create the coupon when an affiliate earns one:
 
-- **Shopify** — a Shopify discount code.
-- **Stripe** — a Stripe coupon code.
-- **WooCommerce** — a WooCommerce coupon.
-- **API** — you create the code yourself on your own system. Choose this if you don't use one of the platforms above. Referly stores the reward and hands it off to you to fulfil.
+- **Shopify**: a Shopify discount code.
+- **Stripe**: a Stripe coupon code.
+- **WooCommerce**: a WooCommerce coupon.
+- **Creem**: a Creem discount code.
+- **Ecwid**: an Ecwid discount coupon.
+- **API**: you create the code yourself on your own system. Choose this if you don't use one of the platforms above. Referly stores the reward and hands it off to you to fulfil.
 
-If you pick Shopify, Stripe, or WooCommerce, a banner shows whether that platform is connected. If it isn't, connect it first so the codes can be created automatically, see [integrations](/help-center/integrations/overview).
+If you pick any source other than API, a banner shows whether that platform is connected. If it isn't, connect it first so the codes can be created automatically, see [integrations](/help-center/integrations/overview).
 
 ### Set the discount
 
@@ -60,7 +62,7 @@ Now describe the discount the coupon gives:
 - **Amount** — the size of the discount, for example 10 for 10% off, or 5 for 5 off.
 - **Duration** — how long the discount applies: **One-time** (a single order), **Forever** (every future order), or **Multiple Months** (a set number of billing cycles). Choosing Multiple Months adds a **Number of Months** field.
 
-![coupon-reward-settings](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784636800152-730470-SCR-20260721-nlms.jpeg)
+![The Reward panel of a coupon commission plan with the Coupon Source tiles, Stripe selected, the connection banner, the Discount Type choice and the Purchase Condition options](/images/help-center/getting-started/coupon-reward-settings-v2.png)
 
 If you've already built a payout coupon you want to reuse, you can select it instead of configuring a new one.
 
@@ -72,10 +74,11 @@ With **Credits** selected, you choose what kind of credit to give and how much.
 
 Under **Credit Type**, pick where the credit lives:
 
-- **Shopify** — store credit on the affiliate's Shopify customer account.
-- **Stripe** — a credit on the affiliate's Stripe customer balance.
-- **WooCommerce** — store credit in WooCommerce.
-- **Custom** — your own credit or points system, which you top up yourself. Pick this to run something like coins, points, or AI credits.
+- **Shopify**: store credit on the affiliate's Shopify customer account.
+- **Stripe**: a credit on the affiliate's Stripe customer balance.
+- **WooCommerce**: store credit in WooCommerce.
+- **Creem**: customer credits on the affiliate's Creem customer account.
+- **Custom**: your own credit or points system, which you top up yourself. Pick this to run something like coins, points, or AI credits.
 
 Choosing **Custom** adds a **Credit unit name** field so you can name your unit (for example `coins`, `points`, or `AI credits`). That name is used everywhere the reward is shown.
 
@@ -88,7 +91,7 @@ How you enter the amount depends on when affiliates earn the reward:
   - **Flat per purchase** — the same amount of credit for every qualifying purchase.
   - **Per currency unit** — credit that scales with the order, for example a number of credits for each unit of currency the customer spends.
 
-![credits-reward-settings](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784636815022-339311-SCR-20260721-npsc.jpeg)
+![Plan Settings with Credits selected as the non-cash type, Purchase as the trigger, the Credit Calculation choice between Flat per purchase and Per currency unit, and the Max times credits can be earned field](/images/help-center/getting-started/credits-reward-settings-v2.png)
 
 ## Decide when affiliates earn the reward
 
@@ -129,17 +132,20 @@ Approved non-cash rewards collect into payout batches, just like cash. When you 
 
 **Coupons**
 
-- **Shopify** — the coupon codes are created in your Shopify store and become available to affiliates in their portal.
-- **Stripe** — the coupon is created as a Stripe coupon code.
-- **WooCommerce** — a coupon is created in WooCommerce for each affiliate.
-- **API** — the reward is stored and handed to you to create the code on your own system, then mark the batch as paid.
+- **Shopify**: the coupon codes are created in your Shopify store and become available to affiliates in their portal.
+- **Stripe**: the coupon is created as a Stripe coupon code.
+- **WooCommerce**: a coupon is created in WooCommerce for each affiliate.
+- **Creem**: a Creem discount code is created for each affiliate.
+- **Ecwid**: a discount coupon is created in your Ecwid store for each affiliate.
+- **API**: the reward is stored and handed to you to create the code on your own system, then mark the batch as paid.
 
 **Credits**
 
-- **Shopify** — the amount is added as store credit to each affiliate's Shopify customer account. The affiliate must already exist as a customer in your store.
-- **Stripe** — the amount is added to each affiliate's Stripe customer balance, matched by their payout email.
-- **WooCommerce** — a single-use coupon for the credit amount is created for each affiliate, restricted to their payout email.
-- **Custom** — you add the credit on your own system, then mark the batch as paid.
+- **Shopify**: the amount is added as store credit to each affiliate's Shopify customer account. The affiliate must already exist as a customer in your store.
+- **Stripe**: the amount is added to each affiliate's Stripe customer balance, matched by their payout email.
+- **WooCommerce**: a single-use coupon for the credit amount is created for each affiliate, restricted to their payout email.
+- **Creem**: the amount is added to each affiliate's customer credits in Creem, matched by their payout email. The affiliate must already be a customer in your Creem store.
+- **Custom**: you add the credit on your own system, then mark the batch as paid.
 
 <Note>
   This is only the short version so you can plan your rewards. The full walk-through for running a non-cash payout, batch by batch and method by method, lives in the [payouts](/help-center/manage/payouts/overview) section.
@@ -158,6 +164,6 @@ Approved non-cash rewards collect into payout batches, just like cash. When you 
     Learn how earned rewards are paid out, including non-cash rewards.
   </Card>
   <Card title="Connect an integration" icon="plug" href="/help-center/integrations/overview" arrow>
-    Link Shopify, Stripe, or WooCommerce to create coupons and credits automatically.
+    Link Shopify, Stripe, WooCommerce, Creem, or Ecwid to create rewards automatically.
   </Card>
 </Columns>

@@ -1,0 +1,158 @@
+---
+title: "Connect a Shopify store"
+description: "Connect a Shopify store to Referly Atlas: install the Referly app, turn on the theme app embed, turn on the Atlas pixel, pick your type of checkout and verify the connection. What the app sets up and how it works next to Shopify's own pixels."
+keywords: ["Shopify ad tracking", "Referly Atlas Shopify", "Shopify app embed", "Shopify web pixel", "Atlas pixel Shopify", "Shopify external checkout tracking", "Shopify server-side conversions", "connect Shopify to Atlas", "Shopify Meta pixel deduplication"]
+---
+On Shopify, Referly Atlas does not need a script in your theme code. The Referly app registers a web pixel on your store, a theme app embed loads the tracker on your storefront, and Shopify sends Atlas each order as it is paid. The wizard step is titled **Connect your Shopify store** and says what it does: orders, carts and checkouts come straight from Shopify, in three steps, in order.
+
+This guide walks through those steps, the verification at the end, and what to think about if you already run Shopify's own Facebook & Instagram or Google & YouTube apps.
+
+## Before you start
+
+You will need:
+
+- **Your Shopify store domain**, the one that ends in `.myshopify.com`. Find it in your Shopify admin address.
+- **Permission to install apps** on the store, so you can approve the Referly app when Shopify asks.
+- **An Atlas store set up to step 2 of the wizard.** On [Step 1: Your website](/help-center/atlas/setup#step-1-your-website), enter your storefront address and pick the **Shopify** tile (Atlas usually detects it for you).
+
+![Add a store wizard, step 1 with the Shopify tile selected and Connect Shopify shown as the next step](/images/atlas/setup/setup-shopify--platform-selected.png)
+
+If you already use the Referly app for your affiliate program, it is the same app. Stores that were connected before Atlas existed need to approve the app once more so it can register the pixel; the store's Overview shows a **Shopify connection required** banner with a **Connect now** button when that is the case.
+
+## Step 1: Install the Referly app
+
+The first block of the step is **Install the Referly Shopify app**. Its subtitle tells you what to expect: approve the app in your Shopify admin, then come back here.
+
+![Connect your Shopify store step with the store domain field and the Install Referly app button](/images/atlas/setup/setup-shopify--connect-step.png)
+
+<Steps>
+  <Step title="Enter your store handle">
+    In **Your Shopify store domain**, type the part before `.myshopify.com` (for example `my-store`). Handles only use lowercase letters, numbers and dashes; if you paste something else, Atlas shows the cleaned-up version it will use.
+  </Step>
+  <Step title="Select Install Referly app">
+    Shopify opens in a new tab and asks you to approve the app and the access it needs.
+  </Step>
+  <Step title="Approve and come back">
+    After you approve, Shopify sends you straight back to this step. The block turns green, names your store followed by **is connected**, and confirms that the Referly app is installed on your store.
+  </Step>
+</Steps>
+
+Until the app is installed, the next two blocks are greyed out with the note **Install the app first.**
+
+## Step 2: Turn on the app embed
+
+The embed loads the tracker on your storefront, which is what records page views, product views and carts before the checkout. Shopify never turns app embeds on by itself, so this is a step you do in your theme.
+
+1. Select **Open theme editor**. Your current theme opens in Shopify's editor.
+2. In the theme editor, click the **App embeds** icon in the left sidebar.
+3. Switch **Referly Affiliate Tracker** on.
+4. Click **Save**.
+
+Back in the wizard, select **Mark as completed** if the block has not ticked itself yet. Atlas ticks it on its own as soon as it sees the embed on a page load of your store, and Step 4 below checks for it too.
+
+## Step 3: Turn on the Atlas pixel
+
+The third block, **Turn on the Atlas pixel**, registers Atlas's web pixel on your store. Before you press the button, set **Type of checkout**:
+
+![Turn on the app embed and Turn on the Atlas pixel steps with the Type of checkout selector](/images/atlas/setup/setup-shopify--connect-step-pixel.png)
+
+| Type of checkout | Choose it when |
+| --- | --- |
+| **Native Shopify checkout** | Your customers pay in Shopify's own checkout. Atlas records an order when Shopify marks it paid. |
+| **External checkout (3rd party)** | A third-party checkout creates your Shopify orders. Atlas then records orders when they are created, because they may never be marked paid inside Shopify. |
+
+![Store details section with Store name, Shopify domain, Platform and the Type of checkout choice between Native Shopify checkout and External checkout](/images/atlas/settings/store-settings--store-details.png)
+
+Then select **Turn on Atlas pixel**. A toast confirms **Atlas pixel is on**, the subtitle changes to **The Atlas pixel is on**, and the button becomes **Turn on again**, which you can use any time to push the settings to Shopify once more. If Shopify did not accept every setting, Atlas says so and asks you to open the theme editor and check the embed.
+
+<Note>
+  The type of checkout is locked once the store is connected. It is shown under **Store details** in [Store settings](/help-center/atlas/settings/store-settings), where you can see which one is in use.
+</Note>
+
+## Step 4: Verify the connection
+
+As soon as the pixel is on, a **Test the connection** block appears under it. Enter your storefront address (your custom domain if you have one) and select **Verify**. Password-protected stores cannot be checked, so remove the password or test on a store that is open.
+
+Atlas looks at your storefront for the embed and reports one of these:
+
+| Result | Meaning |
+| --- | --- |
+| **Theme app embed found on your-store.com. It is live and connected to this store.** | Done. Select **Continue**. |
+| **Not found yet. Turn on the Referly app embed in your theme, save it, then verify again.** | Go back to Step 2. If your browser blocked a popup, allow popups for this page: Atlas opens your site briefly to let the tracker report in. |
+| **A Referly script is on this site, but with another store ID.** | This storefront is already tracked by a different Atlas store. Use that store, or remove it. |
+| **We could not reach this address. Check it and try again.** | The address is wrong or the site is not reachable from the internet. |
+
+Under the field, a second line reports events: **Events received. Last event 2 minutes ago.** once the pixel has sent something, **No events yet. Visit your site, then verify again.** when it has not, or **Events start when you finish setup and the store goes live.** while the store is still a draft. **Last checked** shows when you last ran it.
+
+Select **Continue** to move on to the ad platforms step, then **Finish**. The toast **Store is live. Tracking is on.** confirms the store is live (if your plan is active; otherwise it waits for one). You can rerun the same checks any time with [Test connection](/help-center/atlas/setup/test-connection).
+
+![Connection status tiles for a Shopify store: App embed seen, Web pixel registered, last pixel event, last order webhook and destinations, with the Test connection button](/images/atlas/setup/test-connection--status-tiles.png)
+
+## What the app sets up for you
+
+Once the three blocks are done, the Referly app has put these in place on your store:
+
+- **A web pixel** that records page views, product views, collection views, searches, adds to cart, checkouts started and checkouts completed. A checkout completed in the browser is provisional until Shopify confirms the paid order.
+- **The theme app embed** that loads the tracker on your storefront, so visits get a visitor cookie and the ad click that brought them.
+- **Order notifications** from Shopify to Atlas: paid orders for a native checkout, created orders for an external checkout. These are what Atlas sends to your pixels as purchases, with refunds netted off.
+- **Customer notifications**, used for sign ups (classic customer accounts) and newsletter leads. These need Shopify's protected customer data access to be approved for the app.
+
+In **Store settings**, under **Tracking and connection**, the tiles show the result: **App embed**, **Web pixel**, **Last pixel event**, **Last order webhook** and **Destinations**. Nothing else needs pasting into your theme, and you never add ad platform tags for Atlas: those are server-side [pixels](/help-center/atlas/pixels) you add in Atlas. The one exception is Google Ads, which fires in the browser through a Shopify custom pixel: see the [Google Ads guide](/help-center/atlas/pixels/google-ads).
+
+## Shopify's own pixels and Atlas
+
+Many Shopify stores already send events through the Facebook & Instagram app or the Google & YouTube app. Atlas is built to sit next to them.
+
+**Meta.** Atlas reuses the event id Shopify generates for each event, the same id Shopify's Facebook & Instagram app sends from the browser. When Meta receives the browser event and the server event from Atlas with the same id, it keeps one. You have two options:
+
+- Leave customer data sharing on in the Facebook & Instagram app and let Meta deduplicate. You keep Shopify's browser signal and gain Atlas's server-side one.
+- Turn off customer data sharing in the Facebook & Instagram app so Atlas is the single source. Cleaner reporting, one fewer thing to compare.
+
+Both work. Pick the one you prefer, and read [Avoid double counting](/help-center/atlas/pixels/avoid-double-counting) before you decide.
+
+**Google Ads.** Atlas fires Google Ads conversions in the browser through a custom pixel it asks you to add in Shopify (**Settings**, then **Customer events**). Do not also send these conversions from Google's own tag or the Google & YouTube app, or they count twice.
+
+**Every other platform** (TikTok, Snapchat, Pinterest and so on) receives server-side events from Atlas only. If you also run that platform's own Shopify app or pixel, [Avoid double counting](/help-center/atlas/pixels/avoid-double-counting#shopify-and-every-other-platform) explains what to keep.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Turn on Atlas pixel says to install the Referly Shopify app first">
+    The app is not installed on the store named in Step 1, or the install was not approved. Go back to **Install the Referly Shopify app**, check the handle, and select **Install Referly app** again.
+  </Accordion>
+  <Accordion title="Verify keeps saying Not found yet">
+    The embed is off, or your theme was not saved after you switched it on. Open the theme editor, confirm **Referly Affiliate Tracker** is on under **App embeds**, and click **Save**. If you are previewing a different theme, switch the embed on in the live theme. Allow popups for the Atlas page, then verify again.
+  </Accordion>
+  <Accordion title="Shopify did not accept every setting">
+    Atlas could not store its settings on the web pixel or the theme. Select **Turn on again**, then open the theme editor to check the embed. If it keeps failing, reinstall the app from Step 1 so Shopify grants it the access it needs.
+  </Accordion>
+  <Accordion title="My storefront is password protected">
+    Verify cannot read a storefront behind Shopify's password page. Remove the password while you test, or skip Verify, select **Mark as completed** on the embed block, and check the **Tracking and connection** tiles after your first real visits.
+  </Accordion>
+  <Accordion title="The Overview shows Shopify connection required or Connection lost">
+    The store was connected before Atlas, so the app does not yet have the access Atlas needs, or the app was uninstalled. Select **Connect now** on the banner, or reinstall the app from your Shopify admin, then run **Turn on Atlas pixel** again. See [Store statuses](/help-center/atlas/statuses#store-statuses).
+  </Accordion>
+  <Accordion title="Orders do not show up but page views do">
+    Check **Type of checkout**. If a third-party checkout creates your orders, Atlas needs **External checkout (3rd party)** so it records orders when they are created. Also check that the store is not in test mode in **Store settings**: test orders show in the feed but stay out of reporting and are never sent.
+  </Accordion>
+  <Accordion title="Meta reports more purchases than Atlas">
+    Meta counts everything it receives, from Shopify's Facebook & Instagram app and from Atlas, while Atlas only sends the purchases that passed consent and your event filters. In [Reporting](/help-center/atlas/reports/reporting), the Meta cell shows Atlas's count next to Meta's own number and how many were sent. If the gap is large, read [Avoid double counting](/help-center/atlas/pixels/avoid-double-counting).
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Add a store" icon="store" href="/help-center/atlas/setup" arrow>
+    The whole wizard, from Your website to Ad platforms.
+  </Card>
+  <Card title="Test your connection" icon="stethoscope" href="/help-center/atlas/setup/test-connection" arrow>
+    Rerun the four checks from Store settings.
+  </Card>
+  <Card title="Avoid double counting" icon="clone" href="/help-center/atlas/pixels/avoid-double-counting" arrow>
+    Shopify's apps, Meta deduplication and Google Ads.
+  </Card>
+  <Card title="Shopify for affiliates" icon="bag-shopping" href="/help-center/integrations/shopify" arrow>
+    The same Referly app, on the affiliate program side.
+  </Card>
+</Columns>

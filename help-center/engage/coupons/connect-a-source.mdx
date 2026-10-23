@@ -1,7 +1,7 @@
 ---
 title: "Connect a coupon source"
-description: "Connect Stripe, Shopify, WooCommerce, or Polar as your coupon source in Referly so the codes you create work at checkout and every redemption is tracked to the right affiliate."
-keywords: ["connect coupon source", "coupon integration", "Stripe coupons", "Shopify discount codes", "WooCommerce coupons", "Polar coupons", "affiliate coupon setup", "referly coupon integration"]
+description: "Connect Stripe, Shopify, WooCommerce, Polar, Creem, or Ecwid as your coupon source in Referly so the codes you create work at checkout and every redemption is tracked to the right affiliate."
+keywords: ["connect coupon source", "coupon integration", "Stripe coupons", "Shopify discount codes", "WooCommerce coupons", "Polar coupons", "affiliate coupon setup", "referly coupon integration", "Creem coupons", "Ecwid coupons"]
 ---
 For a coupon to work when a customer checks out, it has to exist on the platform where they pay. Connecting a coupon source links Referly to that platform, so every code you create in Referly is created there too — and every redemption is tracked back to the right affiliate automatically.
 
@@ -11,10 +11,12 @@ You only need to connect a source once. After that, creating and [syncing coupon
 
 Referly can create and track coupons on these platforms:
 
-- **Stripe** — create coupons directly on your Stripe account. See the [Stripe integration](/help-center/integrations/stripe).
-- **Shopify** — create discount codes directly on your Shopify store. See the [Shopify integration](/help-center/integrations/shopify).
-- **WooCommerce** — create coupons directly on your WooCommerce store. See the [WooCommerce integration](/help-center/integrations/woocommerce).
-- **Polar** — create coupons directly on your Polar store. See the [Polar integration](/help-center/integrations/polar).
+- **Stripe**: create coupons directly on your Stripe account. See the [Stripe integration](/help-center/integrations/stripe).
+- **Shopify**: create discount codes directly on your Shopify store. See the [Shopify integration](/help-center/integrations/shopify).
+- **WooCommerce**: create coupons directly on your WooCommerce store. See the [WooCommerce integration](/help-center/integrations/woocommerce).
+- **Polar**: create coupons directly on your Polar store. See the [Polar integration](/help-center/integrations/polar).
+- **Creem**: create coupons directly on your Creem store. See the [Creem integration](/help-center/integrations/creem).
+- **Ecwid**: create coupons directly on your Ecwid store. See the [Ecwid integration](/help-center/integrations/ecwid).
 
 There's also an **API** option, which lets you manage coupons from your own server instead of a store platform. This is for programs with a custom checkout — most people use one of the platforms above.
 
@@ -22,7 +24,7 @@ There's also an **API** option, which lets you manage coupons from your own serv
 
 You connect a source from the same place you create coupons. Open your campaign, select **Coupons** in the left sidebar, then select **Create Coupon**. At the top of the dialog you'll pick where the coupon should be created.
 
-![choose-coupon-source](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784754659660-831863-SCR-20260723-bdlc.png)
+![The Choose Coupon Source dialog with API, Shopify, Stripe, WooCommerce, Polar, Creem and Ecwid tiles and the Continue button](/images/help-center/engage/choose-coupon-source-v2.png)
 
 ### Pick your source
 
@@ -49,6 +51,8 @@ Select **Connect** to open that platform's connection screen. It lists what conn
 </Steps>
 
 ![integration-connect-dialog](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784754666103-610167-SCR-20260723-bdtp.png)
+
+Creem and Ecwid connect a little differently. For Creem, you paste an API key and a webhook signing secret from your Creem dashboard. For Ecwid, you install the Referly app in your Ecwid store. Their guides walk you through it: [Creem integration](/help-center/integrations/creem) and [Ecwid integration](/help-center/integrations/ecwid).
 
 <Note>
 With Stripe you can also choose **Connect Test Mode** to link a test account first. Use this to try coupons end to end before you switch on real discounts.

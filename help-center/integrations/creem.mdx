@@ -53,7 +53,7 @@ Two settings are worth getting right now:
 
 ## Step 2: Open the Creem integration in Referly
 
-In Referly, open your program, go to **Settings**, then **Integrations**, and choose **Creem**.
+In Referly, open your program, go to **Settings**, then **Integrations**. Under **Sales tracking**, select **Add integration**, choose **Creem**, then select **Connect Creem**.
 
 The dialog shows your program's own **Webhook URL** at the top, plus the two fields you'll fill in shortly. Copy the webhook URL and keep this dialog open — you'll come back to it in Step 4.
 
@@ -76,11 +76,11 @@ This is what tells Referly that a payment happened.
   <Step title="Name it and paste the URL">
     Give it a name you'll recognise later, such as "Referly", and paste the webhook URL you copied in Step 2.
   </Step>
-  <Step title="Select every event">
-    Use **Select All** so every event type is ticked. Referly ignores the ones it doesn't need.
+  <Step title="Leave every event selected">
+    Every event type is selected by default. Leave them all ticked. Referly ignores the ones it doesn't need.
   </Step>
   <Step title="Create it and copy the signing secret">
-    Click **Create**, then copy the webhook's **signing secret**. You'll paste it into Referly in Step 4. It's shown on the webhook itself in Creem.
+    Click **Create webhook**, then copy the webhook's **signing secret**. You'll paste it into Referly in Step 4. It's shown on the webhook itself in Creem.
   </Step>
 </Steps>
 
@@ -102,7 +102,8 @@ In Creem, go to **Settings**, then **API Keys**, and create a key. Grant it:
 | --- | --- |
 | **Products: Read** | Always. Referly uses it to validate the connection and list your products. |
 | **Discounts: Read & Write** | Only if you want Referly to create and sync affiliate discount codes. |
-| **Customers: Read & Write** | Only if you reward affiliates with Creem customer credits. |
+| **Customers: Read** | Only if you reward affiliates with Creem customer credits (Referly looks the affiliate up by email). |
+| **Customer credits: Read & Write** | Only if you reward affiliates with Creem customer credits (Referly creates and tops up their credits account). |
 
 Full access works too, if you'd rather not pick individual permissions.
 
@@ -149,7 +150,9 @@ Referly reads the referral from a checkout field called `referly_ref`. Pick whic
 
 <Tabs>
   <Tab title="Payment links">
-    Add this line to the pages where people click your Creem payment links, **after** the tracking script and before the closing `body` tag. It finds Creem payment links on the page and attaches the referral to them once it's known.
+    Add this line to the pages where people click your Creem payment links, **after** the tracking script and before the closing `body` tag. It finds Creem payment links on the page and attaches the referral to them once it's known. Links that appear after the page loads (client-side rendering, modals, pricing toggles) are picked up too, and a link is decorated once more on click as a last resort.
+
+    The snippet only sees `<a>` elements whose address points at `creem.io/payment/` (or `creem.io/test/payment/` in test mode). If a button opens Creem from JavaScript instead (`window.open`, `location.href`), append the parameter yourself: `metadata[referly_ref]=` followed by `window.affiliateId`, or use the Checkout API tab.
 
     ```html Payment link snippet
     <script async src="https://www.referly.so/creem-integration-snippet.js"></script>
@@ -180,7 +183,7 @@ Referly reads the referral from a checkout field called `referly_ref`. Pick whic
 
 Creem copies checkout metadata onto the subscription, so renewals keep crediting the same affiliate without you doing anything extra.
 
-{/* TODO screenshot: creem-wizard-methods, upload it in the local Documentation Agent */}
+![Step 2 of the Creem guide, Send the affiliate ID to Creem, with the Payment Links method selected and the script to add before the closing body tag](/images/help-center/integrations/creem-wizard-methods.png)
 
 ## How Referly decides who gets credit
 

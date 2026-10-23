@@ -1,0 +1,124 @@
+---
+title: "Statuses and labels"
+description: "Every status Atlas shows and what it means: store statuses, pixel states, delivery statuses in Live activity, match types on orders, ad account sync states and plan statuses."
+keywords: ["Referly Atlas statuses", "Atlas store status", "awaiting data", "pending connection", "delivery status", "skipped event", "deduped event", "filtered event", "match type", "ad account sync", "past due"]
+---
+Atlas labels almost everything it shows with a short status: a store is **Running** or **Awaiting data**, a delivery is **Sent** or **Skipped**, an ad account is **Up to date** or needs a **Reconnect**. This page lists every one of them in one place, with what it means and what to do about it. Other pages link here instead of repeating the tables.
+
+## Store statuses
+
+A store's status shows on the **All stores** page, in the store picker at the top of every page, and on the store's **Overview** as a banner. Atlas records and sends events only while a store is **Running** or **Awaiting data**.
+
+| Status | What it means | What to do |
+| --- | --- | --- |
+| **Draft** | Setup not finished. No events are tracked yet. | Open **Setup wizard** from the store row and finish the steps. |
+| **Pending connection** | Nothing received yet. Finish the setup to start tracking. | Add the tracking script or app, then run **Test connection**. |
+| **Awaiting data** | Connected. Waiting for the first event or order. | Visit your site or place a test order. Atlas switches to Running on its own when the first order arrives. |
+| **Running** | Events are flowing to your destinations. | Nothing. This is where a healthy store stays. |
+| **Paused** | Nothing is sent until you resume the store. Orders are still recorded. | Use the switch on the store row, or **Resume tracking** in Store settings. |
+| **Reviewing** | Tracking continues while Referly reviews unusual activity on this store. | Nothing. Referly emails you if anything needs your attention. |
+| **Disabled** | Turned off. No events are sent. This happens when the Atlas plan ended. | Choose a plan under **Settings**, **Billing**. The store comes back on its own. |
+| **Disconnected** | The connection dropped or the last send failed. On Shopify, the Referly app was removed. | Click **Connect now** on the Overview banner, or reinstall the Shopify app. |
+
+![Store rows showing the Running, Paused, Reviewing, Disconnected, Awaiting data and Draft badges](/images/atlas/reference/statuses--store-badges.png)
+
+A store goes live on its own: as soon as the tracking step of the wizard is done and your Atlas plan is active, it moves to **Awaiting data**, then to **Running** with the first order. Without an active plan the store waits, and the checklist asks you to choose a plan first.
+
+## Pixel states
+
+Each pixel row under **Pixels and destinations** carries a small dot. Hover it to read the state.
+
+| Dot | Label | What it means |
+| --- | --- | --- |
+| Green, pulsing | **Live** | Events are being sent. The line under the name reads "N sent in 24 h" and when the last one went out. |
+| Red | **Error** | The last send failed. The line shows the platform's error, for example an expired access token. Edit the pixel and paste a new token, then send a test event. |
+| Gray | **Off** | No events are sent. Turn the pixel on in **Edit pixel**, or the whole platform on with the switch on its row. |
+
+Google Ads pixels fire in the browser rather than from Atlas's servers. Their line reads "N fired in the browser in 24 h", or, on Shopify, "Not set up in Shopify yet: add the custom pixel, then click Verify" until the custom pixel is connected. See [Google Ads pixel](/help-center/atlas/pixels/google-ads).
+
+## Delivery statuses
+
+**Live activity** shows one row per event that reached Atlas and one row per attempt to send it to a pixel. The **Status** column uses these pills:
+
+| Status | What it means | What to do |
+| --- | --- | --- |
+| **Received** | The event reached Atlas from your site, app or integration. The Destination column reads "Atlas". | Nothing. The sends follow as their own rows. |
+| **Queued** | Waiting to be sent. | Wait a few seconds. |
+| **Sent** | Accepted by the platform. The details show the HTTP status the platform answered with. | Nothing. |
+| **Failed** | Rejected, or Atlas ran out of retries. Atlas tries 8 times with growing pauses before it gives up. | Open the code icon to read the platform's response. A wrong token or id is the usual cause: fix it in **Edit pixel**. |
+| **Retrying** | The last attempt failed and Atlas is trying again shortly. | Wait. If it turns into Failed, read the response. |
+| **Filtered** | Stopped by an event filter. The details name the rule. | Expected if you set the rule. Otherwise adjust it under **Event filters**. |
+| **Skipped** | No consent, or nothing the platform can match. The details say which: "no marketing consent" or "no identity to match". | Consent skips are correct behaviour. Identity skips mean the visitor gave no email, phone, cookie or click id the platform accepts; see [Consent and privacy](/help-center/atlas/pixels/consent-and-privacy). |
+| **Deduped** | Already sent to this pixel within 48 hours. | Nothing. Atlas sends each event once per pixel. |
+| **Test** | A test event you sent from a pixel's menu or from Test connection. The pill reads "Test passed" or "Test failed". | Read the response if it failed. |
+
+![Delivery status pills in the live feed](/images/atlas/reference/statuses--delivery-pills.png)
+
+Test-mode orders and events from paused stores never produce Sent rows, because nothing is sent.
+
+## Match types
+
+The **Match** column of the Recent orders table on the Overview tells you how Atlas tied an order to the visit that produced it. Atlas tries these in order and keeps the first that works.
+
+| Match | How the order was linked |
+| --- | --- |
+| **Cart attribute** | The Atlas visitor id travelled with the Shopify cart and came back on the order. The most exact match. |
+| **Cart token** | The Shopify cart token on the order matched a checkout Atlas saw start. |
+| **Cookie** | The order carried the Atlas visitor cookie, for example an order sent by the tracking script or the WooCommerce plugin. |
+| **Email** | The buyer's email matched a visitor who identified with it earlier, on any device. |
+| **Phone** | The buyer's phone matched an identified visitor. |
+| **Shopify customer** | The Shopify customer id matched an earlier order of the same customer. |
+| **Stripe customer** | The Stripe customer id matched an earlier payment. |
+| **Customer id** | The external customer id your integration sent matched an identified visitor. |
+| **Fingerprint** | No cookie survived, but exactly one recent visit matched on network and browser details within the matching window. Only used after consent in consent regions. See [Store settings](/help-center/atlas/settings/store-settings#attribution). |
+| **No match** | Atlas could not tie the order to any visit. It still counts in revenue and is sent with whatever customer data the order carries, but it has no campaign in Reporting. |
+| **Store landing page** | The order's own landing page information from Shopify, used when no visit matched. |
+
+## Ad account and campaign statuses
+
+Each connected ad account under **Ad center**, **Ad accounts** shows a pill:
+
+| Pill | What it means | What to do |
+| --- | --- | --- |
+| **Up to date** | The last sync worked. The card shows when, and when the next one runs. | Nothing. |
+| **Import pending** | The 90-day history import starts within the hour. | Wait. |
+| **Queued** or **Syncing** | A sync is running. The card shows which step: accounts, campaigns and ads, days of spend, audience. | Wait. |
+| **Retrying** | The last sync failed and Atlas retries on its own, within the next 10 minutes or at the time shown. | Wait. Click **Re-sync** to try now. |
+| **Waiting on limits** | The platform asked Atlas to slow down. Sync resumes on its own at the time shown. | Wait. |
+| **Sync error** | Several syncs in a row failed. Atlas keeps retrying with longer pauses. | Click **Re-sync**. If it keeps failing, reconnect the login. |
+| **Reconnect** | The platform stopped accepting this login, usually because the token expired or access was revoked. Spend stops syncing. | Click **Reconnect** and sign in to the platform again. |
+| **Paused** | You paused the sync. | Click **Resume**. |
+
+Campaign, ad set and ad rows in the Ad center carry the platform's own status: **Active**, **Paused**, **In review**, **Issue**, **Removed** or **Unknown**. Paused and removed rows are hidden when you turn off **Show disabled** in the table menu.
+
+## Plan statuses
+
+The plan card under **Settings**, **Billing** shows one of these:
+
+| Pill | What it means |
+| --- | --- |
+| **Trial** | Your 14-day free trial is running. The card shows the days left and the end date. |
+| **Active** | The plan is paid and tracking is on. |
+| **Cancels at period end** | You cancelled in **Manage billing**. You keep access until the end of the paid period, then stores stop sending. |
+| **Past due** | The last payment failed. Tracking continues for 7 days past the period end; update your card in **Manage billing**. |
+| **Canceled** | The plan ended. Stores are disabled until you choose a plan again. |
+| **Not subscribed** | No plan yet. Stores wait in Draft or Pending connection until you choose one. |
+
+See [Plans and billing](/help-center/atlas/settings/billing) for what happens at each step.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Live activity" icon="bolt" href="/help-center/atlas/reports/live-activity" arrow>
+    Watch events and deliveries arrive in real time.
+  </Card>
+  <Card title="Troubleshooting" icon="wrench" href="/help-center/atlas/troubleshooting" arrow>
+    What to do when events do not arrive or a pixel shows an error.
+  </Card>
+  <Card title="Store settings" icon="sliders" href="/help-center/atlas/settings/store-settings" arrow>
+    Attribution, consent, test mode and the danger zone.
+  </Card>
+  <Card title="Connect ad accounts" icon="bullhorn" href="/help-center/atlas/ad-center/connect-ad-accounts" arrow>
+    Sync states, re-sync and reconnect.
+  </Card>
+</Columns>

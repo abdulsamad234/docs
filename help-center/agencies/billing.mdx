@@ -1,6 +1,178 @@
 ---
 title: "Agency billing"
-description: "How agency plans and client billing work."
+description: "How agency billing works in Referly: your Agency, Agency Pro or Agency Scale plan and client-billing fee, connecting Stripe, creating the plans you sell, assigning a plan to a client with charge confirmation, tracking client subscriptions, and marketplace licenses."
+keywords: ["agency billing", "bill clients affiliate program", "Stripe Connect agency", "agency pricing plans", "assign plan to client", "Confirm plan assignment", "client billing fee", "application fee", "Agency Pro", "Agency Scale", "client subscriptions", "agency marketplace licenses"]
 ---
+Billing in an agency account has two sides. There's your own subscription to Referly, which decides how many client programs you can run. And there's charging your clients: you connect your own Stripe account, design the plans you sell, and assign them to client programs. Client payments go to your Stripe account.
 
-{/* TODO: Write this article. */}
+This page covers both, plus the marketplace licenses that come with your agency plan.
+
+## Your agency plan
+
+Agency mode comes with any of the three agency plans. The main differences are how many client programs you can run and the fee on client billing:
+
+| Plan | Client programs | Client-billing fee |
+|---|---|---|
+| **Agency** | 15 | 5% |
+| **Agency Pro** | 30 | 2.5% |
+| **Agency Scale** | 60 | 1% |
+
+For prices and everything else each plan includes, see [plans and features](/help-center/billing/plans-and-features).
+
+To see or change your plan, open **Agency Settings** (the gear at the bottom of the left bar), go to the **Billing** tab, and select **Subscription**. Select **Change Plan** and pick the **I'm an agency** tab to compare the three. Agency Scale is set up with our team, so its button reads **Speak with us**. Your Referly invoices are under **Billing**, then **Invoices**.
+
+### The client-billing fee
+
+When your clients pay you through Stripe, Referly takes a small application fee from those payments. It's charged only on client billing, never on your clients' affiliate sales, and the rate falls as you move up a plan (see the table above).
+
+You can see the rate that applies to you at the top of **Agency Settings** > **General** > **Accept Payments**, in the **Application Fee** card.
+
+## Connect Stripe to accept payments
+
+You need a connected Stripe account before you can create plans or charge clients. Only the agency Owner or an Admin can set this up.
+
+<Steps>
+  <Step title="Open Accept Payments">
+    In **Agency Settings**, go to **General** and select **Accept Payments**.
+  </Step>
+  <Step title="Start the Stripe setup">
+    In the **Payment Processing** card, select **Connect Stripe Account**. You're taken to Stripe to fill in your business details and add the bank account your client payments are paid out to. Stripe may also ask you to verify your identity.
+  </Step>
+  <Step title="Come back to Accept Payments">
+    When Stripe sends you back, the card shows where you are. "Your Stripe Connect account is fully set up and ready to receive payments!" means you're done. If it asks for more, select **Continue Onboarding** to pick up where you left off.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: accept-payments-connected, upload it in the local Documentation Agent */}
+
+Once connected, the card shows three checks: **Charges Enabled**, **Payouts Enabled** and **Details Submitted**. You need all three before your plans can sync with Stripe. **Open Stripe Dashboard** takes you to your Stripe account, where you manage payments and payouts.
+
+<Note>
+  To switch to a different Stripe account, select the red bin icon next to **Connected Account**, then **Remove Account**. This can't be undone, and you'll need to connect a Stripe account again before you can bill clients.
+</Note>
+
+## Create the plans you sell
+
+Your plans live in **Agency Settings** > **General** > **Plans and Features**. Each plan sets a price, usage limits and features for the clients on it.
+
+### Start from the defaults
+
+The first time you open the page, select **Initialize Default Plans**, then **Initialize Plans** to confirm. Referly creates three plans, **Indie**, **Startup** and **Business**, for both monthly and yearly billing, based on Referly's standard tiers. Lifetime versions are created too, but switched off.
+
+You can then change any of them to suit your pricing.
+
+### Edit or add a plan
+
+Plans are grouped under **Monthly**, **Yearly** and **Lifetime** tabs, with three plan slots on each.
+
+![The Plans and Features grid with the Monthly, Yearly and Lifetime tabs and the Indie, Startup and Business plan cards, each with its price, limits and a Configure Plan button](/images/help-center/agencies/agency-plans-grid.png)
+
+- Select **Configure Plan** on a plan to edit it, or **Create Plan** on an empty slot.
+- On the **General** tab, set the **Price (USD)**, give the plan your own name in **Custom Plan Name (Optional)**, and switch on **Enable This Plan** to offer it.
+- On the **Limits** and **Features** tabs, set what clients on the plan get. Use `-1` for any limit you want to be unlimited. See [feature access and usage limits](/help-center/agencies/feature-access) for what each one controls.
+- Select **Create Plan** or **Save Changes**.
+
+The switch at the top right of each plan card turns it on or off. Only plans that are switched on can be assigned to clients or chosen by them.
+
+If you change the price of a plan, clients already on it move to the new price from their next billing date, without a prorated charge.
+
+<Warning>
+  **Reset to Defaults** recreates the default plans and replaces the plans you've set up in the same slots. Use it only if you want to start over.
+</Warning>
+
+### Make sure your plans are synced with Stripe
+
+Each plan card shows **Stripe ✓** when it's ready to bill, or **Not Synced** if it isn't yet. If any plan isn't synced, a **Sync Plans with Stripe** banner appears at the top of the page: select **Sync with Stripe** to fix it. A plan has to be synced before you can assign it to a client.
+
+### Offer a free trial
+
+In **Trial Period Settings**, set **Monthly Plans Trial Days** and **Yearly Plans Trial Days**, then select **Save Trial Settings**. Each applies to all plans with that billing period. Leave it at `0` for no trial.
+
+## Assign a plan to a client program
+
+<Steps>
+  <Step title="Open the client's Current Plan page">
+    From your agency home screen, select the client's program card, go to the **Plan & Billing** tab, and select **Current Plan**.
+  </Step>
+  <Step title="Pick a plan">
+    Choose a plan from the **Assign Plan** list. To take a client off their plan, choose **No Plan (Unassigned)**.
+  </Step>
+  <Step title="Review the charge">
+    Select **Update Plan Assignment**. Before anything happens, a **Confirm plan assignment** window shows exactly what the client will be charged.
+  </Step>
+  <Step title="Confirm">
+    Select the confirm button to assign the plan, or **Cancel** to go back without changes.
+  </Step>
+</Steps>
+
+{/* TODO screenshot: confirm-plan-assignment-dialog, upload it in the local Documentation Agent */}
+
+The **Confirm plan assignment** window shows:
+
+- **The plan and its price**, with the amount under **Charged today**.
+- **The client's payment method**, such as a card ending in four digits, marked **Will be charged**.
+- **What happens next.** For example, "Visa •••• 4242 is charged $99.00 today. The client's Startup plan then renews at $99.00/month on Nov 1, 2026." If you've set trial days, nothing is charged today and the window shows when the trial ends.
+- **What happens to their current plan.** If the client already has a subscription, it's cancelled immediately and replaced by the new one.
+
+The confirm button tells you what it will do, for example **Charge $99.00 and assign**, or **Assign plan** when nothing is charged today.
+
+When it's done, you'll see "Plan updated and subscription created successfully". The plan's limits and features become the starting point for that program, and you can still fine-tune them on the program's **Access & Features** tab.
+
+### If the client has no card on file
+
+The window warns you: "This client has no card on file. Stripe creates the invoice but cannot collect it automatically until they add a payment method." The button changes to **Continue and invoice**, followed by the amount.
+
+### If the preview doesn't load
+
+You'll see "We could not load a preview of this charge." Select **Try again**. If you choose **Continue anyway**, the client's card on file is charged for the plan.
+
+<Note>
+  New client programs start with a payment exemption, so they work before billing is set up. Once a client is on a plan, turn the exemption off if you want their access to depend on paying. See [payment exemptions](/help-center/agencies/payment-exemption).
+</Note>
+
+### Let clients choose a plan themselves
+
+Your clients can also pick a plan on their own. In their program dashboard they go to **Settings** > **Billing** > **Subscription** and select **Choose Plan** (or **Change Plan**). They see the plans you've switched on and pay through Stripe.
+
+## Keep track of client billing
+
+### One client: Billing Status
+
+On a client program's **Plan & Billing** tab, **Billing Status** shows where their subscription stands: **Active**, **Trial**, **Past Due**, **Suspended**, **No Subscription** or **Payment Exempted**. Below that you'll find the current period, next billing date, amount due, payment method, and their last 10 invoices, with links to view or download each one.
+
+### Every client: Subscriptions
+
+In **Agency Settings**, go to **Agency Clients** and select **Subscriptions** to see all your clients' subscriptions in one list, with each one's plan, status, billing period, next billing date and affiliate count. Search by program name, subdomain or customer email, or filter by status.
+
+- **View Subscription** opens the subscription in your Stripe dashboard.
+- The **...** menu lets you **Pause Subscription** (the client keeps access but isn't charged), **Cancel Subscription** (it stays active until the end of the current billing period), or **Reactivate Subscription** for one that's paused or cancelled.
+
+## Marketplace licenses
+
+A [marketplace license](/help-center/grow/marketplace/licenses) publishes a program's listing on the Referly marketplace. Your agency licenses are in **Agency Settings** > **Billing** > **Marketplace Licenses**.
+
+Your agency plan includes a number of free licenses; see [plans and features](/help-center/billing/plans-and-features) for how many. Select the **Add Free License** card to claim one. Free licenses become available once your paid plan starts, not during your trial, and each one is valid for a year.
+
+Each license card shows:
+
+- Whether it's **Active** or **Inactive**.
+- When it runs out, under **Valid Until**. A lifetime license shows **Expires** with the value **Never**.
+- Which program it covers, under **Assigned Program**. Select the program name (or **Assign Program**), pick a program, and select **Save Assignment** to move the license.
+- **Manage Subscription** while a license is active, or **Renew License** once it has run out.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Payment exemptions" icon="hand-holding-dollar" href="/help-center/agencies/payment-exemption" arrow>
+    Let a client program run without a paid plan.
+  </Card>
+  <Card title="Feature access and usage limits" icon="sliders" href="/help-center/agencies/feature-access" arrow>
+    Choose what each client can use and how far they can grow.
+  </Card>
+  <Card title="Manage client programs" icon="folder-tree" href="/help-center/agencies/client-programs" arrow>
+    Create programs, invite clients, and manage them day to day.
+  </Card>
+  <Card title="Plans and features" icon="credit-card" href="/help-center/billing/plans-and-features" arrow>
+    Compare Referly's plans, including the three agency plans.
+  </Card>
+</Columns>

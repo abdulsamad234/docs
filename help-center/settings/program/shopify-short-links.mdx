@@ -1,7 +1,7 @@
 ---
 title: "Shopify short links"
-description: "Create affiliate short links on your own Shopify store domain using Shopify URL redirects. Covers connecting Shopify, choosing landing pages, auto-applying discount codes, and re-syncing redirects."
-keywords: ["shopify short links", "shopify url redirects", "affiliate short links shopify", "auto-apply discount code", "shopify affiliate links", "connected coupons", "re-sync redirects", "shopify discount route", "branded short links"]
+description: "Create affiliate short links on your own Shopify store domain with Shopify URL redirects. Choose landing pages, create links for every affiliate or per promo code, set link names, auto-apply discount codes and re-sync redirects."
+keywords: ["shopify short links", "shopify url redirects", "affiliate short links shopify", "auto-apply discount code", "shopify affiliate links", "connected coupons", "re-sync redirects", "shopify discount route", "branded short links", "shopify link name rule", "create links for all affiliates"]
 ---
 If you sell on Shopify, your store's own domain is the most persuasive address an affiliate can share. Shopify short links use it: instead of a long tracking URL, affiliates share something like `yourstore.com/jane`, which redirects to the product page you chose with their tracking preserved. To a customer it looks like an ordinary link to your shop, because it is one.
 
@@ -19,38 +19,76 @@ Once connected, the strip turns green and reads **Shopify connected** with your 
 
 Short links are a Business-plan feature, so the option prompts you to upgrade on lower plans.
 
+<Note>
+If your program is managed by an agency, Shopify short links may not be available. Agencies can switch off Shopify short links for the programs they manage, in which case the **Shopify Short Links** option doesn't appear and saving it anyway returns **Your agency has disabled Shopify short links for this program.** Agencies can also switch off all automated short links, which hides the **Automated short links** page entirely.
+</Note>
+
 ## Choose the landing pages to shorten
 
 **Select Landing Pages for Short Links** lists the landing pages configured for your program. Select one or more — these are the destinations your short links will point at.
 
-![select-landing-pages](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784816438131-989378-final-select-landing-pages-1784816437619.png)
+{/* TODO screenshot: select-landing-pages-v2, upload it in the local Documentation Agent */}
 
 If the list is empty, you'll see a note that no landing page URLs are configured and to add at least one in your program details. Set those up in [General program settings](/help-center/settings/program/general) first, then come back.
 
 ### Pick a primary page
 
-Every selected page shows a **Set as Primary** button; the chosen one is badged **Primary**. The primary page's path is what Referly uses to build the redirects in Shopify.
+Every selected page shows a **Set as Primary** button; the chosen one is badged **Primary**. The primary page's path is what Referly uses to build the redirects in Shopify, unless a link is tied to a different page (see [Where each short link goes](#where-each-short-link-goes)).
 
 That matters if you select several pages. Because the redirect is generated from the primary page's path, Referly recommends keeping the path portion the same across your landing pages so the short links behave consistently. If your pages point at genuinely different paths, keep it simple and select just one.
 
+### Choose how links are created for each page
+
+Every selected page has a two-way switch that decides how short links to that page are created:
+
+- **Connect to coupon(s)** is the default. You connect one or more coupons to the page, and Referly creates a short link to it for each affiliate who has an auto-generated code on a connected coupon. Details are in the next section.
+- **Create links for all affiliates** gives every affiliate who has access to this page their own short link to it, whether or not they have a promo code. Affiliates who join later get one automatically too. You can't connect coupons to a page in this mode.
+
+Pick **Create links for all affiliates** when you want everyone to have a link to a page, such as your main shop page. Pick **Connect to coupon(s)** when a page goes with a particular discount.
+
 ### Connect coupons to a page (optional)
 
-Under each selected page is **Connected Coupons (optional)**, where you can search your Shopify coupons and attach one or more to that landing page. This links a discount to a destination — the coupon attached here is what gets applied when the auto-apply setting below is on.
+With **Connect to coupon(s)** selected, the page shows **Connected Coupons (optional)**, where you can search your Shopify coupons and attach one or more to that landing page. This links a discount to a destination — the coupon attached here is what gets applied when the auto-apply setting below is on.
+
+For each connected coupon, Referly creates one short link for every affiliate with an auto-generated code on it, and names the link after that code. An affiliate whose code is `JANE10` gets a short link like `yourstore.com/JANE10`, and because the link is tied to the code, the discount can be applied for the customer automatically.
 
 A coupon can only be connected to one landing page at a time. If it's already attached elsewhere, it appears in the list marked with the page that claimed it and can't be selected twice.
+
+### Set the link name rule
+
+With **Create links for all affiliates** selected, you choose how each affiliate's link is named instead of connecting coupons.
+
+{/* TODO screenshot: shopify-link-name-rule, upload it in the local Documentation Agent */}
+
+- **Link name structure**: turn on any of **First name**, **Last name**, **Email** (the part before the @) and **Random characters**. When **Random characters** is on, a dropdown next to it sets how many to add, from 2 to 10. The default is first name plus 4 random characters.
+- **Prefix**: optional text added to the start of every link name, for example `SHOP`. Letters and numbers only.
+- **Example**: a preview of a finished link on your store's domain, such as `https://yourstore.com/JANEx7q4`.
+
+The parts are joined in that order with nothing between them. If you turn every part off, each affiliate gets a random link name instead. And if a name is already taken in your program, Referly adds three random digits to the end so every link stays unique.
+
+## Where each short link goes
+
+When you select several landing pages, Referly decides the destination of each short link separately, checking in this order:
+
+1. **The page the link is tied to.** Links made by **Create links for all affiliates** are tied to their page, and so are links that you or an affiliate connect to a landing page when creating them.
+2. **The page of its promo code's coupon.** If the link is connected to a promo code, and that code's coupon is connected to a page, the link goes there.
+3. **Your primary page.**
+4. **The first of your selected pages the affiliate can see**, if they can't see the primary page.
+
+Landing page restrictions are respected at every step. If you've limited a page to certain affiliates or groups in [General program settings](/help-center/settings/program/general), affiliates outside that list never get a short link to it, and their links fall through to the next page they can see.
 
 ## Auto-apply a discount code
 
 **Auto-Apply Discount Code** sends the visitor through Shopify's discount route so a code is applied for them, with no typing at checkout. It's the single biggest reason to choose Shopify short links over the alternatives — a discount that applies itself converts better than one the customer has to remember.
 
-![auto-apply-discount](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784816433896-866957-final-auto-apply-discount-1784816433801.png)
+{/* TODO screenshot: auto-apply-discount-v2, upload it in the local Documentation Agent */}
 
-When it's on, Referly works out which code to apply in this order:
+When it's on, Referly works out which code to apply like this:
 
 1. If a coupon is connected to the landing page, it uses the affiliate's own promo code under that coupon.
-2. If the affiliate doesn't have a promo code, or no coupon is connected to that page, it uses the affiliate's link slug as the discount code.
+2. Links without a connected promo code redirect straight to the landing page with no discount applied.
 
-That second case is worth checking before you rely on it. If no discount in your store matches the affiliate's slug, the customer simply arrives with nothing applied — so if you want every affiliate's link to carry a discount, connect a coupon to the landing page rather than depending on the fallback.
+So if you want an affiliate's link to carry a discount, make sure it's connected to one of their promo codes, either through a coupon connected to the page or by connecting the code when the link is created.
 
 ## Show only the matching short link
 
@@ -63,6 +101,8 @@ Turn this on when you run several landing pages with different coupons and don't
 Once a primary page is chosen, a **Preview** panel shows the round trip: what the **Affiliate shares**, and where the **Customer lands on**.
 
 ![short-link-preview](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784816440737-42727-final-short-link-preview-1784816440644.png)
+
+If your primary page uses **Create links for all affiliates**, the **Affiliate shares** link follows your link name rule.
 
 Read it before saving. It's the quickest way to confirm the redirect lands on the page you intended and carries the tracking parameters — and to catch a landing page path that isn't what you assumed.
 

@@ -1,7 +1,7 @@
 ---
 title: "Tax and invoices"
-description: "Set your legal entity details, add and verify an EU VAT number, generate self-billing invoices, and handle VAT and NL tax exports for affiliate payouts in Referly."
-keywords: ["payout tax", "self-billing invoice", "affiliate invoice", "VAT number", "VIES validation", "reverse charge VAT", "require invoice information", "ICP export", "BTW summary", "affiliate payout VAT"]
+description: "Set your legal entity details, verify an EU VAT number, download self-billing invoices once payouts are paid, and handle VAT and NL tax exports for affiliate payouts in Referly."
+keywords: ["payout tax", "self-billing invoice", "affiliate invoice", "VAT number", "VIES validation", "reverse charge VAT", "require invoice information", "ICP export", "BTW summary", "affiliate payout VAT", "download all invoices", "W-9 W-8 tax forms"]
 ---
 Paying affiliates comes with paperwork: invoices for your records and, if you're in the EU, VAT to account for correctly. Referly handles the heavy lifting — it generates self-billing invoices for your payouts and works out the VAT treatment from the countries involved. Your job is to give it your legal entity details once, and this page walks through that.
 
@@ -55,7 +55,15 @@ Turn on **Require invoice information from affiliates** if you need affiliates t
 
 ## Download an invoice
 
-For **Referly Payouts** batches, you can save the invoice for your records: open the batch and choose **Download Invoice** to get a PDF. Self-billing invoices for your affiliates are generated from the legal entity and VAT details you set above.
+Invoices become available once a payout or batch has been paid or marked as paid. Until then, the download options are greyed out, and hovering over them explains why.
+
+- **Referly Payouts batches.** Open the batch, open the **Actions** menu, and choose **Download Invoice** to get a PDF.
+- **Cash batches you pay yourself.** Open the batch, open the **Actions** menu, and choose **Download All Invoices**. You get a ZIP file with one PDF invoice for each payout in the batch.
+- **A single payout.** Open the payout's details and select **Download Invoice**.
+
+![The Actions menu of a payout batch with the Download All Invoices option](/images/help-center/manage/download-all-invoices.png)
+
+Self-billing invoices for your affiliates are generated from the legal entity and VAT details you set above.
 
 ## Netherlands tax exports
 
@@ -68,6 +76,10 @@ A preview of both loads on screen first, and the CSV downloads unlock once the p
 
 ![nl-reporting-exports](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784751531639-130982-final-nl-reporting-exports-1784751531042.png)
 
+## W-9 and W-8 tax forms
+
+US tax forms are collected per affiliate, not on this page. To request a W-9, W-8BEN, or W-8BEN-E from an affiliate and download the completed form, see [Collect W-9 and W-8 tax forms](/help-center/manage/payouts/tax-forms).
+
 ## Related
 
 <Columns cols={2}>
@@ -79,6 +91,9 @@ A preview of both loads on screen first, and the CSV downloads unlock once the p
   </Card>
   <Card title="Payout batches" icon="layer-group" href="/help-center/manage/payouts/batches" arrow>
     Open a batch to download its invoice.
+  </Card>
+  <Card title="Collect W-9 and W-8 tax forms" icon="file-signature" href="/help-center/manage/payouts/tax-forms" arrow>
+    Request US tax forms from affiliates and download them.
   </Card>
   <Card title="Payouts overview" icon="wallet" href="/help-center/manage/payouts/overview" arrow>
     How the whole payout process fits together.

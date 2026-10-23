@@ -1,0 +1,126 @@
+---
+title: "Microsoft Ads pixel"
+description: "Send your store's events to Microsoft Ads through the UET Conversions API with Referly Atlas. Find your UET Tag ID and API token, add the Bing pixel in Atlas, and verify that events arrive."
+keywords: ["microsoft ads conversions api", "uet tag server side", "uet tag id", "microsoft ads api token", "bing ads conversion tracking", "referly atlas microsoft ads", "bing pixel atlas", "microsoft ads purchase event", "uet conversions api access"]
+---
+Referly Atlas sends your store's events to Microsoft Ads from its servers, through the Conversions API for your UET tag. Page views, product views, carts, checkouts and purchases reach Microsoft Ads without depending on the visitor's browser, with customer details hashed before they leave. This guide walks you through finding the two values Microsoft asks for, adding the pixel in Atlas (where the chip reads **Bing**), and checking that events arrive.
+
+## Before you start
+
+You need:
+
+- **A store in Atlas that is set up and live.** Only stores that are Running or Awaiting data send events. See [Store statuses](/help-center/atlas/statuses#store-statuses).
+- **A UET tag in Microsoft Ads.** Atlas sends to a tag you already have, it does not create one.
+- **Conversions API access on that tag.** The Conversions API for UET is a pilot: if the **Use Conversions API** option is missing when you edit the tag, ask Microsoft Ads support to turn it on for your account.
+
+If this is your first pixel, read [Pixels and destinations](/help-center/atlas/pixels) first: it explains what a pixel is in Atlas and what every pixel row shows.
+
+## Step 1: Find your Tag ID
+
+<Steps>
+  <Step title="Open your UET tags">
+    In Microsoft Ads, go to **Tools**, then **UET tag**. In the new navigation it sits under **Conversions**, then **UET tag**.
+  </Step>
+  <Step title="Copy the Tag ID">
+    Find your tag in the list and copy the number in the **Tag ID** column. It is digits only, for example `123456789`.
+  </Step>
+</Steps>
+
+Microsoft's own article on UET tags: [help.ads.microsoft.com](https://help.ads.microsoft.com/apex/index/3/en/56682). The same steps sit in the **Where to find it** tooltip beside the field in Atlas, and the **How to find it** link under the field opens Microsoft's article.
+
+## Step 2: Copy your API token
+
+There is no public Microsoft article for this token yet, so the steps in the **Where to find it** tooltip are the guide.
+
+<Steps>
+  <Step title="Edit your UET tag">
+    Go to **Conversions**, then **UET tag**, and select the pencil beside your tag.
+  </Step>
+  <Step title="Turn on the Conversions API">
+    Select **Use Conversions API**. If the option is missing, ask Microsoft Ads support for Conversions API access.
+  </Step>
+  <Step title="Copy the token">
+    Copy the token Microsoft shows. It looks like `a72aa7aa-aa7a-7aa-aa7a-a7a7777777a7`.
+  </Step>
+</Steps>
+
+## Step 3: Add the pixel in Atlas
+
+<Steps>
+  <Step title="Open Pixels and destinations">
+    In the left sidebar of Atlas, open **Pixels and destinations** for the store, then select **+ Add pixel**.
+  </Step>
+  <Step title="Choose Bing">
+    In the **Add your tracking pixel** dialog, select the **Bing** chip: that is the Microsoft Ads destination. Leave **Method** on **Add a new pixel**. If another store of your business already sends to this tag, choose **Use an existing pixel** instead and Atlas copies its ids and keys to this store. See [Use an existing pixel](/help-center/atlas/pixels#use-an-existing-pixel).
+  </Step>
+  <Step title="Paste the two values">
+    Fill in **Tag ID** (digits only) and **API token**. **Name (optional)** helps you tell pixels apart when a store sends to more than one tag.
+  </Step>
+  <Step title="Choose the events to send">
+    Under **Events sent**, keep or change the events Atlas pre-selected for your business type, limited to the events Microsoft Ads accepts (see the table below). See [Default events by business type](/help-center/atlas/events#default-events-by-business-type).
+  </Step>
+  <Step title="Save">
+    Select **Add pixel**. Atlas shows the **Pixel saved** screen with a **Data flowing** badge.
+  </Step>
+</Steps>
+
+![Add pixel dialog with Bing selected, showing the Tag ID and API token fields for Microsoft Ads](/images/atlas/pixels/pixels-microsoft-ads--add-pixel-dialog.png)
+
+On the **Pixel saved** screen, use **You can verify that here** to send a test event straight away. Atlas answers **Test event accepted** with the HTTP status Microsoft returned, or shows Microsoft's own error message so you can correct the ID or token.
+
+## Events Atlas sends to Microsoft Ads
+
+| Atlas event | What Microsoft Ads calls it |
+| --- | --- |
+| Page view | page_view |
+| View content | view_item |
+| Add to cart | add_to_cart |
+| Initiate checkout | begin_checkout |
+| Purchase | purchase |
+| Lead | generate_lead |
+| Sign up | sign_up |
+| Start trial | start_trial |
+| Subscribe | subscribe |
+
+Add payment info and Search are not sent to Microsoft Ads.
+
+Only the events ticked under **Events sent** are forwarded. Orders and conversions are always evaluated; the browser events (page views, product views, carts, checkouts) are forwarded only when a pixel wants them.
+
+## Verify that events arrive
+
+1. **Send a test event.** On the pixel row, open the row's menu and choose **Send test event**. A toast confirms that Microsoft accepted the event, or shows Microsoft's error. Test events time out after 10 seconds.
+2. **Read the delivery line.** The line under the pixel reads how many events reached Microsoft Ads in the last 24 hours, for example **8 sent in 24 h**, or **8 sent, 2 failed in 24 h** when some were rejected. A green dot means **Live**: events are being sent. See [Pixel states](/help-center/atlas/statuses#pixel-states).
+3. **Watch Live activity.** Open **Live activity** in the left sidebar and filter by destination to see each event's status and Microsoft's response. See [Live activity](/help-center/atlas/reports/live-activity).
+
+![More pixel actions menu on a pixel row with Send test event and Event filters](/images/atlas/pixels/pixels--row-menu.png)
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The test event fails">
+    Atlas shows Microsoft's error next to the test. Check the Tag ID first (digits only, from the **Tag ID** column), then the token: Atlas never shows a saved token again, so select **Edit** on the row and paste a fresh one (a blank field keeps the saved value). Test events time out after 10 seconds, so a slow answer also counts as a failure: try once more.
+  </Accordion>
+  <Accordion title="The row says No events in the last 24 h">
+    Atlas sends only from stores that are Running or Awaiting data, only the events ticked under **Events sent**, and never test-mode orders. Check that the platform switch at the top of the Bing row is on, then open **Live activity** and read the Status column: **Skipped** means no consent or no identifiers Microsoft can match, **Filtered** means an event filter stopped it, **Deduped** means the same event was already sent within 48 hours. See [Delivery statuses](/help-center/atlas/statuses#delivery-statuses).
+  </Accordion>
+  <Accordion title="There is no Use Conversions API option on my UET tag">
+    The Conversions API for UET is a pilot and is not switched on for every account. Ask Microsoft Ads support for Conversions API access; once it is on, edit the tag again, select **Use Conversions API** and copy the token. Until then Atlas cannot send to Microsoft Ads for this store.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Pixels and destinations" icon="plug" href="/help-center/atlas/pixels" arrow>
+    Add, edit, test and detach pixels on any store.
+  </Card>
+  <Card title="Events" icon="list-check" href="/help-center/atlas/events" arrow>
+    What each event means and which platform calls it what.
+  </Card>
+  <Card title="Consent and privacy" icon="shield-halved" href="/help-center/atlas/pixels/consent-and-privacy" arrow>
+    What is hashed before it leaves and what consent Atlas needs.
+  </Card>
+  <Card title="Live activity" icon="wave-pulse" href="/help-center/atlas/reports/live-activity" arrow>
+    Watch every event and Microsoft's response as they happen.
+  </Card>
+</Columns>

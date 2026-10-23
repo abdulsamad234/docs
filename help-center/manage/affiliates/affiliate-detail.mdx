@@ -1,7 +1,7 @@
 ---
 title: "The affiliate detail view"
-description: "Everything on a Referly affiliate's detail page — profile, status, performance, tabs for activity, audience, payouts, promo codes, answers, assets, and the actions you can take on one affiliate."
-keywords: ["affiliate detail", "affiliate profile", "single affiliate page", "affiliate performance", "affiliate activity", "impersonate affiliate", "affiliate payouts tab", "affiliate answers", "referly affiliate page"]
+description: "Everything on a Referly affiliate's detail page: profile, status, performance, tabs for activity, audience, payouts, promo codes and answers, actions like tax forms, and managing this affiliate's referral links."
+keywords: ["affiliate detail", "affiliate profile", "single affiliate page", "affiliate performance", "impersonate affiliate", "affiliate payouts tab", "rename affiliate promo code", "create affiliate link", "affiliate manage own links", "request tax form affiliate", "referly affiliate page"]
 ---
 The detail page is everything about one affiliate in a single place — who they are, how they're performing, the customers and payouts tied to them, and every action you can take on them. It's where most of your one-on-one affiliate management happens.
 
@@ -51,6 +51,8 @@ Every payout to this affiliate, with its amount and status — a full record of 
 
 The discount and promo codes assigned to this affiliate, so you can see the codes they share with their audience. See [Coupons and promo codes](/help-center/engage/coupons/overview).
 
+To rename an active code, select the pencil icon next to it (**Edit promo code**), type the new code, and press Enter or select the check mark to save. Press Escape to cancel. See [Promotional codes](/help-center/engage/coupons/promotional-codes) for what renaming changes, including any link connected to the code.
+
 ### Answers
 
 What the affiliate told you when they applied — their answers to your [application questions](/help-center/getting-started/recruit/application-questions), including any documents they uploaded. This is what you review before approving someone.
@@ -71,18 +73,43 @@ When you run a [multi-level program](/help-center/settings/program/multi-level-c
 
 Beyond approving or rejecting, the three-dots menu at the top of the profile panel holds the actions for this one affiliate:
 
-- **Edit Profile** — fix their name or email.
-- **Add Sale** — record a sale for one of their referred customers so the right commission is credited.
-- **Add Customer** — attach a referred customer to this affiliate by hand.
-- **Give Bonus** — award them a one-off bonus. See [Give a bonus](/help-center/manage/affiliates/give-a-bonus).
-- **Use Commission Plan Rate / Use Affiliate Rate** — switch between the plan's standard rate and a custom rate just for this affiliate.
-- **Deactivate**, **Reactivate**, or **Ban** — pause, restore, or remove them. Which options appear depends on their current status. See [Ban or deactivate an affiliate](/help-center/manage/affiliates/ban-or-deactivate).
+- **Edit Profile**: fix their name or email.
+- **Add Sale**: record a sale for one of their referred customers so the right commission is credited.
+- **Add Customer**: attach a referred customer to this affiliate by hand.
+- **Give Bonus**: award them a one-off bonus. See [Give a bonus](/help-center/manage/affiliates/give-a-bonus).
+- **Use Commission Plan Rate / Use Affiliate Rate**: switch between the plan's standard rate and a custom rate just for this affiliate.
+- **Tax Forms**: request a W-9, W-8BEN, or W-8BEN-E tax form from this affiliate and see the forms they've submitted. Available on the Business plan or higher. See [Tax forms](/help-center/manage/payouts/tax-forms).
+- **Deactivate**, **Reactivate**, or **Ban**: pause, restore, or remove them. Which options appear depends on their current status. See [Ban or deactivate an affiliate](/help-center/manage/affiliates/ban-or-deactivate).
 
 A few more actions live on the page itself:
 
-- **Commission Plan** — this section shows the [plan](/help-center/getting-started/commissions/overview) they're on, with a **Change Plan** button. See [Change an affiliate's commission plan](/help-center/manage/affiliates/change-commission-plan).
-- **View Affiliate Links** — see the referral links this affiliate uses.
-- **Impersonate Affiliate** — log in as the affiliate to see their portal exactly as they do. This is the fastest way to check what they're seeing when they ask for help.
+- **Commission Plan**: this section shows the [plan](/help-center/getting-started/commissions/overview) they're on, with a **Change Plan** button. See [Change an affiliate's commission plan](/help-center/manage/affiliates/change-commission-plan).
+- **View Affiliate Links**: see, create, and manage this affiliate's referral links. See the next section.
+- **Impersonate Affiliate**: log in as the affiliate to see their portal exactly as they do. This is the fastest way to check what they're seeing when they ask for help.
+
+## Manage this affiliate's links
+
+Select **View Affiliate Links** to open the **Affiliate Links** window. The button shows how many links the affiliate has.
+
+![The Affiliate Links dialog with the switch that lets the affiliate manage their own links, the Create New Link button and two links with their clicks, referrals and revenue](/images/help-center/manage/affiliate-links-dialog.png)
+
+### Create a link
+
+Select **Create New Link**, type the link value, and select **Create Link**. Use letters, numbers, and hyphens only, with no spaces.
+
+If you use [Shopify short links](/help-center/settings/program/shopify-short-links), you'll also see **Connect this link to**, which decides where the short link goes:
+
+- **Default**: the short link points at your primary landing page.
+- **Landing page**: pick a page from **Select a landing page**, and the short link points there.
+- **Promo code**: pick one of this affiliate's codes from **Select a promo code**. The short link follows that code's landing page and applies the code automatically at checkout. Only codes on Shopify coupons are listed.
+
+When **Auto-Apply Discount Code** is on, each Shopify short link in the list shows the promo code connected to it, or **No discount code connected**.
+
+### Let this affiliate manage their own links
+
+At the top of the window, turn on **Allow this affiliate to manage their own links** to let this one affiliate create and edit their own links in their portal, whatever your program-wide setting is. They can only choose their own link endings. The full referral links are still built from the landing page URLs in your program settings.
+
+This switch is available on the Business plan or higher. To change the setting for every affiliate at once, see [Let affiliates manage their own links](/help-center/settings/program/general#let-affiliates-manage-their-own-links).
 
 ## Related
 

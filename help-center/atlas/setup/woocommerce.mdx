@@ -1,0 +1,126 @@
+---
+title: "Connect a WooCommerce store"
+description: "Connect a WooCommerce store to Referly Atlas with the Referly WordPress plugin: install or update the plugin, paste your Atlas token, verify the connection, and see what each plugin version sends."
+keywords: ["WooCommerce ad tracking", "Referly Atlas WooCommerce", "Referly WordPress plugin", "Atlas token WordPress", "WooCommerce server-side conversions", "WooCommerce Meta conversions API", "connect WooCommerce to Atlas", "WordPress caching tracking script", "WooCommerce order tracking"]
+---
+On WooCommerce, the Referly WordPress plugin does the work: it adds the tracking script to every page and sends your orders, refunds and conversions to Referly Atlas from your server. The wizard step is titled **Connect WooCommerce** and sums it up: install the plugin, paste your Atlas token, then verify.
+
+If you already use the plugin for your affiliate program, you keep it and update it. Atlas needs version 2.1.0 or later.
+
+## Before you start
+
+You will need:
+
+- **Admin access to your WordPress site**, to upload and activate a plugin.
+- **The Referly plugin at version 2.1.0 or later.** The block's subtitle asks the question: already use it for your affiliate program? Update it to version 2.1.0 or later.
+- **An Atlas store set up to step 2 of the wizard.** On [Step 1: Your website](/help-center/atlas/setup#step-1-your-website), enter your site address and pick the **WooCommerce** tile.
+
+![The seven platform tiles of the Add a store wizard](/images/atlas/setup/setup--platform-tiles.png)
+
+The plugin's general setup, including its affiliate features, is covered in the [WooCommerce integration](/help-center/integrations/woocommerce) and [WordPress](/help-center/integrations/wordpress) guides. This page covers only the Atlas part.
+
+## Step 1: Install the plugin
+
+The first block is **Install the Referly plugin on WordPress**.
+
+![Connect WooCommerce step with Install the Referly plugin, Paste your Atlas token and Verify the connection](/images/atlas/setup/setup-woocommerce--connect-step.png)
+
+1. Select **Download plugin** to get the plugin zip file.
+2. In WordPress, go to **Plugins**, **Add New**, **Upload Plugin**, and upload the zip.
+3. Activate the plugin through the **Plugins** menu.
+
+If the plugin is already installed, upload the new zip the same way; WordPress replaces the old version and keeps your settings. Select **Mark as completed** when it is active. Atlas ticks the block on its own once it hears from the plugin.
+
+## Step 2: Paste your Atlas token
+
+The second block, **Paste your Atlas token in WordPress**, shows an **Atlas token** that is shown once. Copy it before you leave this step.
+
+1. Select **Generate token** to reveal the token, then copy it.
+2. In WordPress, open **Referly** in the admin menu.
+3. Paste the token in the **Atlas** card and click **Verify and Save**.
+
+**Verify and Save** sends a first heartbeat to Atlas, which is what ticks the block and the verification below. The token is what lets the plugin send orders and conversions to this store and no other, so one token belongs to one store.
+
+Lost it? Open **Store settings**, go to **Tracking and connection** and use the **API token** row. **Regenerate** gives you a new token (again shown once) and stops the old one working, so paste the new one into WordPress straight away. Tokens start with `atl_` and Atlas shows the last four characters of the one in use.
+
+![Tracking and connection section with the connection status tiles, the Test connection button and the API token row](/images/atlas/settings/store-settings--tracking-and-connection.png)
+
+## Step 3: Verify
+
+The last block, **Verify the connection**, checks your site for the script. Your site address is prefilled from Step 1 of the wizard; select **Verify**.
+
+| Result | Meaning |
+| --- | --- |
+| **Tracking script found on your-site.com. It is live and connected to this store.** | Done. Select **Continue**. |
+| **Not found yet.** Atlas also opened your site to catch a script added another way and still could not find it. | The plugin is not active, the token was not saved, or a cache is serving old pages. See [Caching plugins](#caching-plugins). Allow popups for this page if your browser blocked one. |
+| **A Referly script is on this site, but with another store ID.** | This site is connected to a different Atlas store, or the token in WordPress belongs to another store. Paste this store's token and verify again. |
+| **We could not reach this address. Check it and try again.** | The address is wrong, or the site is not reachable from the internet (a local or staging site behind a login, for example). |
+
+![Verify the connection block with the site address, the Verify button and the result No events yet. Visit your site, then verify again.](/images/atlas/setup/setup-tracking-script--verify-states.png)
+
+Under the address, a second line reports events: **No events yet. Visit your site, then verify again.** until a page view has arrived, then **Events received** with the time of the last one. Open your site in another tab, browse a product page, and verify again.
+
+Select **Continue** to the ad platforms step and **Finish**. The toast **Store is live. Tracking is on.** means the store is live and sending (with an active plan; without one it waits). The same checks are available later under [Test connection](/help-center/atlas/setup/test-connection).
+
+## Caching plugins
+
+If you use a caching plugin (WP Rocket, LiteSpeed Cache, W3 Total Cache and the like) or a host with page caching, clear its cache so the script loads on every page. The wizard reminds you of this under the token block, and it matters twice:
+
+- **After activating or updating the plugin**, cached pages still carry the old HTML without the script, so Verify reports **Not found yet** even though everything is set up.
+- **After pasting the token**, the script tag changes to include your store, and a cached copy would keep serving the old one.
+
+Clear the whole cache, load your homepage once, then select **Verify** again. Orders are not affected by caching: the plugin sends them from your server, not from the page.
+
+## What the plugin sends, by version
+
+The plugin sends your orders and conversions to Atlas from your server, so they arrive even when a visitor's browser blocks tracking. What it sends grew with each version:
+
+| Version | What it adds for Atlas |
+| --- | --- |
+| **2.1.0** | Atlas support: the tracking script on every page, orders with the statuses processing, completed, pending, on-hold, cancelled, refunded and failed, refunds, adds to cart and checkouts started. |
+| **2.2.0** | Sign ups, and leads from Contact Form 7 and WPForms submissions. |
+| **2.3.3** | Trials started and subscriptions from subscription products, and the Google Ads conversions fired by the plugin for all eight events. |
+
+
+Update to the latest version to get everything. The version you run is visible on the **Plugins** page in WordPress. For what each event means and where it goes, see [Events](/help-center/atlas/events) and [Conversions](/help-center/atlas/conversions).
+
+<Tip>
+  Orders arrive with every status change, so a refund or a cancellation after the sale is netted off in your reports and your pixels get the update. You do not need to do anything in Atlas when an order changes.
+</Tip>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="There is no Atlas card in the Referly plugin settings">
+    Your plugin is older than 2.1.0. Select **Download plugin** in the wizard and upload the zip over the old version.
+  </Accordion>
+  <Accordion title="Verify and Save in WordPress fails">
+    The token was copied incompletely, or it has been regenerated since. Go to **Store settings**, **Tracking and connection**, select **Regenerate** on the **API token** row and paste the new token.
+  </Accordion>
+  <Accordion title="Verify says Not found yet although the plugin is active">
+    Almost always a cache. Clear it, load your homepage, verify again. If you use a plugin that moves scripts or delays them, exclude the Referly script from it.
+  </Accordion>
+  <Accordion title="Page views arrive but orders do not">
+    The token in WordPress belongs to another store, or **Verify and Save** was never clicked. Paste this store's token and save. If orders are tests placed while **Test mode** is on in Store settings, they show in Live activity as **Test** and stay out of reporting.
+  </Accordion>
+  <Accordion title="Sign ups, leads, trials or subscriptions are missing">
+    Check the version table above: sign ups and form leads need 2.2.0, trials and subscriptions need 2.3.3. Leads are only recorded from Contact Form 7 and WPForms.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Add a store" icon="store" href="/help-center/atlas/setup" arrow>
+    The whole wizard, from Your website to Ad platforms.
+  </Card>
+  <Card title="Test your connection" icon="stethoscope" href="/help-center/atlas/setup/test-connection" arrow>
+    Rerun the four checks from Store settings.
+  </Card>
+  <Card title="WooCommerce for affiliates" icon="wordpress" href="/help-center/integrations/woocommerce" arrow>
+    The plugin's affiliate features and full install guide.
+  </Card>
+  <Card title="Google Ads pixel" icon="google" href="/help-center/atlas/pixels/google-ads" arrow>
+    How the plugin fires Google Ads conversions for you.
+  </Card>
+</Columns>

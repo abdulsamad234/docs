@@ -1,0 +1,124 @@
+---
+title: "Campaigns"
+description: "Use the Campaigns table in the Referly Atlas Ad center to compare every campaign, ad set and ad on spend and the revenue your store tracked. Covers the columns, performance targets and period comparison, filters, Show disabled, totals, export, and the Unmapped and Unattributed rows."
+keywords: ["campaign performance table", "ad set performance", "ad level roas", "performance targets", "period comparison", "campaign filter", "unmapped orders", "unattributed orders", "export campaign data", "referly atlas campaigns"]
+---
+The **Campaigns** page of the Ad center lists **Campaigns, ad sets and ads with the revenue your store tracked beside their spend.** Every row carries the same metrics as the dashboard cards, plus two ratings that tell you at a glance whether a row is hitting your targets and which way it is moving.
+
+![Campaigns page with the level tabs, Performance bands and metric columns](/images/atlas/ad-center/ad-center-campaigns--page.png)
+
+The **Channels** and **Ad accounts** selectors, the date range and **Refresh** work exactly as on the [dashboard](/help-center/atlas/ad-center/dashboard#choose-channels-and-ad-accounts). With nothing ticked, the page asks you to **Select at least one ad account in Channels or Ad accounts**; with nothing synced yet, it shows **No campaigns yet** until the first sync finishes.
+
+## Campaigns, ad sets and ads
+
+The **Level** tabs above the table switch between **Campaigns**, **Ad sets** and **Ads**. Each row shows the name, its id, a platform icon and a status pill (hover it for **Active on Meta** and similar). To drill down, select a name: a campaign opens its ad sets, and an ad set opens its ads. On the deeper levels a line under the name shows where the row belongs, such as **Campaign: Summer Sale** or **Ad set: Lookalike 1%**.
+
+![Campaigns table at the Ad sets level with one row per ad set](/images/atlas/ad-center/ad-center-campaigns--ad-sets-level.png)
+
+With **All stores** selected, a **Store** column tells you which store each row's revenue was matched in.
+
+## Columns
+
+Hover a column header for its definition; the formulas are collected on the [Metrics](/help-center/atlas/ad-center/metrics) page. Select a header to sort by it. The columns available are:
+
+| Group | Columns |
+| --- | --- |
+| Ratings | **Performance**, **vs. prior range** |
+| Identity | **Name**, **Store** (All stores only), **Platform** |
+| Spend and return | **Spend**, **Revenue**, **AOV**, **ROAS**, **AER**, **CPA**, **Purchases** |
+| Platform's own count | **Conversions** |
+| Funnel | **ATC**, **Cost per ATC**, **IC**, **Page Views** |
+| Traffic | **Clicks**, **Impressions**, **CTR**, **CPC**, **CPM**, **Frequency** |
+| Audience (Meta) | **New audience**, **Engaged audience**, **Existing customers** |
+
+Your column choice is saved separately for the Campaigns, Ad sets and Ads levels.
+
+To change the columns, click the **Customize columns** icon at the right end of the table header, tick or untick metrics, and drag to reorder them.
+
+## Performance targets and period comparison
+
+The two rating columns are driven by settings you reach from the table's options menu (the **Table options** button at the top right of the table).
+
+![Table options menu with Performance targets, Period comparison settings, Show disabled and the export formats](/images/atlas/ad-center/ad-center-campaigns--table-options.png)
+
+### Performance targets
+
+**Performance targets** rates every row on one metric against your targets, and fills the **Performance** column with **High**, **Medium** or **Low**.
+
+<Steps>
+  <Step title="Pick the metric">
+    Choose the **Metric** the rating is based on. ROAS is the default; CPA, CTR and CPC are the other common choices.
+  </Step>
+  <Step title="Set the thresholds">
+    Under **Threshold ranges**, type the value **High** starts from and the value **Low** sits below. **Medium** is everything in between and is shown as read-only text, for example **1.5x to 3x**. High has to be at least Low, or the dialog says so.
+  </Step>
+  <Step title="Apply">
+    Select **Apply**. The dialog confirms with **Saved for this store.** Turn on **Apply settings for all stores** before applying to use the same targets everywhere; it overrides the settings you set per store, and the confirmation reads **Saved for every store.** **Reset to default** restores the defaults below.
+  </Step>
+</Steps>
+
+![Performance targets settings with the metric set to CPA and the threshold ranges](/images/atlas/ad-center/ad-center-campaigns--performance-targets.png)
+
+The defaults, before you change anything:
+
+| Metric | High | Medium | Low |
+| --- | --- | --- | --- |
+| ROAS | 3x and above | 1.5x to 3x | below 1.5x |
+| CPA | 25 and below | 25 to 50 | above 50 |
+| CTR | 1.5% and above | 0.8% to 1.5% | below 0.8% |
+| CPC | 0.75 and below | 0.75 to 1.5 | above 1.5 |
+
+Currency amounts are in the store currency.
+
+### Period comparison
+
+**Period comparison settings** rates how each row moved against the previous range of the same length, and fills the **vs. prior range** column with **Increased**, **Stable** or **Decreased**. Pick the metric, then the change above which a row counts as **Increased** and below which it counts as **Decreased**; the default is ROAS with a 10% band either way. The same **Apply settings for all stores** switch and **Reset to default** button are there.
+
+## Filter, search and Show disabled
+
+The search box above the table narrows the rows by name. **Filter** opens a menu with:
+
+- **Campaign** and **Ad set**: tick one or more by name. Long lists show the first matches with **Type to narrow.**
+- **Platform**: Meta, Google Ads or TikTok.
+- **Status**: **Active**, **In review**, **Issue**, **Paused** or **Removed**. What each one means is on the [Statuses](/help-center/atlas/statuses#ad-account-and-campaign-statuses) page.
+- A **Min** and **Max** range for any metric, for example Spend above 100 or ROAS below 1. The menu refuses a range where **Min must not be above Max.**
+
+![Filter menu of the Campaigns table with Campaign, Platform, Status and the metric filters](/images/atlas/ad-center/ad-center-campaigns--filter.png)
+
+When filters hide everything, the page says **No campaigns match** and offers to clear the search or the filters.
+
+**Show disabled** lives in the table options menu and is on by default. Turn it off to hide paused and removed campaigns, ad sets and ads; the page then reads **Paused and removed campaigns are hidden.** when nothing active is left. Your choice is saved.
+
+## Totals and export
+
+The last row of the table is the total. It reads **Total · this page (25 of 112)** when it sums the rows on screen, or **Total · all 112 campaigns** when it sums every row that matches your selection and filters; switch between the two on the row itself.
+
+**Export** in the table options menu downloads the table as **CSV** (every row as a spreadsheet), **JSON for AI** or **Markdown for AI**. The export follows the level, filters and date range on screen. Atlas confirms with **Export ready**.
+
+## Unmapped and Unattributed rows
+
+Two rows appear at the bottom of the table when the Ad center could not tie an order to a synced campaign. They carry revenue but no spend, so you can see what is missing from your ROAS.
+
+| Row | What it holds | How to fix it |
+| --- | --- | --- |
+| **Unmapped (Meta)**, or another platform | Paid orders whose campaign could not be matched by id or name. The click came from that platform, but it carried no ids and its names matched nothing Atlas synced. | Paste the platform's tracking template into its ads manager so every click carries campaign, ad set and ad ids. See [UTM tagging](/help-center/atlas/reports/utm-tagging). |
+| **Unattributed** | Orders with no paid click inside the lookback window: no click id and no paid visit in the 7 days before the order. | Nothing to fix if the order came from email, organic or affiliates. If you expected an ad click, check that your ads land on a page with the Atlas tracker and carry the template. |
+
+Hover either row's name for its description. The **Mapping health** card on the [Ad accounts](/help-center/atlas/ad-center/connect-ad-accounts#mapping-health-and-tracking-templates) page shows how many of your orders were matched by id, by name, platform only, or not at all.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Ad center dashboard" icon="chart-line" href="/help-center/atlas/ad-center/dashboard" arrow>
+    The same metrics as cards, with the trend over time.
+  </Card>
+  <Card title="Metrics" icon="calculator" href="/help-center/atlas/ad-center/metrics" arrow>
+    What every column means and how it is calculated.
+  </Card>
+  <Card title="Creative center" icon="images" href="/help-center/atlas/ad-center/creative-center" arrow>
+    Rank the creatives, copies and headlines behind your ads.
+  </Card>
+  <Card title="UTM tagging" icon="tag" href="/help-center/atlas/reports/utm-tagging" arrow>
+    Make every click carry the ids the table matches on.
+  </Card>
+</Columns>

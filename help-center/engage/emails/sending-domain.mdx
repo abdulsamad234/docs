@@ -1,7 +1,7 @@
 ---
 title: "Send from your own domain"
-description: "Send Referly's affiliate emails from your own domain. Add your domain, install the DNS records, verify it, and set your sending address and sender name for better deliverability and trust."
-keywords: ["custom sending domain", "send email from own domain", "email dns records", "domain verification", "sender name", "email deliverability", "affiliate email domain"]
+description: "Send Referly's affiliate emails from your own domain or subdomain. Connect the domain, add the DNS records (with the option for GoDaddy, Cloudflare and Namecheap host names), verify it, and set your sending address and sender name."
+keywords: ["custom sending domain", "send email from own domain", "email dns records", "domain verification", "sender name", "email deliverability", "affiliate email domain", "email subdomain", "DNS host name"]
 ---
 By default, the emails Referly sends to your affiliates come from a Referly address. On the Business plan you can send them from your own domain instead — so a welcome email arrives from `notifications@your-domain.com` rather than a Referly one. Emails from your own domain look more professional, build trust with your affiliates, and are less likely to land in spam.
 
@@ -15,15 +15,19 @@ You'll need a domain you own and access to its DNS settings — the place where 
 
 ## Add your domain
 
-In the left sidebar, select **Settings**, open **Affiliate Portal**, then **Email domain**. In the **Custom Sending Domain** section, type your domain into the **Domain Name** field — for example `your-domain.com` — and select **Connect**.
+In the left sidebar, select **Settings**, open **Affiliate Portal**, then **Email domain**. In the **Domain Configuration** section, type your domain into the **Domain Name** field. Referly recommends a subdomain, for example `notifications.your-domain.com` or `mail.your-domain.com`. Using a subdomain keeps these emails from interfering with your existing email setup and improves deliverability.
 
-![connect-domain](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784760492208-315913-SCR-20260723-clih.png)
+Under the field there's a checkbox for people whose DNS is managed by GoDaddy, Cloudflare, Namecheap, Google Domains, or DigitalOcean. If that's you, tick it before you connect. When it's ticked and you're connecting a subdomain, the **Host(name)** values Referly shows in the next step leave off your main domain. For example, you'll see `notifications` rather than `notifications.your-domain.com`. That way you can paste each value as it is, and your domain isn't added to the host twice. The checkbox only appears before a domain is connected, so decide before you continue.
 
-Your domain now appears with an **Unverified** badge. The next step tells Referly your domain is really yours.
+Then select **Connect Domain**.
+
+![The Domain Configuration card with a subdomain typed into Domain Name, the DNS provider checkbox and the Connect Domain button](/images/help-center/engage/connect-domain-v2.png)
+
+Your domain now appears with a **Pending Verification** badge. The next step tells Referly your domain is really yours.
 
 ## Add the DNS records
 
-Select **How to verify** (or the refresh icon) to open the **Verify Your Domain** window. It lists a set of DNS records you need to add at your domain provider, grouped into **Sending Records** and **MX Records**.
+Select **How to verify**, next to the badge, to open the **Verify Your Domain** window. It lists a set of DNS records you need to add at your domain provider, grouped into **Sending Records** and **MX Records**.
 
 ![verify-dns-dialog](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784760496722-207467-SCR-20260723-clsp.png)
 
@@ -34,7 +38,7 @@ To add them:
     In a separate tab, log in to wherever you manage your domain's DNS and go to its DNS records.
   </Step>
   <Step title="Copy each record across">
-    For every row in the window, add a matching record at your provider using the **Type**, **Host (name)**, and **Value (points to)** shown. Select the copy icon next to each value so you paste it exactly — a single wrong character will stop the domain from verifying. For MX records, also set the **Priority** shown.
+    For every row in the window, add a matching record at your provider using the **Type**, **Host(name)**, and **Value(points to)** shown. Select the copy icon next to each value so you paste it exactly — a single wrong character will stop the domain from verifying. For MX records, also set the **Priority** shown.
   </Step>
   <Step title="Save at your provider">
     Save the records. They can take anywhere from a few minutes to a few hours to take effect, depending on your provider.
@@ -45,16 +49,16 @@ To add them:
 
 Back in the window, select **Verify DNS Records**. Referly checks your domain and marks each record **Verified** once it finds it. When all the records check out, your domain shows a green **Verified** badge and your emails will start sending from it.
 
-If it doesn't verify right away, wait a little longer for the records to take effect and select **Verify DNS Records** again. Double-check that each record's host and value match exactly, with no extra spaces, and that you didn't accidentally add your domain name twice in the host field.
+If it doesn't verify right away, wait a little longer for the records to take effect and select **Verify DNS Records** again. You can also select the refresh icon next to your domain to check its status. Double-check that each record's host and value match exactly, with no extra spaces, and that you didn't accidentally add your domain name twice in the host field (the DNS-provider checkbox in [Add your domain](#add-your-domain) helps with this).
 
 ## Set your sending address and sender name
 
-Once your domain is connected, choose how emails appear:
+Once your domain is verified, use the **Email Settings** section to choose how emails appear:
 
-- **Sending Email Address** — the part before the `@`. For example, entering `notifications` sends emails from `notifications@your-domain.com`.
-- **Sender Name** — the name affiliates see as the sender, such as `Acme Affiliate Program`.
+- **Sending Email Address**: the part before the `@`. For example, if you connected `mail.your-domain.com`, entering `partners` sends emails from `partners@mail.your-domain.com`.
+- **Sender Name**: the name affiliates see as the sender, such as `Acme Affiliate Program`.
 
-Select **Save** to apply them.
+Select **Save Changes**, at the bottom right, to apply them.
 
 ![sending-address-fields](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784760500815-730570-SCR-20260723-cmji.png)
 

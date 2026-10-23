@@ -1,6 +1,157 @@
 ---
 title: "Custom domain"
-description: "Serve client portals from your domain."
+description: "Serve your Referly agency dashboard and client affiliate portals from your own subdomain with CNAME records, verify the domain, and send client notification emails from your own Email Sending Domain."
+keywords: ["agency custom domain", "white label domain", "CNAME setup", "wildcard CNAME", "agency subdomain", "affiliate portal custom domain", "email sending domain", "DNS records", "verify domain", "Referly agency"]
 ---
+A custom domain moves your agency dashboard and every client's affiliate portal onto your own web address. Your clients sign in at something like `agency.yourwebsite.com`, and each affiliate portal gets its own address on your domain, such as `acme.yourwebsite.com`. Your main website isn't touched, and you don't need to change your nameservers.
 
-{/* TODO: Write this article. */}
+This page also covers the **Email Sending Domain**, which sends your clients' notification emails from your own domain.
+
+## Before you start
+
+You'll need:
+
+- A domain you own, such as `yourwebsite.com`.
+- Access to its DNS settings, usually wherever you bought the domain or host your website.
+- The **Owner** or **Admin** role in your agency.
+
+Pick the subdomain you want your agency dashboard on, such as `agency.yourwebsite.com` or `app.yourwebsite.com`.
+
+## How your addresses work
+
+Once your domain is set up:
+
+- **Your agency dashboard** lives on the subdomain you choose, for example `agency.yourwebsite.com`.
+- **Each client's affiliate portal** lives on its own subdomain of the same domain, for example `acme.yourwebsite.com`, using the portal subdomain set in that program's [general settings](/help-center/settings/program/general).
+
+One DNS record covers every client program, including ones you create later, so you never add records for individual programs.
+
+<Note>
+  Your agency subdomain can't be one that a client program already uses for its portal, and a domain can only be connected to one agency.
+</Note>
+
+## Add your agency subdomain
+
+<Steps>
+  <Step title="Open the Custom Domain page">
+    Select the gear at the bottom of the left bar to open **Agency Settings**, select the **Customization** tab, then select **Custom Domain (CName)**.
+  </Step>
+  <Step title="Start adding the subdomain">
+    Select **Add Subdomain**. Read the **How it works** summary, then select **Continue**.
+  </Step>
+  <Step title="Enter your subdomain">
+    Type your subdomain into **Agency Subdomain**, for example `agency.yourwebsite.com`, and select **Add Subdomain**.
+  </Step>
+</Steps>
+
+You'll see **Domain added, now add the DNS records shown**, and the **DNS Configuration** window opens with the records to add.
+
+## Add the DNS records
+
+The **DNS Configuration** window lists each record with its **Type**, **Name**, and **Value**. Add each one at your DNS provider, using the copy icon in the **Action** column so the values are pasted exactly.
+
+![The DNS Configuration window listing the two CNAME records with their Type, Name, Value and a copy icon in the Action column, plus the Close and Verify Domain buttons](/images/help-center/agencies/agency-dns-configuration.png)
+
+You'll usually see these records:
+
+| Type | Name | What it's for |
+|---|---|---|
+| **CNAME** | Your subdomain, for example `agency` | Points your agency dashboard at Referly. |
+| **CNAME** | `*` | The wildcard record that serves every client's affiliate portal. |
+| **TXT** | As shown | Only appears when it's needed to prove you own the domain. One TXT record covers your agency domain and all program subdomains. |
+
+If you use your root domain (such as `yourwebsite.com`) instead of a subdomain, the window shows **A** records with the name `@` in place of the first CNAME.
+
+## Verify your domain
+
+After adding the records, select **Verify Domain** at the bottom of the window. DNS changes usually take effect within minutes but can take up to 48 hours.
+
+- If everything checks out, you'll see **Domain successfully verified!**
+- If not, you'll see **Waiting for verification. DNS changes can take a little while to propagate, try again in a few minutes.** Wait a little and try again.
+
+Back on the page, your agency subdomain is labelled **(Agency Dashboard)** and shows its status. Your program addresses are labelled **(Affiliate Program Subdomains)**; after you verify, they show how many program domains are active. The statuses are:
+
+| Status | What it means |
+|---|---|
+| **Verified** | The address is set up and working. |
+| **Waiting for DNS** | Referly hasn't found your DNS records yet. |
+| **Waiting for Ownership Verification** | Add the TXT record shown in the **DNS Configuration** window. |
+| **Not Registered** | The address isn't connected yet. |
+
+Below them, the overall badge reads **Domain Verified** once everything is set up, or **Waiting for Verification** until then. While you're waiting, select **Setup Instructions** to reopen the records, or the refresh icon to check again.
+
+![The Agency Subdomain page after adding a domain, with the agency dashboard and wildcard subdomain cards each marked Waiting for DNS, the overall Waiting for Verification badge and the Setup Instructions link](/images/help-center/agencies/agency-domain-verified.png)
+
+## Change or remove your domain
+
+Your agency can have one subdomain at a time. To use a different one, select the trash icon (**Remove domain**) next to your current domain, then add the new one.
+
+<Note>
+  Some older agency domains use a nameserver setup and show **This domain uses our legacy nameserver setup and continues to work as-is.** To manage DNS at your own provider instead, remove the domain and add it again.
+</Note>
+
+## Send client emails from your own domain
+
+By default, the notification emails your clients get come from Referly. With an **Email Sending Domain**, they come from your own domain instead, which builds trust with your clients and helps the emails reach their inbox.
+
+Find it under **Agency Settings**, on the **Customization** tab, then **Email Sending Domain**.
+
+### Connect your sending domain
+
+1. In **Domain Name**, enter a subdomain such as `notifications.yourdomain.com` or `mail.yourdomain.com`. Using a subdomain avoids interfering with the email you already send from your main domain.
+2. If your DNS provider is GoDaddy, Cloudflare, Namecheap, Google Domains, or DigitalOcean, tick the checkbox under the field. These providers add your root domain to record names automatically, so ticking it shows only the part you need to type (for example `mail` instead of `mail.yourdomain.com`).
+3. Select **Connect Domain**.
+
+![The Email Sending Domain page with a subdomain typed into Domain Name, the DNS provider checkbox and the Connect Domain button](/images/help-center/agencies/agency-email-domain-connect.png)
+
+<Note>
+  The checkbox only appears before you connect the domain. If you need to change it later, remove the domain and connect it again.
+</Note>
+
+### Add the email DNS records
+
+Your domain shows **Pending Verification**. Select **How to verify** to open the **Verify Your Domain** window. It lists the records to add at your DNS provider in two tables, **Sending Records** and **MX Records**, with the **Type**, **Host(name)**, and **Value(points to)** for each. MX records also have a **Priority**.
+
+Add every record at your DNS provider, using the copy icons so the values are exact.
+
+### Verify it
+
+In the **Verify Your Domain** window, select **Verify DNS Records**. Each record shows **Verified** once Referly finds it. You can also check again later with the refresh icon (**Check verification status**) next to your domain.
+
+When everything checks out, your domain shows **Verified**.
+
+### Set the sender details
+
+Once your domain is verified, fill in **Email Settings**:
+
+- **Sending Email Address**: the part before the `@`. Entering `notifications` sends emails from `notifications@` followed by your sending domain.
+- **Sender Name**: the name your clients see in the "From" field.
+
+Select **Save Changes** to apply them. These fields stay locked until the domain is verified.
+
+### What changes once it's verified
+
+Notification emails to your clients, such as new affiliates, new referrals, new sales, payouts, and the weekly report, are sent from your domain using your sender details. They carry the **Email Logo** from your [white label](/help-center/agencies/white-label) settings and don't include Referly's footer.
+
+Emails to a client program's affiliates also come from your domain, unless that program sends from its own verified [email domain](/help-center/engage/emails/sending-domain).
+
+### Remove the sending domain
+
+Select the trash icon (**Remove domain**) next to your domain, then select **Remove Domain** to confirm. Emails go back to being sent from Referly's default domain.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="White label" icon="palette" href="/help-center/agencies/white-label" arrow>
+    Put your agency name and logos on the dashboard your clients use.
+  </Card>
+  <Card title="Agencies overview" icon="building" href="/help-center/agencies/overview" arrow>
+    How the agency dashboard and settings fit together.
+  </Card>
+  <Card title="Manage client programs" icon="folder-tree" href="/help-center/agencies/client-programs" arrow>
+    Create programs, hand them to clients, and manage them day to day.
+  </Card>
+  <Card title="Program email domain" icon="envelope" href="/help-center/engage/emails/sending-domain" arrow>
+    How a single program sends affiliate emails from its own domain.
+  </Card>
+</Columns>

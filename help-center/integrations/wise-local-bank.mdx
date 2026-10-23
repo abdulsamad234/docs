@@ -1,7 +1,7 @@
 ---
 title: "Local bank account payouts (powered by Wise)"
-description: "Pay affiliates directly into their local bank account through your connected Wise account. Setup, the bank details affiliates must supply per currency, paying a batch, fees, and troubleshooting."
-keywords: ["local bank account payouts", "Wise bank transfer affiliates", "pay affiliates to bank account", "Wise recipient bank details", "IBAN affiliate payout", "affiliate payout currency", "Wise to local bank", "Referly payout methods", "international affiliate payouts"]
+description: "Pay affiliates directly into their local bank account through your connected Wise account. Setup, the bank details affiliates supply per currency, how Wise checks them on save, paying a batch, fees, and troubleshooting."
+keywords: ["local bank account payouts", "Wise bank transfer affiliates", "pay affiliates to bank account", "Wise recipient bank details", "IBAN affiliate payout", "affiliate payout currency", "Wise to local bank", "Referly payout methods", "international affiliate payouts", "Wise rejected payout details", "account holder name Wise"]
 ---
 **Local Bank Account** is a payout method that sends an affiliate's commission straight into their own bank account, using your connected Wise account to move the money. Your affiliate doesn't need a Wise account, doesn't get a claim link, and doesn't have to do anything when the payout goes out — the money simply arrives.
 
@@ -71,7 +71,7 @@ There's no separate switch for Local Bank Account. Turning Wise on makes both op
   </Step>
 </Steps>
 
-{/* TODO screenshot: wise-payouts-card-enabled — upload it in the local Documentation Agent */}
+{/* TODO screenshot: wise-payouts-card-enabled, upload it in the local Documentation Agent */}
 
 <Note>
   Turning Wise on switches **Manual Bank Account** off, because Wise already sends money to bank accounts for you. You can't offer both at once. See [Payout methods](/help-center/manage/payouts/payout-methods).
@@ -79,7 +79,7 @@ There's no separate switch for Local Bank Account. Turning Wise on makes both op
 
 ## Step 2: Point your affiliates at their payout settings
 
-Nobody gets paid this way until they've entered their bank details themselves — you can't do it for them. Ask your affiliates to go to **Settings → Payouts → Cash payouts** in the affiliate portal, and walk them through the steps below.
+Nobody gets paid this way until their bank details are in, and affiliates usually enter these themselves. Ask your affiliates to go to **Settings → Payouts → Cash payouts** in the affiliate portal, and walk them through the steps below. If you need to, you can also enter or correct an affiliate's details yourself by opening one of their payouts and selecting **Edit Payout Details**.
 
 ## How an affiliate adds their bank account
 
@@ -91,7 +91,7 @@ Under **Payout Method**, they pick the card labelled **Local Bank Account**, des
 
 Choosing this hides the payout email field — it isn't needed, because nothing is sent by email.
 
-{/* TODO screenshot: affiliate-local-bank-option — upload it in the local Documentation Agent */}
+![The Cash Payout Method cards in the affiliate portal with Local Bank Account selected next to the Wise, PayPal Payouts and Manual Bank Account options](/images/help-center/integrations/affiliate-local-bank-option.png)
 
 ### Pick the payout currency
 
@@ -117,7 +117,11 @@ Now the actual form appears. Every field on it comes from Wise, for that exact c
 
 Some fields reload the rest of the form when changed — picking a country or a bank, for instance, can change which fields come next. That's expected; give it a second to settle.
 
-{/* TODO screenshot: affiliate-bank-fields — upload it in the local Documentation Agent */}
+Each field is checked against Wise's format rules as the affiliate types. If something doesn't fit, a red message under the field says it's invalid and shows an example of the expected format.
+
+One of the fields asks for the account holder's full name (Wise labels it **Full name of the account holder**). This is the name Referly sends to Wise for the payout, not the affiliate's profile name, so it should match the name on the bank account exactly and include both a first and a last name.
+
+{/* TODO screenshot: affiliate-bank-fields, upload it in the local Documentation Agent */}
 
 ### Fill in the recipient address
 
@@ -132,7 +136,9 @@ This is the address of the person receiving the money, not their bank's address.
 
 ### Save
 
-The save action stays disabled until the currency is chosen, every required bank field is filled in, and all four address parts are complete. If nothing happens when an affiliate tries to save, one of those is missing — the empty required fields are the place to look.
+The affiliate selects **Save Changes**. Missing details don't block the button. Instead, saving highlights every empty required field with **This field is required.** underneath it, and shows **Fill in the highlighted bank account fields.** If no currency is chosen yet, they'll see **Select a payout currency.**
+
+**Save Changes** is only unavailable when nothing has changed, while a save is running, or while a field still has a format error. In that last case, fix the field with the red message under it.
 
 ## What the fields look like by destination
 
@@ -152,9 +158,13 @@ Every one of these also asks for the account holder's name and full address.
 
 ## What happens after an affiliate saves
 
-Referly hands the details to Wise, which sets the affiliate up as a payee on your Wise account. From then on, they're paid straight from your balance whenever you run a batch.
+When the affiliate saves, Referly checks the details with Wise straight away by setting the affiliate up as a recipient on your Wise account. From then on, they're paid straight from your balance whenever you run a batch.
 
-Wise checks the format at this point, so obviously wrong details — an IBAN with the wrong number of characters, a sort code that's too short — are caught right away and shown as an error on the field.
+This is a full check by Wise, not only a format check. Problems such as an IBAN that doesn't pass Wise's check, a missing country, or an account holder name without a first and last name are caught at save time. If Wise rejects anything, the details aren't saved. The affiliate sees a message that Wise rejected the payout details, and each problem appears in red under the field it belongs to. A name problem shows **Enter the account holder's first and last name.** under the account holder's name field.
+
+{/* TODO screenshot: wise-bank-save-errors, upload it in the local Documentation Agent */}
+
+The same check runs when affiliates enter their bank details during onboarding, and when you change an affiliate's details yourself with **Edit Payout Details**. If Wise can't be reached at that moment, the details are saved anyway.
 
 What Wise can't check is whether the account actually belongs to that person or is even open. Those problems only surface after you've sent the money, when the receiving bank rejects it and the payout comes back as failed.
 
@@ -166,7 +176,7 @@ Open the batch. Referly flags affiliates who chose Local Bank Account but haven'
 
 The batch itself is labelled **Wise to local bank**, so you can tell at a glance which route it's taking.
 
-{/* TODO screenshot: batch-wise-local-bank-label — upload it in the local Documentation Agent */}
+{/* TODO screenshot: batch-wise-local-bank-label, upload it in the local Documentation Agent */}
 
 ### Review the fee preview
 
@@ -181,7 +191,7 @@ Select the pay action and Referly asks Wise to quote every transfer, then shows 
 
 Anything Wise can't quote is listed here with the affiliate's name and the reason, rather than failing silently later.
 
-{/* TODO screenshot: local-bank-fee-preview — upload it in the local Documentation Agent */}
+{/* TODO screenshot: local-bank-fee-preview, upload it in the local Documentation Agent */}
 
 <Info>
   The fee comes out of the amount rather than being added on top. **Total from Wise balance (You pay)** is the figure to check your balance against.
@@ -228,12 +238,14 @@ When every payout reaches Paid, the batch is marked paid and you get a confirmat
 | What you see | What's wrong | What to do |
 | --- | --- | --- |
 | The affiliate is skipped when you pay | They picked Local Bank Account but left the currency or bank fields blank | Ask them to finish **Settings → Payouts → Cash payouts** in the affiliate portal |
-| Save is disabled and nothing happens | A required bank field or part of the address is empty | Check every field with a red asterisk, and confirm country, city, street, and post code are all filled |
+| Saving highlights fields with "This field is required." | A required bank field or part of the address is empty | Fill in every highlighted field, and confirm country, city, street, and post code are all filled |
+| **Save Changes** can't be selected | Nothing has changed since the last save, or a field has a format error | Fix any field with a red message under it. If nothing has changed, there's nothing to save |
 | "No account requirements available for this currency." | Wise can't pay into a bank account in that currency | Choose a currency the affiliate's bank can receive, or switch them to another payout method |
 | Stuck on "Loading account requirements..." | The connection to Wise didn't respond | Reload the page. If it persists, check Wise is still connected on your program |
 | The form emptied itself | The currency or a field that changes the form was changed | Expected behaviour. Re-enter the details under the new currency |
 | A payout can't be quoted in the fee preview | Wise doesn't support that route, or the saved details don't satisfy Wise | Ask the affiliate to re-check their details, or pay them another way this cycle |
-| Wise rejects the details when the affiliate saves | The format is wrong — IBAN too short, sort code wrong length | Have them copy the details straight from their bank statement or banking app |
+| "Wise rejected these payout details" when the affiliate saves | Wise checked the details and found a problem, such as an invalid IBAN or a missing country | Read the red message under each highlighted field. Have them copy the details straight from their bank statement or banking app |
+| "Enter the account holder's first and last name." | The account holder name has only one word | Enter the account holder's full name, exactly as the bank has it |
 | Transfers created but nothing arrives | You haven't approved and funded them in Wise | Open the batch in Wise and confirm the payment |
 | A payout fails days after you paid | The receiving bank rejected it — closed account, name mismatch, wrong number | The money returns to your Wise balance. Have the affiliate correct their details, then re-run the payout |
 | Local Bank Account isn't offered to affiliates | Wise isn't connected or isn't enabled on the program | Connect Wise and turn the card on in **Payout settings** |

@@ -1,7 +1,7 @@
 ---
 title: "Create a coupon"
-description: "Create a coupon in Referly: choose your source, set a percentage or flat-rate discount, pick a duration, add redemption limits, and Referly builds it on Stripe, Shopify, WooCommerce, or Polar for you."
-keywords: ["create a coupon", "make a discount code", "set up affiliate coupon", "percentage discount", "flat rate coupon", "coupon duration", "redemption limit", "referly create coupon"]
+description: "Create a coupon in Referly: choose your source, set a percentage or flat-rate discount, pick a duration, add redemption limits, and Referly builds it on Stripe, Shopify, WooCommerce, Polar, Creem, or Ecwid for you."
+keywords: ["create a coupon", "make a discount code", "set up affiliate coupon", "percentage discount", "flat rate coupon", "coupon duration", "redemption limit", "referly create coupon", "Creem discount code", "Ecwid coupon"]
 ---
 Creating a coupon in Referly builds the discount for you on your connected platform, so it works the moment a customer enters the code at checkout. You choose the discount and the rules; Referly handles the rest.
 
@@ -17,7 +17,12 @@ Open your campaign, select **Coupons** in the left sidebar, then select **Create
 
 ### Choose the source
 
-At the top, pick where the coupon should be created — **Stripe**, **Shopify**, **WooCommerce**, **Polar**, or the **API**. This is the platform Referly will build the coupon on. If the one you want isn't connected yet, you'll be prompted to [connect it](/help-center/engage/coupons/connect-a-source) first.
+At the top, pick where the coupon should be created: **Stripe**, **Shopify**, **WooCommerce**, **Polar**, **Creem**, **Ecwid**, or the **API**. This is the platform Referly will build the coupon on. If the one you want isn't connected yet, you'll be prompted to [connect it](/help-center/engage/coupons/connect-a-source) first.
+
+A couple of platforms have limits worth knowing before you start:
+
+- **Creem**: each code can be at most 14 characters. If a code you type is longer, Referly shows a message naming the code and its length, and the coupon isn't created until you shorten it. Auto-generated codes are shortened to fit automatically. See the [Creem integration](/help-center/integrations/creem).
+- **Ecwid**: there's no **Multiple Months** duration, and Ecwid coupons are either single-use or unlimited. If you set **Maximum Redemptions** above 1, Referly tracks it in your reporting, but your Ecwid checkout doesn't enforce it. See the [Ecwid integration](/help-center/integrations/ecwid).
 
 ### Name the coupon
 
@@ -40,7 +45,9 @@ For subscription products, the duration decides how many billing cycles the disc
 - **One-time** — the discount applies to the first payment only.
 - **A set number of months** — the discount repeats for the number of months you enter, then stops.
 
-For one-off purchases, the discount simply applies to that order.
+For one-off purchases, the discount applies to that order.
+
+On screen, the set-number-of-months option is called **Multiple Months**. It isn't available for WooCommerce or Ecwid coupons.
 
 ![coupon-duration](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784755413723-433899-SCR-20260723-bhvz.png)
 
@@ -57,6 +64,8 @@ These apply to the coupon as a whole. You can also set finer limits on individua
 
 Select **Create** at the bottom. Referly builds the coupon on your connected platform and adds it to your library, ready to assign to affiliates.
 
+You can change some of these settings later. What you can change depends on the platform, so check [Edit a coupon](/help-center/engage/coupons/edit) before you rely on it.
+
 ![create-coupon-form](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784755419584-601761-SCR-20260723-bifx.png)
 
 ## What to do next
@@ -64,6 +73,8 @@ Select **Create** at the bottom. Referly builds the coupon on your connected pla
 - Add the [promotional code](/help-center/engage/coupons/promotional-codes) customers will type, or tie a code to a specific affiliate.
 - [Auto-generate a unique code](/help-center/engage/coupons/auto-generated-codes) for every affiliate from this coupon.
 - Add [restrictions](/help-center/engage/coupons/restrictions) like a minimum order or first-time-customer rule.
+- Let affiliates [create their own codes](/help-center/engage/coupons/affiliate-generated-codes) under this coupon.
+- [Edit the coupon](/help-center/engage/coupons/edit) later if your offer changes.
 
 ## Related
 

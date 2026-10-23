@@ -1,6 +1,173 @@
 ---
 title: "Manage your subscription"
-description: "Change, pause, or cancel your plan."
+description: "Manage your Referly subscription from Settings, Billing, Subscription: choose or change your plan, see exactly what an upgrade or downgrade costs before you confirm, start your paid plan during a free trial, and cancel."
+keywords: ["Referly subscription", "change plan", "upgrade plan", "downgrade plan", "cancel subscription", "start paid plan", "free trial", "proration", "plan change charge", "confirm plan change", "billing portal", "account credit"]
 ---
+Your subscription is the Referly plan you pay for. From one screen you can see the plan you're on and what it costs, move to a different plan, start paying before your free trial ends, and cancel. Referly always shows you exactly what you'll be charged before it touches your card.
 
-{/* TODO: Write this article. */}
+To find it, open **Settings** from the left sidebar, go to **Billing**, then select **Subscription**.
+
+![The Subscription screen with the current plan, the Change Plan button, the yearly cost and next payment, and the usage meters for referrals, revenue, affiliate programs and affiliates](/images/help-center/billing/subscription-overview.png)
+
+## What the Subscription screen shows
+
+- **Plan**: the name of your plan, followed by **Monthly** or **Yearly**. While you're trialing, a **Free Trial** badge sits next to it.
+- **Change Plan**: opens the plan chooser. If you don't have a plan yet, the button reads **Choose Plan**.
+- **Usage**: how much of your plan's limits you've used. See [plans and features](/help-center/billing/plans-and-features) for what each bar counts.
+- **Monthly cost** or **Yearly cost**: what you pay each billing period.
+- **Next payment**: the date of your next charge. If a payment is late, an **Overdue** badge appears next to the date, along with a **Pay now** button that opens the unpaid invoice so you can settle it.
+- **Manage/Cancel Subscription**: opens your secure Stripe billing portal, where you can cancel. See [Cancel your subscription](#cancel-your-subscription) below.
+- **Add-ons**: the card below your plan, where you buy and manage add-ons. See [add-ons](/help-center/billing/add-ons).
+
+<Note>
+  If you're on a custom Enterprise contract, there's no **Change Plan** button. Instead you'll see "You are on a custom Enterprise contract. To change your plan, contact your account manager."
+</Note>
+
+## Choose or change your plan
+
+Select **Change Plan** (or **Choose Plan**) under your plan name. The **Choose your plan** panel opens with the plans side by side.
+
+![The Choose your plan panel with the brand and agency toggle and the Startup, Business and Enterprise plans side by side, each with a Switch Plan or Speak with us button](/images/help-center/billing/choose-plan-sheet.png)
+
+- Use the **I'm a brand** and **I'm an agency** tabs at the top to switch between the brand plans and the agency plans.
+- Turn on the **Annual** switch on a plan card to see yearly prices. Paying yearly gets you **2 months free**.
+- Hover over most features in a card's list to see a short explanation of what they do.
+- To compare every feature in one table, select **View full pricing page** at the bottom of the panel.
+
+The button on each card tells you what selecting it will do:
+
+| Button | When you see it | What happens |
+| --- | --- | --- |
+| **Start 14-day free trial** | You don't have a plan yet and the **Annual** switch is off | You add a card on Stripe's secure checkout and your 14-day trial starts. |
+| **Start Paid Plan** | You don't have a plan yet, and either the **Annual** switch is on or a free trial isn't available to you (for example, you've already had one) | You pay for the plan on Stripe's secure checkout and it starts right away. |
+| **Upgrade** | You're on a paid plan and this plan is a step up | Referly shows you the charge to review before anything is billed. |
+| **Switch Plan** | You're on a paid plan and this plan is a step down, or the same plan on a different billing period | Referly shows you the charge or credit to review before anything changes. |
+| **Current Plan** | This is the plan and billing period you're on now | Nothing; the button can't be selected. |
+| **Speak with us** | Enterprise and Agency Scale | Opens a page where you can book a call with the Referly team, who set these plans up with you. |
+
+To learn what each plan includes and costs, see [plans and features](/help-center/billing/plans-and-features).
+
+## Upgrade or downgrade a paid plan
+
+<Steps>
+  <Step title="Open the plan chooser">
+    On the **Subscription** screen, select **Change Plan**.
+  </Step>
+  <Step title="Pick the billing period">
+    Turn the **Annual** switch on for yearly billing, or leave it off for monthly.
+  </Step>
+  <Step title="Choose the new plan">
+    Select **Upgrade** or **Switch Plan** on the plan you want. A confirmation window opens showing exactly what will happen to your card.
+  </Step>
+  <Step title="Confirm">
+    Check the amount and the card, then select the confirm button. The change takes effect right away and you'll see "Your plan has been updated".
+  </Step>
+</Steps>
+
+If you switch to one of the agency plans, Referly takes you to your agency dashboard once the change goes through.
+
+### How upgrades and downgrades are charged
+
+Plan changes are settled immediately, based on how much of your current billing period is left:
+
+- **If the new plan costs more**: your card is charged today for the new plan's price for the period ahead, minus a credit for the unused part of your current plan.
+- **If the new plan costs less**: nothing is charged today. The unused part of your current plan is added to your account as credit and taken off your future invoices.
+
+Either way, the confirmation window shows the full breakdown and tells you the date your new plan renews and the price it renews at.
+
+## Review the charge before you confirm
+
+Whenever a button would charge the card you have saved, Referly opens a confirmation window first, so a stray click never turns into a charge you didn't expect. It's titled **Confirm plan change** when you switch plans, or **Start your paid plan** when you end a free trial early. The same window opens from the upgrade prompts on locked features and from the **Start Paid Plan** button in the left sidebar during a trial.
+
+{/* TODO screenshot: confirm-charge-dialog, upload it in the local Documentation Agent */}
+
+The window shows:
+
+- **The plan you're moving to**, with its regular price (such as `$149.00/month`) and, for a plan change, the plan you're moving from.
+- **Charged today** or **Account credit**: the amount that will be charged now, or the credit you'll receive when you move to a cheaper plan. Below it, each line of the calculation is listed, and any discount you have appears as a **Discount** line.
+- **Your card**: the card brand, its last four digits and its expiry date. A **Will be charged** badge appears when the card is charged on confirmation.
+- **A plain-language summary** of what happens when you confirm, including when the plan renews and at what price.
+
+Select **Cancel** to close the window without changing anything. To go ahead, select the confirm button, which names the amount when there's something to pay (for example, **Pay $74.00 and switch** or **Pay $149.00 and start plan**). When nothing is charged today, it reads **Confirm plan change** or **Start paid plan**.
+
+### If you don't have a card saved
+
+When you start your paid plan and there's no card saved on your subscription, Referly skips the review and takes you straight to Stripe's secure checkout, with the message "Taking you to secure checkout to add a card." You add your card there, and the checkout page shows the amount before you pay.
+
+When you change plans and Referly can't find a card to charge, the window warns you that Stripe will email you an invoice for the amount instead of charging a card automatically, and the confirm button reads **Continue and invoice** followed by the amount.
+
+### If the charge preview doesn't load
+
+Occasionally the window shows "We could not load a preview of this charge." Select **Try again** to reload it. If you select **Continue anyway**, the card you have saved is charged for the plan without a preview, so we recommend trying again first.
+
+## Start your paid plan during a free trial
+
+While you're on a free trial, the **Subscription** screen shows a **You're on a free trial** banner with the number of days you have left. Your plan's full limits are unlocked during the trial, but a few features stay locked until you start paying. See [plans and features](/help-center/billing/plans-and-features) for what the trial includes.
+
+![The Subscription screen during a free trial, with the Free Trial badge next to the plan name, the Trial Limits Active badge on the usage meters and the Trial Account Limits card showing the days left and the Start Paid Plan button](/images/help-center/billing/trial-banner.png)
+
+![The usage meter in the sidebar during a trial, showing the days left and the Start paid plan button](/images/help-center/billing/trial-sidebar-meter.png)
+
+To start your paid plan now instead of waiting for the trial to end:
+
+<Steps>
+  <Step title="Select Start Paid Plan">
+    Select **Start Paid Plan** in the trial banner. You'll also find a **Start Paid Plan** button in the left sidebar, under the number of trial days you have left.
+  </Step>
+  <Step title="Review the charge">
+    The **Start your paid plan** window shows the card on file and the amount. Your trial ends as soon as you confirm, and you pay the full price of your plan today.
+  </Step>
+  <Step title="Confirm">
+    Select the confirm button. Your new billing period starts today, so your next payment is due one billing period from now.
+  </Step>
+</Steps>
+
+### Switch plans during your trial
+
+You can try a different plan without ending your trial. Open **Change Plan**, keep the **Annual** switch off, and select **Switch Trial Plan** on the plan you want. Your trial carries on with that plan, and nothing is charged until the trial ends.
+
+Yearly billing isn't available during a free trial. With the **Annual** switch on, the plan cards show **Start Paid Plan** instead. Selecting it takes you to Stripe's secure checkout to pay for the yearly plan, which replaces your trial straight away.
+
+## Cancel your subscription
+
+<Steps>
+  <Step title="Open the billing portal">
+    On the **Subscription** screen, select **Manage/Cancel Subscription** on the right. Your secure Stripe billing portal opens.
+  </Step>
+  <Step title="Cancel your plan">
+    Cancel your subscription in the portal. When you're done, use the portal's link back to Referly to return to the **Subscription** screen.
+  </Step>
+</Steps>
+
+If your cancellation is set for the end of the billing period you've already paid for, your plan stays active until then, and you can go back through **Manage/Cancel Subscription** to undo the cancellation before that date. Once your plan has ended, the button on the **Subscription** screen reads **Choose Plan** whenever you want to come back.
+
+There's no option to pause a subscription. If you need a break, cancel and choose a plan again later.
+
+<Note>
+  Add-ons are billed separately from your plan. To manage or cancel one, select **Manage add-on** next to it in the **Add-ons** card. See [add-ons](/help-center/billing/add-ons).
+</Note>
+
+### If you pay through Shopify
+
+If your Referly subscription is billed through Shopify, you'll see a **Cancel Subscription** button instead of **Manage/Cancel Subscription**. Select it, and a window asks "Are you sure you want to cancel your subscription? You'll lose access to premium features." Select **Confirm Cancel** to cancel, or **Keep Subscription** to keep your plan.
+
+## If an agency manages your program
+
+When you open a client's program from an agency account, the **Subscription** screen shows a notice that the program is managed by your agency settings, with a **Go to Agency Account Billing** button. Your agency's own plan and billing live in your agency account. See [billing for agencies](/help-center/agencies/billing).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Plans and features" icon="layer-group" href="/help-center/billing/plans-and-features" arrow>
+    Compare plans, limits and what each one unlocks.
+  </Card>
+  <Card title="Add-ons" icon="puzzle-piece" href="/help-center/billing/add-ons" arrow>
+    Add Engage, Gamify or Influencer Discovery to your plan.
+  </Card>
+  <Card title="Invoices" icon="file-invoice-dollar" href="/help-center/billing/invoices" arrow>
+    Find, view and pay your Referly invoices.
+  </Card>
+  <Card title="Billing for agencies" icon="building" href="/help-center/agencies/billing" arrow>
+    How billing works when you run programs for clients.
+  </Card>
+</Columns>

@@ -1,0 +1,98 @@
+---
+title: "Plans and billing"
+description: "Referly Atlas plans and prices, the 14-day free trial, how tracked revenue is metered, what happens at 80% and 100% of your band, changing or cancelling your plan, the 20% discount for Referly plan holders, failed payments and invoices."
+keywords: ["Atlas pricing", "Atlas plans", "tracked revenue", "Atlas free trial", "Starter Growth Scale", "change Atlas plan", "cancel Atlas", "past due", "Atlas invoices", "Referly bundle discount", "Referly Atlas billing"]
+---
+Atlas has its own plan, separate from your Referly affiliate plan. It is priced on the revenue Atlas tracks for you each month, never on orders, sessions or ad spend, and going over your band never blocks tracking. Everything about the plan lives under **Settings**, **Billing** in the left sidebar, on two tabs: **Subscription** and **Invoices**. Only the account owner or an admin can change the plan.
+
+![Billing subscription page of an active Growth plan](/images/atlas/settings/billing--growth-active.png)
+
+## Plans and prices
+
+| | Starter | Growth | Scale | Enterprise |
+| --- | --- | --- | --- | --- |
+| Price | $59 a month, or $588 a year | $159 a month, or $1,548 a year | $359 a month, or $3,588 a year | Custom |
+| Tracked revenue per month | Up to $25,000 | Up to $150,000 | Up to $500,000 | Custom band |
+| Stores | 1 | 3 | 10 | Unlimited |
+| Pixels per store | Unlimited | Unlimited | Unlimited | Unlimited |
+| Ad accounts in Ad center | 2 | 6 | 20 | Unlimited |
+| Team seats | 3 | 10 | 25 | 100 |
+| Event history | 90 days | 12 months | 24 months | Custom |
+| Event filters | No | Yes | Yes | Yes |
+| Creative center | No | No | Yes | Yes |
+| Priority support | No | No | Yes | Yes |
+
+Every plan sends server-side events to all ten platforms with enhanced matching, tracks leads, sign ups, trials and subscriptions as well as purchases, and includes the conversions report, Live activity, the Ad center dashboard and campaigns, CSV export and the weekly report. Yearly billing works out to two months free. Enterprise is sales-led: **Talk with us** books a call.
+
+![Plans ladder with Starter, Growth, Scale and Enterprise](/images/atlas/settings/billing--plans-ladder.png)
+
+## Start a trial or choose a plan
+
+Your first Atlas plan starts with a **14-day free trial** when you pick monthly billing. The trial is offered once per account; a plan change later never restarts it. Yearly plans are paid today and have no trial.
+
+Click **Choose a plan** on the plan card (or follow the onboarding's last step, or the setup checklist). The **Choose a plan** sheet lists the plans with a **Yearly** / **Monthly** toggle. With a trial available and monthly selected it reads "Get full access for 14 days. Cancel before {date} and you won't be charged." Pick a plan and click **Continue**: Stripe's checkout collects a card. Monthly billing starts when the trial ends, unless you cancel first. If no card is on file when the trial ends, the plan cancels.
+
+![Choose a plan sheet with the yearly and monthly toggle and the plan cards](/images/atlas/settings/billing--plan-drawer.png)
+
+When checkout completes you land back in Atlas with a **You're in** dialog: "Your Atlas plan is active. Complete your setup and the data starts flowing." Stores that were waiting for a plan go live on their own.
+
+To end a trial early and start paying now, click **Start paid plan** under the usage meter in the sidebar. It confirms the charge and starts the plan today.
+
+![Billing page of a trialing account showing Starter Monthly with the Trial pill and the days left](/images/atlas/settings/billing--trial.png)
+
+![Sidebar of a trialing account with Trial: 5 days left and Start paid plan](/images/atlas/settings/billing--trial-sidebar.png)
+
+## Tracked revenue and the usage meter
+
+**Tracked revenue** is the revenue of the orders Atlas records for you, converted to US dollars, added up per calendar month across all your stores and businesses. Refunds count as negative amounts. Leads, sign ups and trials do not count; only paid orders and subscriptions with a value do. The meter resets on the first of each month, on yearly plans too.
+
+The meter sits in the sidebar of every page and on the Billing page as **Tracked revenue this month**, with the orders tracked and the share of your band. It turns amber at 80% and red past 100%.
+
+![Usage section with the tracked revenue meter at 85% of the band](/images/atlas/settings/billing--usage-meter.png)
+
+Going over is never blocked. At 80% Atlas shows a banner ("You have used 85% of this month's tracked revenue band") with **See plans**, and emails the owner once. Past 100% the banner reads "You passed this month's tracked revenue band. Tracking continues. Move to a bigger plan to match your store." with **Change plan**, and a second email goes out. Both banners can be dismissed for the rest of the month. Nothing is charged automatically and no event is dropped.
+
+![Banner at 85% of the tracked revenue band](/images/atlas/settings/billing--usage-banner-80.png)
+
+## Stores, ad accounts and seats
+
+The **Stores** meter on the Billing page counts connected stores across your businesses against the plan's limit; at the limit it reads "Every store on your plan is in use. Move up a plan to add another." and the store wizard asks you to upgrade. Ad accounts are counted the same way across stores, with the same account in two stores counting once. Team seats count the owner, every member and every pending invitation. The limits for each plan are in the table above.
+
+## Change or cancel your plan
+
+Click **Change plan** on the plan card to open the plan sheet, pick another tier or cycle, and click **Continue**. A plan change goes through a new checkout: the new plan starts as soon as it completes and replaces the current one. Downgrades work the same way; stores beyond the new limit keep running, but you cannot add more until you are back within it.
+
+To cancel, click **Manage billing**. It opens Stripe's customer portal, where you can cancel the subscription, update your card and change your billing details. A cancelled plan keeps access until the end of the paid period; the plan card then reads **Cancels at period end**. You can reactivate it from the same portal before the period ends.
+
+## Discount for Referly plan holders
+
+Accounts with an active Referly affiliate plan (not on a Referly trial) get 20% off Atlas, for as long as both plans are active. The plan sheet shows "Referly plan holder: 20% off, applied at checkout" and the discount comes off every Atlas invoice. If the Referly plan ends, the discount ends with it on the next invoice.
+
+## Past due
+
+When a payment fails, Atlas emails the owner ("Atlas: your payment did not go through") and shows a red banner on every page: "Your last Atlas payment failed. Update your card to keep sending events to your ad platforms." with **Update billing**. Tracking continues for 7 days past the end of the paid period. After that, and 14 days after the period end at the latest, stores are disabled and stop sending events. Update the card in **Manage billing** and the stores come back on their own: **Running** if they had orders, **Awaiting data** otherwise.
+
+![Overview of a past-due account with the payment failed banner](/images/atlas/settings/billing--past-due.png)
+
+## Invoices
+
+The **Invoices** tab lists every Atlas invoice, newest first, with its date, number, amount and status (**Paid**, **Open**, **Void**, **Uncollectible** or **Draft**). **Download PDF** saves a copy; **Pay now** appears on open invoices. The tab shows the last 24 invoices; older ones are in the Stripe portal under **Manage billing**.
+
+![Invoices tab](/images/atlas/settings/billing--invoices.png)
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Statuses and labels" icon="list-check" href="/help-center/atlas/statuses#plan-statuses" arrow>
+    Trial, Active, Past due and the other plan statuses.
+  </Card>
+  <Card title="Team" icon="users" href="/help-center/atlas/settings/team" arrow>
+    Seats, roles and invitations.
+  </Card>
+  <Card title="Add a store" icon="store" href="/help-center/atlas/setup" arrow>
+    Store limits and what happens when a plan is active.
+  </Card>
+  <Card title="Preferences" icon="sliders" href="/help-center/atlas/settings/preferences" arrow>
+    Usage warning emails and the display currency.
+  </Card>
+</Columns>

@@ -1,6 +1,114 @@
 ---
 title: "Manage client programs"
-description: "Run programs on behalf of your clients."
+description: "Create and manage client affiliate programs from your Referly agency dashboard: add a program from the client's website, invite your client as an admin, open their program, switch it off, or delete it."
+keywords: ["agency client programs", "create client affiliate program", "invite client to affiliate program", "Referly agency dashboard", "manage client programs", "client program limit", "deactivate client program", "delete client program", "agency program invitation", "white label affiliate program for clients"]
 ---
+A client program is an affiliate program you run for one of your clients. You create it from your agency dashboard, invite the client in as an admin of that one program, and keep the agency-level controls (features, limits, billing and status) for yourself.
 
-{/* TODO: Write this article. */}
+This page walks you through creating a client program, getting your client into it, and managing it day to day.
+
+## Before you start
+
+- **You need an agency plan.** How many client programs you can run at once depends on it: 15 on **Agency**, 30 on **Agency Pro** and 60 on **Agency Scale**. See [plans and features](/help-center/billing/plans-and-features).
+- **You need to be the agency Owner or an Admin.** Members of your agency team can work in the programs you give them, but they can't create new ones.
+- **Have your client's website address and email to hand.** Referly builds the program from the website, and the email is where the invitation goes.
+
+## Create a client program
+
+On your agency home screen, select the plus button in the narrow bar on the left, or the **Create New Program** card at the end of your program list. The **Create New Affiliate Program** window opens.
+
+![The Create New Affiliate Program window with the Website URL and Client email fields filled in and the Create button](/images/help-center/agencies/create-client-program-dialog.png)
+
+<Steps>
+  <Step title="Add the client's website">
+    Enter the address in **Website URL**. Referly fetches the company name and logo from the site and generates a unique web address for the program's affiliate portal. The program is named after the website, so `acme.com` becomes **Acme Referral Program**. You can change the name and logo later.
+  </Step>
+  <Step title="Add the client's email">
+    Enter it in **Client email**. Once the program exists, this person is invited as an admin of the program.
+  </Step>
+  <Step title="Select Create">
+    You'll see "Program created successfully!" and you're taken into the setup flow for the new program, where you finish the details and choose how commissions work. It's the same flow as any new program; see [setting up your affiliate program](/help-center/getting-started/set-up-program/affiliate-program-setup).
+  </Step>
+</Steps>
+
+<Note>
+  If the email belongs to someone who is already on your team, or who already has an invitation from you, the program is still created but no new invitation is sent. A message tells you the person "is already on your team" or "has already been invited".
+</Note>
+
+When you've used all the client programs on your plan, the create button asks you to upgrade instead of opening the window. Moving to a bigger agency plan raises the limit; see [agency billing](/help-center/agencies/billing).
+
+## How your client gets access
+
+Your client joins through the invitation email. It's sent in your agency's name, and if you've verified an [email sending domain](/help-center/agencies/custom-domain), it comes from that domain. If your [custom domain](/help-center/agencies/custom-domain) is verified, the link opens on your web address rather than Referly's.
+
+The link opens a **Program Team Invitation** page showing the invited email, the **ADMIN** role, the program name, and the date the invitation expires.
+
+![The Program Team Invitation page showing the invited email, the ADMIN role, the expiry date, the program being joined and the Decline and Sign Up and Accept buttons](/images/help-center/agencies/client-invitation-page.png)
+
+- **A new client** selects **Sign Up & Accept**, creates an account, and joins the program as an admin.
+- **A client who already has an account** signs in and selects **Accept Invitation**.
+- **Decline** turns the invitation down.
+
+Ask your client to sign up with the exact email address you invited. The invitation only works for that address: anyone signed in with a different email sees "You can only accept invitations sent to your email address."
+
+Because the invitation vouches for them, an invited client's account is created straight away, with no confirmation email.
+
+### If the invitation expires
+
+Invitations are valid for 7 days. To send a fresh link, open the client program, select **Manage Users** on the **Access & Features** tab, go to **Invitations**, and choose **Resend Invitation** from the **...** menu on the client's row. See [invitations](/help-center/settings/team/invitations) for more.
+
+## Open a client program
+
+Your agency home screen shows a card for every client program, with its revenue, clicks, referrals and affiliates for the date range you've picked. From a card you can go three places:
+
+- **Select the card** to open your agency controls for that program.
+- **Visit Affiliate Portal** opens the portal the client's affiliates see.
+- **Manage affiliate program** opens the program's full dashboard, where you can work with its affiliates, commissions and payouts exactly as the client would.
+
+You can also open a program's agency controls from its icon in the bar on the left. Hover over an icon to see the program's name.
+
+## Manage a client program
+
+The agency controls for a program open with a header showing its logo and name, a **Visit Affiliate Portal** link, a **Manage Program** link (it opens the program's dashboard in a new tab), and a **Status** switch. Three tabs sit underneath:
+
+- **Access & Features** decides which features the client can use and how far the program can grow. **Manage Users** opens the program's own team screen, where you can see who has access. See [feature access and usage limits](/help-center/agencies/feature-access).
+- **Plan & Billing** is where you assign one of your plans to the client, check their billing status, and set a payment exemption. See [agency billing](/help-center/agencies/billing) and [payment exemptions](/help-center/agencies/payment-exemption).
+- **Advanced** holds the **Danger Zone**, where you can delete the program.
+
+### Turn a client program off or on
+
+The **Status** switch at the top right of the program's controls shows **Active** or **Inactive**. Turn it off to deactivate the program, and on again to bring it back.
+
+While a program is inactive:
+
+- Your client sees a banner in their dashboard: "Your affiliate program is not active. Please reach out to your account manager."
+- Affiliates who visit the portal see "Sorry, this Affiliate Program is not active." instead of their dashboard.
+
+Nothing is deleted, so switching it back on restores everything.
+
+### Delete a client program
+
+Open the program's controls, go to **Advanced**, and select **Delete Program** in the **Danger Zone**. Type the program's name exactly as shown to confirm, then select **Delete Program** again.
+
+Deleting removes the program for good, along with all its affiliates, sales and transaction history. Its custom domains and integrations are disconnected.
+
+<Warning>
+  Deleting a program doesn't cancel the client's subscription in your Stripe account. If the client is on a paid plan, set their plan to **No Plan (Unassigned)** on **Plan & Billing**, under **Current Plan**, before you delete the program.
+</Warning>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Agencies overview" icon="building" href="/help-center/agencies/overview" arrow>
+    How an agency account works and where everything lives.
+  </Card>
+  <Card title="Feature access and usage limits" icon="sliders" href="/help-center/agencies/feature-access" arrow>
+    Choose what each client can use and how far they can grow.
+  </Card>
+  <Card title="Agency billing" icon="receipt" href="/help-center/agencies/billing" arrow>
+    Connect Stripe, create plans, and charge your clients.
+  </Card>
+  <Card title="Payment exemptions" icon="hand-holding-dollar" href="/help-center/agencies/payment-exemption" arrow>
+    Let a client program run without a paid plan.
+  </Card>
+</Columns>

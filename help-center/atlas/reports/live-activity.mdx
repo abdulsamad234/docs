@@ -1,0 +1,110 @@
+---
+title: "Live activity"
+description: "Watch events reach Referly Atlas and your ad platforms in real time: delivery statuses, event payloads and platform responses, filters by status, event, conversion and destination, and how to use the feed to debug your tracking."
+keywords: ["live activity feed", "real-time event tracking", "delivery status", "platform response", "failed deliveries", "deduped skipped filtered", "event payload", "debug pixel events", "Atlas live feed"]
+---
+
+**Live activity** is the running log of everything Referly Atlas receives and everything it sends on. Each page view, add to cart, order and conversion appears as it reaches Atlas, followed by one row per destination it was delivered to, with the platform's answer. Open it from **Live activity** in the left sidebar.
+
+![Live activity page with the Live indicator, Pause button, Filter dropdown and a table of deliveries with Failed, Deduped, Skipped and Filtered statuses](/images/atlas/reports/live-activity--page.png)
+
+## What the feed shows
+
+The subtitle reads "Events from" your store "as they reach Atlas and your destinations." (or "from every store of this business" with **All stores** selected). A green dot and **Live** in the header mean the feed is refreshing: Atlas checks for new rows every 3 seconds while the tab is visible, and slows down to every 15 seconds when nothing changes. Press **Pause** to freeze the list while you read it (the label turns to **Paused**) and **Resume** to catch up.
+
+Newest rows are at the top. The columns:
+
+| Column | What it shows |
+|---|---|
+| **Time** | When Atlas received the event, the order or conversion happened, or the destination answered, in your store's time zone. |
+| **Event** | The event name, with a line under it saying whether the row is an **Event**, an **Order** or a **Conversion**. Conversions are shown in green. |
+| **Status** | **Received** for rows that reached Atlas; for delivery rows, the destination's answer. |
+| **Destination** | Where the event was sent. Rows marked **Atlas** are the events as they arrived, before any delivery. |
+| **Store** | The store the event belongs to (All stores only). |
+| **Details** | Source, page, value, country and consent: for example the UTM source and landing page of a page view, the value of an order, or "no consent" when the visitor declined marketing. |
+
+Delivery rows only appear for stores that are **Running** or **Awaiting data**. A paused store records events but sends nothing, and orders placed while [test mode](/help-center/atlas/settings/store-settings#testing) is on are recorded as **Test** and never sent. [Pixels and destinations](/help-center/atlas/pixels) explains which events each pixel receives.
+
+## Delivery statuses
+
+Every row carries a status pill. Hover the **Status** header for the one-line meaning of each:
+
+| Pill | Meaning |
+|---|---|
+| **Received** | Events that reached Atlas |
+| **Sent** | Accepted by the platform |
+| **Failed** | Rejected or out of retries |
+| **Retrying** | Trying again shortly |
+| **Queued** | Waiting to be sent |
+| **Filtered** | Stopped by an event filter |
+| **Skipped** | No consent or nothing to match |
+| **Deduped** | Already sent |
+| **Test passed** or **Test failed** | The result of a test event sent from a pixel |
+
+![Rows of the live feed showing the Failed, Deduped, Skipped and Filtered status pills with their reasons in the Details column](/images/atlas/reports/live-activity--status-pills.png)
+
+For **Filtered**, **Skipped** and **Deduped** rows the **Details** column says why: the rule that stopped it, "Visitor declined marketing consent", "Consent unknown in a consent-required region", "No identifiers the platform can match" or "Already sent within 48 hours". A failed delivery is retried up to 8 times, with the wait growing from 10 seconds, before it is marked **Failed**. The full list, with what to do about each, is in [Delivery statuses](/help-center/atlas/statuses#delivery-statuses).
+
+## Open an event
+
+Hover a row and click the code icon at its right end. What opens depends on the row:
+
+- **Event payload** for an incoming event: what your site or app sent to Atlas.
+- **Platform response** for a delivery: the status, the HTTP status, how long the call took, the attempt number, the platform's error message, the event filter rule that stopped it (if any), the event key, the payload Atlas sent and the platform's raw response.
+- **Order** or **Conversion** for ledger rows: the record Atlas stored.
+
+![Platform response popover of a failed delivery showing the status, HTTP status, error message, event key and payload summary](/images/atlas/reports/live-activity--platform-response.png)
+
+The error message in **Platform response** is the platform's own wording, so it is the first thing to search for in that platform's help when a delivery fails.
+
+## Filter the feed
+
+**Filter** (top right) opens a menu with four categories: **Status**, **Events**, **Conversions** and **Destination**. Each option shows how many rows matched in the last 24 hours, given the other filters you have on. Hold Shift and click to select more than one option.
+
+![Filter menu of the live feed with Status, Events, Conversions and Destination](/images/atlas/reports/live-activity--filters.png)
+
+An active filter becomes a chip above the table, such as **Status is Sent**. Click the chip to change its options or its × to remove it, and **Clear all** to start over. You can also hover an **Event**, **Status** or **Destination** cell and use its **Filter by** button to filter on that value in one click.
+
+![Live activity feed paused and filtered to Status is Sent, with the filter chip and Clear all](/images/atlas/reports/live-activity--filter-chip.png)
+
+## Load older events
+
+The feed loads 50 rows at a time and keeps up to 500 on screen; as new rows arrive, the oldest drop off. Press **Load older** at the bottom to bring in the next 50. For anything further back, narrow the feed with a filter, or use [Reporting](/help-center/atlas/reports/reporting) for totals.
+
+Atlas keeps delivery rows for 90 days. Events and sessions are kept for the event history your plan includes; see [Billing](/help-center/atlas/settings/billing#plans-and-prices).
+
+## Use it to debug
+
+Live activity answers most "is it working?" questions in a minute.
+
+<AccordionGroup>
+  <Accordion title="Is my site sending events at all?">
+    Open your site in another tab and browse to a product page. A page view row with **Atlas** as the destination should appear within seconds. If nothing shows, the tracking script or app embed is not live: run **Test connection** in Store settings and follow [Test the connection](/help-center/atlas/setup/test-connection).
+  </Accordion>
+  <Accordion title="Is a platform accepting them?">
+    Filter **Destination** to the platform and **Status** to **Failed**, then open **Platform response** on a row and read the error. It is the platform's own message, so [Troubleshooting](/help-center/atlas/troubleshooting#a-pixel-shows-error) lists the common ones and what to change.
+  </Accordion>
+  <Accordion title="Why was an event Skipped, Filtered or Deduped?">
+    The reason is in the **Details** column. **Skipped** means the visitor had no marketing consent or the event carried nothing the platform can match; **Filtered** names the [event filter](/help-center/atlas/event-filters) rule; **Deduped** means the same event already went to that pixel within 48 hours. See [Consent and privacy](/help-center/atlas/pixels/consent-and-privacy) and [Avoid double counting](/help-center/atlas/pixels/avoid-double-counting).
+  </Accordion>
+  <Accordion title="Did my test event go through?">
+    **Send test event** from a pixel's menu on [Pixels and destinations](/help-center/atlas/pixels#send-a-test-event) adds a row with a **Test passed** or **Test failed** pill. Filter **Status** to **Test** to see only those.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Delivery statuses" icon="circle-check" href="/help-center/atlas/statuses#delivery-statuses" arrow>
+    Every status pill and what to do about it.
+  </Card>
+  <Card title="Event filters" icon="filter" href="/help-center/atlas/event-filters" arrow>
+    Rules that stop events before they reach a destination.
+  </Card>
+  <Card title="Troubleshooting" icon="circle-question" href="/help-center/atlas/troubleshooting" arrow>
+    No events, failed deliveries and numbers that differ from Ads Manager.
+  </Card>
+  <Card title="Pixels and destinations" icon="plug" href="/help-center/atlas/pixels" arrow>
+    Add, test, edit and detach the pixels your events go to.
+  </Card>
+</Columns>

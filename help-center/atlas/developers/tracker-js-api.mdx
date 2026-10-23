@@ -1,0 +1,320 @@
+---
+title: "Tracker JavaScript API"
+description: "Reference for the Referly Atlas tracker in the browser: the script tag and its data-atlas attributes, referlyAtlas.track, identify, consent and getVisitorId, the command queue, event names and properties, product markup for ViewContent, Stripe elements and debugging."
+keywords: ["referlyAtlas", "Atlas tracker", "referlyAtlas.track", "referlyAtlas.identify", "referlyAtlas.consent", "getVisitorId", "data-atlas", "data-rly-product-id", "Atlas JavaScript API", "browser conversion tracking"]
+---
+The Atlas tracker is the Referly tracking script with Atlas mode switched on. Once it runs on a page it records page views, carts, checkouts and orders on its own, and it exposes `window.referlyAtlas` so your code can send conversions, identify the visitor and pass consent. This page is the reference for that object. For what to install where, see [Tracking script](/help-center/atlas/setup/tracking-script); for events sent from a server, see the [Events API](/help-center/atlas/developers/events-api).
+
+## Load the tracker
+
+Shopify loads the tracker through the Referly app's theme app embed, and WooCommerce through the Referly plugin. Every other site pastes the snippet from **Store settings**, under **Tracking and connection**, before the closing `head` tag of every page:
+
+```html
+<script
+  async
+  src="https://www.referly.so/affiliate-tracker.js"
+  data-affiliate
+  data-program-id="YOUR_STORE_ID"
+  data-atlas="1">
+</script>
+```
+
+<ParamField path="data-affiliate" type="attribute" required>
+  The marker the script uses to find its own tag. Without it the script does nothing. Frameworks that need a value accept `data-affiliate=""`.
+</ParamField>
+
+<ParamField path="data-program-id" type="string" required>
+  Your store id, already filled in on the snippet Atlas gives you.
+</ParamField>
+
+<ParamField path="data-atlas" type="'1'" required>
+  Turns Atlas mode on for this tag. The snippet Atlas generates always carries it.
+</ParamField>
+
+<ParamField path="data-atlas-debug" type="'1'">
+  Logs every decision to the browser console with the prefix `[Referly Atlas]`. See [Debugging](#debugging).
+</ParamField>
+
+<ParamField path="data-atlas-autodetect" type="'1'">
+  On every form submit, reads an email input (`type="email"`, or a name containing "email") and a phone input (`type="tel"`, or a name containing "phone") and calls `identify` with them. Opt in; off by default.
+</ParamField>
+
+<ParamField path="data-atlas-tcf-vendor" type="string">
+  Your IAB TCF v2 vendor id. With a TCF banner on the page, the tracker reads purpose 1 and, when this is set, the consent given to your vendor as well.
+</ParamField>
+
+When the page loads, the tracker:
+
+1. Fetches the store's configuration from `GET https://www.referly.so/api/atlas/config?programId=YOUR_STORE_ID`:
+
+   ```json
+   {
+     "enabled": true,
+     "cookieDays": 400,
+     "consentMode": "balanced",
+     "attributionWindowDays": 30,
+     "fingerprintEnabled": true,
+     "collect": "https://www.referly.so/api/atlas/collect",
+     "debug": false,
+     "googleAds": []
+   }
+   ```
+
+   `enabled` is `false` for a store that is not tracking yet or has been disabled; the API then becomes a no-op and `getVisitorId()` returns `null`. `googleAds` lists the store's enabled Google Ads pixels, each with the event filter rules the tracker applies before it fires a conversion in the browser; it is empty on Shopify, where the custom pixel fires them. The configuration is cached in the browser and refreshed in the background once it is older than 10 minutes, so a pixel or filter change reaches visitors within about 15 minutes.
+
+2. Sets the visitor cookie `_rly_vid` on your root domain for as many days as the store's **Visitor cookie** setting allows (400 by default), and a session id in `_rly_sid`. A session ends after 30 minutes without activity.
+
+3. Records a PageView. The first event of a session carries the landing URL, the referrer, every `utm_*` parameter plus `utm_id`, `adset_id`, `ad_id` and `placement`, the click ids (`gclid`, `gbraid`, `wbraid`, `fbclid`, `msclkid`, `ttclid`, `twclid`, `li_fat_id`, `rdt_cid`, `sccid`, `epik`, `tblci`, `gad_source`) and the platform cookies it can read (`_fbp`, `_ttp`, `_scid`, `_rdt_uuid`, `_shopify_y`).
+
+4. Replays any queued commands, and records a new PageView on each single-page navigation.
+
+Events travel in batches of up to 25 per request (64 KB at most). Purchases, checkouts and conversions are flushed at once; the rest go within about a second.
+
+## track(name, props)
+
+```js
+referlyAtlas.track("AddToCart", { value: 59, currency: "USD", contents: [{ id: "SKU-123", quantity: 1 }] });
+```
+
+Records one event. Unknown names are ignored (and logged in debug mode). Names are matched after lowercasing and removing anything that is not a letter, so `Sign up`, `sign_up` and `SignUp` all resolve.
+
+| Event | Aliases |
+| --- | --- |
+| `ViewContent` | `viewcontent` |
+| `AddToCart` | `addtocart` |
+| `InitiateCheckout` | `initiatecheckout` |
+| `AddPaymentInfo` | `addpaymentinfo` |
+| `Purchase` | `purchase` |
+| `Search` | `search` |
+| `Lead` | `lead`, `generatelead` |
+| `CompleteRegistration` | `completeregistration`, `signup`, `register`, `registration` |
+| `StartTrial` | `starttrial`, `trial` |
+| `Subscribe` | `subscribe`, `subscription` |
+
+`PageView` is automatic and cannot be sent. `ViewContent` is also detected on its own on Shopify and WooCommerce product pages and on any page with JSON-LD, OpenGraph or `data-rly-*` product markup (see [Product markup](#product-markup)).
+
+### Properties for site and checkout events
+
+<ParamField path="value" type="number">
+  The amount of the event. Strings that parse as numbers are accepted.
+</ParamField>
+
+<ParamField path="currency" type="string">
+  Three-letter code, uppercased for you.
+</ParamField>
+
+<ParamField path="orderId" type="string">
+  Your order id, for `Purchase`. It deduplicates the order against the copy that arrives from your platform or server. Up to 128 characters.
+</ParamField>
+
+<ParamField path="contents" type="array">
+  Up to 50 items. Each needs an id (`id`, `productId` or `sku`, with `name` as a last resort) and may carry `variantId`, `sku`, `name`, `price`, `currency` and `quantity` (defaults to 1). Items without an id are dropped.
+</ParamField>
+
+<ParamField path="cartToken" type="string">
+  The cart token, when your platform has one.
+</ParamField>
+
+<ParamField path="checkoutToken" type="string">
+  The checkout token, when your platform has one.
+</ParamField>
+
+### Properties for conversions
+
+`Lead`, `CompleteRegistration`, `StartTrial` and `Subscribe` take the same `value` and `currency`, plus the person:
+
+<ParamField path="id" type="string">
+  The conversion id. It deduplicates repeats, such as a reload or the same trial also reported by Stripe. `eventId`, `userId` or `subscriptionId` are read when `id` is missing.
+</ParamField>
+
+<ParamField path="email" type="string">
+  Lowercased and trimmed in the browser, hashed by Atlas before it reaches a platform.
+</ParamField>
+
+<ParamField path="phone" type="string">
+  The person's phone number.
+</ParamField>
+
+<ParamField path="firstName" type="string">
+  The person's first name.
+</ParamField>
+
+<ParamField path="lastName" type="string">
+  The person's last name.
+</ParamField>
+
+<ParamField path="externalId" type="string">
+  Your own customer id. `userId` is accepted as an alias.
+</ParamField>
+
+Passing any of these on a conversion also calls `identify` for you.
+
+<Warning>
+  `Purchase` does not read `email` or the other identity fields from its props. Call `referlyAtlas.identify(...)` before `track("Purchase", ...)`, or the order goes out with the visitor's cookies and click ids only.
+</Warning>
+
+A purchase sent from the browser waits 60 seconds for the matching order from your platform or server (same order id) and is enriched with it, so send the same id in both places.
+
+<CodeGroup>
+
+```js Purchase
+referlyAtlas.identify({ email: "jane@example.com", firstName: "Jane", lastName: "Doe" });
+referlyAtlas.track("Purchase", {
+  orderId: "1001",
+  value: 129.0,
+  currency: "USD",
+  contents: [{ id: "SKU-123", variantId: "V-9", name: "Trail jacket", price: 129.0, quantity: 1 }],
+});
+```
+
+```js Lead
+referlyAtlas.track("Lead", {
+  id: "lead_7f3a",
+  email: "jane@example.com",
+  firstName: "Jane",
+});
+```
+
+```js Start trial
+referlyAtlas.track("StartTrial", {
+  id: "sub_1Q8xVe",
+  userId: "user_123",
+  email: "jane@example.com",
+  value: 0,
+  currency: "USD",
+});
+```
+
+</CodeGroup>
+
+The tracker also dispatches a DOM event named `referly-atlas:event` on `document` for every call, with `detail.name` and `detail.props`.
+
+## identify(traits)
+
+```js
+referlyAtlas.identify({ email: "jane@example.com", phone: "+15555550123", externalId: "user_123" });
+```
+
+Attaches a person to the current visitor. Accepted traits: `email`, `phone`, `firstName`, `lastName` and `externalId` (`userId` works too). Empty or malformed values are ignored; an email must contain `@`. Nothing is hashed in the browser; Atlas hashes the email, phone, names and external id with SHA-256 before anything reaches an ad platform.
+
+Where consent is required and not yet granted, the identity is held and sent as soon as the visitor consents. Call it at sign up, sign in and checkout, and on any page where you know who the visitor is. `data-atlas-autodetect="1"` does it for you on form submits.
+
+## consent(...)
+
+```js
+referlyAtlas.consent({ marketing: true, analytics: true });
+```
+
+Tells the tracker what the visitor answered on your banner. An explicit choice is remembered in the browser for 182 days, so a banner that does not re-signal on every page only needs to call it once. Calling it again (for example with `marketing: false`) overwrites the stored choice. Signals from Shopify's Customer Privacy API and from an IAB TCF v2 banner still win when they fire.
+
+What the choice does depends on the store's **Consent mode** in Store settings:
+
+| Consent mode | Without consent | After `marketing: true` |
+| --- | --- | --- |
+| Strict | Nothing is sent for the visitor. | Events and identifiers flow. |
+| Balanced (default) | Visitors from the EEA, UK and Switzerland wait, or are skipped, according to **Visitors with unknown consent**. Everyone else is tracked. | Events and identifiers flow. |
+| Off | Everything is sent, except after an explicit decline. | No change. |
+
+The tracker dispatches `referly-atlas:consent` on `document` whenever the effective consent changes, with `detail.marketing`, `detail.analytics` and `detail.implicit` (`true` when no answer was needed). Google Ads conversions fired by the tracker follow Google Consent Mode: denied by default in consent regions until marketing consent is granted, unless the store's consent mode is Off.
+
+## getVisitorId() and the queue
+
+```js
+const vid = referlyAtlas.getVisitorId(); // a UUID, or null
+```
+
+Returns the visitor id, the value of the `_rly_vid` cookie. Before the tracker has loaded it reads the cookie (or its local storage copy) directly; it returns `null` when Atlas is disabled for the store or the visitor has no id yet. Use it to tie a server-side event to the visit: send it as `visitorId` to the [Events API](/help-center/atlas/developers/events-api), or put it in your own checkout metadata as `referly_vid` for the billing integrations (see [Connect your data](/help-center/atlas/setup/connect-your-data)).
+
+The script loads asynchronously, so code that runs before it can queue commands. Two styles work:
+
+<CodeGroup>
+
+```js Queue array
+window.referlyAtlasQ = window.referlyAtlasQ || [];
+window.referlyAtlasQ.push(["track", "ViewContent", { value: 49, currency: "USD" }]);
+```
+
+```js Stub object
+window.referlyAtlas = window.referlyAtlas || [];
+window.referlyAtlas.push(["identify", { email: "jane@example.com" }]);
+```
+
+</CodeGroup>
+
+Queued commands run after the page view, in order. `referlyAtlas.loaded` is `true` once the tracker has finished loading and the real methods are in place, and `referlyAtlas.push([...])` keeps working after that.
+
+## Product markup
+
+`ViewContent` is recorded automatically when the tracker can tell which product the page shows. It reads Shopify and WooCommerce product pages, JSON-LD `Product` objects and OpenGraph product tags (`og:type`, `product:price:amount`, `product:price:currency`). On any other page, mark one element up:
+
+```html
+<div
+  data-rly-product-id="SKU-123"
+  data-rly-variant-id="V-9"
+  data-rly-sku="SKU-123"
+  data-rly-product-name="Trail jacket"
+  data-rly-price="129.00"
+  data-rly-currency="USD">
+</div>
+```
+
+<ParamField path="data-rly-product-id" type="string" required>
+  The product id. Without it the element is ignored.
+</ParamField>
+
+<ParamField path="data-rly-variant-id" type="string">
+  The variant id, when you sell variants.
+</ParamField>
+
+<ParamField path="data-rly-sku" type="string">
+  The SKU.
+</ParamField>
+
+<ParamField path="data-rly-product-name" type="string">
+  The product name.
+</ParamField>
+
+<ParamField path="data-rly-price" type="number">
+  The unit price.
+</ParamField>
+
+<ParamField path="data-rly-currency" type="string">
+  Three-letter currency code.
+</ParamField>
+
+Product views are deduplicated per page, so a single-page app that re-renders the same product does not record it twice.
+
+## Stripe elements
+
+Stripe Checkout runs on Stripe's domain, so the visit is handed over in the checkout's client reference id. The tracker sets it to `rly_<visitorId>` on every Stripe Buy Button and Pricing Table on the page (the `client-reference-id` attribute) and on every payment link to `buy.stripe.com` or `donate.stripe.com` (a `client_reference_id` query parameter), including elements added later by a single-page app and links clicked before they were tagged. A reference your site set itself is never replaced, so affiliate ids passed there keep working.
+
+Under Strict consent mode nothing is tagged until the visitor consents. For your own Checkout Sessions, pass the visitor id as `referly_vid` in the session metadata instead; the Stripe integration reads both. See [Connect your data](/help-center/atlas/setup/connect-your-data).
+
+## Debugging
+
+Add `data-atlas-debug="1"` to the script tag, or turn on [debug mode](/developer-documentation/tracking/debug-mode) for the program, and open the browser console. Every line starts with `[Referly Atlas]`:
+
+| Line | Meaning |
+| --- | --- |
+| `active` with the program, visitor and session ids and the consent mode | Atlas mode is running on this page. |
+| `disabled for` and the store id | The configuration returned `enabled: false`: the store is not live. |
+| `unknown event name` | `track` was called with a name that is not in the table above. |
+| `consent restored` | A stored consent choice was applied. |
+| `api call failed` | A method threw; the error follows. |
+
+Then check the other end. **Live activity** in Atlas shows every event as it arrives, with its Status and the reason it was Skipped, Filtered or Deduped, and **Test connection** in Store settings confirms the script was seen.
+
+<AccordionGroup>
+  <Accordion title="Purchases arrive without a customer">
+    `Purchase` ignores identity props. Call `identify` first.
+  </Accordion>
+  <Accordion title="Nothing is sent and getVisitorId() returns null">
+    The store is not live, so the configuration came back disabled. Finish the setup wizard and make sure a plan is active, then reload with the console open and look for `active`.
+  </Accordion>
+  <Accordion title="Events show as Skipped: Consent unknown">
+    Under Balanced mode a visitor from a consent region has not answered the banner, and the store skips unknown consent. Wire your banner to `referlyAtlas.consent(...)`, or switch **Visitors with unknown consent** to **Send the event** if you accept the responsibility.
+  </Accordion>
+  <Accordion title="Events from a staging site never arrive">
+    **Allowed domains** in Store settings limits which hosts may send events. Add the staging domain, or leave the list empty while testing.
+  </Accordion>
+</AccordionGroup>

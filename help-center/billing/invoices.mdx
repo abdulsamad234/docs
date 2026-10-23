@@ -1,6 +1,66 @@
 ---
 title: "Invoices"
-description: "Find and download your invoices."
+description: "Find your Referly invoices under Settings, Billing, Invoices. See each invoice's amount, status and date, open it on Stripe to view or download it, and pay an unpaid invoice."
+keywords: ["Referly invoices", "billing invoices", "invoice history", "download invoice", "receipts", "pay unpaid invoice", "overdue payment", "billing history", "Stripe invoice", "agency invoices"]
 ---
+Every time Referly bills you for your plan, an invoice is created. You can find them all in your dashboard, open any one in full, and pay one that's outstanding.
 
-{/* TODO: Write this article. */}
+## Find your invoices
+
+Open **Settings** from the left sidebar, go to **Billing**, then select **Invoices**. You can also open [search](/help-center/getting-started/global-search) and type "invoices" to jump straight there.
+
+{/* TODO screenshot: invoices-list, upload it in the local Documentation Agent */}
+
+The **Invoices** screen lists your invoices, one row each. Every row shows:
+
+- **The amount** of the invoice.
+- **A status badge**: **Paid**, **Unpaid**, or **Canceled**.
+- **What it's for**, a short description of what you were billed for, such as your plan.
+- **The date** the invoice was created and its **invoice number**.
+
+Only invoices for more than $0 are listed. If you haven't been billed yet, the screen says "No invoices found".
+
+<Note>
+  Add-ons are billed separately from your plan, so their invoices don't appear in this list. To manage an add-on's billing, select **Manage add-on** next to it in the **Add-ons** card on the [Subscription](/help-center/billing/subscription) screen. This opens that add-on's billing in Stripe's secure portal.
+</Note>
+
+## View or download an invoice
+
+Select **View** on any invoice. It opens on Stripe's secure invoice page in a new tab, where you can see the full breakdown and download a copy for your records.
+
+## Pay an unpaid invoice
+
+An invoice that hasn't been paid shows an **Unpaid** badge and a **Pay Now** button. Select **Pay Now** to open the invoice on Stripe's secure page and pay it there.
+
+You'll also be reminded in two other places while an invoice is outstanding:
+
+- A red banner across the top of your dashboard reads "Unpaid Invoice" with the amount, and has its own **Pay Now** button.
+- On the [Subscription](/help-center/billing/subscription) screen, an **Overdue** badge appears next to your **Next payment** date, with a **Pay now** button underneath.
+
+<Warning>
+  Pay outstanding invoices promptly. The dashboard banner warns that your affiliate programs may be deactivated soon if an invoice stays unpaid.
+</Warning>
+
+## Invoices for agencies and their clients
+
+- **If you run an agency**, your agency's own Referly invoices are in your agency settings: open **Billing**, then **Invoices**. They work the same way as described above.
+- **If an agency runs your program** and bills you through Referly, the **Invoices** screen inside that program shows the invoices your agency has sent you for it.
+
+See [billing for agencies](/help-center/agencies/billing) for how agency billing works.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Manage your subscription" icon="credit-card" href="/help-center/billing/subscription" arrow>
+    Change your plan, review charges, or cancel.
+  </Card>
+  <Card title="Plans and features" icon="layer-group" href="/help-center/billing/plans-and-features" arrow>
+    Compare plans, limits and what each one unlocks.
+  </Card>
+  <Card title="Add-ons" icon="puzzle-piece" href="/help-center/billing/add-ons" arrow>
+    Add Engage, Gamify or Influencer Discovery to your plan.
+  </Card>
+  <Card title="Billing for agencies" icon="building" href="/help-center/agencies/billing" arrow>
+    How billing works when you run programs for clients.
+  </Card>
+</Columns>

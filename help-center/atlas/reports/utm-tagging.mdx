@@ -1,0 +1,153 @@
+---
+title: "Tag your ads with UTMs"
+description: "Add the Referly Atlas tracking templates to your Meta, Google Ads and TikTok ads so every click carries campaign, ad set and ad names and ids, learn which UTM parameters, utm_source values and click ids Atlas recognises, and check your Mapping health."
+keywords: ["UTM tracking template", "utm_campaign utm_content utm_term", "Meta URL parameters", "Google Ads final URL suffix", "TikTok destination URL", "click id fbclid gclid ttclid", "utm_source values", "mapping health", "ad attribution UTMs"]
+---
+
+Referly Atlas attributes orders to the ad that brought the visitor by reading the landing URL of each visit. The click id a platform adds tells Atlas which platform it was; the UTM parameters tell it which campaign, ad set and ad. This page gives you the exact template to paste for Meta, Google Ads and TikTok, explains what Atlas reads from a URL, and shows where to check that your clicks carry everything they should.
+
+## Why tag your ads
+
+Without UTMs, Atlas still knows a visit came from Meta or Google Ads (from the click id), but it cannot tell which campaign. Those conversions land in the **Ad click without campaign UTMs** row of [Reporting](/help-center/atlas/reports/reporting#rows-without-utms) instead of under the campaign, and the [Ad center](/help-center/atlas/ad-center/campaigns#unmapped-and-unattributed-rows) shows their revenue as **Unmapped** rather than beside the campaign's spend.
+
+With the templates below, every click carries two things:
+
+- **Names** (`utm_campaign`, `utm_content`, `utm_term`), which Reporting groups by.
+- **Ids** (`utm_id`, `adset_id`, `ad_id`), which Ad center uses to match the order to the synced campaign, ad set and ad. Ids survive renaming; names do not. When ids are missing, Ad center falls back to matching the names against your campaign, ad set and ad names, and when that fails too the order is credited to the platform only.
+
+## The parameters Atlas reads
+
+| Parameter | What Atlas does with it |
+|---|---|
+| `utm_campaign` | The **Campaign** level in Reporting. Matched against campaign names in Ad center when `utm_id` is missing. |
+| `utm_content` | The **Ad set** level. Matched against ad set (ad group) names. |
+| `utm_term` | The **Ad** level. Matched against ad names. |
+| `utm_id`, `adset_id`, `ad_id` | The platform's campaign, ad set and ad ids. Ad center matches on these first. |
+| `utm_source` | Names the platform when the URL has no click id (see below). Also available as a field in [Event filters](/help-center/atlas/event-filters). |
+| `utm_medium` | Recorded with the visit and available as a field in Event filters. |
+
+### Click ids
+
+Platforms add a click id to every ad click. Atlas reads it first, before `utm_source`, to decide the platform:
+
+| Platform | Click id |
+|---|---|
+| Meta | `fbclid` |
+| Google Ads | `gclid`, `gbraid`, `wbraid` |
+| TikTok | `ttclid` |
+| Microsoft Ads | `msclkid` |
+| Snapchat | `sccid` |
+| Pinterest | `epik` |
+| Reddit | `rdt_cid` |
+| X | `twclid` |
+| Taboola | `tblci` |
+
+The click id is also what Atlas sends back to the platform with a conversion, so make sure nothing on your site strips it from the URL before the page loads. Taboola can only match conversions by click id, so Taboola ads must keep `tblci` intact.
+
+### utm_source values
+
+When there is no click id, Atlas reads `utm_source`. Upper or lower case makes no difference. These values are recognised:
+
+| Platform | `utm_source` values |
+|---|---|
+| Meta | `facebook`, `fb`, `ig`, `instagram`, `meta`, `msg`, `an` |
+| Google Ads | `google`, `adwords`, `googleads`, `youtube` |
+| TikTok | `tiktok` |
+| Microsoft Ads | `bing`, `microsoft` |
+| Snapchat | `snapchat` |
+| Pinterest | `pinterest` |
+| Reddit | `reddit` |
+| X | `x`, `twitter` |
+| Taboola | `taboola` |
+| Klaviyo | `klaviyo` |
+| Affiliate | `affiliate`, `affiliates`, `referly`, `partner`, `partners` |
+
+Any other value, such as `newsletter`, becomes its own source row in Reporting.
+
+## Meta
+
+Paste this in Ads Manager, at the ad level, in the **Tracking** section, in **URL parameters**:
+
+```text
+utm_source=facebook&utm_medium=paid&utm_campaign={{campaign.name}}&utm_content={{adset.name}}&utm_term={{ad.name}}&utm_id={{campaign.id}}&adset_id={{adset.id}}&ad_id={{ad.id}}&placement={{placement}}
+```
+
+1. Open the ad in Ads Manager and scroll to **Tracking**.
+2. Paste the template into **URL parameters**. Meta fills the placeholders in double braces at delivery time.
+3. Keep the names in sync: `utm_campaign`, `utm_content` and `utm_term` are matched against your campaign, ad set and ad names when ids are missing.
+
+The template sets `utm_source=facebook` for Instagram placements too; Atlas files both under Meta.
+
+You can also copy each template from the **Tracking templates** card at the bottom of the **Ad accounts** page in Ad center: pick the platform tab, press **Copy**, and check the **Example landing URL** underneath to see what a tagged click looks like.
+
+![Tracking templates card with the Meta, Google Ads and TikTok tabs, the template to paste, where to paste it, and an example landing URL](/images/atlas/reports/utm-tagging--tracking-templates.png)
+
+## Google Ads
+
+Paste this in Google Ads under **Settings**, **Account settings**, **Tracking**, in **Final URL suffix**, so every ad inherits it:
+
+```text
+utm_source=google&utm_medium=cpc&utm_campaign={campaignid}&utm_content={adgroupid}&utm_term={creative}&utm_id={campaignid}&adset_id={adgroupid}&ad_id={creative}
+```
+
+1. Open Google Ads, **Settings**, **Account settings**, **Tracking**.
+2. Paste the template into **Final URL suffix**.
+3. `{campaignid}`, `{adgroupid}` and `{creative}` are ValueTrack parameters; Google fills them at click time.
+
+Google's parameters insert ids rather than names, which is why the same ids go into `utm_campaign` and `utm_id`: Ad center matches on the id either way.
+
+For Google Ads, the template fills the campaign, ad group and ad with their ids. Reporting matches those ids to the campaigns it synced from your Google Ads account and shows the synced name; rows from an account you have not connected in the Ad center show the id itself.
+
+## TikTok
+
+Paste this at the ad level in TikTok Ads Manager, appended to the **Destination URL** after the `?`:
+
+```text
+utm_source=tiktok&utm_medium=paid&utm_campaign=__CAMPAIGN_NAME__&utm_content=__AID_NAME__&utm_term=__CID_NAME__&utm_id=__CAMPAIGN_ID__&adset_id=__AID__&ad_id=__CID__
+```
+
+1. Open the ad in TikTok Ads Manager and edit the destination URL.
+2. Append the template to the URL. TikTok replaces the placeholders (the words between double underscores, such as `__CAMPAIGN_NAME__`) at delivery time.
+3. Campaign, ad group and ad names are used as a fallback when the ids are missing.
+
+## Other platforms
+
+Atlas provides templates for the three platforms Ad center syncs. For Snapchat, Pinterest, Microsoft Ads, X, Reddit and Taboola there is no spend to match, but Reporting still groups their conversions by campaign when you add UTMs:
+
+- Set `utm_source` to one of the values above so the platform is recognised even if the click id is lost.
+- Put the campaign, ad set and ad names (or the platform's own placeholders for them) in `utm_campaign`, `utm_content` and `utm_term`.
+- Keep the platform's click id in the URL: it identifies the platform and is sent with each conversion.
+
+Each platform's ads manager has a tracking or URL parameters field similar to Meta's; its help pages list the placeholder names to use.
+
+## Check your mapping
+
+The **Mapping health** card on the **Ad accounts** page in Ad center tells you how many paid clicks carry the ids Ad center needs. Its subtitle reads "How many paid clicks carry the ids Ad center needs to credit the right campaign, ad set and ad." The headline is a percentage "of" your paid clicks "in the last 30 days" that "carry campaign, ad set and ad ids", shown per platform: green at 80% or more, amber from 40%, red below that. Under it, an **Orders** line splits your paid orders into matched by id, matched by name, platform only, and with no paid click.
+
+![Mapping health card showing the share of paid clicks that carry campaign, ad set and ad ids, per platform, and how orders were matched](/images/atlas/reports/utm-tagging--mapping-health.png)
+
+Read it like this:
+
+- Mostly **matched by id**: the templates are in place. Nothing to do.
+- Mostly **by name**: clicks carry names but not ids. Paste the full template, not only the UTM names, and avoid renaming campaigns while they run.
+- Many **platform only**: clicks have a click id but no usable UTMs. Add the template for that platform.
+- Many **with no paid click**: these orders had no paid visit inside the lookback window. They are organic, affiliate or direct, or the click id was stripped on the way to your site.
+
+Before any paid click arrives, the card reads "No paid clicks in the last 30 days yet. Add the tracking templates below so every click carries its ids." A template applies to clicks from the moment you save it in the platform; earlier visits keep the URL they arrived with.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Reporting" icon="table" href="/help-center/atlas/reports/reporting" arrow>
+    Conversions by campaign, ad set and ad, next to what each platform reported.
+  </Card>
+  <Card title="Connect ad accounts" icon="plug" href="/help-center/atlas/ad-center/connect-ad-accounts" arrow>
+    Sync spend, campaigns and ads from Meta, Google Ads and TikTok.
+  </Card>
+  <Card title="Campaigns in Ad center" icon="bullseye" href="/help-center/atlas/ad-center/campaigns" arrow>
+    Spend beside revenue per campaign, with Unmapped and Unattributed rows explained.
+  </Card>
+  <Card title="Event filters" icon="filter" href="/help-center/atlas/event-filters" arrow>
+    Send events only when a UTM, country, value or product matches a rule.
+  </Card>
+</Columns>

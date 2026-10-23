@@ -1,0 +1,126 @@
+---
+title: "Pinterest Ads pixel"
+description: "Send your store's events to Pinterest through the Conversions API with Referly Atlas. Find your Pinterest ad account ID and access token, add the pixel in Atlas, and verify that events arrive."
+keywords: ["pinterest conversions api", "pinterest tag server side", "pinterest ad account id", "pinterest conversions api token", "referly atlas pinterest", "pinterest checkout event", "pinterest page_visit event", "pinterest capi shopify", "pinterest ads tracking"]
+---
+Referly Atlas sends your store's events to Pinterest from its servers, through Pinterest's Conversions API. Page views, product views, carts and purchases reach your Pinterest ad account without depending on the visitor's browser, with customer details hashed before they leave. This guide walks you through finding the two values Pinterest asks for, adding the pixel in Atlas, and checking that events arrive.
+
+## Before you start
+
+You need:
+
+- **A store in Atlas that is set up and live.** Only stores that are Running or Awaiting data send events. See [Store statuses](/help-center/atlas/statuses#store-statuses).
+- **A Pinterest business account with an ad account.** Atlas sends to the ad account, so note which one you advertise from.
+- **Access to that ad account's Conversions settings**, so you can generate an access token.
+
+If this is your first pixel, read [Pixels and destinations](/help-center/atlas/pixels) first: it explains what a pixel is in Atlas and what every pixel row shows.
+
+## Step 1: Find your Ad account ID
+
+<Steps>
+  <Step title="Open Conversions">
+    In Pinterest, open the **Business** menu, then **Conversions**.
+  </Step>
+  <Step title="Open the API setup">
+    Select **Set up API**.
+  </Step>
+  <Step title="Copy the Ad account ID">
+    Copy the **Ad account ID** shown beside the token. It is 12 digits and starts with 549, for example `549123456789`.
+  </Step>
+</Steps>
+
+Pinterest's own article: [Getting started with the Conversions API](https://help.pinterest.com/en/business/article/getting-started-with-the-conversions-api). The same steps sit in the **Where to find it** tooltip beside the field in Atlas, and the **How to find it** link under the field opens Pinterest's article.
+
+## Step 2: Generate an access token
+
+<Steps>
+  <Step title="Open the API setup">
+    In Pinterest, open the **Business** menu, then **Conversions**, then **Set up API**.
+  </Step>
+  <Step title="Generate the token">
+    Select **Generate new token** and copy it. It starts with `pina_`.
+  </Step>
+</Steps>
+
+The token is covered by the same Pinterest article as the ad account ID.
+
+## Step 3: Add the pixel in Atlas
+
+<Steps>
+  <Step title="Open Pixels and destinations">
+    In the left sidebar of Atlas, open **Pixels and destinations** for the store, then select **+ Add pixel**.
+  </Step>
+  <Step title="Choose Pinterest">
+    In the **Add your tracking pixel** dialog, select the **Pinterest** chip. Leave **Method** on **Add a new pixel**. If another store of your business already sends to this ad account, choose **Use an existing pixel** instead and Atlas copies its ids and keys to this store. See [Use an existing pixel](/help-center/atlas/pixels#use-an-existing-pixel).
+  </Step>
+  <Step title="Paste the two values">
+    Fill in **Ad account ID** (digits only) and **Access token**. **Name (optional)** helps you tell pixels apart when a store sends to more than one ad account.
+  </Step>
+  <Step title="Choose the events to send">
+    Under **Events sent**, keep or change the events Atlas pre-selected for your business type, limited to the events Pinterest accepts (see the table below). See [Default events by business type](/help-center/atlas/events#default-events-by-business-type).
+  </Step>
+  <Step title="Save">
+    Select **Add pixel**. Atlas shows the **Pixel saved** screen with a **Data flowing** badge.
+  </Step>
+</Steps>
+
+![Add pixel dialog with Pinterest selected, showing the Ad account ID and Access token fields](/images/atlas/pixels/pixels-pinterest--add-pixel-dialog.png)
+
+On the **Pixel saved** screen, use **You can verify that here** to send a test event straight away. Atlas answers **Test event accepted** with the HTTP status Pinterest returned, or shows Pinterest's own error message so you can correct the ID or token.
+
+## Events Atlas sends to Pinterest
+
+Two names are worth knowing: Pinterest's name for a purchase is **checkout**, and both page views and product views arrive as **page_visit**.
+
+| Atlas event | What Pinterest calls it |
+| --- | --- |
+| Page view | page_visit |
+| View content | page_visit |
+| Add to cart | add_to_cart |
+| Purchase | checkout |
+| Search | search |
+| Lead | lead |
+| Sign up | signup |
+
+Pinterest's standard events stop at lead and signup, so Initiate checkout, Add payment info, Start trial and Subscribe are not sent to Pinterest.
+
+Only the events ticked under **Events sent** are forwarded. Orders and conversions are always evaluated; the browser events (page views, product views, carts, searches) are forwarded only when a pixel wants them.
+
+## Verify that events arrive
+
+1. **Send a test event.** On the pixel row, open the row's menu and choose **Send test event**. A toast confirms that Pinterest accepted the event, or shows Pinterest's error. Test events time out after 10 seconds.
+2. **Read the delivery line.** The line under the pixel reads how many events reached Pinterest in the last 24 hours, for example **8 sent in 24 h**, or **8 sent, 2 failed in 24 h** when some were rejected. A green dot means **Live**: events are being sent. See [Pixel states](/help-center/atlas/statuses#pixel-states).
+3. **Watch Live activity.** Open **Live activity** in the left sidebar and filter by destination to see each event's status and Pinterest's response. See [Live activity](/help-center/atlas/reports/live-activity).
+
+![More pixel actions menu on a pixel row with Send test event and Event filters](/images/atlas/pixels/pixels--row-menu.png)
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The test event fails">
+    Atlas shows Pinterest's error next to the test. Check the Ad account ID first (12 digits, starting with 549), then the token: Atlas never shows a saved token again, so select **Edit** on the row and paste a fresh one (a blank field keeps the saved value). Test events time out after 10 seconds, so a slow answer also counts as a failure: try once more.
+  </Accordion>
+  <Accordion title="The row says No events in the last 24 h">
+    Atlas sends only from stores that are Running or Awaiting data, only the events ticked under **Events sent**, and never test-mode orders. Check that the platform switch at the top of the Pinterest row is on, then open **Live activity** and read the Status column: **Skipped** means no consent or no identifiers Pinterest can match, **Filtered** means an event filter stopped it, **Deduped** means the same event was already sent within 48 hours. See [Delivery statuses](/help-center/atlas/statuses#delivery-statuses).
+  </Accordion>
+  <Accordion title="Pinterest shows checkout events, but no purchases">
+    That is expected: **checkout** is Pinterest's name for a completed purchase, and Atlas does not send Initiate checkout to Pinterest at all. Likewise, product views arrive as **page_visit**, the same name as page views. Use the table above when you read Pinterest's reports.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Pixels and destinations" icon="plug" href="/help-center/atlas/pixels" arrow>
+    Add, edit, test and detach pixels on any store.
+  </Card>
+  <Card title="Events" icon="list-check" href="/help-center/atlas/events" arrow>
+    What each event means and which platform calls it what.
+  </Card>
+  <Card title="Consent and privacy" icon="shield-halved" href="/help-center/atlas/pixels/consent-and-privacy" arrow>
+    What is hashed before it leaves and what consent Atlas needs.
+  </Card>
+  <Card title="Live activity" icon="wave-pulse" href="/help-center/atlas/reports/live-activity" arrow>
+    Watch every event and Pinterest's response as they happen.
+  </Card>
+</Columns>

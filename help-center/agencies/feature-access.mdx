@@ -1,6 +1,171 @@
 ---
 title: "Feature access and usage limits"
-description: "Control what each client program can do."
+description: "Control what each client program can do in Referly agency mode: set default features and usage limits on your plans, override them for a single client program, and switch short links, Referly Payouts, the earn widget, marketplace, API keys and integrations on or off for every client."
+keywords: ["agency feature access", "client program usage limits", "agency plan features", "white label affiliate software", "agency short links", "Referly Payouts agency", "Referly Earn Widget", "hide integrations from clients", "agency API keys", "agency settings"]
 ---
+As an agency, you decide what each client can do inside their own affiliate program. You do it at three levels:
 
-{/* TODO: Write this article. */}
+- **Your plans** set the default features and limits for every client on that plan.
+- **Each client program** can be adjusted on its own, on top of its plan.
+- **Agency-wide switches** turn whole options on or off for every client program at once.
+
+This page walks through all three.
+
+<Note>
+  These settings apply to your client and their team. When you or someone on your agency team opens a client program, features aren't locked. A program with a [payment exemption](/help-center/agencies/payment-exemption) also gets every feature, and so do client programs while you haven't connected Stripe under **Accept Payments**.
+</Note>
+
+## Set the defaults on a plan
+
+Every plan you sell carries its own features and usage limits. When a client subscribes to a plan, those features and limits are copied onto their program.
+
+<Steps>
+  <Step title="Open your plans">
+    Select the gear at the bottom of the left bar to open **Agency Settings**. On the **General** tab, select **Plans and Features**.
+  </Step>
+  <Step title="Open a plan">
+    Choose **Monthly**, **Yearly**, or **Lifetime**, then select **Configure Plan** on the plan you want to change (or **Create Plan** if it doesn't exist yet).
+  </Step>
+  <Step title="Set limits and features">
+    Use the **Limits** and **Features** tabs, described below, then select **Save Changes** (or **Create Plan**).
+  </Step>
+</Steps>
+
+The **General** tab holds the plan's name and price. Read more about building and pricing plans in [agency billing](/help-center/agencies/billing).
+
+![The Edit Indie Plan dialog on the Limits tab with the Monthly Revenue Limit, Monthly Referrals, Total Affiliates and Team Member Seats fields and the tip to use -1 for unlimited](/images/help-center/agencies/plan-config-limits.png)
+
+### Limits
+
+On the **Limits** tab, fill in four limits. Enter `-1` to make a limit unlimited, except **Team Member Seats**, which needs at least 1.
+
+| Limit | What it caps |
+|---|---|
+| **Monthly Revenue Limit (USD)** | The revenue affiliates can bring in each month. |
+| **Monthly Referrals** | The number of referrals per month. |
+| **Total Affiliates** | The total number of affiliates the program can have. |
+| **Team Member Seats** | The number of people on the client's team, including the owner. |
+
+### Features
+
+On the **Features** tab, switch each feature on or off for clients on this plan. The full list is in [the features you can switch](#the-features-you-can-switch) below.
+
+A note at the bottom of the tab reminds you that these are only defaults: you can still change features and limits for each client program on its own.
+
+<Warning>
+  When a client subscribes to one of your plans, or their subscription changes, that plan's features and limits are copied onto their program again. This replaces any changes you made to that program by hand, so check **Feature Access** and **Usage Limits** afterwards if you'd customised it.
+</Warning>
+
+## Change features for one client program
+
+To give one client more or less than their plan includes:
+
+1. Select the client's program in the left bar of your agency dashboard.
+2. On the **Access & Features** tab, select **Feature Access**.
+3. Switch features on or off. They're grouped into **Affiliate Program Features**, **Customization Features**, **Tracking & Advanced**, and **Special Features**.
+4. Select **Save Changes**. You'll see **Features updated successfully**.
+
+Changes here apply to this program only and override its plan's defaults.
+
+![The Feature Access page of a client program with the Program Feature Control note and the Affiliate Program Features switches](/images/help-center/agencies/program-feature-access.png)
+
+### The features you can switch
+
+The same features appear on a plan's **Features** tab and on a program's **Feature Access** page.
+
+| Feature | What it controls |
+|---|---|
+| **Automated payouts** | Wise and PayPal automated payouts. |
+| **Individual affiliate commission** | Custom commission rates for individual affiliates. |
+| **Affiliate Milestones** | Milestone-based commission upgrades. |
+| **Marketing assets** | Marketing materials for affiliates. |
+| **Commission plans** | More than one commission plan structure. |
+| **Invoice generation (EU Compliant)** | EU-compliant invoices. |
+| **Import data** | Importing existing affiliate data. |
+| **White-label affiliate portal** | A fully branded affiliate portal. |
+| **API access** | Access to the API. |
+| **Custom affiliate questions** | Custom questions on the affiliate sign-up form. |
+| **Custom affiliate bank input** | Collecting custom bank information from affiliates. |
+| **Custom affiliate portal domain (CName)** | The client's own domain for their affiliate portal. |
+| **Custom email builder** | Custom email templates. |
+| **Custom email sending domain** | Sending emails from the client's own domain. |
+| **'Contact Me' widget** | The contact widget for affiliates. |
+| **Custom terms of service** | Custom terms and conditions. |
+| **Coupon tracking** | Tracking referrals through coupon codes. |
+| **Custom cookie duration** | A custom referral cookie lifetime. |
+| **Webhook feature** | Webhooks. |
+| **MLM feature** | Multi-level marketing. |
+| **Widget feature** | The affiliate widget. |
+
+## Change usage limits for one client program
+
+1. Select the client's program in the left bar of your agency dashboard.
+2. On the **Access & Features** tab, select **Usage Limits**.
+3. Fill in **Monthly Revenue Limit (USD)**, **Monthly Referrals**, **Total Affiliates**, and **Team Member Seats**. Enter `-1` to make a limit unlimited. **Team Member Seats** counts the owner and must be at least 1.
+4. Select **Save Changes**. You'll see **Usage limits updated successfully**.
+
+Like feature changes, these limits apply to this program only and override its plan's defaults.
+
+## Agency-wide switches
+
+Some options are switched on or off for every client program at once. You'll find them under **Agency Settings** on the **General** tab. Each has its own page with its switches and a **Save Changes** button.
+
+Only the agency **Owner** or an **Admin** can save these settings.
+
+![The Agency Short Link Controls card with the Allow automated short links master switch and the Allow Referly short links and Allow Shopify short links switches](/images/help-center/agencies/agency-short-link-controls.png)
+
+### Short Links
+
+The **Short Links** page decides which automated short link options your client programs can turn on. It has three switches:
+
+- **Allow automated short links** is the master switch, and it's on by default. Turn it off and the other two switches are turned off and greyed out, and the **Automated Short Links** page disappears from your clients' settings menu.
+- **Allow Referly short links** lets client programs choose [Referly short links](/help-center/settings/program/referly-short-links). It's off by default.
+- **Allow Shopify short links** lets client programs choose [Shopify short links](/help-center/settings/program/shopify-short-links). It's on by default.
+
+These switches stop client programs from turning an option on. If a client tries to turn on an option you've switched off, they'll see a message such as **Your agency has disabled Referly short links for this program.** Read more in [automated short links](/help-center/settings/program/automated-short-links).
+
+### Referly Payouts
+
+**Allow Referly Payouts** decides whether client programs can choose **Allow Referly to handle your payouts** in their [payout settings](/help-center/settings/program/payout-settings). It's on by default. When it's off, your clients only see **Manage payouts yourself**, and Referly doesn't appear in their list of payout integrations.
+
+### Referly Earn Widget
+
+**Allow Referly Earn Widget** decides whether your clients see the **Refer and earn up to $500** button in their dashboard sidebar. It's on by default. Turn it off if you'd rather your clients didn't see an offer from Referly.
+
+### Marketplace
+
+**Allow Marketplace** decides whether your clients see the **Grow** section of their dashboard sidebar, which holds **Influencer Discovery**, **Marketplace**, and **Affiliate Managers**. It's on by default. When it's off, those pages are also left out of your clients' search results.
+
+### API Keys
+
+The **API Keys** page has two switches, both on by default:
+
+- **Allow API Keys** shows **API Keys** under **Advanced** in your clients' settings. When it's off, the page is hidden and clients who try to open it are sent to **Webhooks** instead.
+- **Show API Documentation** shows a **View API Documentation** link on your clients' API keys page.
+
+Read more about [API keys](/help-center/settings/advanced/api-keys).
+
+### Integrations
+
+The **Integrations** page lists every integration with its own switch. All of them are on by default. Turn one off to hide that integration, and its guide cards, from your client programs' setup, including the list of payment processors they can connect. Each integration shows **Visible to agency programs** or **Hidden from agency programs** so you can see where you stand.
+
+At the top, **Allow "All integrations" link** decides whether your clients see the **All integrations** link in their integrations settings. It opens Referly's public list of integrations. It's on by default.
+
+Select **Save Changes** to apply your choices. Read more in [integrations](/help-center/integrations/overview).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Agencies overview" icon="building" href="/help-center/agencies/overview" arrow>
+    How the agency dashboard and settings fit together.
+  </Card>
+  <Card title="Manage client programs" icon="folder-tree" href="/help-center/agencies/client-programs" arrow>
+    Create programs, hand them to clients, and manage them day to day.
+  </Card>
+  <Card title="Agency billing" icon="receipt" href="/help-center/agencies/billing" arrow>
+    Build the plans you sell and charge your clients.
+  </Card>
+  <Card title="Payment exemptions" icon="hand-holding-dollar" href="/help-center/agencies/payment-exemption" arrow>
+    Waive charges for a client program.
+  </Card>
+</Columns>

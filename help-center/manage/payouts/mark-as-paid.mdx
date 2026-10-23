@@ -1,0 +1,120 @@
+---
+title: "Mark payouts as paid"
+description: "Mark affiliate payouts, payout batches, and rewards as paid in Referly with a payment proof, view or download the proof later, and mark a batch or payout as unpaid if you need to undo it."
+keywords: ["mark as paid", "mark payout as paid", "mark batch as paid", "payment proof", "upload payment proof", "view payment proof", "mark as unpaid", "manually marked as paid", "manual bank transfer payout", "record affiliate payment"]
+---
+When you pay affiliates outside Referly, for example by bank transfer from your own bank, you record it by marking the batch, payout, or reward as paid. Each time you do, Referly asks you to upload a payment proof, so you and your team always have a record of the actual payment. This page covers where you can mark something as paid, which files you can upload, how to view a proof later, and how to undo it.
+
+## What you need
+
+Before you start, have a proof of the payment ready:
+
+- A screenshot or document that shows the payout was actually made, for example a bank transfer receipt, a PayPal confirmation, or a screenshot from your payment platform.
+- A **PNG**, **JPEG**, **WebP**, or **PDF** file of up to 10MB. You upload one file at a time. If the file is too big, you'll see "Proof file must be 10MB or smaller."
+
+## Where you can mark something as paid
+
+You can mark a whole batch, individual payouts, or individual rewards as paid. Pick the place that matches what you paid:
+
+| To mark as paid | Do this |
+| --- | --- |
+| A whole batch | Open the batch and choose **Mark Batch as Paid** from the **Actions** menu. A manual bank transfer batch also has a **Mark as Paid** button at the top right. On the batches list, you can choose **Mark as Paid** from the menu at the end of the batch's row. |
+| Several batches | On the batches list, tick the batches and select **Mark as paid** in the bar that appears. |
+| Some payouts in a batch | Open the batch, tick the payouts, and select **Mark as paid** in the bar that appears. |
+| One payout | Open the batch, select the payout to open its details, and select **Mark as Paid** at the bottom. |
+| An affiliate's payouts | On the batches list, filter by that affiliate. The list then shows their payouts, so you can tick them and select **Mark as paid**. |
+| A coupon or credit batch you deliver yourself | If no coupon or credit integration is connected, open the batch, select **Process Rewards**, then select **Mark Batch as Paid** once you've delivered the rewards. |
+| Rewards | On the **Rewards** page, choose **Mark as paid** from a reward's menu, or tick several rewards and choose **Mark as paid** from the menu in the bar that appears. |
+
+<Note>
+  You can't mark a Referly Payouts batch as paid by hand once Referly has charged you for it. Those batches are settled through Referly.
+</Note>
+
+## Upload the proof
+
+Whichever option you choose, the **Upload payment proof** dialog opens. It names what you're about to mark as paid, for example "this payout batch" or "3 payouts".
+
+1. Drag your file into the box, or click the box (**Drag & drop or click to upload**) to choose a file.
+2. Check the file. Images show a preview. To use a different file, select the X icon next to the file name.
+3. Select **Upload & mark as paid**.
+
+When you mark several batches, or every matching reward, at once, the dialog reminds you that one proof will be attached to all of them.
+
+![The Upload payment proof dialog with a file added, showing the file name, its size, an image preview and the Upload and mark as paid button](/images/help-center/manage/upload-payment-proof-dialog.png)
+
+Here's what changes once the upload finishes:
+
+- **A batch**: every payout in it that wasn't already paid is marked as paid, and the batch moves to **Paid**.
+- **Payouts**: the payouts you chose are marked as paid. Once every payout in a batch is paid, the batch moves to **Paid** as well.
+- **Rewards**: the rewards show as **Paid** in the **Payout** column.
+
+## View a payment proof
+
+Anything marked as paid by hand has a **Paid** label with a dotted underline. You'll see it on the batches list, inside a batch, in a payout's details, and on the **Rewards** page.
+
+1. Hover the **Paid** label. A **Manually marked as paid** card shows who marked it and when.
+
+![Hovering the dotted Paid label on a batch shows the Manually marked as paid card with who marked it, when, and a View proof button](/images/help-center/manage/manually-marked-as-paid-card.png)
+2. Select **View proof**. The **Payment proof** dialog opens with the image (or the file name and size, for a PDF), who marked it as paid and when, and where the proof is attached: directly to the reward, to the payout containing it, or to the batch containing it.
+3. Select **Download** to open the full file in a new tab, where you can save it.
+
+Proofs are only visible to you and your team in the dashboard. Affiliates don't see them.
+
+![The Payment proof dialog showing the uploaded image, who marked the batch as paid and when, where the proof is attached, and a Download button](/images/help-center/manage/view-payment-proof.png)
+
+## Mark a batch or payout as unpaid
+
+If you marked something as paid by mistake, or before the money actually left your account, you can undo it. This only works for batches and payouts that were marked as paid by hand. You can't mark a Referly Payouts batch as unpaid once Referly has charged you for it.
+
+### Undo a batch
+
+1. Open the batch and choose **Mark Batch as Unpaid** from the **Actions** menu. On the batches list, you can also choose **Mark as Unpaid** from the menu at the end of the batch's row. Both appear only when the batch is **Paid** and was marked as paid by hand.
+2. Confirm with **Mark as unpaid**.
+
+The batch goes back to **Ready**, the payouts in it that were marked as paid by hand go back to unpaid, and the uploaded payment proof is removed.
+
+![The Mark batch as unpaid confirmation explaining that the batch and its manually paid payouts go back to unpaid and the proof is removed](/images/help-center/manage/mark-batch-as-unpaid.png)
+
+### Undo a payout
+
+1. Open the batch and select the payout to open its details.
+2. Select **Mark as Unpaid** at the bottom, then confirm in **Mark payout as unpaid?**.
+
+The payout goes back to pending and its payment proof is removed. If the batch it belongs to was **Paid**, the batch moves back to **Ready**.
+
+### Undo a reward
+
+On the **Rewards** page, choose **Mark as unpaid** from the menu of a reward you marked as paid on its own. The reward goes back to unpaid, and its proof is removed from it.
+
+## Why some rewards can't be marked as unpaid on their own
+
+A reward that was paid as part of a payout belongs to that payout, so you undo it from the payout or batch, not from the **Rewards** page. That way the reward, its payout, and its batch always agree.
+
+For these rewards, **Mark as unpaid** in the reward's menu is greyed out. Hover it to see why:
+
+- If the batch was marked as paid by hand, the tooltip asks you to mark that payout batch as unpaid.
+- If the payout was marked as paid by hand, it asks you to mark that payout as unpaid.
+- Otherwise (for example, the payout was sent through Wise or PayPal), it explains that the reward can't be unpaid on its own and has to be reverted from the payout it belongs to.
+
+Select **Go to payout batch →** in the tooltip to open the batch, then follow [Mark a batch or payout as unpaid](#mark-a-batch-or-payout-as-unpaid).
+
+When you select several rewards and choose **Mark as unpaid**, only the rewards that were marked as paid on their own are changed. Rewards paid through a payout are left as they are.
+
+![Row menu of a paid reward with Mark as unpaid greyed out and the tooltip explaining it was paid through a payout, with a Go to payout batch link](/images/help-center/manage/reward-mark-unpaid-disabled.png)
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Payout batches" icon="layer-group" href="/help-center/manage/payouts/batches" arrow>
+    Review, pay, and manage your payout batches.
+  </Card>
+  <Card title="Export payouts" icon="file-arrow-down" href="/help-center/manage/payouts/export" arrow>
+    Download a batch as a CSV, pay it, then mark it as paid.
+  </Card>
+  <Card title="Manual bank transfer" icon="building-columns" href="/help-center/integrations/manual-bank-payouts" arrow>
+    Pay affiliates from your own bank and record it in Referly.
+  </Card>
+  <Card title="Rewards overview" icon="gift" href="/help-center/manage/rewards/overview" arrow>
+    See every reward and whether it has been paid.
+  </Card>
+</Columns>

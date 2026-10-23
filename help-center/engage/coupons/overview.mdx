@@ -1,7 +1,7 @@
 ---
 title: "Coupons overview"
-description: "Learn how coupons work in Referly. Let affiliates promote a discount code instead of a link, connect Stripe, Shopify, WooCommerce, or Polar, sync existing codes, and track sales by coupon."
-keywords: ["affiliate coupons", "coupon codes", "affiliate discount codes", "referly coupons", "promo codes for affiliates", "track sales by coupon", "coupon tracking", "affiliate promo code"]
+description: "Learn how coupons work in Referly. Let affiliates promote a discount code instead of a link, connect Stripe, Shopify, WooCommerce, Polar, Creem, or Ecwid, sync existing codes, and track sales by coupon."
+keywords: ["affiliate coupons", "coupon codes", "affiliate discount codes", "referly coupons", "promo codes for affiliates", "track sales by coupon", "coupon tracking", "affiliate promo code", "payout coupons", "Creem coupons", "Ecwid coupons"]
 ---
 Coupons let your affiliates promote a discount code instead of (or alongside) a referral link. When a customer enters the code at checkout, the sale is tracked to the affiliate who owns that code — so the people you work with can send traffic with a memorable code like `SARAH20` instead of a long tracking link, and you still get full credit and commission tracking.
 
@@ -30,19 +30,25 @@ Most of this section is about customer coupons. Switch to **Payout** only when y
 
 ![customer-vs-payout-toggle](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784753682241-35074-SCR-20260722-upha.png)
 
+<Info>
+  Payout coupons need the Business plan or higher. If you have the Gamify add-on, they're unlocked on any plan. See [plans and features](/help-center/billing/plans-and-features).
+</Info>
+
 ## Connect a coupon source
 
-For a coupon to actually work at your checkout, it has to exist on the platform where customers pay. Referly connects to your billing or store platform so the codes you create here are created on that platform too, and redemptions flow back into your reports. You can connect **Stripe**, **Shopify**, **WooCommerce**, or **Polar**, or use the **API** to manage coupons from your own server.
+For a coupon to actually work at your checkout, it has to exist on the platform where customers pay. Referly connects to your billing or store platform so the codes you create here are created on that platform too, and redemptions flow back into your reports. You can connect **Stripe**, **Shopify**, **WooCommerce**, **Polar**, **Creem**, or **Ecwid**, or use the **API** to manage coupons from your own server.
 
 Start here: [Connect a coupon source](/help-center/engage/coupons/connect-a-source).
 
 ## Sync coupons you already have
 
-If you already created discount codes on Stripe, Shopify, WooCommerce, or Polar, you don't have to rebuild them. Syncing pulls those existing codes into Referly so you can assign and track them like any other coupon. See [Sync coupons](/help-center/engage/coupons/sync).
+If you already created discount codes on Stripe, Shopify, WooCommerce, Polar, Creem, or Ecwid, you don't have to rebuild them. Syncing pulls those existing codes into Referly so you can assign and track them like any other coupon. See [Sync coupons](/help-center/engage/coupons/sync).
 
 ## Create a coupon
 
 When you build a coupon in Referly you choose the discount (a percentage or a fixed amount off), how long it lasts, and any limits — then Referly creates it on your connected platform for you. Full walkthrough: [Create a coupon](/help-center/engage/coupons/create).
+
+You can change a coupon after you create it, but what you can change depends on its platform. See [Edit a coupon](/help-center/engage/coupons/edit).
 
 ## Promotional codes
 
@@ -52,6 +58,8 @@ A coupon holds the discount; a **promotional code** is the actual text a custome
 
 Instead of handing out codes one by one, you can have Referly generate a unique code for each affiliate automatically — built from their name, your coupon name, random characters, or a prefix you choose. See [Auto-generate codes](/help-center/engage/coupons/auto-generated-codes).
 
+You can also let affiliates create their own codes under a coupon from their portal, within limits you set. See [Let affiliates create their own codes](/help-center/engage/coupons/affiliate-generated-codes).
+
 ## Add restrictions
 
 You can limit where and how a code applies — to specific products, a minimum order value, first-time customers only, an expiry date, or a redemption cap. See [Restrict a code](/help-center/engage/coupons/restrictions).
@@ -60,7 +68,7 @@ You can limit where and how a code applies — to specific products, a minimum o
 
 <Columns cols={2}>
   <Card title="Connect a coupon source" icon="plug" href="/help-center/engage/coupons/connect-a-source" arrow>
-    Link Stripe, Shopify, WooCommerce, or Polar so codes work at checkout.
+    Link Stripe, Shopify, WooCommerce, Polar, Creem, or Ecwid so codes work at checkout.
   </Card>
   <Card title="Create a coupon" icon="ticket" href="/help-center/engage/coupons/create" arrow>
     Set the discount, duration, and limits for a new coupon.

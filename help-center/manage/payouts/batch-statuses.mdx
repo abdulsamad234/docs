@@ -1,7 +1,7 @@
 ---
 title: "Payout batch statuses"
-description: "What each Referly payout batch status means — Preparing, Ready, Charging, Sent to Wise, Sending to affiliate, Paid, Failed, and No transactions — and what to do next."
-keywords: ["payout batch status", "payout status meaning", "preparing", "ready to pay", "charging", "sending to affiliate", "failed payout", "sent to Wise", "payout processing"]
+description: "What each Referly payout batch status means (Preparing, Ready, Charging, Sent to Wise, Sending to affiliate, Paid, Some payouts failed, Failed, and No transactions) and what to do next."
+keywords: ["payout batch status", "payout status meaning", "preparing", "ready to pay", "charging", "sending to affiliate", "some payouts failed", "partially failed payout", "failed payout", "sent to Wise", "payout processing", "mark as paid"]
 ---
 Every payout batch carries a **status** that tells you where it is in the payout process — whether it's still gathering earnings, waiting on you, on its way to affiliates, or done. You'll see the status as a colored label in the batches table, and hovering it shows a short explanation. This page is the full reference for what each one means and what, if anything, you need to do.
 
@@ -15,7 +15,7 @@ The batch is still open. Referly is collecting earnings, and transactions that b
 
 ## Ready
 
-The batch is closed and ready to be paid. Open it and select **Pay Now** (or **Process Rewards** for a non-cash batch) to send the payout. This is the main status that's waiting on you.
+The batch is closed and ready to be paid. Open it and select **Pay Now** (or **Process Rewards** for a non-cash batch) to send the payout. For a manual bank transfer batch, you send the money from your own bank, so the button reads **Mark as Paid** instead and asks you to upload a payment proof. See [Mark payouts as paid](/help-center/manage/payouts/mark-as-paid). This is the main status that's waiting on you.
 
 ## Waiting for payment
 
@@ -41,9 +41,17 @@ Referly has received the funds and is now sending the payout to the affiliate's 
 
 The batch is fully paid and complete. Affiliates have received their money or rewards. Paid batches can't be deleted.
 
+## Some payouts failed
+
+This yellow label means part of the batch went through and part didn't. The payouts that succeeded are paid, and the ones that failed remain unpaid. Hover the label to see how many failed, for example "2 of 10 payouts in this batch failed and remain unpaid; the rest went through." When Referly has a specific reason for the failure, the tooltip shows that instead.
+
+Fix the failed payouts' details, then retry the batch. Only the unpaid payouts are sent again, so affiliates who were already paid aren't paid twice. See [Failed payouts](/help-center/manage/payouts/failed-payouts).
+
+![A payout batch with the yellow Some payouts failed badge, the Pay Now button, and one payout in the list marked Failed](/images/help-center/manage/some-payouts-failed-badge.png)
+
 ## Failed
 
-Something went wrong and the batch didn't complete. Hover the status (or open the batch) to see the specific reason, fix the cause, and select **Retry Payout**. See [Failed payouts](/help-center/manage/payouts/failed-payouts) for the common reasons and how to resolve each one.
+This red label means the batch didn't go through as a whole, for example because every payout in it failed. (If only some payouts failed, you'll see **Some payouts failed** instead.) Hover the status (or open the batch) to see the specific reason, fix the cause, and select **Retry Payout**. See [Failed payouts](/help-center/manage/payouts/failed-payouts) for the common reasons and how to resolve each one.
 
 ## No transactions
 

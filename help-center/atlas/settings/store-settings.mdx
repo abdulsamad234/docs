@@ -1,0 +1,172 @@
+---
+title: "Store settings"
+description: "Every setting of one Referly Atlas store: store name and website, type of checkout, connection status and API token, currency and time zone, attribution window, visitor cookie, fingerprint matching, consent mode, allowed domains, test mode, and how to pause or delete the store."
+keywords: ["Atlas store settings", "attribution window", "visitor cookie", "fingerprint matching", "consent mode", "allowed domains", "test mode", "Atlas API token", "pause tracking", "delete Atlas store"]
+---
+Store settings holds everything about how one store is tracked in Referly Atlas: its name and website, the type of checkout, how far back a click counts, what happens when a visitor has not answered your cookie banner, and whether orders are recorded as tests. The page header reads "Site, checkout, attribution, consent and tracking of" followed by the store's name.
+
+To open it, go to **Settings** in the left sidebar and pick **Store settings**. When your business has several stores, choose one in the list on the left. You can also pick **Store settings** from a store's row menu on the All stores page.
+
+![Store settings page](/images/atlas/settings/store-settings--page.png)
+
+The card at the top shows the store's name, its status badge, the platform and domain, and two buttons: **Setup wizard** (or **Finish setup** while the store is not connected yet) and **Visit site**. Below it the settings sit in collapsible sections. **Store details** and **Tracking and connection** are open when you arrive; click a section's title to open the others.
+
+Edit what you need, then press **Save** in the **Unsaved changes** bar at the bottom of the page, or **Save** top right. You see **Settings saved** when the change goes through. Saving never changes the [status of the store](/help-center/atlas/statuses#store-statuses).
+
+<Note>
+  A store that is still Draft or Pending connection shows a banner above the sections: "Finish the setup of this store. Atlas starts tracking once the store is connected. You can change its settings now."
+</Note>
+
+## Store details
+
+"How this store shows in Atlas and where it runs."
+
+![Store details section](/images/atlas/settings/store-settings--store-details.png)
+
+| Setting | What it does |
+| --- | --- |
+| **Store name** | "Shown in the store menu and on every Atlas page." Up to 120 characters. It cannot be left empty. |
+| **Shopify domain** (Shopify stores) | "Synced from the Referly Shopify app." Read-only, marked **Synced**. |
+| **Store website** (every other platform) | "The site the tracking script runs on." For example `https://shop.example.com`. |
+| **Platform** | "Set when the store was added. Run the setup wizard to change it." Press **Change** to reopen the wizard. |
+| **Type of checkout** (Shopify stores) | **Native Shopify checkout**: "Orders are recorded when they are paid." **External checkout**: "A third-party checkout creates the orders. They are recorded when created." |
+
+Type of checkout locks once the Referly Shopify app is connected. The helper text then reads "To change it, update the type of checkout in the Referly app in your Shopify store." Before the app is connected it reads "Pick External when a third-party checkout creates your Shopify orders."
+
+## Tracking and connection
+
+"When Atlas last heard from your store, its tracking script and API token." The section's summary line shows when the store was last seen and how many destinations it has.
+
+![Tracking and connection section](/images/atlas/settings/store-settings--tracking-and-connection.png)
+
+### Connection status
+
+"Run a test after you change your site or your setup." Five tiles sum up the connection:
+
+| Tile | What you see |
+| --- | --- |
+| **Tracking script** (**App embed** on Shopify) | "Seen 2 minutes ago", or "Not seen yet". |
+| **Pixel token** (**Web pixel** on Shopify) | On Shopify, **Registered** or **Not registered**. On other platforms, **Not needed**. |
+| **Last pixel event** | When the last browser event arrived, or "None yet". |
+| **Last order webhook** | When the last order arrived, or "Waiting for the first order". |
+| **Destinations** | "3 connected" or "None yet", with **Add one** or **Manage**, which opens Pixels and destinations. |
+
+Press **Test connection** to run the four checks (the script or app embed, tracked events, the order webhook and every destination). [Test the connection](/help-center/atlas/setup/test-connection) explains each result and what to do when one fails.
+
+### Tracking script
+
+Shown for every platform except Shopify. "Paste it before the closing head tag on every page of your site." On WooCommerce the helper text reads "The plugin adds it for you. Use it only if you load scripts by hand." See [Tracking script](/help-center/atlas/setup/tracking-script).
+
+### API token
+
+"Used by the Referly WordPress plugin and by server-side calls. Shown once when generated." Press **Generate token** and copy the token (it starts with `atl_`) somewhere safe. The row reads "No token yet." until you do, and afterwards shows only its last four characters.
+
+**Regenerate** replaces the token. The confirmation reads "The current token stops working right away. Update your plugin or server with the new one." You see **Token generated** or **Token regenerated** when it is done. The WordPress plugin, Zapier, Make and your own server all use this token; see [Connect your data](/help-center/atlas/setup/connect-your-data).
+
+## Currency and time zone
+
+"How Atlas reads amounts and days for this store."
+
+![Currency and time zone section](/images/atlas/settings/store-settings--currency-and-time-zone.png)
+
+| Setting | What it does | Default |
+| --- | --- | --- |
+| **Store currency** | "Orders that arrive without a currency use this one." On Shopify it is "Synced with Shopify on the first order." | Not set |
+| **Time zone** | "Days in reports start at midnight here." On Shopify it is synced with Shopify. The helper line also shows the current time there. | UTC |
+
+Live activity shows event times in the store's time zone. The currency your reports are displayed in, and the account-wide time zone for report days and the weekly email, are set in [Preferences](/help-center/atlas/settings/preferences).
+
+## Attribution
+
+"How Atlas ties an order to the ad click and to the visitor behind it."
+
+![Attribution section](/images/atlas/settings/store-settings--attribution.png)
+
+### Attribution window
+
+"How far back a click can be for an order to count as its conversion."
+
+| Option | Helper text |
+| --- | --- |
+| **7 days** | "Quick, impulse purchases." |
+| **30 days** (default, marked **Recommended**) | "Fits most stores." |
+| **90 days** | "Long, considered purchases." |
+
+The window also decides which visit gets an order in Reporting: the last qualifying session inside it. See [Which visit gets the order](/help-center/atlas/reports/reporting#which-visit-gets-the-order).
+
+### Visitor cookie
+
+"How long Atlas remembers a returning browser, up to 400 days. Some browsers keep it for less." Enter a number of days from 1 to 400. The default is 400.
+
+### Fingerprint matching
+
+"Stitch a cookie-less return visit to its earlier session with the IP, user agent and screen size. Never used on its own for visitors who must consent." On by default. Turn it off to match returning visitors by cookie and identifiers only.
+
+### Matching window
+
+Shown while fingerprint matching is on. "How long after a visit a fingerprint can still match it, up to 168 hours (7 days)." Use the **24h**, **3 days** or **7 days** presets, or type a number of hours. The default is 72 hours.
+
+## Privacy and consent
+
+"What Atlas sends to your ad platforms when visitors answer, or ignore, your cookie banner." This section sets the rules; [Consent and privacy](/help-center/atlas/pixels/consent-and-privacy) explains where consent comes from, what is hashed and how each choice plays out.
+
+![Privacy and consent section](/images/atlas/settings/store-settings--privacy-and-consent.png)
+
+| Setting | Options | Default |
+| --- | --- | --- |
+| **Consent mode** | **Strict**: "Nothing is sent for a visitor until marketing consent is granted." **Balanced**: "Consent is required only where the law asks for it: EEA, UK and Switzerland." **Off**: "Consent is ignored. Use it only where no consent law applies to your visitors." | Balanced (marked **Recommended**) |
+| **Visitors with unknown consent** | "A visitor from the EEA, UK or Switzerland who never answered your banner." **Skip the event**: "Nothing is sent until the visitor answers. The safer choice." **Send the event**: "Events go out anyway. You take responsibility for the consent." Greyed out while consent mode is Off. | Skip the event (marked **Safer**) |
+| **Allowed domains** | "Accept events only from these domains and their subdomains. Leave the list empty to accept events from any site that loads your script." Type a domain such as `shop.example.com` and press Enter. Up to 20 domains. | Empty, any domain |
+
+## Testing
+
+"Try your setup without touching your numbers."
+
+![Testing section](/images/atlas/settings/store-settings--testing.png)
+
+**Test mode**: "Orders are recorded as tests: they show in the feed but stay out of reporting and your destinations." While it is on, the row shows a **Recording tests** pill and the store card shows **Test mode**. Test orders appear in Live activity with the Test status, and they are never sent to your ad platforms.
+
+![Test mode switched on](/images/atlas/settings/store-settings--test-mode-on.png)
+
+![Store card with the Test mode pill](/images/atlas/settings/store-settings--test-mode-card.png)
+
+Turn it on before you place a test order, and off before real orders arrive. Orders recorded while it was on never count in Overview or Reporting.
+
+## Danger zone
+
+"Pause or delete the Atlas store. Nothing here touches your affiliate data."
+
+![Danger zone section](/images/atlas/settings/store-settings--danger-zone.png)
+
+### Pause tracking
+
+"Orders are still recorded. Nothing goes to your destinations while paused." The button is available for stores that are Running, Awaiting data or Reviewing. You see **Store paused** and the badge turns to Paused.
+
+While the store is paused the row reads **Resume tracking**: "Events start flowing to your destinations again." Press it to go back to tracking; you see **Store resumed**.
+
+### Delete Atlas store
+
+"Deletes the store's tracking data, pixels, filters and connected ad accounts. Your affiliate data stays."
+
+<Warning>
+  The confirmation reads "Tracking stops and the store's Atlas data is deleted for good: visitors, orders, events, reports, pixels, filters and the ad accounts connected to it. This cannot be undone. Your affiliate data stays." Pause the store instead if you may want its history later.
+</Warning>
+
+Press **Delete Atlas store** in the dialog to confirm. You see **Atlas store deleted**.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Test the connection" icon="plug-circle-check" href="/help-center/atlas/setup/test-connection" arrow>
+    What the four checks look for and how to read the results.
+  </Card>
+  <Card title="Consent and privacy" icon="shield-check" href="/help-center/atlas/pixels/consent-and-privacy" arrow>
+    Where consent comes from and what Atlas hashes before it sends.
+  </Card>
+  <Card title="Businesses and stores" icon="store" href="/help-center/atlas/businesses-and-stores" arrow>
+    Switch between businesses, add stores and read their statuses.
+  </Card>
+  <Card title="Preferences" icon="sliders" href="/help-center/atlas/settings/preferences" arrow>
+    Account-wide time zone, display currency and email notifications.
+  </Card>
+</Columns>

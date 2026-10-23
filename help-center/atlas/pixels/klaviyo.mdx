@@ -1,0 +1,141 @@
+---
+title: "Klaviyo integration"
+description: "Send your store's events to Klaviyo as metrics with Referly Atlas. Find your Klaviyo public and private API keys, add Klaviyo as a pixel in Atlas, and verify that Placed Order, Started Checkout and the other metrics arrive on your profiles."
+keywords: ["klaviyo integration", "klaviyo events api", "klaviyo public api key", "klaviyo private api key", "referly atlas klaviyo", "klaviyo placed order metric", "klaviyo started checkout", "klaviyo server side events", "klaviyo flows from atlas events"]
+---
+Referly Atlas can send your store's events to Klaviyo, where each one becomes a metric on the customer's profile: Placed Order, Started Checkout, Added to Cart and so on. Klaviyo is not an ad platform, but Atlas treats it like every other destination, so you add it as a pixel and it shows up on the Pixels and destinations page like the rest. This guide walks you through finding your two Klaviyo API keys, adding the connection in Atlas, and checking that metrics arrive.
+
+## Before you start
+
+You need:
+
+- **A store in Atlas that is set up and live.** Only stores that are Running or Awaiting data send events. See [Store statuses](/help-center/atlas/statuses#store-statuses).
+- **A Klaviyo account where you can create a private API key** with permission to write events.
+- **Events that carry an email or phone.** Klaviyo attaches every metric to a profile, so Atlas sends an event only when it knows the visitor's email or phone number. Orders and conversions usually do; anonymous page views usually do not. See [Events that need an identity](/help-center/atlas/events#events-that-need-an-identity).
+
+If this is your first pixel, read [Pixels and destinations](/help-center/atlas/pixels) first: it explains what a pixel is in Atlas and what every pixel row shows.
+
+## Step 1: Find your Public API key
+
+<Steps>
+  <Step title="Open your API keys">
+    In Klaviyo, open **Account**, then **Settings**, then **API keys**.
+  </Step>
+  <Step title="Copy the Public API key">
+    Copy the **Public API key / Site ID**. It is short, for example `ABc1De`.
+  </Step>
+</Steps>
+
+Klaviyo's own article on the public API key: [help.klaviyo.com](https://help.klaviyo.com/hc/en-us/articles/115005062267#h_01HRFPP8R1AEVQ744SE33FQTEC). The same steps sit in the **Where to find it** tooltip beside the field in Atlas, and the **How to find it** link under the field opens Klaviyo's article.
+
+## Step 2: Create a private API key
+
+<Steps>
+  <Step title="Open your API keys">
+    In Klaviyo, open **Account**, then **Settings**, then **API keys**.
+  </Step>
+  <Step title="Create the key">
+    Select **Create Private API Key**. Give it **Full** access, or **Custom** access with events set to write.
+  </Step>
+  <Step title="Copy it now">
+    Klaviyo shows the key once. It starts with `pk_`, for example `pk_a1b2c3d4...`.
+  </Step>
+</Steps>
+
+Klaviyo's own article on private API keys: [help.klaviyo.com](https://help.klaviyo.com/hc/en-us/articles/7423954176283).
+
+<Note>
+  Both keys must come from the same Klaviyo account. When Atlas tests the connection it checks the public key against the account the private key belongs to, and fails the test if they are from two different accounts.
+</Note>
+
+## Step 3: Add the pixel in Atlas
+
+<Steps>
+  <Step title="Open Pixels and destinations">
+    In the left sidebar of Atlas, open **Pixels and destinations** for the store, then select **+ Add pixel**.
+  </Step>
+  <Step title="Choose Klaviyo">
+    In the **Add your tracking pixel** dialog, select the **Klaviyo** chip. Leave **Method** on **Add a new pixel**. If another store of your business already sends to this Klaviyo account, choose **Use an existing pixel** instead and Atlas copies its ids and keys to this store. See [Use an existing pixel](/help-center/atlas/pixels#use-an-existing-pixel).
+  </Step>
+  <Step title="Paste the two keys">
+    Fill in **Public API key** and **Private API key**. Atlas checks that the private key starts with `pk_`. **Name (optional)** helps you tell connections apart.
+  </Step>
+  <Step title="Choose the events to send">
+    Under **Events sent**, keep or change the events Atlas pre-selected for your business type, limited to the events Klaviyo accepts (see the table below). See [Default events by business type](/help-center/atlas/events#default-events-by-business-type).
+  </Step>
+  <Step title="Save">
+    Select **Add pixel**. Atlas shows the **Pixel saved** screen with a **Data flowing** badge.
+  </Step>
+</Steps>
+
+![Add pixel dialog with Klaviyo selected, showing the Public API key and Private API key fields](/images/atlas/pixels/pixels-klaviyo--add-pixel-dialog.png)
+
+On the **Pixel saved** screen, use **You can verify that here** to send a test event straight away. Atlas answers **Test event accepted** with the HTTP status Klaviyo returned, or shows Klaviyo's own error message so you can correct a key.
+
+## Events Atlas sends to Klaviyo
+
+Each Atlas event becomes a Klaviyo metric with one of these names. Use them when you build flows and segments.
+
+| Atlas event | What Klaviyo calls it |
+| --- | --- |
+| Page view | Active on Site |
+| View content | Viewed Product |
+| Add to cart | Added to Cart |
+| Initiate checkout | Started Checkout |
+| Purchase | Placed Order |
+| Search | Searched Site |
+| Lead | Became a Lead |
+| Sign up | Signed Up |
+| Start trial | Started Trial |
+| Subscribe | Started Subscription |
+
+Add payment info is not sent to Klaviyo.
+
+Only the events ticked under **Events sent** are forwarded, and only when the visitor's email or phone is known. Orders and conversions are always evaluated; the browser events (page views, product views, carts, checkouts, searches) are forwarded only when a pixel wants them.
+
+## Verify that events arrive
+
+1. **Send a test event.** On the pixel row, open the row's menu and choose **Send test event**. A toast confirms that Klaviyo accepted the event, or shows Klaviyo's error. Test events time out after 10 seconds.
+2. **Read the delivery line.** The line under the pixel reads how many events reached Klaviyo in the last 24 hours, for example **8 sent in 24 h**, or **8 sent, 2 failed in 24 h** when some were rejected. A green dot means **Live**: events are being sent. See [Pixel states](/help-center/atlas/statuses#pixel-states).
+3. **Watch Live activity.** Open **Live activity** in the left sidebar and filter by destination to see each event's status and Klaviyo's response. Rows marked **Skipped** with **No identifiers the platform can match** are visitors Atlas could not tie to an email or phone. See [Live activity](/help-center/atlas/reports/live-activity).
+
+![More pixel actions menu on a pixel row with Send test event and Event filters](/images/atlas/pixels/pixels--row-menu.png)
+
+## Klaviyo settings in Atlas
+
+Klaviyo connections have no extra settings in Atlas. Three things decide what Klaviyo receives:
+
+- **Every event needs an email or phone.** Klaviyo stores metrics on profiles, so Atlas sends an event only when it knows the visitor's email or phone number. Purchases and conversions from your store or billing tool carry one. Page views, product views and carts from a visitor who has not identified themselves are skipped. On a custom site, identify the visitor through the tracker as soon as you know who they are; see [Tracker JS API](/help-center/atlas/developers/tracker-js-api).
+- **The metric names are fixed.** Atlas sends the names in the table above. Build your Klaviyo flows and segments on those metrics, for example a flow triggered by **Started Checkout** without a **Placed Order** afterwards.
+- **The test checks both keys belong to one account.** When you send a test event, Atlas checks the public key against the private key's account before sending. A test that fails with a message about the keys means they came from two Klaviyo accounts: copy both from the same account's **API keys** page.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The test event fails">
+    Atlas shows Klaviyo's error next to the test. Check that the private key starts with `pk_` and has permission to write events, and that both keys come from the same Klaviyo account. Atlas never shows a saved private key again, so select **Edit** on the row and paste a fresh one (a blank field keeps the saved value). Test events time out after 10 seconds, so a slow answer also counts as a failure: try once more.
+  </Accordion>
+  <Accordion title="The row says No events in the last 24 h">
+    Atlas sends only from stores that are Running or Awaiting data, only the events ticked under **Events sent**, and never test-mode orders. Check that the platform switch at the top of the Klaviyo row is on, then open **Live activity** and read the Status column: **Skipped** means no consent or no email or phone to match, **Filtered** means an event filter stopped it, **Deduped** means the same event was already sent within 48 hours. See [Delivery statuses](/help-center/atlas/statuses#delivery-statuses).
+  </Accordion>
+  <Accordion title="Purchases arrive in Klaviyo but page views and carts do not">
+    That is normal for anonymous visitors: Klaviyo needs an email or phone on every metric, and a visitor who has not signed in, bought or filled in a form has neither. Once a visitor is identified (an order, a sign up, a form, or a call to the tracker on your own site), their later events are sent. Orders from Shopify, WooCommerce and your billing integrations carry the customer's email, which is why purchases arrive.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Pixels and destinations" icon="plug" href="/help-center/atlas/pixels" arrow>
+    Add, edit, test and detach pixels on any store.
+  </Card>
+  <Card title="Events" icon="list-check" href="/help-center/atlas/events" arrow>
+    What each event means and which events need an identity.
+  </Card>
+  <Card title="Conversions" icon="flag-checkered" href="/help-center/atlas/conversions" arrow>
+    Leads, sign ups, trials and subscriptions, and where they come from.
+  </Card>
+  <Card title="Tracker JS API" icon="code" href="/help-center/atlas/developers/tracker-js-api" arrow>
+    Identify visitors on a custom site so Klaviyo can match their events.
+  </Card>
+</Columns>

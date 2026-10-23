@@ -1,6 +1,95 @@
 ---
 title: "Payment exemptions"
-description: "Let a client program bypass its own billing."
+description: "Use payment exemptions in your Referly agency account to let a client program run without a paid plan: set a reason, make it permanent or temporary, check it on Billing Status, and end it safely."
+keywords: ["payment exemption", "agency payment exemption", "exempt client program from payment", "free client program", "temporary payment exemption", "Billing not set up yet", "Payment Exempted status", "Referly agency billing", "client program without subscription", "waive client charges"]
 ---
+A payment exemption lets a client program run without an active subscription. While a program is exempt, it has full access without any payment requirements, and its affiliate portal stays live even if the client isn't on one of your plans.
 
-{/* TODO: Write this article. */}
+Exemptions are meant for special cases, such as a partnership, a beta tester, a promotional deal, a non-profit, or a program you run for your own agency.
+
+## New client programs start exempt
+
+Every client program you create starts with a permanent exemption, with the reason "Billing not set up yet". This keeps the program working while you connect Stripe and set up your plans, so your client isn't blocked on day one.
+
+The exemption stays on until you turn it off. Once your client is on a plan and you want their access to depend on paying for it, end the exemption (see [End an exemption](#end-an-exemption) below).
+
+## What an exemption does
+
+While a client program is exempt:
+
+- The program has full access without payment requirements.
+- Its affiliate portal keeps working even if no plan is assigned.
+- Your client sees **Payment Exempt** under **Next payment** on their billing page.
+- The **Billing Status** tab in your agency controls shows **Payment Exempted**.
+
+<Warning>
+  An exemption doesn't cancel or pause a subscription you've assigned. If the client is on a paid plan, Stripe keeps billing them. To stop charging them, set their plan to **No Plan (Unassigned)** under **Current Plan**, or pause or cancel the subscription. See [agency billing](/help-center/agencies/billing).
+</Warning>
+
+## Grant an exemption
+
+<Steps>
+  <Step title="Open the program's Payment Exemption page">
+    From your agency home screen, select the client's program card. Go to the **Plan & Billing** tab and select **Payment Exemption**.
+  </Step>
+  <Step title="Turn the exemption on">
+    Switch on **Enable Payment Exemption**. The rest of the form appears below it.
+  </Step>
+  <Step title="Choose a reason">
+    Pick one under **Exemption Reason**: **Partner Program**, **Beta Tester**, **Promotional**, **Non-Profit**, **Internal Use**, or **Other**. A reason is required.
+  </Step>
+  <Step title="Choose how long it lasts">
+    Under **Exemption Duration**, choose **Permanent** or **Temporary**. For a temporary exemption, set an **End Date** (required) and, if you like, a **Start Date**. If you leave the start date empty, it starts today.
+  </Step>
+  <Step title="Add notes and save">
+    Use **Internal Notes** to record why you granted it or who approved it. These notes are only visible to agency administrators, never to your client. Select **Save Changes**.
+  </Step>
+</Steps>
+
+![The Payment Exemption form with Enable Payment Exemption switched on, Partner Program as the reason, Permanent as the duration and an internal note](/images/help-center/agencies/payment-exemption-form.png)
+
+When it's saved, you'll see "Payment exemption updated successfully".
+
+## Check a program's exemption
+
+Open the program's **Plan & Billing** tab and select **Billing Status**. An exempt program shows **Payment Exempted** with an **Exemption Details** card listing the **Exemption Type**, the **Reason** and, for a temporary exemption, the date it ends under **Exemption Ends**.
+
+![The Billing Status page of an exempt client program with the Payment Exempted banner and the Exemption Details card showing the type and reason](/images/help-center/agencies/billing-status-exempted.png)
+
+<Note>
+  After a temporary exemption's end date passes, **Billing Status** stops showing it as exempt. To make sure the program's access follows the client's subscription from then on, open **Payment Exemption** and switch the exemption off.
+</Note>
+
+## End an exemption
+
+<Steps>
+  <Step title="Assign a plan first">
+    Go to **Plan & Billing**, select **Current Plan**, and assign the client one of your plans. See [assign a plan to a client program](/help-center/agencies/billing#assign-a-plan-to-a-client-program).
+  </Step>
+  <Step title="Switch the exemption off">
+    Select **Payment Exemption**, switch off **Enable Payment Exemption**, and select **Save Changes**.
+  </Step>
+</Steps>
+
+Turning an exemption off clears its reason, dates and notes. If you exempt the program again later, you'll fill them in afresh.
+
+<Warning>
+  A client program with no exemption and no plan stops working for affiliates: its portal shows "Sorry, this Affiliate Program is not active." Assign a plan before you switch the exemption off.
+</Warning>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Agency billing" icon="receipt" href="/help-center/agencies/billing" arrow>
+    Connect Stripe, create plans, and assign them to clients.
+  </Card>
+  <Card title="Manage client programs" icon="folder-tree" href="/help-center/agencies/client-programs" arrow>
+    Create programs, invite clients, and manage them day to day.
+  </Card>
+  <Card title="Feature access and usage limits" icon="sliders" href="/help-center/agencies/feature-access" arrow>
+    Choose what each client can use and how far they can grow.
+  </Card>
+  <Card title="Agencies overview" icon="building" href="/help-center/agencies/overview" arrow>
+    How an agency account works and where everything lives.
+  </Card>
+</Columns>

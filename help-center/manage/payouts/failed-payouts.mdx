@@ -1,11 +1,11 @@
 ---
 title: "Failed payouts"
-description: "Find out why a Referly payout failed and how to fix it — read the failure reason, resolve the cause, and retry the payout batch."
-keywords: ["failed payout", "payout failed", "retry payout", "payout error", "payment declined", "insufficient funds payout", "Wise payout failed", "PayPal payout failed"]
+description: "Find out why a Referly payout failed and how to fix it: read the failure reason, fix the cause or an affiliate's payout details, and retry the payout batch. Covers Failed and Some payouts failed batches."
+keywords: ["failed payout", "payout failed", "some payouts failed", "retry payout", "payout error", "edit payout details", "payment declined", "insufficient funds payout", "Wise payout failed", "PayPal payout failed"]
 ---
-Sometimes a payout doesn't go through. When that happens, the batch shows a **Failed** status, and Referly records why. The good news is that a failed payout is almost always fixable — you find the reason, sort out the cause, and retry. This page shows how.
+Sometimes a payout doesn't go through. When that happens, the batch shows a **Failed** or **Some payouts failed** status, and Referly records why. The good news is that a failed payout is almost always fixable — you find the reason, sort out the cause, and retry. This page shows how.
 
-Failed batches appear on the [payout batches](/help-center/manage/payouts/batches) list under **Payouts** in the left sidebar, with a red **Failed** label.
+Failed batches appear on the [payout batches](/help-center/manage/payouts/batches) list under **Payouts** in the left sidebar. A red **Failed** label means the batch didn't go through as a whole, for example because every payout in it failed. A yellow **Some payouts failed** label means part of the batch was paid and the rest wasn't. See [Payout batch statuses](/help-center/manage/payouts/batch-statuses) for more on each.
 
 ![failed-batch](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784743144223-300098-final-failed-batch-1784743144094.png)
 
@@ -13,8 +13,10 @@ Failed batches appear on the [payout batches](/help-center/manage/payouts/batche
 
 Referly attaches a reason to every failure. To see it:
 
-- **On the list** — hover over the red **Failed** label and the reason appears in a tooltip.
+- **On the list** — hover over the **Failed** or **Some payouts failed** label and the reason appears in a tooltip. For a partly failed batch, the tooltip tells you how many payouts failed, unless Referly has a more specific reason to show.
 - **Inside the batch** — open the batch to see the reason at the top, and hover the status on any individual payout that failed to see its specific reason.
+
+For PayPal payouts, the reason starts with "PayPal:" followed by PayPal's own error message, and often a suggested next step, such as "Top up your PayPal balance and retry."
 
 Read the reason first — it tells you exactly what to fix before you retry.
 
@@ -25,7 +27,21 @@ Most failures come down to one of these:
 - **The payout method isn't connected.** If your Wise or PayPal connection dropped or was never finished, the batch can't be sent. Reconnect the method under [Payout settings](/help-center/manage/payouts/payout-methods), then retry.
 - **Not enough funds.** If the account you pay from doesn't have enough to cover the batch, the payment fails. Top up your Wise, PayPal, or bank balance and retry.
 - **A payment method was declined.** For Referly Payouts, if the card or bank account Referly charges is declined or can't be charged, the batch fails. Update or switch your payment method, then retry.
-- **An affiliate's payout details are wrong.** If an affiliate's bank, PayPal, or Wise details are invalid, their payout can fail. Ask the affiliate to correct their details before you retry.
+- **An affiliate's payout details are wrong.** If an affiliate's bank, PayPal, or Wise details are invalid, their payout can fail. Ask the affiliate to correct their details, or [fix them yourself](#fix-an-affiliates-payout-details), before you retry.
+- **Some Wise transfers couldn't be created.** If Wise couldn't create a transfer for some payouts in a batch, the batch is marked failed with a reason like "2 payout(s) could not be transferred and remain unpaid", followed by the first error Wise returned. Fix the affected affiliates' payout details, then retry the batch.
+- **The payout came to zero.** If refunds or other adjustments bring an affiliate's payout down to nothing, there's no money to send, so that payout fails with the reason "Payout amount is 0 after commission adjustments (e.g. refunds); nothing to transfer." Nothing is owed to that affiliate for this payout.
+
+## Fix an affiliate's payout details
+
+You don't have to wait for the affiliate to update their details. To fix them yourself:
+
+1. Open the batch and select the affiliate's payout to open its details.
+2. Select **Edit Payout Details** at the bottom.
+3. Correct the details and select **Save Changes**.
+
+If something is missing or wasn't accepted, the dialog scrolls to it and shows the problem in red under the field, so you can see exactly what to change. Once the details are saved, retry the batch.
+
+![The Edit Payout Details dialog with the PayPal method selected and the Payout Email field highlighted in red with the message Payout email is required](/images/help-center/manage/edit-payout-details.png)
 
 ## Retry the payout
 
@@ -37,7 +53,7 @@ Once you've fixed the cause, open the batch and select **Retry Payout**. Referly
 If a retry keeps failing for the same reason, re-check the reason message — the underlying cause probably hasn't been resolved yet.
 
 <Note>
-  If only some payouts in a batch failed, you can also mark the ones that did succeed as paid so your records stay accurate while you sort out the rest.
+  If only some payouts in a batch failed, the ones that went through are already paid. When you retry, Referly sends only the payouts that are still unpaid, so no affiliate is paid twice.
 </Note>
 
 ## Related

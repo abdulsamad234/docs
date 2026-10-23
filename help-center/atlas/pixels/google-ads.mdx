@@ -1,0 +1,156 @@
+---
+title: "Google Ads pixel"
+description: "Fire Google Ads conversions from your store's browser with Referly Atlas. Find your Conversion ID and conversion labels, add the Google pixel, paste the custom pixel in Shopify, and verify that conversions arrive in Google Ads."
+keywords: ["google ads conversion tracking", "google ads conversion id", "google ads conversion label", "shopify custom pixel google ads", "referly atlas google ads", "google ads purchase conversion shopify", "google ads tag consent mode", "google ads conversions double counted", "google ads woocommerce conversions"]
+---
+Google Ads is the one platform Referly Atlas does not send to from its servers. Google counts conversions through its own tag in the visitor's browser, so Atlas builds that tag for you: on Shopify you paste it once as a custom pixel, and on every other site the Referly tracker fires the conversions on its own. Every conversion that fires is reported back to Atlas and counted in Reporting, so Google still sits beside your other platforms.
+
+## Before you start
+
+You need:
+
+- **A store in Atlas that is set up and live.** See [Store statuses](/help-center/atlas/statuses#store-statuses).
+- **A Google Ads account with at least one conversion action** for the events you want to count. Atlas builds the tag only for events that have a conversion label, so create the actions in Google Ads first.
+- **On Shopify, access to Customer events** in your Shopify admin (under **Settings**), where custom pixels are added.
+
+<Warning>
+  Do not also send these conversions from Google's own tag or the Google & YouTube app, or they count twice. Pick one source for each conversion action.
+</Warning>
+
+## Step 1: Find your Conversion ID
+
+Your account has one Conversion ID, shared by every conversion action.
+
+<Steps>
+  <Step title="Open a conversion action">
+    In Google Ads, go to **Goals**, then **Conversions**, then **Summary**, and open the action you want to track.
+  </Step>
+  <Step title="Open the tag setup">
+    Select **Tag setup**, then **Use Google Tag Manager**.
+  </Step>
+  <Step title="Copy the Conversion ID">
+    Copy the **Conversion ID** (one per account). Atlas accepts it with or without the prefix, so `AW-123456789` and `123456789` both work.
+  </Step>
+</Steps>
+
+Google's own article on the conversion ID and label: [support.google.com](https://support.google.com/tagmanager/answer/6105160).
+
+## Step 2: Find your conversion labels
+
+Each conversion action has its own label, shown on the same **Use Google Tag Manager** screen as the Conversion ID, under **Conversion label** (one per action). A label looks like `X9dKCJvA75kDEND8kMQo`.
+
+Collect one label for every event you want Atlas to count. Atlas has a row for each of these eight events: Page view, Add to cart, Initiate checkout, Purchase, Lead, Sign up, Start trial and Subscribe. You need at least one.
+
+## Step 3: Add the pixel in Atlas
+
+<Steps>
+  <Step title="Open Pixels and destinations">
+    In the left sidebar of Atlas, open **Pixels and destinations** for the store, then select **+ Add pixel**.
+  </Step>
+  <Step title="Choose Google">
+    In the **Add your tracking pixel** dialog, select the **Google** chip (the chip reads **Google**, not Google Ads). Leave **Method** on **Add a new pixel**, or choose **Use an existing pixel** if another store of your business already has this account set up. See [Use an existing pixel](/help-center/atlas/pixels#use-an-existing-pixel).
+  </Step>
+  <Step title="Paste the Conversion ID">
+    Fill in **Conversion ID**. **Name (optional)** helps you tell accounts apart.
+  </Step>
+  <Step title="Add your conversion labels">
+    Under **Conversion labels**, select **Add conversion**, pick the event and paste its label. Repeat for every event you collected in Step 2. There are no **Events sent** chips for Google: the label rows are the event selection, and Atlas saves only when at least one row is filled in.
+  </Step>
+  <Step title="Save">
+    Select **Add pixel**. The **Pixel saved** screen shows **One step left** on a Shopify store (the custom pixel still has to be pasted) or **Ready** on every other site.
+  </Step>
+</Steps>
+
+![Add pixel dialog with Google selected, showing the Conversion ID field, the Conversion labels rows and the note that conversions fire in the browser](/images/atlas/pixels/pixels-google-ads--add-pixel-dialog.png)
+
+## Events Atlas sends to Google Ads
+
+Each row in the table is one conversion label. Events without a label are not built into the tag.
+
+| Atlas event | What Google Ads calls it |
+| --- | --- |
+| Page view | page_view |
+| Add to cart | add_to_cart |
+| Initiate checkout | begin_checkout |
+| Purchase | purchase |
+| Lead | generate_lead |
+| Sign up | sign_up |
+| Start trial | start_trial |
+| Subscribe | subscribe |
+
+View content, Add payment info and Search have no conversion label row and are not sent to Google Ads.
+
+## Verify that events arrive
+
+Google Ads pixels have no **Send test event**, because the conversions fire in the browser rather than from Atlas. Use these checks instead:
+
+1. **On Shopify, run Verify.** The last step of the **Set up Google Ads in Shopify** dialog opens your store in a new tab and watches for the custom pixel for up to 90 seconds. When it fires, the dialog reads **Google Ads pixel connected**.
+2. **Read the delivery line.** The Google Ads row reads how many conversions fired in the browser in the last 24 hours, for example **8 fired in the browser in 24 h**. The row's sub-line says where they come from: **Browser, Shopify custom pixel** or **Browser, automatic**.
+3. **Watch Live activity.** Each fired conversion is reported back to Atlas and listed in **Live activity** with Google Ads as the destination. See [Live activity](/help-center/atlas/reports/live-activity).
+4. **Check Google Ads.** Open your [conversions summary](https://ads.google.com/aw/conversions) in Google Ads and look for the actions whose labels you added.
+
+![Google Ads pixel rows on a Shopify store with the Set up and Verify buttons](/images/atlas/pixels/pixels-google-ads--rows.png)
+
+## Google Ads settings in Atlas
+
+### Shopify stores: paste the custom pixel
+
+On a Shopify store the Google Ads row shows **Set up** (and **Shopify setup** in the row's menu). It opens the **Set up Google Ads in Shopify** dialog, which walks you through six steps:
+
+1. **Copy code**: copies the tag Atlas built from your labels.
+2. In your Shopify admin, open **Settings**, then **Customer events**.
+3. Add a custom pixel and name it **Referly Atlas Google Ads**.
+4. Paste the code in the **Code** box.
+5. Select **Save**, then **Connect**.
+6. Back in Atlas, select **Verify**. Atlas opens your store in a new tab and checks for up to 90 seconds.
+
+![Set up Google Ads in Shopify dialog with the six steps from Copy code to Verify and the Good to know box](/images/atlas/pixels/pixels-google-ads--shopify-setup-dialog.png)
+
+On Shopify the custom pixel fires page views, carts, checkouts and purchases on its own. Sign ups fire only with classic customer accounts, leads come from contact and newsletter forms, and trials and subscriptions come from subscription products.
+
+### Other sites: automatic through the Referly tracker
+
+On WooCommerce, Wix, Squarespace, Webflow and custom sites, the Referly tracker fires the conversions, so there is nothing to paste. The WooCommerce plugin fires all eight events from version 2.3.3. If a page cannot run the tracker, choose **Copy snippet** in the row's menu and paste that code on the page instead.
+
+### After you change a label
+
+The pasted code carries your labels. After you add or change one, copy the code again and replace what you pasted earlier, in the Shopify custom pixel or on any page that uses the snippet. The tracker picks up the change on its own.
+
+### Event filters and consent
+
+The tracker applies your [event filters](/help-center/atlas/event-filters) in the browser, with country and customer type rules staying neutral. The Shopify custom pixel and the pasted snippet apply no event filters. Google Ads tags use Consent Mode: in regions that need consent they start denied, unless the store's consent mode is **Off**. See [Consent and privacy](/help-center/atlas/pixels/consent-and-privacy).
+
+### Where the conversions show
+
+Reporting counts every fired conversion in the Google Ads column, marked **via snippet**. See [Reporting](/help-center/atlas/reports/reporting).
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Verify does not find the pixel on Shopify">
+    Check that the custom pixel is saved and connected under **Customer events** in Shopify, with the code pasted in full. Then open your store in the new tab Atlas opened and load a page: Verify waits up to 90 seconds for the pixel to fire. If you changed a label since you pasted, copy the code again.
+  </Accordion>
+  <Accordion title="The row says no conversions fired in the last 24 h">
+    Atlas counts only from stores that are Running or Awaiting data, and only events that have a label. On Shopify, the custom pixel has to be connected. On other sites, the tracker must be on the page: run **Test connection** in Store settings to confirm it is seen. See [Test the connection](/help-center/atlas/setup/test-connection).
+  </Accordion>
+  <Accordion title="Google Ads counts twice as many conversions as Atlas">
+    Another tag is sending the same actions: Google's own tag, or the Google & YouTube app on Shopify. Keep one source per conversion action. See [Avoid double counting](/help-center/atlas/pixels/avoid-double-counting#google-ads).
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Pixels and destinations" icon="plug" href="/help-center/atlas/pixels" arrow>
+    Add, edit, test and detach pixels on any store.
+  </Card>
+  <Card title="Set up Shopify" icon="bag-shopping" href="/help-center/atlas/setup/shopify" arrow>
+    Install the Referly app and turn on the Atlas pixel.
+  </Card>
+  <Card title="Avoid double counting" icon="clone" href="/help-center/atlas/pixels/avoid-double-counting" arrow>
+    Keep Google's own tag and Atlas from counting the same conversion twice.
+  </Card>
+  <Card title="UTM tagging" icon="tag" href="/help-center/atlas/reports/utm-tagging" arrow>
+    The Google Ads tracking template that fills Reporting.
+  </Card>
+</Columns>

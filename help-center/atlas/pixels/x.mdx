@@ -1,0 +1,157 @@
+---
+title: "X Ads pixel"
+description: "Send your store's events to X through the Conversions API with Referly Atlas. Find your X Pixel ID, the event ID of each conversion and your developer app's four keys, add the pixel in Atlas, and verify that events arrive."
+keywords: ["x ads conversions api", "twitter conversions api", "x pixel id", "x ads event id", "x developer app keys", "referly atlas x ads", "twitter pixel server side", "x ads api key access token", "x ads conversion tracking"]
+---
+Referly Atlas sends your store's events to X from its servers, through X's Conversions API. X works a little differently from the other platforms: every conversion event has its own event ID in Events Manager, and every request has to be signed with the four keys of an X developer app. This guide walks you through collecting those values, adding the pixel in Atlas, and checking that events arrive.
+
+## Before you start
+
+You need:
+
+- **A store in Atlas that is set up and live.** Only stores that are Running or Awaiting data send events. See [Store statuses](/help-center/atlas/statuses#store-statuses).
+- **An X Ads account with a pixel (event source) and at least one conversion event** in Events Manager. Atlas sends only events that have an event ID, so create the events you want to count first.
+- **An X developer app with Ads API access approved.** Atlas signs every request with the app's API key, API key secret, access token and access token secret. Without approved Ads API access, X rejects the requests.
+
+If this is your first pixel, read [Pixels and destinations](/help-center/atlas/pixels) first: it explains what a pixel is in Atlas and what every pixel row shows.
+
+## Step 1: Find your Pixel ID
+
+<Steps>
+  <Step title="Open Events Manager">
+    At ads.x.com, go to **Tools**, then **Events Manager**.
+  </Step>
+  <Step title="Open your event source">
+    Select the event source (pixel) you advertise with.
+  </Step>
+  <Step title="Copy the Pixel ID">
+    Copy the **Pixel ID**. It is short, for example `abc12`.
+  </Step>
+</Steps>
+
+X's own article: [Web conversions](https://docs.x.com/x-ads-api/measurement/web-conversions). The same steps sit in the **Where to find it** tooltip beside the field in Atlas, and the **How to find it** link under the field opens X's article.
+
+## Step 2: Find your event IDs and API keys
+
+### Event IDs
+
+X creates one event ID per conversion event in Events Manager. Atlas sends an event only when it has an ID for it, so collect one for every event you want to send. You need at least one.
+
+<Steps>
+  <Step title="Open an event">
+    In **Events Manager**, open the conversion event, for example your purchase event.
+  </Step>
+  <Step title="Copy the Event ID">
+    Copy the **Event ID**. It looks like `tw-abc12-abcd0`.
+  </Step>
+  <Step title="Repeat for every event">
+    Atlas has a row for each of these nine events: Page view, View content, Add to cart, Initiate checkout, Purchase, Lead, Sign up, Start trial and Subscribe.
+  </Step>
+</Steps>
+
+### API keys
+
+The four keys live on one tab of your developer app.
+
+<Steps>
+  <Step title="Open your app's keys">
+    In the X **Developer portal**, go to **Apps**, open your app, then **Keys and tokens**.
+  </Step>
+  <Step title="Copy the API key and API key secret">
+    Copy both halves of the pair. X's article: [API key and secret](https://docs.x.com/fundamentals/authentication/oauth-1-0a/api-key-and-secret).
+  </Step>
+  <Step title="Generate the access token and access token secret">
+    Under **Authentication Tokens**, select **Generate** and copy both values. X's article: [OAuth 1.0a overview](https://docs.x.com/fundamentals/authentication/oauth-1-0a/overview).
+  </Step>
+</Steps>
+
+![The four X developer app keys in the Add pixel dialog: API key, API key secret, Access token and Access token secret](/images/atlas/pixels/pixels-x--keys.png)
+
+## Step 3: Add the pixel in Atlas
+
+<Steps>
+  <Step title="Open Pixels and destinations">
+    In the left sidebar of Atlas, open **Pixels and destinations** for the store, then select **+ Add pixel**.
+  </Step>
+  <Step title="Choose X">
+    In the **Add your tracking pixel** dialog, select the **X** chip. Leave **Method** on **Add a new pixel**. If another store of your business already sends to this pixel, choose **Use an existing pixel** instead and Atlas copies its ids and keys to this store. See [Use an existing pixel](/help-center/atlas/pixels#use-an-existing-pixel).
+  </Step>
+  <Step title="Paste the Pixel ID">
+    Fill in **Pixel ID**. **Name (optional)** helps you tell pixels apart.
+  </Step>
+  <Step title="Add your event IDs">
+    Under **Event IDs**, select **Add event**, pick the event and paste its ID. Repeat for every event you collected. There are no **Events sent** chips for X: the event ID rows are the event selection, and Atlas saves only when at least one row is filled in.
+  </Step>
+  <Step title="Paste the four keys">
+    Fill in **API key**, **API key secret**, **Access token** and **Access token secret**. All four are required.
+  </Step>
+  <Step title="Save">
+    Select **Add pixel**. Atlas shows the **Pixel saved** screen with a **Data flowing** badge.
+  </Step>
+</Steps>
+
+![Add pixel dialog with X selected, showing the Pixel ID, Event IDs rows and the API key fields](/images/atlas/pixels/pixels-x--add-pixel-dialog.png)
+
+On the **Pixel saved** screen, use **You can verify that here** to send a test event straight away. Atlas answers **Test event accepted** with the HTTP status X returned, or shows X's own error message so you can correct an ID or a key.
+
+## Events Atlas sends to X
+
+Each row in the table is one event ID row in Atlas.
+
+| Atlas event | What X calls it |
+| --- | --- |
+| Page view | PageView |
+| View content | ContentView |
+| Add to cart | AddToCart |
+| Initiate checkout | Checkout |
+| Purchase | Purchase |
+| Lead | Lead |
+| Sign up | SignUp |
+| Start trial | StartTrial |
+| Subscribe | Subscribe |
+
+Add payment info and Search are not sent to X. Events without an event ID are skipped.
+
+## Verify that events arrive
+
+1. **Send a test event.** On the pixel row, open the row's menu and choose **Send test event**. A toast confirms that X accepted the event, or shows X's error. Test events time out after 10 seconds.
+2. **Read the delivery line.** The line under the pixel reads how many events reached X in the last 24 hours, for example **8 sent in 24 h**, or **8 sent, 2 failed in 24 h** when some were rejected. A green dot means **Live**: events are being sent. See [Pixel states](/help-center/atlas/statuses#pixel-states).
+3. **Watch Live activity.** Open **Live activity** in the left sidebar and filter by destination to see each event's status and X's response. See [Live activity](/help-center/atlas/reports/live-activity).
+
+![More pixel actions menu on a pixel row with Send test event and Event filters](/images/atlas/pixels/pixels--row-menu.png)
+
+## X settings in Atlas
+
+- **Events without an ID are skipped.** The event ID rows decide what Atlas sends. To start sending a new event, select **Edit** on the pixel row, add a row for it under **Event IDs** and paste the ID from Events Manager. To stop sending one, remove its row.
+- **The four developer keys sign every request.** X's Conversions API accepts only signed requests, so Atlas needs the API key, API key secret, access token and access token secret of one developer app with approved Ads API access. Atlas never shows a saved key again: to replace one, select **Edit** on the pixel row and paste the new value. A blank field keeps the saved value.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The test event fails">
+    Atlas shows X's error next to the test. Check the Pixel ID and the event IDs first, then the four keys: Atlas never shows a saved key again, so select **Edit** on the row and paste fresh values (a blank field keeps the saved value). Make sure all four keys come from the same developer app. Test events time out after 10 seconds, so a slow answer also counts as a failure: try once more.
+  </Accordion>
+  <Accordion title="The row says No events in the last 24 h">
+    Atlas sends only from stores that are Running or Awaiting data, only events that have an event ID row, and never test-mode orders. Check that the platform switch at the top of the X row is on, then open **Live activity** and read the Status column: **Skipped** means no consent, no identifiers X can match, or no event ID for that event, **Filtered** means an event filter stopped it, **Deduped** means the same event was already sent within 48 hours. See [Delivery statuses](/help-center/atlas/statuses#delivery-statuses).
+  </Accordion>
+  <Accordion title="X rejects every request, even with the right keys">
+    The developer app needs approved Ads API access: without it, X refuses signed requests from that app. Make sure the app has been approved for Ads API access in the X Developer portal. Then confirm the access token and access token secret were generated under **Authentication Tokens** of that same app.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Pixels and destinations" icon="plug" href="/help-center/atlas/pixels" arrow>
+    Add, edit, test and detach pixels on any store.
+  </Card>
+  <Card title="Events" icon="list-check" href="/help-center/atlas/events" arrow>
+    What each event means and which platform calls it what.
+  </Card>
+  <Card title="Conversions" icon="flag-checkered" href="/help-center/atlas/conversions" arrow>
+    Leads, sign ups, trials and subscriptions, and where they come from.
+  </Card>
+  <Card title="Live activity" icon="wave-pulse" href="/help-center/atlas/reports/live-activity" arrow>
+    Watch every event and X's response as they happen.
+  </Card>
+</Columns>

@@ -1,0 +1,134 @@
+---
+title: "Connect your data"
+description: "Connect a billing or payment tool to Referly Atlas so sign ups, trials, subscriptions and sales become conversion events: Stripe, Paddle, Chargebee, Creem, Polar, Ecwid, Sharetribe, Zapier, Make or the REST API, one per store."
+keywords: ["Atlas data integration", "connect Stripe to Atlas", "Paddle conversion events", "Chargebee Atlas", "Polar Atlas", "Ecwid orders Atlas", "Zapier conversion events", "Make webhook Atlas", "Atlas API key", "referly_vid"]
+---
+The tracking script sees what happens on your pages. It does not see a subscription renew in Stripe, a trial start in Paddle or an order placed in Ecwid. **Connect your data**, step 3 of the store wizard, closes that gap: pick the tool that records your sign ups, trials, subscriptions or sales, and Referly Atlas turns them into conversion events for your ad platforms, recorded from the server.
+
+The step is optional. Skip it if the tracking script already sends everything, which is often the case for a simple shop. It appears only for stores set up with the tracking script: Shopify and WooCommerce stores get their orders from their own platform and do not see it.
+
+## What a data connection adds
+
+A data connection gives Atlas a second, server-side source of conversions next to the script:
+
+- **Events the page never sees.** A renewal, a trial that converts, a refund or an order placed by phone all happen in your billing tool, not in the visitor's browser.
+- **Events that survive blockers.** Server-side records arrive even when the visitor's browser blocks the script.
+- **Values and ids you can trust.** Amounts and currencies come straight from the payment, and each conversion carries the tool's own id, so it is never counted twice.
+
+When the script and the connection both report the same conversion (the same person and type within 24 hours), Atlas merges them and the server copy wins the value and the time. Browser rows wait 60 seconds for the server copy before they are sent. See [How duplicates are merged](/help-center/atlas/conversions#how-duplicates-are-merged).
+
+Atlas matches a payment to the ad click behind it by the customer's email. For an exact match, several tools let you pass the Atlas visitor id along with the checkout; the wizard shows how under **Match payments to ad clicks**.
+
+## One connection per store
+
+Each store has one integration. The step shows a card per tool with the events it records; choose one and the step turns into that tool's instructions. Once a tool is connected or chosen, the step shows it with a **Connected** or chosen badge, a **Manage** (or **View setup**) button, and the rule spelled out: to use another one, disconnect this one first (**Manage**, then **Disconnect**), or click **Change** for a tool that was only chosen.
+
+![Wizard step 3 Connect your data with the integration cards for Stripe, Paddle, Chargebee, Creem, Polar, Ecwid, Sharetribe and Zapier, each listing the events it records](/images/atlas/setup/setup-connect-your-data--tiles.png)
+
+If you open another tool while one is in use, Atlas tells you the store already uses it and how to switch. Use the **Search integrations** box when the list is long, and **All integrations** to go back to the cards. Select **Continue** at the bottom when you are done, or to skip.
+
+<Note>
+  A business with several billing tools needs one store per tool. Stores are limited by plan; see [Billing](/help-center/atlas/settings/billing).
+</Note>
+
+## What each integration sends
+
+![All ten data integration cards: Stripe, Paddle, Chargebee, Creem, Polar, Ecwid, Sharetribe, Zapier, Make and REST API, with the events each one records](/images/atlas/setup/setup-connect-your-data--all-tiles.png)
+
+| Integration | Conversions it records | How it connects |
+| --- | --- | --- |
+| **Stripe** | Trials started, subscriptions, purchases | **Connect Stripe** (approval in Stripe) |
+| **Paddle** | Trials started, subscriptions, purchases | **Connect Paddle** |
+| **Chargebee** | Trials started, subscriptions, purchases | **Connect Chargebee** |
+| **Creem** | Trials started, subscriptions, purchases | **Connect Creem** |
+| **Polar** | Trials started, subscriptions, purchases | **Connect Polar** |
+| **Ecwid** | Purchases (orders and refunds) | **Install the Referly app on Ecwid** |
+| **Sharetribe** | Sign ups, purchases | **Connect Sharetribe** |
+| **Zapier** | Leads, sign ups, trials started, subscriptions, purchases | Your Atlas API key and a webhook step |
+| **Make** | Leads, sign ups, trials started, subscriptions, purchases | Your Atlas API key and an HTTP module |
+| **REST API** | Leads, sign ups, trials started, subscriptions, purchases | Your Atlas API key and a request from your backend |
+
+Two more tools, **Zylvie** (leads and purchases) and **Skillplate** (subscriptions and purchases), appear only for accounts that were granted access to them.
+
+Every card for a payment tool starts with a **Connect** block whose subtitle reads "Authorize Referly to access your ... account". The connection is the same one your affiliate program uses, so if you already connected the tool there, the block shows **Connected** with the account name and a **Reconnect** button. If the wizard asks you to open the store first, select **Open store** and come back to the step from there.
+
+### Stripe
+
+Select **Connect Stripe** and approve the connection on Stripe's site, as described in the [Stripe integration](/help-center/integrations/stripe#step-2-connect-your-stripe-account). Atlas then records trials, subscriptions and payments as they happen. Test mode and live mode are separate connections, so connect the one you want to track.
+
+The optional **Match payments to ad clicks** block shows how to put the Atlas visitor id in the checkout session metadata: read it in the browser and add it as `referly_vid` when your server creates the Checkout Session. Atlas matches payments to visits by email; passing `referly_vid` makes the match exact. If you use Stripe Buy Buttons, Pricing Tables or payment links, the tracking script sets the client reference id for you, so there is nothing to add.
+
+![Stripe integration page in the wizard with the Connect Stripe button and the optional Match payments to ad clicks step showing how to pass referly_vid in the checkout session metadata](/images/atlas/setup/setup-connect-your-data--stripe.png)
+
+### Paddle
+
+Select **Connect Paddle** and follow the [Paddle integration](/help-center/integrations/paddle). The **Match payments to ad clicks** block passes `referly_vid` in the checkout's custom data. A Paddle connection made before Atlas needs the `subscription.activated` event added to its webhook so trials and subscriptions arrive.
+
+### Chargebee
+
+Select **Connect Chargebee** and follow the [Chargebee integration](/help-center/integrations/chargebee). Chargebee has no visitor id step: payments are matched by email.
+
+### Creem
+
+Select **Connect Creem** and follow the [Creem integration](/help-center/integrations/creem). The optional block adds `referly_vid` to the checkout metadata when you create the checkout.
+
+### Polar
+
+Select **Connect Polar** and follow the [Polar integration](/help-center/integrations/polar). The optional block adds `referly_vid` to the checkout metadata. Polar's webhook needs the `subscription.created`, `subscription.active` and `subscription.updated` events enabled for trials and subscriptions to reach Atlas.
+
+### Ecwid
+
+Select **Install the Referly app on Ecwid**: the app comes from the Ecwid App Market and there is nothing to paste. Approve it in your Ecwid admin and you come back with the store connected. Orders and refunds then come in from Ecwid automatically. The [Ecwid integration](/help-center/integrations/ecwid) covers the app in detail. If you picked the **Ecwid** tile in step 1 of the wizard, the same block already appeared in the [tracking script step](/help-center/atlas/setup/tracking-script#step-2-add-it-to-your-site).
+
+### Sharetribe
+
+Select **Connect Sharetribe** and follow the [Sharetribe integration](/help-center/integrations/sharetribe). Atlas records sign ups and purchases from your marketplace.
+
+### Zylvie and Skillplate
+
+**Zylvie** connects like the payment tools above and records leads and purchases. **Skillplate** asks you to add a webhook: in Skillplate, go to **Settings**, **Webhooks**, **Create Webhook**, paste the endpoint shown in the wizard, pick the event **Payment Succeeded** and save, then repeat for **Subscription Started**. Both tools are listed only for accounts that have been granted access.
+
+## Zapier, Make and the REST API
+
+These three do not connect to a platform. They let anything that can make a web request send conversions to Atlas, which makes them the way in for a CRM, a booking tool, a course platform or your own backend. Each has the same two blocks:
+
+<Steps>
+  <Step title="Get your Atlas API key">
+    Select **Generate token** to reveal your **Atlas API key**. It is shown once when generated, so copy it now. Send it as a Bearer token. A Referly API key from your affiliate program works too. Lost it? **Regenerate** it under **Tracking and connection** in [Store settings](/help-center/atlas/settings/store-settings).
+  </Step>
+  <Step title="Send your events">
+    The block shows the URL, the header and a JSON body you can copy. For **Zapier**: in your Zap, add the **Webhooks by Zapier** action and choose **POST**, then use the URL, the Authorization header and a JSON body like the one shown. For **Make**: in your scenario, add the **HTTP** module and make a POST request the same way. For the **REST API**, pick your language from the dropdown and send a POST request from your backend each time a conversion happens.
+  </Step>
+</Steps>
+
+![Zapier integration page in the wizard with the Get your Atlas API key step and the Send your events step showing the Webhooks by Zapier URL, Authorization header and body](/images/atlas/setup/setup-connect-your-data--zapier.png)
+
+The body carries the event name (`Lead`, `CompleteRegistration`, `StartTrial`, `Subscribe` or `Purchase`), an `id`, and the person's `email`. A purchase needs an `id` and a `value`. You can send up to 50 events in one request. Send one from your tool, check that it shows in [Live activity](/help-center/atlas/reports/live-activity), then select **Mark as completed** on the **Send your events** block: the tool becomes this store's integration and the step shows it as chosen.
+
+Field by field, with limits, errors and examples in several languages, see the [Events API](/help-center/atlas/developers/events-api). The affiliate guides for [Zapier](/help-center/integrations/zapier), [Make](/help-center/integrations/make) and [API keys](/help-center/settings/advanced/api-keys) show where those tools keep their settings.
+
+## Disconnect a data source
+
+Open the store's wizard (**Setup wizard** from the store's row on the **All stores** page) and go to **Connect your data**.
+
+- For a connected tool (Stripe, Paddle, Chargebee, Creem, Polar, Ecwid, Sharetribe, Zylvie): select **Manage**, then **Disconnect**. New payments stop arriving in Atlas at once.
+- For Zapier, Make, the REST API or Skillplate: select **Change** on the card. The API key keeps working, so requests from your Zap, scenario or backend are still recorded; **Regenerate** the key under **Tracking and connection** in Store settings to stop them.
+
+Conversions already recorded stay in your reports. If the store reuses a site from your affiliate program, the payment connection is the same one your affiliate program uses, so disconnecting it here disconnects it there too; reconnect it from either place.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Conversions" icon="bullseye" href="/help-center/atlas/conversions" arrow>
+    The four conversions, where they come from and how duplicates merge.
+  </Card>
+  <Card title="Events API" icon="code" href="/help-center/atlas/developers/events-api" arrow>
+    The request body, errors, rate limits and examples.
+  </Card>
+  <Card title="Add the tracking script" icon="file-code" href="/help-center/atlas/setup/tracking-script" arrow>
+    The browser side of conversions, on any site.
+  </Card>
+  <Card title="Stripe integration" icon="stripe" href="/help-center/integrations/stripe" arrow>
+    What the Stripe connection can and cannot track.
+  </Card>
+</Columns>

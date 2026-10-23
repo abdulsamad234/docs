@@ -1,0 +1,119 @@
+---
+title: "Taboola pixel"
+description: "Send your store's conversions to Taboola server to server with Referly Atlas. Find your Taboola Account ID, add the pixel in Atlas, name your Taboola conversions to match, and verify that events arrive."
+keywords: ["taboola server to server conversions", "taboola account id", "taboola pixel server side", "referly atlas taboola", "taboola click id tblci", "taboola make_purchase conversion", "taboola conversion names", "taboola s2s tracking", "taboola realize tracking"]
+---
+Referly Atlas sends your store's conversions to Taboola from its servers. Taboola needs only one value from you, your Account ID, but it matches events in a different way from the other platforms: by the click id Taboola adds to the landing URL of every ad click, and by conversion name. This guide walks you through finding the Account ID, adding the pixel in Atlas, naming your Taboola conversions to match, and checking that events arrive.
+
+## Before you start
+
+You need:
+
+- **A store in Atlas that is set up and live.** Only stores that are Running or Awaiting data send events. See [Store statuses](/help-center/atlas/statuses#store-statuses).
+- **A Taboola account in Realize**, Taboola's ads platform.
+- **Conversions in Taboola named like the events in the table below.** Taboola matches what Atlas sends to a conversion by its name, so create one conversion per event you want to count, with the same name.
+- **Ads whose landing URL carries Taboola's click id.** Atlas can send an event to Taboola only when the visitor arrived through a Taboola click; every other visitor's events are skipped.
+
+If this is your first pixel, read [Pixels and destinations](/help-center/atlas/pixels) first: it explains what a pixel is in Atlas and what every pixel row shows.
+
+## Step 1: Find your Account ID
+
+<Steps>
+  <Step title="Open Tracking">
+    In **Realize**, choose the account you advertise from, then open **Tracking**.
+  </Step>
+  <Step title="Copy the numeric Account ID">
+    Copy the numeric **Account ID** shown top left. It is digits only, for example `123456789`.
+  </Step>
+</Steps>
+
+Taboola's own article: [Your account ID](https://developers.taboola.com/pixel/docs/your-account-id). The same steps sit in the **Where to find it** tooltip beside the field in Atlas, and the **How to find it** link under the field opens Taboola's article. There is no token: the Account ID is all Taboola needs.
+
+## Step 2: Add the pixel in Atlas
+
+<Steps>
+  <Step title="Open Pixels and destinations">
+    In the left sidebar of Atlas, open **Pixels and destinations** for the store, then select **+ Add pixel**.
+  </Step>
+  <Step title="Choose Taboola">
+    In the **Add your tracking pixel** dialog, select the **Taboola** chip. Leave **Method** on **Add a new pixel**. If another store of your business already sends to this account, choose **Use an existing pixel** instead and Atlas copies its ids to this store. See [Use an existing pixel](/help-center/atlas/pixels#use-an-existing-pixel).
+  </Step>
+  <Step title="Paste the Account ID">
+    Fill in **Account ID**. **Name (optional)** helps you tell pixels apart when a store sends to more than one Taboola account.
+  </Step>
+  <Step title="Choose the events to send">
+    Under **Events sent**, keep or change the events Atlas pre-selected for your business type, limited to the events Taboola accepts (see the table below). See [Default events by business type](/help-center/atlas/events#default-events-by-business-type).
+  </Step>
+  <Step title="Save">
+    Select **Add pixel**. Atlas shows the **Pixel saved** screen with a **Data flowing** badge.
+  </Step>
+</Steps>
+
+![Add pixel dialog with Taboola selected, showing the Account ID field and the events Taboola accepts](/images/atlas/pixels/pixels-taboola--add-pixel-dialog.png)
+
+On the **Pixel saved** screen, use **You can verify that here** to send a test event straight away. Atlas answers **Test event accepted** with the HTTP status Taboola returned, or shows Taboola's own error message so you can correct the Account ID.
+
+## Events Atlas sends to Taboola
+
+Taboola matches each event to a conversion by name, so these names are the ones to use when you create conversions in Taboola.
+
+| Atlas event | What Taboola calls it |
+| --- | --- |
+| View content | view_content |
+| Add to cart | add_to_cart |
+| Initiate checkout | start_checkout |
+| Purchase | make_purchase |
+| Lead | lead |
+| Sign up | complete_registration |
+| Start trial | start_trial |
+| Subscribe | subscribe |
+
+Page view, Add payment info and Search are not sent to Taboola.
+
+Only the events ticked under **Events sent** are forwarded. Orders and conversions are always evaluated; the browser events (product views, carts, checkouts) are forwarded only when a pixel wants them.
+
+## Verify that events arrive
+
+1. **Send a test event.** On the pixel row, open the row's menu and choose **Send test event**. A toast confirms that Taboola accepted the event, or shows Taboola's error. Test events time out after 10 seconds.
+2. **Read the delivery line.** The line under the pixel reads how many events reached Taboola in the last 24 hours, for example **8 sent in 24 h**, or **8 sent, 2 failed in 24 h** when some were rejected. A green dot means **Live**: events are being sent. See [Pixel states](/help-center/atlas/statuses#pixel-states).
+3. **Watch Live activity.** Open **Live activity** in the left sidebar and filter by destination to see each event's status and Taboola's response. Expect many **Skipped** rows: they are the visitors who did not come from a Taboola ad. See [Live activity](/help-center/atlas/reports/live-activity).
+
+![More pixel actions menu on a pixel row with Send test event and Event filters](/images/atlas/pixels/pixels--row-menu.png)
+
+## Taboola settings in Atlas
+
+Taboola pixels have no extra settings in Atlas. Two rules decide what Taboola receives:
+
+- **Atlas matches by Taboola's click id only.** When someone clicks a Taboola ad, Taboola adds its click id to the landing URL and the Referly tracker remembers it for that visitor. Atlas sends that visitor's events to Taboola with the click id. Visitors without one, which means everyone who did not arrive through a Taboola ad, are skipped with the reason **No identifiers the platform can match**. Hashed emails and phones are not used for Taboola.
+- **Create conversions with the same names.** Taboola matches what Atlas sends to a conversion in your account by name. Create one conversion in Taboola for each event you send, named exactly as in the table above, for example `make_purchase` for purchases.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The test event fails">
+    Atlas shows Taboola's error next to the test. Check the Account ID: it is the numeric id shown top left under **Tracking** in Realize, not the account name. Select **Edit** on the row to correct it. Test events time out after 10 seconds, so a slow answer also counts as a failure: try once more.
+  </Accordion>
+  <Accordion title="The row says No events in the last 24 h">
+    Atlas sends only from stores that are Running or Awaiting data, only the events ticked under **Events sent**, and never test-mode orders. Check that the platform switch at the top of the Taboola row is on, then open **Live activity** and read the Status column: **Skipped** means no consent or no Taboola click id, **Filtered** means an event filter stopped it, **Deduped** means the same event was already sent within 48 hours. See [Delivery statuses](/help-center/atlas/statuses#delivery-statuses).
+  </Accordion>
+  <Accordion title="Every event shows Skipped with No identifiers the platform can match">
+    Those visitors did not arrive through a Taboola click, or the click id was lost before the event. Check that your Taboola ads land on the tracked store's domain, that nothing strips query parameters on the way (a redirect, a link shortener), and that the tracking script runs on the landing page so the click id is remembered. See [Test the connection](/help-center/atlas/setup/test-connection).
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Pixels and destinations" icon="plug" href="/help-center/atlas/pixels" arrow>
+    Add, edit, test and detach pixels on any store.
+  </Card>
+  <Card title="Events" icon="list-check" href="/help-center/atlas/events" arrow>
+    What each event means and which platform calls it what.
+  </Card>
+  <Card title="Conversions" icon="flag-checkered" href="/help-center/atlas/conversions" arrow>
+    Leads, sign ups, trials and subscriptions, and where they come from.
+  </Card>
+  <Card title="Live activity" icon="wave-pulse" href="/help-center/atlas/reports/live-activity" arrow>
+    Watch every event and Taboola's response as they happen.
+  </Card>
+</Columns>

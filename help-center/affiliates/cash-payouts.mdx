@@ -1,7 +1,7 @@
 ---
 title: "Cash payouts"
-description: "Set up how you get paid as an affiliate: choose Wise, a local bank account, PayPal, or manual bank transfer, add your payout details, and connect a bank account for Referly payouts."
-keywords: ["affiliate cash payouts", "affiliate payout method", "Wise payout affiliate", "PayPal affiliate payout", "affiliate bank details", "connect bank account payouts", "payout email", "local bank account payout", "affiliate payout settings", "failed affiliate payout"]
+description: "Set up how you get paid as an affiliate: choose Wise, a local bank account, PayPal, or manual bank transfer, fix bank details Wise flags when you save, and connect a bank account for Referly payouts."
+keywords: ["affiliate cash payouts", "affiliate payout method", "Wise payout affiliate", "PayPal affiliate payout", "affiliate bank details", "connect bank account payouts", "payout email", "local bank account payout", "Wise rejected payout details", "account holder name", "affiliate payout settings", "failed affiliate payout"]
 ---
 Your cash payout settings are where you tell a program how to send you money. Until they're filled in, your earnings still build up, but the program has no way to pay them out. This page walks through every method you might be offered and what each one asks for.
 
@@ -33,6 +33,15 @@ Start by picking your **Payout Currency**. Wise then asks for the exact details 
 
 This method doesn't ask for a payout email, since the money goes straight to the account you describe here.
 
+Enter the name on the bank account in the **Full name of the account holder** field, with both a first and a last name. This is the name the transfer is sent to, so use the name your bank has on file. It doesn't come from your profile, so changing your profile name won't change it.
+
+Your details are checked with Wise along the way:
+
+- **As you type**, each field is checked against the format banks in that currency use. If something doesn't fit, a red message starting with **Invalid** appears under the field, with an example of the expected format when one is available.
+- **When you save**, your details are sent to Wise to confirm they can be paid. If Wise finds a problem, for example an account number that isn't valid, your details aren't saved and Wise's explanation appears in red under the field it's about.
+
+{/* TODO screenshot: local-bank-field-errors, upload it in the local Documentation Agent */}
+
 ### PayPal Payouts
 
 Money is sent to your PayPal account. All you need to add is your **Cash Rewards Payout Email**, which has to be the email address your PayPal account uses.
@@ -58,6 +67,14 @@ You'll also be asked for your **Cash Rewards Payout Email** so the program can r
 
 Select **Save Changes** at the bottom of the page. The button stays inactive until you've actually changed something, so if you can't select it, your details are already saved.
 
+With a **Local Bank Account**, **Save Changes** also stays inactive while any field shows a format error, so fix the fields marked in red first. If a required field is empty when you select **Save Changes**, it's highlighted with **This field is required.** underneath instead of the page saving.
+
+A message also pops up to tell you what to fix:
+
+- **Select a payout currency.** means you haven't picked a **Payout Currency** yet.
+- **Fill in the highlighted bank account fields.** means one or more required fields are still empty.
+- A message starting **Wise rejected these payout details** means Wise checked your details and found a problem. Read the red message under each highlighted field, correct it, and save again.
+
 ## Connect a bank account for Referly payouts
 
 Some programs let Referly send the money for them. In that case you won't see any method cards at all. Instead there's a single **Bank Account** card with a **Connect** button, and no **Save Changes** button, because your bank details are entered on a secure page rather than on this one.
@@ -75,7 +92,7 @@ Select **Connect** to open **Connect your bank account**, then work through two 
   </Step>
 </Steps>
 
-{/* TODO screenshot: connect-bank-account-flow — upload it in the local Documentation Agent */}
+{/* TODO screenshot: connect-bank-account-flow, upload it in the local Documentation Agent */}
 
 <Warning>
   Take the requirements list seriously — if your account doesn't meet them, payouts can be delayed or rejected. Your account has to be in your local currency, has to be a checking account rather than a savings account or debit card, and the account holder name has to match your affiliate account name.

@@ -1,7 +1,7 @@
 ---
 title: "Integrations overview"
-description: "Every way to connect Referly to your stack: Stripe, Shopify, WooCommerce, Paddle, Chargebee and Polar connections, Zapier and Make, the REST API, the Universal integration, and postback URLs — with how attribution flows through each."
-keywords: ["referly integrations", "affiliate tracking integration", "click id attribution", "client_reference_id stripe", "affiliate api", "conversion tracking", "payment provider webhooks", "zapier affiliate", "make affiliate", "universal integration", "postback url", "server-side conversion reporting"]
+description: "Every way to connect Referly to your stack: Stripe, Shopify, WooCommerce, Paddle, Chargebee, Polar, Creem, Ecwid and Sharetribe connections, Zapier and Make, the REST API, the Universal integration, and postback URLs — with how attribution flows through each."
+keywords: ["referly integrations", "affiliate tracking integration", "click id attribution", "client_reference_id stripe", "affiliate api", "conversion tracking", "payment provider webhooks", "zapier affiliate", "make affiliate", "universal integration", "postback url", "server-side conversion reporting", "stripe payment links snippet", "creem webhook events", "ecwid webhook events", "sharetribe integration api"]
 ---
 Referly needs two facts to pay an affiliate: **who** sent the visitor, and **what** that visitor eventually bought. An integration is whatever supplies those two facts. Every integration in this section is a different answer to the same question, chosen to fit a different stack.
 
@@ -68,6 +68,9 @@ You authorise Referly against your payment provider once. From then on Referly c
 | Polar | Access token | `order.paid`, `order.created`, `order.refunded` |
 | Shopify | OAuth app install | `orders/paid`, `refunds/create` |
 | WooCommerce | Plugin + API credentials | Order paid and refunded, sent by the plugin |
+| Creem | API key + webhook signing secret | `checkout.completed`, `subscription.paid`, `subscription.active`, `subscription.trialing`, `subscription.canceled`, `subscription.expired`, `subscription.unpaid`, `subscription.update`, `refund.created`, `dispute.created` |
+| Ecwid | Ecwid App Market app install (OAuth) | `order.created` and `order.updated`, acted on by payment status (paid, refunded, partially refunded, cancelled), and `order.deleted` |
+| Sharetribe | Integration API client ID + secret. Sharetribe has no webhooks, so Referly polls its events about once a minute | `user/created`, `user/updated`, `user/deleted`, `transaction/transitioned` |
 
 Attribution reaches the provider through whichever identifier that provider carries end to end. For Stripe that is `client_reference_id` on the Checkout Session, set to `window.affiliateId`:
 
@@ -81,7 +84,9 @@ const session = await stripe.checkout.sessions.create({
 });
 ```
 
-For hosted Stripe surfaces — payment links, pricing tables, buy buttons — the tracker appends `client_reference_id` to the link or embed for you, so there is nothing to wire up manually.
+Hosted Stripe surfaces (payment links, pricing tables, buy buttons) need one more snippet on the page, after the tracker. The tracker does not touch them on its own. Once `window.affiliateId` is set, the Stripe snippet appends `client_reference_id` to every `buy.stripe.com` link and sets the `client-reference-id` attribute on pricing table and buy button embeds. It depends on jQuery, which the copyable version in your dashboard loads first. Copy it from the Stripe setup's **Payment Links**, **Pricing Table** or **Buy Button** method; see [Stripe payment links](/help-center/integrations/stripe/payment-links) for the full walkthrough.
+
+The other native connections carry the click ID their own way: Creem reads `referly_ref` from checkout metadata, Ecwid reads the order's `refererId`, which the storefront script installed by the Referly app sets, and Sharetribe reads the `referralSource_` value (for example `referralSource_ref`) that Sharetribe's Referral sources feature saves in a new user's private data, or `referly_ref` in protected data on a custom-coded marketplace.
 
 <Note>
   PayPal is a **payout** method in Referly, not a conversion source. Its webhook reports the status of money you send to affiliates, not sales you receive. See [payout methods](/help-center/manage/payouts/payout-methods).
@@ -219,7 +224,7 @@ Everything else on this page flows inbound, toward Referly.
 
 Work down this list and stop at the first match:
 
-1. **Your provider has a native connection** (Stripe, Shopify, Paddle, Chargebee, Polar, WooCommerce) — use it. Refunds, real charged amounts, and subscription lifecycle come free.
+1. **Your provider has a native connection** (Stripe, Shopify, Paddle, Chargebee, Polar, WooCommerce, Creem, Ecwid, Sharetribe) — use it. Refunds, real charged amounts, and subscription lifecycle come free.
 2. **You bill through something else but can fire an automation** — use Zapier or Make.
 3. **You have a backend and want control** — use the REST API. Report referrals and sales yourself, with your own retry and idempotency semantics.
 4. **You only need to know who referred a sign-up** — the Universal integration is enough on its own.
@@ -237,10 +242,10 @@ Whichever route you take, the shape is the same:
     Add the script to your `head` on every page in the funnel, including the landing pages affiliates link to. Skip this only for a coupon-only program.
   </Step>
   <Step title="Connect or authenticate">
-    Authorise the payment provider, install the plugin or app, or create an API key under **Settings**, then **API keys**. API keys require a Business plan.
+    Authorise the payment provider, install the plugin or app, or create an API key under **Settings**, then **Advanced**, then **API Keys**. API keys require a Business plan.
   </Step>
   <Step title="Carry the click ID to checkout">
-    Attach `window.affiliateId` to whatever your provider carries end to end — `client_reference_id` for Stripe, metadata or cart attributes elsewhere. Hosted Stripe surfaces are handled automatically.
+    Attach `window.affiliateId` to whatever your provider carries end to end — `client_reference_id` for Stripe, metadata or cart attributes elsewhere. Hosted Stripe surfaces (payment links, pricing tables, buy buttons) need the Stripe snippet described above.
   </Step>
   <Step title="Verify with a test conversion">
     Visit your site with `?ref=` and a real affiliate code, complete a purchase in test mode, and confirm the sale appears against the right affiliate. Turn on [debug mode](/developer-documentation/tracking/debug-mode) to watch the tracker's decisions in the console.

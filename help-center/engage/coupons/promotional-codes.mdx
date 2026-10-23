@@ -1,7 +1,7 @@
 ---
 title: "Promotional codes"
-description: "Learn how promotional codes work in Referly: the actual codes customers type at checkout. Add one or more codes to a coupon and tie each one to a specific affiliate or customer."
-keywords: ["promotional codes", "promo codes", "add a promo code", "assign code to affiliate", "coupon code vs promo code", "customer-specific code", "referly promotional code"]
+description: "Learn how promotional codes work in Referly: the codes customers type at checkout. Add codes to a coupon, tie each one to an affiliate or customer, rename a code and sync it to your platform, and find codes fast."
+keywords: ["promotional codes", "promo codes", "add a promo code", "assign code to affiliate", "coupon code vs promo code", "customer-specific code", "referly promotional code", "rename promo code", "edit promo code", "change coupon code"]
 ---
 A coupon holds the discount. A **promotional code** is the actual text a customer types at checkout to claim it, like `PROMO30`. One coupon can have several promotional codes, and each code can be pointed at a specific affiliate or customer — which is how Referly knows who to credit for the sale.
 
@@ -44,6 +44,53 @@ Leave this off for a general code that anyone can use without crediting a partic
 
 You can also turn on **Limit to specific customer** and choose a customer, so the code only works for that one person. This is useful for a one-off deal you've agreed with a single buyer, rather than a code you hand to an affiliate to share.
 
+## Rename a code
+
+You can change the text of any active code after it's saved, for example to swap a random code for something easier to say out loud. Open the coupon from your library, or an affiliate's **Promo Codes** tab on their [detail page](/help-center/manage/affiliates/affiliate-detail), and find the code.
+
+<Steps>
+  <Step title="Select the pencil">
+    Select the pencil next to the code (its tooltip says **Edit promo code**). The code turns into a text box.
+  </Step>
+  <Step title="Type the new code">
+    Use letters and numbers only. Anything else is removed as you type, and capitals are kept the way you type them. About half a second after you stop typing, Referly checks that no other code in your program uses it, ignoring capitals, and that it isn't already taken on your connected platform. A spinner shows while it checks, then a green tick if the code is free or a red message, such as **This promo code already exists in this program**, if it isn't.
+  </Step>
+  <Step title="Save">
+    Select the tick or press Enter to save. Press Escape to cancel. You'll see **Promo code updated** when it's done.
+  </Step>
+</Steps>
+
+![A promo code row in inline edit mode with the code in a text box, the tick to save and the X to cancel](/images/help-center/engage/rename-promo-code.png)
+
+### What happens on your platform
+
+For most platforms, Referly changes the code on the platform for you and the old code stops working at checkout. The code stays assigned to the same affiliate.
+
+- **Stripe**: the old promotion code is turned off and a new one is created with the new text.
+- **Shopify**: the old code is removed from the discount and the new one is added.
+- **WooCommerce** and **Ecwid**: the code is renamed in place.
+- **Creem**: a new discount is created with the new code and the old one is deleted. Creem codes can be at most 14 characters.
+- **Polar**: renaming changes the code in Referly only. The code isn't changed on Polar.
+
+If your platform rejects the change, Referly shows a message explaining what went wrong and leaves the code as it was. If the message says authentication failed, reconnect that integration and try again.
+
+Once the old code stops working, customers who type it won't get the discount, so let the affiliate know their new code before they share it again.
+
+### If the code is connected to a short link
+
+If the code is connected to a short link, a **Connected link** dialog opens when you save. It names the link and has a switch, on by default, to **Also rename the link to** your new code:
+
+- **On**: both the code and the link are renamed. The old short link stops working.
+- **Off**: only the code changes. The link keeps its current name.
+
+Select **Save changes** to finish, or **Cancel** to go back. Either way, if you use [Shopify short links](/help-center/settings/program/shopify-short-links), the link's redirect is updated so it applies the new code.
+
+{/* TODO screenshot: connected-link-dialog, upload it in the local Documentation Agent */}
+
+## Find a code
+
+On a coupon's page, codes are grouped into **Manually Added Promotion Codes**, **Auto-generated Promotion Codes** and **Affiliate-Generated Promo Codes**, and each group shows 20 codes at a time. Once a group has more than one page, a search box appears at its top right (**Search by code, affiliate name or email**) and arrows to move between pages appear at its bottom right.
+
 ## Turning a code on or off
 
 Each code can be active or inactive. Deactivate a code to stop it working at checkout without deleting it — handy when a promotion ends but you want to keep the history. You can reactivate it later if the deal comes back.
@@ -51,6 +98,8 @@ Each code can be active or inactive. Deactivate a code to stop it working at che
 ## Give every affiliate their own code automatically
 
 Adding codes one at a time works for a handful of affiliates. When you want a unique code for everyone in your program, let Referly build them for you from a pattern — see [Auto-generate codes](/help-center/engage/coupons/auto-generated-codes).
+
+You can also let affiliates create their own codes under a coupon from their portal, within limits you set. See [Let affiliates create their own codes](/help-center/engage/coupons/affiliate-generated-codes).
 
 ## Related
 

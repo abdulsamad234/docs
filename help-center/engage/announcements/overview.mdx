@@ -1,7 +1,7 @@
 ---
 title: "Announcements overview"
-description: "Broadcast pop-up announcements to your affiliates inside their portal with Referly. Learn how the editor works, campaign vs automation delivery, scheduling, targeting, and tracking results."
-keywords: ["affiliate announcements", "referly announcements", "affiliate portal pop-up", "broadcast to affiliates", "announcement automation", "engage affiliates", "affiliate portal message"]
+description: "Broadcast pop-up announcements to your affiliates inside their portal with Referly. Learn how the editor works, campaign vs automation delivery, display windows, targeting, turning announcements on or off, statuses, and tracking results."
+keywords: ["affiliate announcements", "referly announcements", "affiliate portal pop-up", "broadcast to affiliates", "announcement automation", "engage affiliates", "affiliate portal message", "announcement display window", "turn off announcement"]
 ---
 Announcements let you broadcast a one-way message to the people promoting your product, shown right inside their affiliate portal. Use them to launch a new promotion, share a program change, or point affiliates to a fresh set of marketing assets — without sending a single email.
 
@@ -17,7 +17,7 @@ Pop-ups are the only announcement format available today. More formats may follo
 
 ## Open Announcements
 
-In the left sidebar, select **Affiliate Announcements**. The page opens with your list of announcements and a calendar that shows when each one is scheduled or running. To start a new one, select **Create announcement** in the top right.
+In the left sidebar, select **Affiliate Announcements**. The page opens with your list of announcements and a calendar that shows when each one is scheduled or running. To start a new one, select **Create Announcement** in the top right.
 
 ![announcements-list](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784752013020-470117-SCR-20260722-uesc.png)
 
@@ -50,6 +50,19 @@ By default an announcement goes to everyone in your program. You can also narrow
 
 On the **Setup** tab you can schedule an announcement to go live at a future date, set how many times it reappears after an affiliate dismisses it, and choose how long to wait between each showing. You can also limit it to specific pages of the portal, so it only appears where it's relevant.
 
+### Set a display window
+
+In the **When** section of the **Setup** tab, use **Display window** to choose the dates the pop-up can appear between:
+
+- **Starts**: when the pop-up can begin showing. Left empty, it reads **Immediately**.
+- **Ends**: when the pop-up stops showing. Left empty, it reads **Never**, so the pop-up keeps running.
+
+Outside the window the pop-up doesn't appear, but affiliates can still find the announcement in their notification inbox. Once the end date passes, the announcement can't be turned back on, so choose an end date you're sure about.
+
+The end date has to be after the start date. If you pick an end date that has already passed, the editor warns you that the announcement won't display, and you'll need to change it before you can publish.
+
+![The When section of the announcement editor with the Display window card, its Starts and Ends date fields and the explanation that the popup only appears between these dates](/images/help-center/engage/announcement-display-window.png)
+
 ## Track results
 
 Once an announcement is live, open its **Results** tab to see how many affiliates it was **sent** to, how many **viewed** it, how many **clicked** its button, and how many **dismissed** it. Use this to tell whether a promotion landed or whether it's worth sending a follow-up.
@@ -58,18 +71,34 @@ Once an announcement is live, open its **Results** tab to see how many affiliate
 
 ## Statuses and the calendar
 
-Every announcement carries a status so you always know where it stands:
+Every announcement carries a status badge so you always know where it stands. Campaigns show:
 
-- **Draft** — still being built; not visible to anyone.
-- **Scheduled** — set to go live at a future date.
-- **Active** — currently showing to your audience.
-- **Completed** — finished running.
-- **Paused** — temporarily stopped; you can resume it.
-- **Archived** — retired and hidden from the main list.
+- **Draft**: still being built; not visible to anyone.
+- **Scheduled**: set to go out at a future date. To hold it back, open the card's menu and select **Suspend**, which returns it to **Draft**.
+- **Sent**: published to your audience.
 
-The calendar on the Announcements page plots your scheduled and active announcements by day, so you can see what's going out and when at a glance. You can pause or resume an announcement straight from the list using its toggle.
+Automations show **Active** while the automation is switched on, **Inactive** when it's switched off, and **Draft** before you publish it.
+
+Two more badges take priority over the ones above once an announcement is published:
+
+- **Off**: you turned the announcement off, so it no longer pops up. It stays in your affiliates' notification inboxes.
+- **Expired**: its display window has ended, so it won't pop up again.
+
+Under each announcement's name, a line shows when it was created, scheduled, or sent. If it has an end date, the line adds **Shows until** and that date, or **Stopped showing** and the date once the window has ended.
+
+The calendar on the Announcements page plots your scheduled and active announcements by day, so you can see what's going out and when at a glance.
 
 ![announcement-status-badges](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784752032684-902907-SCR-20260722-ufkh.png)
+
+### Turn an announcement on or off
+
+Each campaign that's scheduled or sent has a switch on its card in the list. Turn it off to stop the pop-up from appearing. The announcement stays in your affiliates' notification inboxes, so anyone who already received it can still read it there. Turn it back on whenever you like, as long as its display window hasn't ended.
+
+Once the display window has ended, the switch is greyed out and the announcement can't be turned back on. Hover over the switch to see why.
+
+Automations have their own switch on the card, which turns the automation on or off.
+
+![Three announcement cards, each with its on-off switch, type badge, sent date and delivery stats](/images/help-center/engage/announcement-on-off-switch.png)
 
 ## Availability
 

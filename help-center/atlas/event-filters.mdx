@@ -1,0 +1,127 @@
+---
+title: "Event filters"
+description: "Use event filters in Referly Atlas to decide which events each pixel receives: store-wide rules and per-pixel rules on UTMs, country, customer type, order value, currency and product id, combined with AND or OR, with examples and what the filters do not cover."
+keywords: ["event filters", "filter conversion events", "send only new customers to meta", "minimum order value pixel", "exclude country from pixel", "utm campaign filter", "store-wide rules", "pixel rules", "filtered events", "atlas growth plan"]
+---
+By default a pixel receives every event you turned on for it. Event filters let you narrow that down with plain rules: send only new customers to Meta, send TikTok only orders worth at least 100, keep a test country out of every platform, or feed one pixel a single campaign. An event that fails a rule is not sent to that pixel, and Atlas tells you which rule stopped it.
+
+## What filters do
+
+Event filters are part of the Growth plan and above. On Starter, the page shows the banner **Event filters are on Growth and above** with an **Unlock event filters** button that opens the plans. Rules you saved earlier stay visible but cannot be edited until you upgrade. See [Billing](/help-center/atlas/settings/billing).
+
+![Event filters page on a Starter plan with the banner Event filters are on Growth and above and the Unlock event filters button](/images/atlas/events/event-filters--locked.png)
+
+Open **Event filters** in the left sidebar under **Store**, below **Live activity**, for the store you want to work on. You can also get there from a pixel: on the **Pixels and destinations** page, the pixel's row menu shows **Event filters (n)** and opens the page scrolled to that pixel's card. With one store selected, its cards fill the page; with **All stores**, each store is its own accordion.
+
+The page explains itself at the top: "Store-wide rules run first, then the destination's own rules. In each card, choose AND (every rule must pass) or OR (one rule is enough). An event that fails is not sent and shows as Filtered in Live activity." The strip under it shows the three steps every event goes through: **Store-wide rules** ("Run first, for every destination"), **Destination rules** ("Then each pixel's own rules") and **Failed events are not sent** ("They show as Filtered in Live activity").
+
+![Event filters page with the three-step strip, the Store-wide rules card with three rules joined by AND, and the per-pixel cards below](/images/atlas/events/event-filters--page.png)
+
+Filters change what your pixels receive, not what Atlas records. A filtered order still counts in Overview and Reporting; only the platform's own column drops it. Consent is checked before filters, so a filter can never send an event the visitor did not consent to.
+
+## Store-wide rules and pixel rules
+
+The page has one **Store-wide** card ("Runs first, for every destination of this store") followed by one card per pixel, each labelled with its platform and "runs after the store-wide rules". A pixel that is switched off shows a **Turned off** badge on its card.
+
+An event reaches a pixel only when it passes both cards: the store-wide rules and that pixel's own rules. A card with no rules passes everything, so you can keep the store-wide card empty and work pixel by pixel, or do the opposite.
+
+![Store-wide rules card with three rules: UTM source is not qa-bot, Country is none of RU and BY, and Currency is one of USD and CAD for Purchase, joined by AND](/images/atlas/events/event-filters--store-wide-card.png)
+
+Use the store-wide card for things that are true for every platform, such as keeping bot traffic or a test country out. Use a pixel's card for what that platform's campaigns optimize for.
+
+![A pixel's own rules card for the Meta Main pixel with two rules joined by OR: Value is at least 60 for Purchase, and Customer type is new for Purchase](/images/atlas/events/event-filters--pixel-card.png)
+
+## Build a rule
+
+Click **Add rule** at the top of a card. Every rule is one sentence: **Send when** a field, a comparison, a value, **for** the events it applies to. Each row has its own switch, so you can turn a rule off without deleting it, and a delete icon.
+
+![One rule row reading Send when UTM source is not qa-bot for all events, with its on switch and delete icon](/images/atlas/events/event-filters--rule-row.png)
+
+### Fields and comparisons
+
+The field picker groups the fields into **Traffic source**, **Customer** and **Order**.
+
+![Field picker of a rule listing the Traffic source, Customer and Order fields](/images/atlas/events/event-filters--field-picker.png)
+
+| Field | What it reads | Comparisons |
+|---|---|---|
+| UTM source | Where the visit came from, e.g. facebook | is, is not, contains, does not contain, is one of, is none of |
+| UTM medium | The channel, e.g. cpc or email | is, is not, contains, does not contain, is one of, is none of |
+| UTM campaign | The campaign name | is, is not, contains, does not contain, is one of, is none of |
+| UTM content | The ad or link variant | is, is not, contains, does not contain, is one of, is none of |
+| UTM term | The search keyword | is, is not, contains, does not contain, is one of, is none of |
+| Country | Two-letter code, e.g. US | is, is not, contains, does not contain, is one of, is none of |
+| Customer type | New or returning customer | is new, is returning |
+| Value (order or conversion) | In the store currency | is at least, is at most, is, is not |
+| Currency | Three-letter code, e.g. USD | is, is not, contains, does not contain, is one of, is none of |
+| Product id | Any product in the order or cart | is, is not, contains, does not contain, is one of, is none of |
+
+Values are not case sensitive, so `Facebook` and `facebook` match the same visits. **Customer type** takes no value. For **is one of** and **is none of**, the value box becomes a list: "Press Enter or a comma after each value."
+
+A rule with **is**, **contains** or **is one of** only passes an event that carries the field: a visit with no UTM campaign fails "UTM campaign is summer-sale". A rule with **is not**, **does not contain** or **is none of** passes events that have no value for the field.
+
+### Events
+
+The last part of the sentence picks the events the rule judges. Leave it on **All events** or choose from the **Site and checkout** and **Conversions** groups. A rule never affects events outside its list.
+
+![Events picker of a rule with All events selected and the Site and checkout and Conversions checkboxes](/images/atlas/events/event-filters--events-picker.png)
+
+<Warning>
+A **Value (order or conversion)** rule judges every event in its list, and an event with no value, such as a page view or a lead, counts as 0. "Value is at least 100 for all events" therefore drops every page view and cart. Scope value rules to Purchase, or to the conversions that carry a value.
+</Warning>
+
+A **Customer type** rule works the other way round: when Atlas does not yet know whether the visitor is new (a page view before any purchase), the rule is neutral. It never fails an AND card and never passes an OR card on its own.
+
+### AND or OR
+
+Each card combines its rules in one of two ways, switched from the connector between any two rules: **And** ("Every rule must pass") or **Or** ("At least one rule must pass"). The setting applies to the whole card, and the note under the rules restates it, for example "An event goes to every destination only when it passes every rule (AND)."
+
+![The AND or OR toggle between two rules](/images/atlas/events/event-filters--and-or.png)
+
+### Order, limits and saving
+
+Drag the grips on the left to reorder rules. Atlas checks them in that order, and the first rule that fails is the one named in Live activity. A card holds up to 50 rules.
+
+Edits collect in the **Unsaved changes** bar at the bottom. **Save** writes every card you touched and shows **Filters saved**. A rule with an empty value box blocks the save with **Every rule needs a value**; fill it in or delete the rule.
+
+## Examples
+
+| Goal | Card | Rule |
+|---|---|---|
+| Only new customers to Meta | The Meta pixel's card | Send when **Customer type** **is new** for **Purchase** |
+| Orders of at least 100 to TikTok | The TikTok pixel's card | Send when **Value (order or conversion)** **is at least** `100` for **Purchase** |
+| Keep a test country out of every platform | **Store-wide** | Send when **Country** **is not** `XX` for **All events**, with your test country's two-letter code |
+| One campaign only | The pixel's card | Send when **UTM campaign** **is** `summer-sale` for **All events** |
+
+Two notes on the last example. Events from visits without UTMs, such as a server-side order whose visit Atlas could not match, fail the rule, which is usually what you want for a single-campaign pixel. If you also want returning customers who came back directly, add a second rule and switch the card to **Or**.
+
+## What filters do not cover
+
+- **Google Ads on Shopify and pasted snippets.** Google Ads conversions fire in the browser. The Shopify custom pixel that Atlas builds for Google Ads applies no filters, and neither does a snippet you pasted on a page. On every other site the Referly tracker applies your rules in the browser before firing a Google Ads conversion, but **Country** and **Customer type** stay neutral there, because the browser does not know them. Use UTM, value, currency or product rules for Google Ads. See the [Google Ads pixel](/help-center/atlas/pixels/google-ads) guide.
+- **Your own numbers.** Filters never remove an order or conversion from Overview, Reporting or your tracked revenue.
+- **Consent and identity.** An event the visitor did not consent to is skipped before filters run, and an event with nothing the platform can match is skipped after them. Both show as **Skipped**, not **Filtered**. See [Consent and privacy](/help-center/atlas/pixels/consent-and-privacy) and [Events that need an identity](/help-center/atlas/events#events-that-need-an-identity).
+
+## Check a rule
+
+Open [Live activity](/help-center/atlas/reports/live-activity) for the store and filter the feed by status **Filtered** ("Stopped by an event filter"). Each filtered row names the rule that stopped it as "Filtered by rule: …" in its details, so you can tell a rule that works from one that is too broad.
+
+![Rows of the live feed showing the Failed, Deduped, Skipped and Filtered status pills with their reasons in the Details column](/images/atlas/reports/live-activity--status-pills.png)
+
+If a pixel receives fewer events than you expect, check its card here and the count on its row menu, **Event filters (n)**, on the Pixels and destinations page. The full list of delivery statuses is on the [Statuses](/help-center/atlas/statuses#delivery-statuses) page.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Events Atlas sends" icon="bolt" href="/help-center/atlas/events" arrow>
+    Every event, who sends it and what each platform calls it.
+  </Card>
+  <Card title="Pixels and destinations" icon="plug" href="/help-center/atlas/pixels" arrow>
+    Add, edit and test the pixels your filters apply to.
+  </Card>
+  <Card title="Live activity" icon="wave-pulse" href="/help-center/atlas/reports/live-activity" arrow>
+    Watch events reach Atlas and your destinations in real time.
+  </Card>
+  <Card title="Billing" icon="credit-card" href="/help-center/atlas/settings/billing" arrow>
+    Plans, trials and what each plan includes.
+  </Card>
+</Columns>

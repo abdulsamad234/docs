@@ -1,0 +1,175 @@
+---
+title: "Add the tracking script"
+description: "Add the Referly Atlas tracking script to a custom site, Wix, Squarespace, Webflow, Ecwid or Google Tag Manager, send your conversion events, verify the connection and handle consent on your own site."
+keywords: ["Atlas tracking script", "Referly Atlas snippet", "data-atlas", "Wix tracking script", "Squarespace code injection Atlas", "Webflow custom code Atlas", "Google Tag Manager Atlas", "Ecwid Referly app", "referlyAtlas.track", "verify tracking script"]
+---
+If your store does not run on Shopify or WooCommerce, Referly Atlas tracks it with one script tag. The tag records visits, the ad click that brought each visitor, product views and the conversion events you send, so Atlas can forward your conversions to your ad platforms. The wizard step is titled **Add the tracking script**.
+
+Expect ten minutes: copy the snippet, paste it where your site builder keeps head code, verify, done. If you also want purchases, sign ups or trials from a billing tool rather than from the page, the next wizard step, [Connect your data](/help-center/atlas/setup/connect-your-data), handles that.
+
+## Who this is for
+
+You are on the right page if, on [Step 1: Your website](/help-center/atlas/setup#step-1-your-website), you picked one of these tiles: **Wix**, **Squarespace**, **Webflow**, **Ecwid** or **Custom code / other**. That last one covers anything you build yourself or host on a framework. Shopify and WooCommerce stores have their own guides ([Shopify](/help-center/atlas/setup/shopify), [WooCommerce](/help-center/atlas/setup/woocommerce)) and do not need the snippet.
+
+![The seven platform tiles of the Add a store wizard](/images/atlas/setup/setup--platform-tiles.png)
+
+You do not need to code, but you do need access to your site's settings (or someone who has it). The script is the same one the affiliate side of Referly uses, with one extra attribute that turns Atlas on.
+
+## Step 1: Copy the snippet
+
+The first block is **Copy the script into your site's head**, one tag, on every page of your site. The method dropdown at the top right of the block picks the instructions and the matching snippet: your site builder (when you chose one), **Standard**, or **Google Tag Manager**.
+
+![Wizard step 2 Add the tracking script with the method dropdown, the script tag to paste before the closing head tag and the Mark as completed button](/images/atlas/setup/setup-tracking-script--step.png)
+
+Copy the snippet from the wizard, because it already carries your store's ID. It looks like this:
+
+```html Standard snippet
+<script
+  src="https://www.referly.so/affiliate-tracker.js"
+  data-affiliate data-program-id="YOUR_STORE_ID"
+  data-atlas="1"
+  async>
+</script>
+```
+
+Keep `data-atlas="1"` on the tag. It turns on Atlas for this store; without it the script tracks affiliate clicks only.
+
+<Tip>
+  Already have the Referly affiliate script on this site? Replace it with the one from the wizard. The new tag does both jobs.
+</Tip>
+
+## Step 2: Add it to your site
+
+Pick your method in the dropdown. The wizard shows the right instructions, repeated here.
+
+![Install method dropdown of the tracking script step with Webflow, Standard and Google Tag Manager](/images/atlas/setup/setup-tracking-script--method-dropdown.png)
+
+### Wix
+
+1. In your Wix dashboard, open **Settings**, then **Custom code**.
+2. Click **Add custom code** and paste the script.
+3. Choose **All pages** and **Load code in Head**, then click **Apply**.
+
+### Squarespace
+
+1. In Squarespace, open **Code injection** (under **Settings**, in **Developer tools** or **Advanced**).
+2. Paste the script in the **Header** field.
+3. Click **Save**.
+
+### Webflow
+
+1. In Webflow, open **Site settings**, then **Custom code**.
+2. Paste the script in **Head code** and click **Save**.
+3. Publish your site.
+
+![Tracking script step with the method set to Webflow: the three Webflow instructions, the script tag and the step marked Completed](/images/atlas/setup/setup-tracking-script--builder-instructions.png)
+
+### Google Tag Manager
+
+Switch the dropdown to **Google Tag Manager**: the snippet changes to a version that creates the tag from inside a container.
+
+1. In Google Tag Manager, add a **Custom HTML** tag with the code shown.
+2. Trigger it on **All Pages**, then publish the container.
+
+Tag Manager sites cannot be checked by reading the page HTML, so select **Mark as completed** after publishing. Verify in Step 4 still works: Atlas opens your site in a short popup so the tracker can report in.
+
+### Any other site
+
+Paste it before the closing `</head>` tag on every page. In an app with a shared layout or template, add it there once.
+
+<Note>
+  **Ecwid** stores get an extra block first: **Install the Referly app on Ecwid**. The app is recommended because it adds the script and sends your orders and refunds; approve it in your Ecwid admin and you come back with the store connected. Already installed it? Open your Ecwid admin, go to **Apps**, then **Referly**, and use the connect button there. Otherwise paste the snippet in the head of the site where your Ecwid store runs, on every page.
+</Note>
+
+When the tag is on your site, select **Mark as completed** if the block did not tick itself.
+
+## Step 3: Send conversion events
+
+The second block, **Send your conversion events**, is optional. Page views and product views are tracked for you (product views are read from your page's product markup). Conversions are different: Atlas needs to be told when a lead, sign up, trial, subscription or purchase happens. From your site, that is one call per conversion:
+
+```javascript Conversion events
+// Leads and sign ups
+window.referlyAtlas.track("Lead", { email: form.email });
+window.referlyAtlas.track("CompleteRegistration", { id: user.id, email: user.email });
+
+// Trials, subscriptions and purchases
+window.referlyAtlas.track("StartTrial", { id: subscription.id, value: 49, currency: "USD" });
+window.referlyAtlas.track("Subscribe", { id: subscription.id, value: 49, currency: "USD" });
+window.referlyAtlas.track("Purchase", { value: 40, currency: "USD", orderId: "1001" });
+```
+
+![Wizard step 2 continued: the Send your conversion events code example with referlyAtlas.track calls and the Verify the connection block](/images/atlas/setup/setup-tracking-script--send-events-and-verify.png)
+
+Three things the wizard asks of you:
+
+- Pass an **id** so the same conversion is never counted twice, and the **email** so ad platforms can match the person.
+- Already call `createPushLapEmail(email, name)` for your affiliate program? Atlas records each call as a sign up.
+- Billing in Stripe, Paddle or another tool? Connect it in the next step and Atlas records those events from the server.
+
+Select **Read the conversions guide** for the full list of events, or see [Conversions](/help-center/atlas/conversions) and, for developers, the [Tracker JS API](/help-center/atlas/developers/tracker-js-api). Select **Mark as completed** when your events are in place, or skip the block if a data connection will send them.
+
+## Step 4: Verify
+
+The last block, **Verify the connection**, checks your site for the script. Your address from Step 1 of the wizard is prefilled. Select **Verify**. Atlas first reads your page; if it finds nothing, it opens your site in a short popup so a script added through Tag Manager or a framework can report in, then checks again.
+
+| Result | Meaning |
+| --- | --- |
+| **Tracking script found on your-site.com. It is live and connected to this store.** | Done. Select **Continue**. |
+| **Not found yet.** Atlas also opened your site to catch a script added with Google Tag Manager or a framework and still could not find it. | Add the script with this store's ID, publish your site, then verify again. Allow popups for this page if your browser blocked one. |
+| **A Referly script is on this site, but with another store ID.** | Replace it with the script above, then verify again. |
+| **We could not reach this address. Check it and try again.** | The address is wrong, or the site is not reachable from the internet. |
+
+![Verify the connection block with the site address, the Verify button and the result No events yet. Visit your site, then verify again.](/images/atlas/setup/setup-tracking-script--verify-states.png)
+
+A second line under the address reports events: **No events yet. Visit your site, then verify again.** until the first page view arrives, **Events received** with the time of the last one after that, or **Events start when you finish setup and the store goes live.** while the store is still a draft. An explicit **Verify** that finds no script also clears a **Mark as completed** you set by hand, so fix the script before marking again.
+
+Then **Continue** through [Connect your data](/help-center/atlas/setup/connect-your-data) and the ad platforms step, and **Finish**. The same checks live on in [Test connection](/help-center/atlas/setup/test-connection).
+
+## Consent on your own site
+
+Atlas only sends a visitor's events to your pixels when it is allowed to. The rule is set per store under **Privacy and consent** in [Store settings](/help-center/atlas/settings/store-settings): **Balanced** (the default) requires marketing consent only for visitors in the EEA, the UK and Switzerland, **Strict** requires it everywhere, and **Off** sends everything except an explicit decline.
+
+Where does the script learn the answer? If your site uses a consent banner that supports the IAB TCF v2 standard, the tracker reads it on its own. Otherwise, tell it yourself when the visitor accepts or declines:
+
+```javascript Consent
+window.referlyAtlas.consent({ marketing: true, analytics: true });
+```
+
+The choice is remembered for 182 days. While consent is unknown in a region that needs it, Atlas skips the event by default (**Visitors with unknown consent**: **Skip the event**), and the skipped rows show as **Skipped** in [Live activity](/help-center/atlas/reports/live-activity). The full picture, including what is hashed before it leaves, is in [Consent and privacy](/help-center/atlas/pixels/consent-and-privacy).
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Verify says Not found yet, but I pasted the script">
+    Publish your site after saving (Webflow, Wix and Squarespace all need it), then verify again. If the script is added by Tag Manager, check the tag fires on **All Pages** and the container is published, allow popups for the Atlas page and verify once more. A caching layer in front of your site can also serve old pages: clear it.
+  </Accordion>
+  <Accordion title="Verify says the script has another store ID">
+    The tag on your site carries a different store's ID, often an older affiliate snippet. Replace every copy with the snippet from this store's wizard.
+  </Accordion>
+  <Accordion title="The script is found, but No events yet never changes">
+    Open your site in a normal browser window (not one with an aggressive blocker), load a couple of pages, and verify again. If your store is still a **Draft**, events start when you finish the setup and the store goes live.
+  </Accordion>
+  <Accordion title="Page views arrive, conversions do not">
+    Each conversion call needs an id or an email, and a purchase needs a value. If you send a purchase, identify the visitor first so the email travels with it; the [Tracker JS API](/help-center/atlas/developers/tracker-js-api) shows how. Conversions also show in Live activity with their delivery status, which tells you whether they were skipped for consent or filtered.
+  </Accordion>
+  <Accordion title="My site spans several domains">
+    List every domain your site runs on under **Allowed domains** in [Store settings](/help-center/atlas/settings/store-settings) (up to 20), and keep the same snippet on all of them.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Connect your data" icon="plug" href="/help-center/atlas/setup/connect-your-data" arrow>
+    Let Stripe, Paddle, Zapier or your backend send the conversions.
+  </Card>
+  <Card title="Test your connection" icon="stethoscope" href="/help-center/atlas/setup/test-connection" arrow>
+    Rerun the four checks from Store settings.
+  </Card>
+  <Card title="Tracker JS API" icon="code" href="/help-center/atlas/developers/tracker-js-api" arrow>
+    Every event, property and attribute the script understands.
+  </Card>
+  <Card title="Consent and privacy" icon="shield-halved" href="/help-center/atlas/pixels/consent-and-privacy" arrow>
+    Consent modes, hashing and allowed domains.
+  </Card>
+</Columns>

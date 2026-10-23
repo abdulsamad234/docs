@@ -1,0 +1,108 @@
+---
+title: "Add a store"
+description: "Add a store to Referly Atlas with the setup wizard: enter your website, connect Shopify, WooCommerce or any site with the tracking script, connect your data, add your ad platforms, and see when the store goes live."
+keywords: ["add a store Atlas", "Atlas setup wizard", "connect Shopify Atlas", "connect WooCommerce Atlas", "tracking script", "store statuses", "Atlas setup checklist", "Referly Atlas"]
+---
+A store in Atlas is one website with one connection: a Shopify shop, a WordPress site with the Referly plugin, or any site that carries the tracking script. Each store has its own pixels, filters, settings and reports, and belongs to a business. The setup wizard walks you through the four steps in order, saves as you go, and can be reopened any time from the **All stores** page.
+
+If you already connected the same site to your affiliate program, Atlas can reuse that connection. Nothing needs to be installed twice.
+
+## Before you start
+
+- Know which platform the site runs on. The wizard detects it from the address, and you can correct it.
+- Have access to the platform: the Shopify admin, the WordPress admin, or wherever your site's head code is edited.
+- Have a plan or a trial. You can finish the whole wizard without one, but the store only starts sending events once a plan is active. The setup checklist reminds you.
+- Check your plan's store limit: Starter includes 1 store, Growth 3, Scale 10. At the limit the wizard asks you to upgrade before adding another.
+
+## Open the Add a store wizard
+
+There are three ways in, and they all open the same wizard:
+
+- During onboarding, click **Connect your store** on the last step.
+- On the **All stores** page (left sidebar, **Store**, **All stores**), click **Add store** in the top right of the business card.
+- In the business switcher at the top of the sidebar, click **Add store** under the business.
+
+![All stores page with the Add store button highlighted](/images/atlas/setup/setup--add-a-store-button.png)
+
+The wizard is a large dialog with the four steps listed on the left: **Your website**, then **Connect Shopify**, **Connect WooCommerce** or **Tracking script** depending on the platform, then **Connect your data** (optional, custom sites only) and **Ad platforms**. A **Need help?** card at the bottom books an integration call with Referly.
+
+## Step 1: Your website
+
+Enter the site's address in **Website** (for example `mystore.com`). Atlas suggests the **Store name** and checks the site for its platform: "Checking your site…", then "Detected Shopify. Pick another if that is wrong."
+
+![Add a store wizard, step 1 Your website, with the website and store name fields and the platform tiles](/images/atlas/setup/setup--step-1-your-website.png)
+
+Pick the **Platform** tile that matches your site:
+
+| Tile | What it sets up |
+| --- | --- |
+| **Shopify** | The Referly Shopify app, which installs the pixel and sends orders. |
+| **WooCommerce** | The Referly WordPress plugin, which adds the script and sends orders. |
+| **Ecwid** | The Referly app on Ecwid plus the tracking script. |
+| **Wix**, **Squarespace**, **Webflow** | The tracking script, with instructions for that builder. |
+| **Custom code / other** | The tracking script, pasted by you or through Google Tag Manager. |
+
+Below the tiles, **Or use a site from your affiliate program** lists sites you already connected for your affiliate program. Click **Use** next to one and Atlas reuses that connection: nothing to reinstall. Click **Continue**.
+
+## Step 2: Connect your platform
+
+The second step depends on the platform you picked. Each has its own guide:
+
+<Columns cols={3}>
+  <Card title="Shopify" icon="bag-shopping" href="/help-center/atlas/setup/shopify" arrow>
+    Install the app, turn on the app embed and the Atlas pixel.
+  </Card>
+  <Card title="WooCommerce" icon="wordpress" href="/help-center/atlas/setup/woocommerce" arrow>
+    Install the plugin and paste your Atlas token.
+  </Card>
+  <Card title="Tracking script" icon="code" href="/help-center/atlas/setup/tracking-script" arrow>
+    Any other site, including Wix, Squarespace, Webflow and Ecwid.
+  </Card>
+</Columns>
+
+Every variant ends with **Verify the connection**: Atlas looks at your site for the script or app embed and tells you whether it found it. Once this step is done, the store counts as connected.
+
+## Step 3: Connect your data
+
+This step appears for custom sites only (Shopify and WooCommerce already send their orders). Pick the tool that records your sign ups, trials, subscriptions or sales: Stripe, Paddle, Chargebee, Creem, Polar, Ecwid, Sharetribe, Zapier, Make or the REST API. Atlas turns what they report into conversion events for your ad platforms. Each store has one data integration. The step is optional: click **Skip for now** if the tracking script already sends everything. See [Connect your data](/help-center/atlas/setup/connect-your-data).
+
+![Wizard step 3 Connect your data with the integration cards](/images/atlas/setup/setup-connect-your-data--tiles.png)
+
+## Step 4: Ad platforms
+
+Turn on the platforms you advertise on and add a pixel for each: Meta Ads, Google Ads, TikTok Ads, Snapchat Ads, Pinterest Ads, Microsoft Ads, X Ads, Taboola, Reddit Ads and Klaviyo. Each switch opens the **Add your tracking pixel** dialog, which is the same one you find later under **Pixels and destinations**. The optional box below connects ad accounts for the Ad center.
+
+![Wizard step 4 Connect your ad platforms with a switch per platform](/images/atlas/setup/setup--step-4-ad-platforms.png)
+
+Without a plan the step reads "Choose a plan to start sending events" with a **Choose a plan** button; your setup is saved either way. Click **Finish**. The toast reads "Store is live. Tracking is on." You can add pixels later: "No pixel yet. You can finish now and add pixels later under Pixels and destinations."
+
+## What happens after you finish
+
+A store goes live on its own as soon as the tracking step is done and your plan is active. It shows as **Awaiting data** until the first order arrives, then **Running**. Without a plan it waits, and moves on the moment you choose one. Every status is explained under [Store statuses](/help-center/atlas/statuses#store-statuses).
+
+First events usually show in your ads managers within 15 to 30 minutes. Full coverage takes 24 to 48 hours, because Atlas needs new visits to link to new orders.
+
+To reopen the wizard later, open **All stores**, click the three dots on the store row and choose **Setup wizard** (or **Finish setup** while the store is still a draft). To change the platform of a connected store, open Store settings and click **Change** next to **Platform**.
+
+## The setup checklist
+
+While anything is left to do, the top bar shows a **Complete your setup** pill. It opens a five-step list for the business: **Choose a plan** (or **Start your free trial**), **Add your store**, **Add a destination**, **Connect an ad account** and **Receive your first order** (or **Receive your first conversion** for SaaS and lead businesses). Each step opens the right page. **Hide checklist** hides it for the business for good; every step stays available from the sidebar.
+
+![The setup checklist with its five steps](/images/atlas/setup/setup--checklist.png)
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Test your connection" icon="circle-check" href="/help-center/atlas/setup/test-connection" arrow>
+    The four checks and what the results mean.
+  </Card>
+  <Card title="Pixels and destinations" icon="plug" href="/help-center/atlas/pixels" arrow>
+    Add and manage the pixels of a store.
+  </Card>
+  <Card title="Businesses and stores" icon="store" href="/help-center/atlas/businesses-and-stores" arrow>
+    How businesses group stores, and the All stores view.
+  </Card>
+  <Card title="Store settings" icon="sliders" href="/help-center/atlas/settings/store-settings" arrow>
+    Currency, time zone, attribution, consent and test mode.
+  </Card>
+</Columns>

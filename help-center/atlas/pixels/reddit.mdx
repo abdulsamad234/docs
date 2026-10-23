@@ -1,0 +1,123 @@
+---
+title: "Reddit Ads pixel"
+description: "Send your store's events to Reddit through the Conversions API with Referly Atlas. Find your Reddit Pixel ID and access token, add the pixel in Atlas, and verify that events arrive. Trials and subscriptions arrive as custom events."
+keywords: ["reddit conversions api", "reddit pixel server side", "reddit pixel id", "reddit conversions api access token", "referly atlas reddit", "reddit ads conversion tracking", "reddit custom conversion events", "reddit capi shopify", "reddit pixel setup"]
+---
+Referly Atlas sends your store's events to Reddit from its servers, through Reddit's Conversions API. Page views, product views, carts and purchases reach your Reddit Pixel without depending on the visitor's browser, with customer details hashed before they leave. This guide walks you through finding the two values Reddit asks for, adding the pixel in Atlas, and checking that events arrive.
+
+## Before you start
+
+You need:
+
+- **A store in Atlas that is set up and live.** Only stores that are Running or Awaiting data send events. See [Store statuses](/help-center/atlas/statuses#store-statuses).
+- **A Reddit Pixel in Events Manager.** Atlas sends to a pixel you already have, it does not create one.
+- **Access to the Conversions API settings of your Reddit Ads account**, so you can generate an access token. The token is account level and Reddit shows it once.
+
+If this is your first pixel, read [Pixels and destinations](/help-center/atlas/pixels) first: it explains what a pixel is in Atlas and what every pixel row shows.
+
+## Step 1: Find your Pixel ID
+
+<Steps>
+  <Step title="Open Events Manager">
+    In Reddit **Ads Manager**, open **Events Manager**.
+  </Step>
+  <Step title="Copy the Pixel ID">
+    Copy the **Pixel ID** shown at the top. It looks like `a2_abc123def456`.
+  </Step>
+</Steps>
+
+Reddit's own article: [Install the Reddit Pixel on your website](https://business.reddithelp.com/helpcenter/s/article/Install-the-Reddit-Pixel-on-your-website). The same steps sit in the **Where to find it** tooltip beside the field in Atlas, and the **How to find it** link under the field opens Reddit's article.
+
+## Step 2: Create an access token
+
+<Steps>
+  <Step title="Open the Conversions API setup">
+    In **Events Manager**, open **Conversions API**, then **Set up manually**.
+  </Step>
+  <Step title="Generate the token">
+    Select **Generate Access Token** and copy it. The token is account level and shown once, so paste it into Atlas right away.
+  </Step>
+</Steps>
+
+Reddit's own article: [Conversions API](https://business.reddithelp.com/s/article/Conversions-API).
+
+## Step 3: Add the pixel in Atlas
+
+<Steps>
+  <Step title="Open Pixels and destinations">
+    In the left sidebar of Atlas, open **Pixels and destinations** for the store, then select **+ Add pixel**.
+  </Step>
+  <Step title="Choose Reddit">
+    In the **Add your tracking pixel** dialog, select the **Reddit** chip. Leave **Method** on **Add a new pixel**. If another store of your business already sends to this pixel, choose **Use an existing pixel** instead and Atlas copies its ids and keys to this store. See [Use an existing pixel](/help-center/atlas/pixels#use-an-existing-pixel).
+  </Step>
+  <Step title="Paste the two values">
+    Fill in **Pixel ID** and **Access token**. **Name (optional)** helps you tell pixels apart when a store sends to more than one Reddit Pixel.
+  </Step>
+  <Step title="Choose the events to send">
+    Under **Events sent**, keep or change the events Atlas pre-selected for your business type, limited to the events Reddit accepts (see the table below). See [Default events by business type](/help-center/atlas/events#default-events-by-business-type).
+  </Step>
+  <Step title="Save">
+    Select **Add pixel**. Atlas shows the **Pixel saved** screen with a **Data flowing** badge.
+  </Step>
+</Steps>
+
+![Add pixel dialog with Reddit selected, showing the Pixel ID and Access token fields](/images/atlas/pixels/pixels-reddit--add-pixel-dialog.png)
+
+On the **Pixel saved** screen, use **You can verify that here** to send a test event straight away. Atlas answers **Test event accepted** with the HTTP status Reddit returned, or shows Reddit's own error message so you can correct the ID or token.
+
+## Events Atlas sends to Reddit
+
+| Atlas event | What Reddit calls it |
+| --- | --- |
+| Page view | PageVisit |
+| View content | ViewContent |
+| Add to cart | AddToCart |
+| Purchase | Purchase |
+| Search | Search |
+| Lead | Lead |
+| Sign up | SignUp |
+| Start trial | StartTrial (custom event) |
+| Subscribe | Subscribe (custom event) |
+
+Reddit has no standard trial or subscription event, so Atlas sends Start trial and Subscribe as custom events named StartTrial and Subscribe. Initiate checkout and Add payment info are not sent to Reddit.
+
+Only the events ticked under **Events sent** are forwarded. Orders and conversions are always evaluated; the browser events (page views, product views, carts, searches) are forwarded only when a pixel wants them.
+
+## Verify that events arrive
+
+1. **Send a test event.** On the pixel row, open the row's menu and choose **Send test event**. A toast confirms that Reddit accepted the event, or shows Reddit's error. Test events time out after 10 seconds.
+2. **Read the delivery line.** The line under the pixel reads how many events reached Reddit in the last 24 hours, for example **8 sent in 24 h**, or **8 sent, 2 failed in 24 h** when some were rejected. A green dot means **Live**: events are being sent. See [Pixel states](/help-center/atlas/statuses#pixel-states).
+3. **Watch Live activity.** Open **Live activity** in the left sidebar and filter by destination to see each event's status and Reddit's response. See [Live activity](/help-center/atlas/reports/live-activity).
+
+![More pixel actions menu on a pixel row with Send test event and Event filters](/images/atlas/pixels/pixels--row-menu.png)
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The test event fails">
+    Atlas shows Reddit's error next to the test. Check the Pixel ID first, then the token: Atlas never shows a saved token again, so select **Edit** on the row and paste a fresh one (a blank field keeps the saved value). Test events time out after 10 seconds, so a slow answer also counts as a failure: try once more.
+  </Accordion>
+  <Accordion title="The row says No events in the last 24 h">
+    Atlas sends only from stores that are Running or Awaiting data, only the events ticked under **Events sent**, and never test-mode orders. Check that the platform switch at the top of the Reddit row is on, then open **Live activity** and read the Status column: **Skipped** means no consent or no identifiers Reddit can match, **Filtered** means an event filter stopped it, **Deduped** means the same event was already sent within 48 hours. See [Delivery statuses](/help-center/atlas/statuses#delivery-statuses).
+  </Accordion>
+  <Accordion title="Trials and subscriptions do not show as standard events in Reddit">
+    That is expected. Reddit has no standard event for a trial or a subscription, so Atlas sends them as custom events named StartTrial and Subscribe. Look for those custom event names in Reddit when you build reports or optimise campaigns on them.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Pixels and destinations" icon="plug" href="/help-center/atlas/pixels" arrow>
+    Add, edit, test and detach pixels on any store.
+  </Card>
+  <Card title="Events" icon="list-check" href="/help-center/atlas/events" arrow>
+    What each event means and which platform calls it what.
+  </Card>
+  <Card title="Conversions" icon="flag-checkered" href="/help-center/atlas/conversions" arrow>
+    Leads, sign ups, trials and subscriptions, and where they come from.
+  </Card>
+  <Card title="Live activity" icon="wave-pulse" href="/help-center/atlas/reports/live-activity" arrow>
+    Watch every event and Reddit's response as they happen.
+  </Card>
+</Columns>

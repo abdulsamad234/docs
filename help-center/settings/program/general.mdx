@@ -1,7 +1,7 @@
 ---
 title: "General program settings"
 description: "Set up your Referly affiliate program on the General settings page: program name, affiliate portal subdomain, landing page URLs, base commission plan, recurring and tiered rates, auto-approve settings, currency, and tax and shipping deductions."
-keywords: ["general program settings", "affiliate program name", "affiliate portal subdomain", "base commission plan", "default commission plan", "recurring commission", "commission rate", "auto approve affiliates", "auto approve rewards", "landing page URLs", "URL tracking parameter", "campaign currency", "deduct tax from commission", "non-cash rewards"]
+keywords: ["general program settings", "affiliate program name", "affiliate portal subdomain", "base commission plan", "default commission plan", "recurring commission", "commission rate", "auto approve affiliates", "auto approve rewards", "landing page URLs", "URL tracking parameter", "campaign currency", "deduct tax from commission", "non-cash rewards", "step-down commission", "creem credits"]
 ---
 Almost everything that defines your affiliate program lives on one page: what it's called, where affiliates sign in, where their links send people, and — the part that matters most to them — how much they earn. This is the page you fill in when you launch a program, and the one you come back to when you want to change the deal.
 
@@ -103,6 +103,8 @@ Plenty of programs pay generously at first and less later. Select **Add commissi
 
 Two things to know. A milestone set to unlimited (**No Limit** and **Forever**) ends the ladder, because nothing can come after "forever" — so make your final step the unlimited one. And you can remove any milestone with the trash icon beside it.
 
+Step-down periods are available on the Business plan and higher. On other plans, **Add commission after period** appears locked.
+
 ## Reward affiliates with coupons or credits
 
 Choosing **Non-Cash Rewards** lets you pay affiliates in something other than money. **Non-Cash Reward Type** offers:
@@ -114,11 +116,11 @@ Either way you then pick the trigger — **When Customer Signs Up** or **When Cu
 
 ![non-cash-reward-types](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784768966324-10875-final-non-cash-reward-types-1784768966237.png)
 
-For coupons, you tell Referly where the coupon should be created: **API** if you generate codes on your own server, or **Shopify**, **Stripe**, or **WooCommerce** to create them in a connected store. The detailed coupon fields only appear once that source is ready, so if you see a **Connect** prompt instead of settings, connect the store first. From there you set a **Discount Type** (**Percentage** or **Fixed Amount**), the amount off, and — under **Advanced Coupon Settings** — how long the discount lasts (**Forever**, **Multiple Months**, or **One-time**). You can also cap how many coupons one affiliate ever earns.
+For coupons, you tell Referly where the coupon should be created: **API** if you generate codes on your own server, or **Shopify**, **Stripe**, **WooCommerce**, **Creem** or **Ecwid** to create them in a connected store. The detailed coupon fields only appear once that source is ready, so if you see a **Connect** prompt instead of settings, connect the store first. From there you set a **Discount Type** (**Percentage** or **Fixed Amount**), the amount off, and — under **Advanced Coupon Settings** — how long the discount lasts (**Forever**, **Multiple Months**, or **One-time**). You can also cap how many coupons one affiliate ever earns.
 
-For credits, **Credit Type** decides how they're fulfilled: **Shopify Store Credits**, **Stripe Credits**, **WooCommerce Credits**, or **Custom** if you handle distribution yourself. Custom credits need a **Credit unit name** — whatever you call them to affiliates. You can award a fixed number of credits per purchase, or scale them to the purchase amount, and cap how many times an affiliate can earn.
+For credits, **Credit Type** decides how they're fulfilled: **Shopify Store Credits**, **Stripe Credits**, **WooCommerce Credits**, **Creem Credits**, or **Custom** if you handle distribution yourself. Custom credits need a **Credit unit name** — whatever you call them to affiliates. You can award a fixed number of credits per purchase, or scale them to the purchase amount, and cap how many times an affiliate can earn.
 
-Non-cash rewards are a paid feature, so the option may appear locked depending on your plan. There's a fuller walkthrough in [Non-cash rewards](/help-center/getting-started/commissions/non-cash-rewards).
+Non-cash rewards are available on the Business plan and higher, or on any plan with the Gamify add-on. Otherwise the option appears locked. There's a fuller walkthrough in [Non-cash rewards](/help-center/getting-started/commissions/non-cash-rewards).
 
 ## Decide what gets approved automatically
 
@@ -146,7 +148,7 @@ Open the **Advanced Settings** section for the details that rarely change once y
 
 **Allow affiliates to create and manage their own referral links** lets affiliates create extra links with their own custom tags, instead of using only the one you gave them. It's off by default and available on the Business plan.
 
-Turning it on or off applies to every existing affiliate immediately, not just new ones. Their links still point at the landing pages you configured above — affiliates choose their tag, not the destination.
+Turning it on or off applies to every existing affiliate immediately, not just new ones. You can also turn it on or off for a single affiliate with **Allow this affiliate to manage their own links**, under **View Affiliate Links** on their [affiliate detail page](/help-center/manage/affiliates/affiliate-detail); changing the program-level switch later resets everyone to match it. Their links still point at the landing pages you configured above — affiliates choose their tag, not the destination.
 
 ### Campaign Currency
 

@@ -1,0 +1,134 @@
+---
+title: "TikTok Ads pixel"
+description: "Send your store's events to TikTok through the Events API with Referly Atlas. Find your TikTok Pixel ID and access token, add the pixel in Atlas, and verify that events arrive in TikTok Events Manager."
+keywords: ["tiktok events api", "tiktok pixel server side", "tiktok pixel id", "tiktok access token", "referly atlas tiktok", "tiktok completepayment event", "tiktok conversions api shopify", "tiktok events manager verify", "tiktok pixel setup"]
+---
+Referly Atlas sends your store's events to TikTok from its servers, through TikTok's Events API. Page views, product views, carts, checkouts and purchases reach your TikTok pixel without depending on the visitor's browser, with customer details hashed before they leave. This guide walks you through finding the two values TikTok asks for, adding the pixel in Atlas, and checking that events arrive in Events Manager.
+
+## Before you start
+
+You need:
+
+- **A store in Atlas that is set up and live.** Only stores that are Running or Awaiting data send events. See [Store statuses](/help-center/atlas/statuses#store-statuses).
+- **A TikTok pixel in Events Manager.** Atlas sends to a pixel you already have, it does not create one.
+- **Access to that pixel's settings** in TikTok Ads Manager, so you can generate an Events API access token.
+
+If this is your first pixel, read [Pixels and destinations](/help-center/atlas/pixels) first: it explains what a pixel is in Atlas and what every pixel row shows.
+
+## Step 1: Find your Pixel ID
+
+<Steps>
+  <Step title="Open your data sources">
+    In TikTok **Ads Manager**, go to **Tools**, then **Events**, then **Data sources**.
+  </Step>
+  <Step title="Open the pixel">
+    Select the pixel you advertise with.
+  </Step>
+  <Step title="Copy the Pixel ID">
+    Copy the **Pixel ID**. It is a string of letters and numbers like `CG7A7AAA77A77AA2AAA`.
+  </Step>
+</Steps>
+
+TikTok's own article: [How to create and access your TikTok Pixel ID](https://ads.tiktok.com/help/article/how-to-create-and-access-tiktok-pixel-id). The same steps sit in the **Where to find it** tooltip beside the field in Atlas, and the **How to find it** link under the field opens TikTok's article.
+
+## Step 2: Create an access token
+
+The access token lets Atlas send events to your pixel through the Events API.
+
+<Steps>
+  <Step title="Open the pixel settings">
+    In **Events Manager**, select your pixel, then **Settings**.
+  </Step>
+  <Step title="Go to the Events API section">
+    Open **Events API**.
+  </Step>
+  <Step title="Generate the token">
+    Select **Generate Access Token** and copy it. A token lapses after 90 days without use, so generate a fresh one if your pixel has been idle.
+  </Step>
+</Steps>
+
+TikTok's own article: [Events API](https://business-api.tiktok.com/portal/docs?id=1771100865818625).
+
+## Step 3: Add the pixel in Atlas
+
+<Steps>
+  <Step title="Open Pixels and destinations">
+    In the left sidebar of Atlas, open **Pixels and destinations** for the store, then select **+ Add pixel**.
+  </Step>
+  <Step title="Choose TikTok">
+    In the **Add your tracking pixel** dialog, select the **TikTok** chip. Leave **Method** on **Add a new pixel**. If another store of your business already sends to this pixel, choose **Use an existing pixel** instead and Atlas copies its ids and keys to this store. See [Use an existing pixel](/help-center/atlas/pixels#use-an-existing-pixel).
+  </Step>
+  <Step title="Paste the two values">
+    Fill in **Pixel ID** and **Access token**. **Name (optional)** helps you tell pixels apart when a store sends to more than one TikTok pixel.
+  </Step>
+  <Step title="Choose the events to send">
+    Under **Events sent**, keep or change the events Atlas pre-selected for your business type. Every event in the table below is available. See [Default events by business type](/help-center/atlas/events#default-events-by-business-type).
+  </Step>
+  <Step title="Save">
+    Select **Add pixel**. Atlas shows the **Pixel saved** screen with a **Data flowing** badge.
+  </Step>
+</Steps>
+
+![Add pixel dialog with TikTok selected, showing the Pixel ID and Access token fields](/images/atlas/pixels/pixels-tiktok--add-pixel-dialog.png)
+
+On the **Pixel saved** screen, use **You can verify that here** to send a test event straight away. Atlas answers **Test event accepted** with the HTTP status TikTok returned, or shows TikTok's own error message so you can correct the ID or token.
+
+## Events Atlas sends to TikTok
+
+TikTok accepts every event Atlas tracks. Note that TikTok's name for a purchase is CompletePayment.
+
+| Atlas event | What TikTok calls it |
+| --- | --- |
+| Page view | Pageview |
+| View content | ViewContent |
+| Add to cart | AddToCart |
+| Initiate checkout | InitiateCheckout |
+| Add payment info | AddPaymentInfo |
+| Purchase | CompletePayment |
+| Search | Search |
+| Lead | Lead |
+| Sign up | CompleteRegistration |
+| Start trial | StartTrial |
+| Subscribe | Subscribe |
+
+Only the events ticked under **Events sent** are forwarded. Orders and conversions are always evaluated; the browser events (page views, product views, carts, checkouts, payment info, searches) are forwarded only when a pixel wants them.
+
+## Verify that events arrive
+
+1. **Send a test event.** On the pixel row, open the row's menu and choose **Send test event**. A toast confirms that TikTok accepted the event, or shows TikTok's error. Test events time out after 10 seconds.
+2. **Read the delivery line.** The line under the pixel reads how many events reached TikTok in the last 24 hours, for example **8 sent in 24 h**, or **8 sent, 2 failed in 24 h** when some were rejected. A green dot means **Live**: events are being sent. See [Pixel states](/help-center/atlas/statuses#pixel-states).
+3. **Watch Live activity.** Open **Live activity** in the left sidebar and filter by destination to see each event's status and TikTok's response. See [Live activity](/help-center/atlas/reports/live-activity).
+4. **Check Events Manager.** In TikTok's [Events Manager](https://ads.tiktok.com/i18n/events_manager), open your pixel and look for the events Atlas sent.
+
+![More pixel actions menu on a pixel row with Send test event and Event filters](/images/atlas/pixels/pixels--row-menu.png)
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The test event fails">
+    Atlas shows TikTok's error next to the test. Check the Pixel ID first, then the token: Atlas never shows a saved token again, so select **Edit** on the row and paste a fresh one (a blank field keeps the saved value). Test events time out after 10 seconds, so a slow answer also counts as a failure: try once more.
+  </Accordion>
+  <Accordion title="The row says No events in the last 24 h">
+    Atlas sends only from stores that are Running or Awaiting data, only the events ticked under **Events sent**, and never test-mode orders. Check that the platform switch at the top of the TikTok row is on, then open **Live activity** and read the Status column: **Skipped** means no consent or no identifiers TikTok can match, **Filtered** means an event filter stopped it, **Deduped** means the same event was already sent within 48 hours. See [Delivery statuses](/help-center/atlas/statuses#delivery-statuses).
+  </Accordion>
+  <Accordion title="Events were flowing, then every send started failing">
+    A TikTok access token lapses after 90 days without use. Generate a new one under **Events API** in the pixel's settings, select **Edit** on the pixel row in Atlas, paste it into **Access token** and save. The row goes back to **Live** once the next event is accepted.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Pixels and destinations" icon="plug" href="/help-center/atlas/pixels" arrow>
+    Add, edit, test and detach pixels on any store.
+  </Card>
+  <Card title="Events" icon="list-check" href="/help-center/atlas/events" arrow>
+    What each event means and which platform calls it what.
+  </Card>
+  <Card title="Consent and privacy" icon="shield-halved" href="/help-center/atlas/pixels/consent-and-privacy" arrow>
+    What is hashed before it leaves and what consent Atlas needs.
+  </Card>
+  <Card title="UTM tagging" icon="tag" href="/help-center/atlas/reports/utm-tagging" arrow>
+    The TikTok tracking template that fills Reporting.
+  </Card>
+</Columns>

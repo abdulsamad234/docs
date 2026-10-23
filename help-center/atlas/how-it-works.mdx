@@ -1,0 +1,89 @@
+---
+title: "How Atlas works"
+description: "What Referly Atlas records on your store, how it matches an order to the visit and the ad that produced it, what it sends to each ad platform, and what you see in the Atlas dashboard."
+keywords: ["how Atlas works", "server-side tracking", "last click attribution", "visitor matching", "hashed customer data", "conversions API", "ad attribution", "Referly Atlas"]
+---
+Atlas sits between your store and your ad platforms. It watches every visit and every order, works out which ad brought each buyer in, and tells the platforms about the sale from the server. This page walks through that journey once, so the rest of the help section makes sense.
+
+## What Atlas records
+
+Atlas starts recording the moment a visitor lands on your site. The tracking script, the Shopify app or the WooCommerce plugin sends Atlas:
+
+- **The visit**: the landing page, the referrer, every UTM parameter, and the click ids ad platforms add to their links (fbclid, gclid, ttclid and the others).
+- **A visitor id**: a first-party cookie that lasts up to 400 days, so a return visit next month still belongs to the same person.
+- **Site and checkout events**: page views and product views are tracked for you. Adds to cart, checkouts started, add payment info and search arrive from your platform or from a call in your site's code.
+- **Identity**: an email or phone when the visitor signs up, logs in or checks out, which Atlas hashes before it stores it.
+- **Orders and conversions**: paid orders from Shopify, WooCommerce, Stripe and the other billing tools, plus leads, sign ups, trials and subscriptions. See [Events Atlas sends](/help-center/atlas/events) and [Leads, sign ups, trials and subscriptions](/help-center/atlas/conversions).
+
+Everything Atlas records shows up in **Live activity** within seconds, which is the fastest way to confirm a setup. Atlas never fingerprints a visitor without consent where consent is required, and it never changes anything on your affiliate program: Atlas reads the same orders, it does not touch commissions.
+
+![Live activity feed with incoming events and their deliveries](/images/atlas/reports/live-activity--page.png)
+
+## Where the data goes
+
+Each store has one or more **pixels**: a Meta pixel, a Google Ads conversion, a TikTok pixel and so on, each with its own ids and access token. When an order or conversion arrives, Atlas runs it through every enabled pixel, in this order:
+
+1. **Is the pixel on, and is this event turned on for it?** You choose the events per pixel under **Pixels and destinations**.
+2. **Did the visitor consent?** Visitors who declined marketing cookies are never sent. In the EEA, the UK and Switzerland, visitors who never answered your banner are skipped unless you change the store's consent setting. See [Consent and privacy](/help-center/atlas/pixels/consent-and-privacy).
+3. **Does an event filter stop it?** Store-wide rules run first, then the pixel's own rules. See [Event filters](/help-center/atlas/event-filters).
+4. **Is there something the platform can match?** A hashed email or phone, the platform's cookie or click id, or an IP address and user agent. Without any of them the event is skipped as "no identity to match".
+5. **Was it already sent?** Atlas sends each event once per pixel and skips repeats within 48 hours.
+
+Events that pass are queued and sent from Referly's servers. Failed sends are retried up to 8 times with growing pauses. Every outcome is logged with the platform's answer, so **Live activity** shows exactly what happened: **Sent**, **Failed**, **Filtered**, **Skipped** or **Deduped**. The meaning of each is on the [Statuses](/help-center/atlas/statuses#delivery-statuses) page.
+
+Google Ads is the exception: its conversions fire in the browser through a tag Atlas builds for you, because Google Ads counts conversions from the page rather than from a server. On Shopify that is a custom pixel you paste once; on other sites the Referly tracker fires it for you. See [Google Ads pixel](/help-center/atlas/pixels/google-ads).
+
+## How an order is matched to a visit
+
+An order arrives from your platform with whatever it carries: a cart token, a cookie value, an email, a customer id. Atlas tries its matching methods in order and keeps the first that works: the Shopify cart attribute, the cart token, the Atlas cookie, the email, the phone, the Shopify or Stripe customer id, then a fingerprint match on network and browser details within a short window. The method used shows in the **Match** column of the Overview's Recent orders table, and the list is explained under [Match types](/help-center/atlas/statuses#match-types).
+
+Email and phone matching work across devices: a visitor who clicked an ad on their phone and bought on a laptop is still one person once both sessions have identified with the same email.
+
+![Recent orders table with the Attribution and Match columns](/images/atlas/reports/reports-overview--recent-orders.png)
+
+## How a sale is attributed to a campaign
+
+Once the order belongs to a visitor, Atlas looks back through that visitor's sessions inside the store's **attribution window** (7, 30 or 90 days, 30 by default) and credits the sale to the last qualifying touch. A session with an ad click id counts more than one with only UTM parameters, which counts more than one with a plain referrer. If nothing qualifies, the sale is Direct.
+
+The campaign, ad set and ad come from the UTM parameters on that session: `utm_campaign`, `utm_content` and `utm_term`. The platform comes from the click id first, then from `utm_source`. This is why tagging your ads matters: see [Tag your ads with UTMs](/help-center/atlas/reports/utm-tagging). The result is what the **Reporting** page shows.
+
+The **Ad center** uses a stricter version of the same idea: it matches the last paid click within 7 days to the campaigns it synced from your ad accounts, by id first and by name second, so ad spend and tracked revenue line up row by row.
+
+## What is hashed before it leaves
+
+Atlas never sends an email address or phone number in the clear. Before an event leaves Referly's servers, these are lowercased, trimmed and hashed with SHA-256, the format every platform asks for: email, phone (in international format), first name, last name, city, state, postcode, country and the customer id. The platform's own cookies and click ids, the IP address and the user agent are sent as they are, because the platforms match on them directly.
+
+## What you see in Atlas
+
+| Page | What it answers |
+| --- | --- |
+| [Overview](/help-center/atlas/reports/overview) | How much revenue, how many orders and conversions, and whether tracking is healthy. |
+| [Reporting](/help-center/atlas/reports/reporting) | Which campaign, ad set and ad produced each purchase, lead, sign up, trial and subscription, with what each platform reported beside it. |
+| [Live activity](/help-center/atlas/reports/live-activity) | Every event as it arrives and every send, with the platform's answer. |
+| [Pixels and destinations](/help-center/atlas/pixels) | Your pixels, their health and their events. |
+| [Event filters](/help-center/atlas/event-filters) | Which events each pixel gets. |
+| [Ad center](/help-center/atlas/ad-center/dashboard) | Spend, ROAS, CPA and creatives from your connected ad accounts. |
+
+## What Atlas never does
+
+- It never changes a campaign, a budget or an ad. Ad account access is read-only.
+- It never sends events from a paused store, a test-mode order, or a visitor who declined consent.
+- It never touches your affiliate program's customers, sales or commissions.
+- It never sends the same event twice to the same pixel within 48 hours.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Add a store" icon="store" href="/help-center/atlas/setup" arrow>
+    Connect your site and start recording.
+  </Card>
+  <Card title="Pixels and destinations" icon="plug" href="/help-center/atlas/pixels" arrow>
+    Add the platforms you advertise on.
+  </Card>
+  <Card title="Statuses and labels" icon="list-check" href="/help-center/atlas/statuses" arrow>
+    Every status Atlas shows, explained.
+  </Card>
+  <Card title="Consent and privacy" icon="shield" href="/help-center/atlas/pixels/consent-and-privacy" arrow>
+    What is sent, what is hashed, and when consent applies.
+  </Card>
+</Columns>

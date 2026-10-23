@@ -1,6 +1,59 @@
 ---
 title: "API access"
-description: "Which plans can use the API."
+description: "Find out which Referly plans include API access: Business, Enterprise, and every agency plan. Learn how API access works during a free trial, where to create API keys, and where developers find authentication and rate limit details."
+keywords: ["Referly API access", "API plan", "which plan includes API", "Referly API keys", "API free trial", "Business plan API", "agency API access", "Zapier API access", "API rate limits", "Referly developer API"]
 ---
+The Referly API lets your own systems, a developer, or tools like [Zapier](/help-center/integrations/zapier) and [Make](/help-center/integrations/make) read and change your affiliate program's data without anyone logging in to the dashboard. This page explains which plans include it and what to do once you have it.
 
-{/* TODO: Write this article. */}
+## Plans that include API access
+
+| Plan | API access |
+| --- | --- |
+| Startup | Not included |
+| Business | Included |
+| Enterprise | Included |
+| Agency, Agency Pro, and Agency Scale | Included |
+
+[Webhooks](/help-center/settings/advanced/webhooks) come with the same plans. See [plans and features](/help-center/billing/plans-and-features) for everything else each plan includes.
+
+<Note>
+  If you're on a free trial of the Business plan, API access stays locked until you start your paid plan. Select **Start Paid Plan** on the **Subscription** screen (**Settings**, then **Billing**, then **Subscription**) to unlock it straight away.
+</Note>
+
+If an agency runs your program, whether you have API access depends on the plan your agency has given you. Ask your agency if you need it. See [for agencies](/help-center/agencies/overview).
+
+## If your plan doesn't include it
+
+On a plan without API access, the **Generate New Key** button on the **API Keys** screen is locked. Selecting it opens an upgrade prompt that names the plan you'd need.
+
+If you move to a plan without API access after you've created keys, Referly refuses requests made with those keys until you're back on a plan that includes it. That also applies to tools that connect through the API, such as Zapier and Make. Your keys aren't deleted, so they work again as soon as you upgrade.
+
+## Create an API key
+
+Once your plan includes API access, open **Settings** from the left sidebar, go to **Advanced**, then select **API Keys** and select **Generate New Key**. Each key works for one affiliate program, so create one in every program you want to connect.
+
+See [API keys](/help-center/settings/advanced/api-keys) for how to generate, copy, and delete keys safely.
+
+## Hand over to your developer
+
+Everything a developer needs to start making requests is in the developer documentation:
+
+- [Authentication](/developer-documentation/api/authentication) shows how to send your key with each request.
+- [Rate limits](/developer-documentation/api/rate-limits) explains how many requests a key can make. The limits apply per key and are the same on every plan that includes API access.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="API keys" icon="key" href="/help-center/settings/advanced/api-keys" arrow>
+    Generate, copy, and delete your keys.
+  </Card>
+  <Card title="Webhooks" icon="bell" href="/help-center/settings/advanced/webhooks" arrow>
+    Get notified in your own system when something changes.
+  </Card>
+  <Card title="Plans and features" icon="layer-group" href="/help-center/billing/plans-and-features" arrow>
+    Compare plans and see what each one includes.
+  </Card>
+  <Card title="Authentication" icon="lock" href="/developer-documentation/api/authentication" arrow>
+    How requests to the Referly API are authenticated.
+  </Card>
+</Columns>

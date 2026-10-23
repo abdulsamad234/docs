@@ -1,0 +1,128 @@
+---
+title: "Events Atlas sends"
+description: "Every event Referly Atlas can send to your ad platforms: when Page view, View content, Add to cart, Initiate checkout, Purchase, Lead, Sign up, Start trial and Subscribe fire, who sends them, what Meta, Google Ads, TikTok and the other platforms call them, and how to choose events per pixel."
+keywords: ["atlas events", "conversion events", "page view event", "add to cart event", "purchase event", "complete registration", "start trial event", "subscribe event", "pixel event names", "events sent per pixel"]
+---
+Referly Atlas records what visitors do on your site and sends the events you choose to each of your pixels. Most events need nothing from you: the tracker, the Shopify app or the WooCommerce plugin sends them on its own. A few, such as a trial or a subscription, come from your billing tool or from your own code.
+
+This page lists every event Atlas knows, where each one comes from, what each platform calls it, and how to decide which events a pixel receives. For leads, sign ups, trials and subscriptions in depth, see [Conversions](/help-center/atlas/conversions).
+
+## The events
+
+Atlas uses one set of names everywhere in the app. Twelve events exist; eleven can be sent to a platform. **Identify** is internal and never leaves Atlas.
+
+| Event | When it fires | Who sends it |
+|---|---|---|
+| Page view | A page of your site loads. | The tracker, automatically. Your own code cannot send it by hand. |
+| View content | A visitor opens a product or content page. | The tracker, automatically, when it can detect the product (Shopify and WooCommerce product pages, JSON-LD, Open Graph or product markup); the Shopify app for product and collection pages; your site's code. |
+| Add to cart | An item goes into the cart. | The Shopify app; the WooCommerce plugin; your site's code. |
+| Initiate checkout | Checkout starts. | The Shopify app; the WooCommerce plugin; your site's code. |
+| Add payment info | Payment details are entered at checkout. | Your site's code only. |
+| Purchase | An order is paid. | The Shopify app, from the order webhook; the WooCommerce plugin; a billing integration (Stripe, Paddle, Chargebee, Creem, Polar, Skillplate, Zylvie, Sharetribe, Ecwid); your site's code; the REST API, Zapier or Make. |
+| Identify | Atlas learns who the visitor is (email, phone, name). | Internal. Never sent to a platform; it only helps match later events to the person. |
+| Search | A visitor searches your site. | The Shopify app; your site's code. |
+| Lead | A contact form or newsletter sign up. | The Shopify app (theme newsletter sign ups); the WooCommerce plugin 2.2.0 or later (Contact Form 7 and WPForms); Zylvie; your site's code; the REST API, Zapier or Make. |
+| Sign up | A new customer or user account. | The Shopify app (classic customer accounts); the WooCommerce plugin 2.2.0 or later; Sharetribe; your site's code; the REST API, Zapier or Make. |
+| Start trial | A free trial begins. | A billing integration (Stripe, Paddle, Chargebee, Creem, Polar); the WooCommerce plugin 2.3.3 or later; your site's code; the REST API, Zapier or Make. |
+| Subscribe | A subscription starts, including a trial that converts. | A billing integration (Stripe, Paddle, Chargebee, Creem, Polar, Skillplate); the WooCommerce plugin 2.3.3 or later; your site's code; the REST API, Zapier or Make. |
+
+A few things worth knowing about the sources:
+
+- **The tracker** is the Referly script on your site, whether you pasted it, turned on the Shopify app embed or installed the WordPress plugin. It also records the visit itself (landing page, UTMs, click ids), which is how an order later gets matched to an ad. See [How Atlas works](/help-center/atlas/how-it-works).
+- **The Shopify app** sends the browser events through its web pixel and the orders through webhooks. Sign ups and newsletter leads need the app's access to customer data, covered in [Shopify setup](/help-center/atlas/setup/shopify).
+- **Your site's code** sends events through the tracker's JavaScript API. If you send purchases this way, identify the visitor first, otherwise the purchase carries no email. The [Tracker JS API](/help-center/atlas/developers/tracker-js-api) guide has the details.
+- **Billing integrations, the REST API, Zapier and Make** send events from your backend, so they arrive even when the customer's browser never saw your site. See [Connect your data](/help-center/atlas/setup/connect-your-data) and the [Events API](/help-center/atlas/developers/events-api).
+
+Browser events (Page view, View content, Add to cart, Initiate checkout, Add payment info and Search) are only forwarded when at least one pixel wants them. Orders and conversions are always evaluated for every pixel. Before an event reaches a pixel it passes consent, your event filters, an identity check and a 48-hour dedupe, in that order.
+
+## Default events by business type
+
+When you add a pixel, Atlas turns on the events that fit the business type you chose during onboarding. The defaults are trimmed to what the platform accepts, and you can change them at any time.
+
+| Business type | Events on by default |
+|---|---|
+| Ecommerce store | Page view, View content, Add to cart, Initiate checkout, Purchase |
+| SaaS or software | Page view, Lead, Sign up, Start trial, Subscribe |
+| Courses and digital products | Page view, View content, Lead, Initiate checkout, Purchase |
+| Marketplace, Agency, Something else | Page view, View content, Lead, Sign up, Purchase |
+
+A business with no type set gets the ecommerce funnel.
+
+## What each platform calls them
+
+Atlas translates its event names into each platform's standard event, so the events land where the platform expects them and your campaigns can optimize for them. The table shows the main funnel events. A blank cell means the platform has no matching event, so Atlas does not send it there.
+
+| Platform | Page view | View content | Add to cart | Initiate checkout | Purchase | Lead | Sign up |
+|---|---|---|---|---|---|---|---|
+| Meta Ads | `PageView` | `ViewContent` | `AddToCart` | `InitiateCheckout` | `Purchase` | `Lead` | `CompleteRegistration` |
+| Google Ads | `page_view` | | `add_to_cart` | `begin_checkout` | `purchase` | `generate_lead` | `sign_up` |
+| TikTok Ads | `Pageview` | `ViewContent` | `AddToCart` | `InitiateCheckout` | `CompletePayment` | `Lead` | `CompleteRegistration` |
+| Snapchat Ads | `PAGE_VIEW` | `VIEW_CONTENT` | `ADD_CART` | `START_CHECKOUT` | `PURCHASE` | | `SIGN_UP` |
+| Pinterest Ads | `page_visit` | `page_visit` | `add_to_cart` | | `checkout` | `lead` | `signup` |
+| Microsoft Ads | `page_view` | `view_item` | `add_to_cart` | `begin_checkout` | `purchase` | `generate_lead` | `sign_up` |
+| X Ads | `PageView` | `ContentView` | `AddToCart` | `Checkout` | `Purchase` | `Lead` | `SignUp` |
+| Taboola | | `view_content` | `add_to_cart` | `start_checkout` | `make_purchase` | `lead` | `complete_registration` |
+| Reddit Ads | `PageVisit` | `ViewContent` | `AddToCart` | | `Purchase` | `Lead` | `SignUp` |
+| Klaviyo | `Active on Site` | `Viewed Product` | `Added to Cart` | `Started Checkout` | `Placed Order` | `Became a Lead` | `Signed Up` |
+
+The four remaining events are narrower:
+
+- **Add payment info** goes to Meta Ads and TikTok Ads as `AddPaymentInfo` and to Snapchat Ads as `ADD_BILLING`. No other platform receives it.
+- **Search** goes to Meta Ads, TikTok Ads and Reddit Ads as `Search`, to Snapchat Ads as `SEARCH`, to Pinterest Ads as `search` and to Klaviyo as `Searched Site`.
+- **Start trial** goes to Meta Ads, TikTok Ads, X Ads and Reddit Ads as `StartTrial`, to Snapchat Ads as `START_TRIAL`, to Google Ads, Microsoft Ads and Taboola as `start_trial`, and to Klaviyo as `Started Trial`. Pinterest Ads has no trial event.
+- **Subscribe** goes to Meta Ads, TikTok Ads, X Ads and Reddit Ads as `Subscribe`, to Snapchat Ads as `SUBSCRIBE`, to Google Ads, Microsoft Ads and Taboola as `subscribe`, and to Klaviyo as `Started Subscription`. Pinterest Ads has no subscription event.
+
+Reddit has no standard trial or subscription event, so Atlas sends those two as custom events with the names above. Taboola matches events to conversions by name, so create a conversion in Taboola with the same name as the event. On Meta you can replace any standard name with your own custom event name when you edit the pixel; see the [Meta Ads pixel](/help-center/atlas/pixels/meta) guide.
+
+## Choose events per pixel
+
+Each pixel has its own list of events. You set it in the **Add your tracking pixel** dialog when you add the pixel, and change it later with **Edit** on the pixel's row on the **Pixels and destinations** page.
+
+![Add your tracking pixel dialog with the platform chips, the Method choice, the credential fields and Events sent](/images/atlas/pixels/pixels--add-pixel-dialog.png)
+
+The **Events sent** section shows one chip per event the platform accepts, grouped into the site and checkout events and the conversions. Only the chips that are on are sent. The section's help text sums up the rule: "Atlas only sends the events you turn on. A new pixel starts with the funnel of your business type (...). Leave off events your browser pixel already sends (to avoid double counting) and events your campaigns don't optimize for." The part in brackets lists the events your business type starts with.
+
+![Events sent section for an ecommerce store with the site and checkout events on and the conversions off](/images/atlas/events/events--events-sent-ecommerce.png)
+
+A SaaS business starts with a different set: Page view, Lead, Sign up, Start trial and Subscribe.
+
+![Events sent section for a SaaS business with Page view, Lead, Sign up, Start trial and Subscribe on](/images/atlas/events/events--events-sent-saas.png)
+
+Two platforms work differently. **Google Ads** and **X Ads** have no chips. Instead, the dialog shows one row per event under **Conversion labels** (Google Ads, with **Add conversion**) or **Event IDs** (X Ads, with **Add event**). The rows are the event selection: Atlas sends an event only when it has a label or ID for it, and you need at least one. See the [Google Ads](/help-center/atlas/pixels/google-ads) and [X Ads](/help-center/atlas/pixels/x) guides.
+
+<Tip>
+If the platform's own browser pixel is already installed on your site, leave off the events it sends, or Atlas and the browser pixel both report them. [Avoid double counting](/help-center/atlas/pixels/avoid-double-counting) explains the cases where Atlas deduplicates for you.
+</Tip>
+
+To stop every pixel of a platform at once, use the switch on the platform's row on the **Pixels and destinations** page. To stop a single pixel, open **Edit** and turn off its **Status** switch.
+
+## Events that need an identity
+
+A platform can only use an event it can tie to a person or a browser. Before queueing an event, Atlas checks that it carries at least one identifier the platform can match. When it carries none, the event is not sent and shows as **Skipped** in [Live activity](/help-center/atlas/reports/live-activity) with the reason "No identifiers the platform can match".
+
+What counts as an identity depends on the platform:
+
+- **Meta Ads and TikTok Ads** accept an email, a phone number, an external id, their own click and browser ids, or the visitor's IP address together with the user agent. Browser events from the tracker normally carry the last two, so page views and carts go through.
+- **Klaviyo** attaches every event to a profile, so it needs an email or a phone number. Anonymous page views and carts are skipped.
+- **Taboola** attributes through its click id only. Only visitors who arrived from a Taboola ad can be sent.
+
+Purchases from the Shopify app, the WooCommerce plugin and the billing integrations carry the customer's email, so they match. Purchases sent from your own code only carry an email when you identified the visitor first, which is why the [Tracker JS API](/help-center/atlas/developers/tracker-js-api) guide asks you to do that.
+
+Consent is checked before identity. A visitor who declined marketing consent, or who never answered your banner in a region that requires consent, is also recorded as **Skipped**, with a different reason. See [Consent and privacy](/help-center/atlas/pixels/consent-and-privacy) and the [delivery statuses](/help-center/atlas/statuses#delivery-statuses).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Pixels and destinations" icon="plug" href="/help-center/atlas/pixels" arrow>
+    Add a pixel, read its row and send a test event.
+  </Card>
+  <Card title="Conversions" icon="flag-checkered" href="/help-center/atlas/conversions" arrow>
+    Leads, sign ups, trials and subscriptions, and where they come from.
+  </Card>
+  <Card title="Event filters" icon="filter" href="/help-center/atlas/event-filters" arrow>
+    Send only the events that match a rule to a pixel.
+  </Card>
+  <Card title="Avoid double counting" icon="clone" href="/help-center/atlas/pixels/avoid-double-counting" arrow>
+    When Atlas and a browser pixel report the same event.
+  </Card>
+</Columns>

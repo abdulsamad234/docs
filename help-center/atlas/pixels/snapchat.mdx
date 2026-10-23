@@ -1,0 +1,138 @@
+---
+title: "Snapchat Ads pixel"
+description: "Send your store's events to Snapchat through the Conversions API with Referly Atlas. Find your Snap Pixel ID and API token, add the pixel in Atlas, and verify that events arrive. Includes the 24 hour wait for a new token."
+keywords: ["snapchat conversions api", "snap pixel server side", "snapchat pixel id", "snapchat conversions api token", "referly atlas snapchat", "snapchat invalid access token", "snap pixel purchase event", "snapchat capi shopify", "snapchat ads tracking"]
+---
+Referly Atlas sends your store's events to Snapchat from its servers, through Snapchat's Conversions API. Page views, product views, carts, checkouts and purchases reach your Snap Pixel without depending on the visitor's browser, with customer details hashed before they leave. This guide walks you through finding the two values Snapchat asks for, adding the pixel in Atlas, and checking that events arrive.
+
+## Before you start
+
+You need:
+
+- **A store in Atlas that is set up and live.** Only stores that are Running or Awaiting data send events. See [Store statuses](/help-center/atlas/statuses#store-statuses).
+- **A Snap Pixel in Events Manager.** Atlas sends to a pixel you already have, it does not create one.
+- **The Organization Admin role in Snapchat Ads Manager**, because only an Organization Admin can generate a Conversions API token.
+- **Up to 24 hours of patience for a brand new token.** Snapchat can answer **Invalid access token** for up to a day after a token is created, even when everything is right. Create the token first, then add the pixel.
+
+If this is your first pixel, read [Pixels and destinations](/help-center/atlas/pixels) first: it explains what a pixel is in Atlas and what every pixel row shows.
+
+## Step 1: Find your Pixel ID
+
+<Steps>
+  <Step title="Open Events Manager">
+    In Snapchat **Ads Manager**, open the menu, then **Events Manager**.
+  </Step>
+  <Step title="Open your pixel">
+    Select the pixel you advertise with.
+  </Step>
+  <Step title="Copy the Pixel ID">
+    Copy the **Pixel ID** shown under the pixel's name. It is a UUID like `a72aa7aa-aa7a-7aa-aa7a-a7a7777777a7`.
+  </Step>
+</Steps>
+
+Snapchat's own article: [Conversions API](https://businesshelp.snapchat.com/s/article/conversions-api). The same steps sit in the **Where to find it** tooltip beside the field in Atlas, and the **How to find it** link under the field opens Snapchat's article.
+
+## Step 2: Generate an API token
+
+<Steps>
+  <Step title="Open Business Details">
+    In Snapchat **Ads Manager**, open the menu, then **Business Details**.
+  </Step>
+  <Step title="Go to Conversions API Tokens">
+    Open **Conversions API Tokens**.
+  </Step>
+  <Step title="Generate the token">
+    Select **Generate Token** (you need the Organization Admin role) and copy it.
+  </Step>
+</Steps>
+
+Snapchat's own article: [Conversions API: get started, access token](https://developers.snap.com/api/marketing-api/Conversions-API/GetStarted#access-token).
+
+## Step 3: Add the pixel in Atlas
+
+<Steps>
+  <Step title="Open Pixels and destinations">
+    In the left sidebar of Atlas, open **Pixels and destinations** for the store, then select **+ Add pixel**.
+  </Step>
+  <Step title="Choose Snapchat">
+    In the **Add your tracking pixel** dialog, select the **Snapchat** chip. Leave **Method** on **Add a new pixel**. If another store of your business already sends to this pixel, choose **Use an existing pixel** instead and Atlas copies its ids and keys to this store. See [Use an existing pixel](/help-center/atlas/pixels#use-an-existing-pixel).
+  </Step>
+  <Step title="Paste the two values">
+    Fill in **Pixel ID** and **API token**. Under the token field Atlas repeats the notice that a new token can take up to 24 hours to start working. **Name (optional)** helps you tell pixels apart when a store sends to more than one Snap Pixel.
+  </Step>
+  <Step title="Choose the events to send">
+    Under **Events sent**, keep or change the events Atlas pre-selected for your business type. Every event in the table below is available. See [Default events by business type](/help-center/atlas/events#default-events-by-business-type).
+  </Step>
+  <Step title="Save">
+    Select **Add pixel**. Atlas shows the **Pixel saved** screen with a **Data flowing** badge.
+  </Step>
+</Steps>
+
+![Add pixel dialog with Snapchat selected, showing the Pixel ID and API token fields and the 24 hour token notice](/images/atlas/pixels/pixels-snapchat--add-pixel-dialog.png)
+
+On the **Pixel saved** screen, use **You can verify that here** to send a test event straight away. Atlas answers **Test event accepted** with the HTTP status Snapchat returned, or shows Snapchat's own error message. With a token created in the last 24 hours, expect **Invalid access token** until Snapchat activates it.
+
+## Events Atlas sends to Snapchat
+
+| Atlas event | What Snapchat calls it |
+| --- | --- |
+| Page view | PAGE_VIEW |
+| View content | VIEW_CONTENT |
+| Add to cart | ADD_CART |
+| Initiate checkout | START_CHECKOUT |
+| Add payment info | ADD_BILLING |
+| Purchase | PURCHASE |
+| Search | SEARCH |
+| Sign up | SIGN_UP |
+| Start trial | START_TRIAL |
+| Subscribe | SUBSCRIBE |
+
+Snapchat has no standard lead event, so Lead is not sent to Snapchat. Sign ups, trials and subscriptions map one to one.
+
+Only the events ticked under **Events sent** are forwarded. Orders and conversions are always evaluated; the browser events (page views, product views, carts, checkouts, payment info, searches) are forwarded only when a pixel wants them.
+
+## Verify that events arrive
+
+1. **Send a test event.** On the pixel row, open the row's menu and choose **Send test event**. A toast confirms that Snapchat accepted the event, or shows Snapchat's error. Test events time out after 10 seconds.
+2. **Read the delivery line.** The line under the pixel reads how many events reached Snapchat in the last 24 hours, for example **8 sent in 24 h**, or **8 sent, 2 failed in 24 h** when some were rejected. A green dot means **Live**: events are being sent. See [Pixel states](/help-center/atlas/statuses#pixel-states).
+3. **Watch Live activity.** Open **Live activity** in the left sidebar and filter by destination to see each event's status and Snapchat's response. See [Live activity](/help-center/atlas/reports/live-activity).
+
+![More pixel actions menu on a pixel row with Send test event and Event filters](/images/atlas/pixels/pixels--row-menu.png)
+
+## Snapchat settings in Atlas
+
+Snapchat pixels have no extra settings in Atlas. The one thing to plan for is the token:
+
+- **A new token can take up to 24 hours to start working.** Until then Snapchat answers **Invalid access token**, even when the token and the Pixel ID are right. Atlas keeps retrying failed sends (8 attempts, spaced out from 10 seconds), but events that fail all attempts in that window show as **Failed** and are not sent again. If you can, create the token a day before you add the pixel.
+- **Replace a token without losing anything else.** Select **Edit** on the pixel row and paste the new token into **API token**. A blank field keeps the saved token.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The test event fails">
+    Atlas shows Snapchat's error next to the test. Check the Pixel ID first, then the token: Atlas never shows a saved token again, so select **Edit** on the row and paste a fresh one (a blank field keeps the saved value). Test events time out after 10 seconds, so a slow answer also counts as a failure: try once more.
+  </Accordion>
+  <Accordion title="The row says No events in the last 24 h">
+    Atlas sends only from stores that are Running or Awaiting data, only the events ticked under **Events sent**, and never test-mode orders. Check that the platform switch at the top of the Snapchat row is on, then open **Live activity** and read the Status column: **Skipped** means no consent or no identifiers Snapchat can match, **Filtered** means an event filter stopped it, **Deduped** means the same event was already sent within 48 hours. See [Delivery statuses](/help-center/atlas/statuses#delivery-statuses).
+  </Accordion>
+  <Accordion title="Snapchat answers Invalid access token">
+    If you generated the token less than 24 hours ago, wait: Snapchat activates new tokens with a delay, and the token and Pixel ID are most likely fine. If it is older than a day, generate a new token under **Conversions API Tokens** in **Business Details** (Organization Admin role), select **Edit** on the pixel row and paste it in.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Pixels and destinations" icon="plug" href="/help-center/atlas/pixels" arrow>
+    Add, edit, test and detach pixels on any store.
+  </Card>
+  <Card title="Events" icon="list-check" href="/help-center/atlas/events" arrow>
+    What each event means and which platform calls it what.
+  </Card>
+  <Card title="Consent and privacy" icon="shield-halved" href="/help-center/atlas/pixels/consent-and-privacy" arrow>
+    What is hashed before it leaves and what consent Atlas needs.
+  </Card>
+  <Card title="Live activity" icon="wave-pulse" href="/help-center/atlas/reports/live-activity" arrow>
+    Watch every event and Snapchat's response as they happen.
+  </Card>
+</Columns>

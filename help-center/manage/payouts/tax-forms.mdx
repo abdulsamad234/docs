@@ -1,0 +1,133 @@
+---
+title: "Collect W-9 and W-8 tax forms"
+description: "Request W-9, W-8BEN and W-8BEN-E tax forms from affiliates in Referly, see which form each affiliate needs, track submissions, reveal tax IDs securely, and download completed forms."
+keywords: ["W-9 affiliates", "W-8BEN", "W-8BEN-E", "collect tax forms from affiliates", "affiliate tax forms", "1099-NEC affiliates", "backup withholding", "tax ID reveal", "request W-9", "W-8 expiry"]
+---
+If you pay affiliates in the US, or your business is US-based, you may need W-9 or W-8 tax forms on file for them. Referly lets you request these forms from any affiliate. The affiliate fills in and e-signs the form in their portal, and you can review it, reveal the tax ID when you need it, and download the completed form. This page shows how.
+
+<Note>
+  Tax form collection needs the **Business plan** or higher. See [plans and features](/help-center/billing/plans-and-features).
+</Note>
+
+## What W-9 and W-8 forms are
+
+W-9 and W-8 forms are US tax information forms that the payer collects and keeps on file. They're never sent to the IRS. They give you the details and signed certifications you need for year-end reporting:
+
+| Form | Who it's for | What it does | Expiry |
+| --- | --- | --- | --- |
+| **W-9** | US persons (individuals or companies) | Gives you their legal name and tax ID (SSN or EIN) so you can file a 1099-NEC | Doesn't expire |
+| **W-8BEN** | Non-US individuals | Certifies they're not a US person and lets them claim a tax-treaty rate on US-source income | Dec 31 of the third year after signing |
+| **W-8BEN-E** | Non-US companies and other entities | The same as the W-8BEN, for companies rather than individuals | Dec 31 of the third year after signing |
+
+From tax year 2026, a 1099-NEC is required once a US affiliate's payouts reach $2,000 in a year. W-8 forms document why US withholding and 1099 reporting don't apply to affiliates outside the US.
+
+<Warning>
+  Referly never files anything with the IRS. Filing a 1099-NEC or 1042-S is your responsibility, and happens outside Referly through your accountant or an e-filing service.
+</Warning>
+
+Whether these rules apply to you depends on where your business is. If it's US-based, the in-app guidance is to collect a W-9 from every US affiliate and a W-8 from every affiliate outside the US before you pay them. If it isn't, these are US requirements that you generally only need if you're a US entity or make US-source payments, and your own country may have separate rules. Check with your accountant.
+
+To read this explanation in the app, select **What are tax forms?** at the top of any affiliate's tax forms window. It opens **About W-9 & W-8 tax forms**, tailored to your business's country and marking which form applies to that affiliate.
+
+## Open an affiliate's tax forms
+
+You can open tax forms from three places. Each one is labelled **Tax Forms**:
+
+- **From the affiliate's detail page.** Open the three-dots menu at the top of the profile panel and choose **Tax Forms**. See [The affiliate detail view](/help-center/manage/affiliates/affiliate-detail).
+- **From a payout.** Open a payout's details and select **Tax Forms** at the bottom, next to **Edit Payout Details**.
+- **From a payout batch.** Open the batch, open the **Actions** menu, and choose **Tax Forms**. A **Tax forms** list asks you to choose an affiliate in this batch to view or request tax forms. Select the affiliate you want.
+
+![A payout batch header with the Actions menu open, showing Mark Batch as Paid, Tax Forms, Download All Invoices and Export Payouts CSV](/images/help-center/manage/tax-forms-entry-points.png)
+
+Each opens a window titled **Tax forms**, followed by the affiliate's name.
+
+## See which form Referly suggests
+
+A banner at the top of the window suggests which form to collect from this affiliate, and how urgent it is:
+
+- **Tax form required: W-9** appears for a US affiliate whose payouts this year (paid plus pending) are at or above the $2,000 1099-NEC threshold. Without a W-9 on file, you may be liable for 24% backup withholding.
+- **Tax form recommended** appears for a US affiliate below that threshold, or for an affiliate outside the US who has been paid this year or has a payout pending.
+- **No tax form needed right now** appears when a valid form is already on file, when an affiliate outside the US has no payouts this year and nothing pending, or when Referly doesn't know the affiliate's country.
+
+![The Tax forms window for an affiliate with the Tax form required: W-9 banner, the Request W-9 button, the Request new form tab and the Form requests tab](/images/help-center/manage/tax-forms-dialog.png)
+
+The banner explains its reasoning and shows **Paid this year**, **Pending**, and the affiliate's **Country**. Amounts are shown in US dollars.
+
+Referly picks the form from the affiliate's country and entity type:
+
+- Affiliates in the US get a **W-9**.
+- Affiliates outside the US who are individuals get a **W-8BEN**.
+- Affiliates outside the US who are businesses get a **W-8BEN-E**.
+
+The country comes from the affiliate's invoice details, or from where they signed up if those aren't filled in. Whether they're an individual or a business comes from the **Entity Type** they chose in their [invoice details](/help-center/affiliates/invoice-details). If the country is unknown, the banner asks you to have the affiliate complete their invoice details first, because the right form depends on where they're a tax resident.
+
+## Request a form
+
+You can request the suggested form in one click, or choose a form yourself.
+
+- **Suggested form.** Select the **Request** button in the banner, for example **Request W-9**. It only appears when a form is required or recommended.
+- **Any form.** On the **Request new form** tab, choose a **Form type** (**W-9**, **W-8BEN**, or **W-8BEN-E**). The suggested form is marked **(suggested)** and selected for you. Add a **Note (optional)** if you want to give the affiliate context, since it's shown to them with the request. Then select **Request form**.
+
+You'll see **Tax form requested**, and the request moves to the **Form requests** tab.
+
+The affiliate gets a notification in their portal and an email asking them to fill out the form. They complete and e-sign it under **Settings → Payouts → Tax Forms** in the affiliate portal. See [Tax forms for affiliates](/help-center/affiliates/tax-forms) for what they see.
+
+An affiliate can only have one open request for each form type. If you try to request the same form again while one is still open, you'll be asked to void the open request first.
+
+<Note>
+  Requesting a tax form doesn't hold back the affiliate's payouts. Referly doesn't stop a payout because a form is missing, so if you want a form on file before you pay someone, check the **Form requests** tab before you pay their batch.
+</Note>
+
+## Track requests in the Form requests tab
+
+The **Form requests** tab lists every form you've requested from this affiliate, with a count next to the tab name. Each request shows the form, for example **Form W-9**, and a status:
+
+| Status | What it means |
+| --- | --- |
+| **Awaiting affiliate** | You've requested the form and the affiliate hasn't submitted it yet. |
+| **Submitted** | The affiliate has filled in and signed the form. |
+| **Expired** | A W-8 form has passed its expiry date. Request a new one. |
+| **Voided** | You cancelled the request. |
+
+Select a request to expand it. You'll see when it was **Requested** and by whom, when it was **Submitted**, when it **Expires** (for W-8 forms), and any **Note to affiliate**. For a submitted form, you'll also see the affiliate's **Legal name**, **Business name**, **Classification**, **Address**, **Tax ID**, **Signature**, and **Form revision**.
+
+![The Form requests tab with a submitted W-9 expanded, showing when it was requested and by whom, when it was submitted, the legal name, address, masked tax ID with Reveal TIN, the signature, the form revision and the Download form button](/images/help-center/manage/tax-form-submitted-details.png)
+
+## Reveal a tax ID
+
+Tax IDs are stored encrypted, and only the last four digits are shown, for example `****1234`. When you need the full number, select **Reveal TIN** next to it. A reminder appears that **This reveal is logged**: every full reveal is permanently recorded.
+
+Referly doesn't store PDF copies of submitted forms.
+
+## Download a completed form
+
+On a **Submitted** request, select **Download form** to get the official IRS form filled in with the affiliate's answers, as a PDF. It contains the full tax ID, so each download is logged the same way as a reveal. Store the file somewhere secure.
+
+## Void a request
+
+If you no longer need a form that's still **Awaiting affiliate**, expand the request and select **Void request**. Confirm with **Void request** in the window that asks **Void this tax form request?**.
+
+The affiliate is no longer asked to fill it out, and the request shows as **Voided**. You can request a new form at any time.
+
+## When W-8 forms expire
+
+W-8BEN and W-8BEN-E forms are valid until December 31 of the third year after they're signed. For example, a form signed in 2026 expires on December 31, 2029. W-9 forms don't expire.
+
+The **Expires** date shows on each W-8 request. Once it has passed, the form shows as **Expired**, and the affiliate sees it as expired in their portal with the option to submit a new form. To ask for a fresh one yourself, request the form again from the **Request new form** tab.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Tax forms for affiliates" icon="file-signature" href="/help-center/affiliates/tax-forms" arrow>
+    What affiliates see when you request a form, and how they sign it.
+  </Card>
+  <Card title="Tax and invoices" icon="file-invoice" href="/help-center/manage/payouts/tax-and-invoices" arrow>
+    Self-billing invoices and VAT for your payouts.
+  </Card>
+  <Card title="The affiliate detail view" icon="user" href="/help-center/manage/affiliates/affiliate-detail" arrow>
+    Every action you can take on one affiliate.
+  </Card>
+  <Card title="Payout batches" icon="layer-group" href="/help-center/manage/payouts/batches" arrow>
+    Open a batch to review and pay it.
+  </Card>
+</Columns>

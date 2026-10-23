@@ -27,10 +27,12 @@
             "group": "Getting started",
             "pages": [
               "help-center/getting-started/welcome",
+              "help-center/getting-started/global-search",
               {
                 "group": "Setting up your program",
                 "pages": [
                   "help-center/getting-started/set-up-program/affiliate-program-setup",
+                  "help-center/getting-started/set-up-program/setup-checklist",
                   "help-center/getting-started/set-up-program/branding"
                 ]
               },
@@ -118,13 +120,16 @@
                   "help-center/manage/payouts/self-managed-vs-referly",
                   "help-center/manage/payouts/payout-methods",
                   "help-center/manage/payouts/batches",
+                  "help-center/manage/payouts/create-payout",
+                  "help-center/manage/payouts/mark-as-paid",
                   "help-center/manage/payouts/batch-statuses",
                   "help-center/manage/payouts/schedule",
                   "help-center/manage/payouts/minimum-amount",
                   "help-center/manage/payouts/custom-bank-fields",
                   "help-center/manage/payouts/export",
                   "help-center/manage/payouts/failed-payouts",
-                  "help-center/manage/payouts/tax-and-invoices"
+                  "help-center/manage/payouts/tax-and-invoices",
+                  "help-center/manage/payouts/tax-forms"
                 ]
               },
               {
@@ -173,8 +178,10 @@
                   "help-center/engage/coupons/connect-a-source",
                   "help-center/engage/coupons/sync",
                   "help-center/engage/coupons/create",
+                  "help-center/engage/coupons/edit",
                   "help-center/engage/coupons/promotional-codes",
                   "help-center/engage/coupons/auto-generated-codes",
+                  "help-center/engage/coupons/affiliate-generated-codes",
                   "help-center/engage/coupons/restrictions"
                 ]
               },
@@ -467,7 +474,8 @@
                   "help-center/affiliates/payouts",
                   "help-center/affiliates/cash-payouts",
                   "help-center/affiliates/non-cash-payouts",
-                  "help-center/affiliates/invoice-details"
+                  "help-center/affiliates/invoice-details",
+                  "help-center/affiliates/tax-forms"
                 ]
               },
               {
@@ -480,6 +488,112 @@
                   "help-center/affiliates/access-issues"
                 ]
               }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Atlas",
+        "icon": "bullseye",
+        "groups": [
+          {
+            "group": " ",
+            "pages": [
+              "help-center/atlas"
+            ]
+          },
+          {
+            "group": "Getting started",
+            "pages": [
+              "help-center/atlas/how-it-works",
+              "help-center/atlas/create-your-account",
+              "help-center/atlas/businesses-and-stores",
+              "help-center/atlas/setup",
+              {
+                "group": "Connect your store",
+                "pages": [
+                  "help-center/atlas/setup/shopify",
+                  "help-center/atlas/setup/woocommerce",
+                  "help-center/atlas/setup/tracking-script",
+                  "help-center/atlas/setup/connect-your-data",
+                  "help-center/atlas/setup/test-connection"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Pixels and destinations",
+            "pages": [
+              "help-center/atlas/pixels",
+              {
+                "group": "Platform guides",
+                "pages": [
+                  "help-center/atlas/pixels/meta",
+                  "help-center/atlas/pixels/google-ads",
+                  "help-center/atlas/pixels/tiktok",
+                  "help-center/atlas/pixels/snapchat",
+                  "help-center/atlas/pixels/pinterest",
+                  "help-center/atlas/pixels/microsoft-ads",
+                  "help-center/atlas/pixels/x",
+                  "help-center/atlas/pixels/taboola",
+                  "help-center/atlas/pixels/reddit",
+                  "help-center/atlas/pixels/klaviyo"
+                ],
+                "expanded": false
+              },
+              "help-center/atlas/pixels/consent-and-privacy",
+              "help-center/atlas/pixels/avoid-double-counting"
+            ]
+          },
+          {
+            "group": "Events and conversions",
+            "pages": [
+              "help-center/atlas/events",
+              "help-center/atlas/conversions",
+              "help-center/atlas/event-filters"
+            ]
+          },
+          {
+            "group": "Reports",
+            "pages": [
+              "help-center/atlas/reports/overview",
+              "help-center/atlas/reports/reporting",
+              "help-center/atlas/reports/live-activity",
+              "help-center/atlas/reports/utm-tagging",
+              "help-center/atlas/reports/date-ranges"
+            ]
+          },
+          {
+            "group": "Ad center",
+            "pages": [
+              "help-center/atlas/ad-center/connect-ad-accounts",
+              "help-center/atlas/ad-center/dashboard",
+              "help-center/atlas/ad-center/campaigns",
+              "help-center/atlas/ad-center/creative-center",
+              "help-center/atlas/ad-center/metrics"
+            ]
+          },
+          {
+            "group": "Settings and billing",
+            "pages": [
+              "help-center/atlas/settings/store-settings",
+              "help-center/atlas/settings/preferences",
+              "help-center/atlas/settings/billing",
+              "help-center/atlas/settings/team"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "help-center/atlas/troubleshooting",
+              "help-center/atlas/statuses"
+            ]
+          },
+          {
+            "group": "For developers",
+            "pages": [
+              "help-center/atlas/developers/tracker-js-api",
+              "help-center/atlas/developers/events-api"
             ]
           }
         ]

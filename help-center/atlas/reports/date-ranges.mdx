@@ -1,0 +1,77 @@
+---
+title: "Date ranges and comparison"
+description: "Set the date range in Referly Atlas, apply it to every page or to one page only, understand how the comparison period behind every change badge is chosen, and know which time zone your days follow."
+keywords: ["date range picker", "compare to previous period", "last 30 days", "custom date range", "same dates last month", "this page only", "report time zone", "Atlas date ranges"]
+---
+
+Every report in Referly Atlas, from **Overview** to the **Ad center**, follows one date range, and every change badge compares that range with a period before it. This page explains the picker, how to keep a different range on one page, and the rules behind the comparison.
+
+## Pick a range
+
+The date range control sits in the top right of every page. Click it to open the picker: presets on the left and two calendar months on the right.
+
+| Preset | Covers |
+|---|---|
+| **Today** | The current day so far |
+| **Yesterday** | The previous full day |
+| **Last 7 days** | The last 7 days, including today |
+| **Last 14 days** | The last 14 days, including today |
+| **Last 30 days** | The last 30 days, including today (the default) |
+| **Last 90 days** | The last 90 days, including today |
+| **This month** | The 1st of this month to today |
+| **Last month** | The previous calendar month |
+
+For any other range, click a start day and an end day in the calendars and press **Apply**.
+
+![Date range picker open with presets from Today to Last month, two calendar months and the note that it applies to every page](/images/atlas/reports/date-ranges--picker.png)
+
+Presets stay relative: a range picked as **Last 14 days** still means the last 14 days when you come back tomorrow, while a custom range keeps its dates.
+
+## One range for every page
+
+The note at the bottom of the picker says it: "Applies to every page. Hold Shift to set it for this page only." A range you pick on Overview is the range Reporting, Live activity and the Ad center open with, and Atlas remembers it per business, so it is still there when you come back.
+
+To look at a different range on one page without disturbing the rest, hold **Shift** while you click a preset or **Apply**. A **This page only** pill appears next to the control; click its × to go back to the shared range.
+
+## How the comparison period is chosen
+
+Every change badge, every dashed "previous period" line on a chart and the **vs. prior range** column in Ad center compare your range with an earlier one of the same length. Which one depends on how long your range is:
+
+| Your range | Compared with |
+|---|---|
+| One day | The day before |
+| 2 to 7 days | The same days last week |
+| 8 days to less than a whole month | The same dates last month |
+| A whole calendar month | The previous month |
+| Anything longer | The period of the same length right before |
+
+So **Last 7 days** compares each weekday with the same weekday a week earlier, and **This month** on the 15th compares the 1st to the 15th with the 1st to the 15th of last month. In the "same dates last month" case, a range that ends on the last day of its month is compared with one that ends on the last day of the previous month, so Feb 10 to Feb 28 compares with Jan 10 to Jan 31.
+
+Hover any change badge to see the exact dates, for example "Compared with Sep 1 to Sep 8, the same dates last month." When there was nothing in the earlier period, the badge reads **New** instead of a percentage.
+
+The Campaigns table in Ad center uses the same period for its **vs. prior range** column. Its **Period comparison settings** change the thresholds for **Increased**, **Stable** and **Decreased**, not the period itself; see [Campaigns](/help-center/atlas/ad-center/campaigns#performance-targets-and-period-comparison).
+
+## Time zone
+
+A day in your reports runs from midnight to midnight in the time zone set in [Preferences](/help-center/atlas/settings/preferences#time-zone), which says "Days in reports and the weekly email start at midnight in this time zone." It applies to every business and store on your account, so the **Today** and **Yesterday** presets, the month presets and the comparison period all follow it.
+
+Each store also has its own **Time zone** under **Currency and time zone** in [Store settings](/help-center/atlas/settings/store-settings#currency-and-time-zone). Live activity shows its **Time** column in the store's time zone.
+
+A store's own time zone, set in Store settings, decides where its days start in the Overview, Reporting and Live activity. The account time zone in Preferences applies to the weekly email and to businesses viewed across several stores.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Overview" icon="chart-simple" href="/help-center/atlas/reports/overview" arrow>
+    Revenue, orders, conversions and tracking health for the selected range.
+  </Card>
+  <Card title="Reporting" icon="table" href="/help-center/atlas/reports/reporting" arrow>
+    Conversions by campaign, ad set and ad, and how far back you can go.
+  </Card>
+  <Card title="Preferences" icon="gear" href="/help-center/atlas/settings/preferences" arrow>
+    Time zone, display currency and email notifications for your account.
+  </Card>
+  <Card title="Ad center dashboard" icon="bullseye" href="/help-center/atlas/ad-center/dashboard" arrow>
+    Spend beside revenue, with the previous period on every trend card.
+  </Card>
+</Columns>

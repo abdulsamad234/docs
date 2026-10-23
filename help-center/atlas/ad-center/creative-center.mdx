@@ -1,0 +1,103 @@
+---
+title: "Creative center"
+description: "Rank the videos, images, copies and headlines behind your ads on the revenue your store tracked. The Referly Atlas Creative center adds Hook, Watch, Click and Overall scores, system reports, live ad previews and age and gender breakdowns. Scale and Enterprise plans."
+keywords: ["creative performance", "ad creative roas", "hook score", "watch score", "click score", "creative insights", "top performing videos", "top performing headlines", "ad preview", "referly atlas creative center"]
+---
+The Creative center shows **How each creative, copy and headline performs on the revenue your store tracked.** Where the Campaigns table ranks ads by their place in the account, the Creative center groups them by what they show: the same video or image reused across ad sets becomes one row, so you can see which creative brings orders at the best ROAS and how well it holds attention compared with the rest of its campaign.
+
+![Creative center with the All creatives report, the Spend and Revenue cards and the Performance chart](/images/atlas/ad-center/creative-center--page.png)
+
+## Who can use it
+
+The Creative center is included in the **Scale** and **Enterprise** plans. On other plans the page shows a locked card, **Creative center is not in your plan**, with a **See plans** button that opens the plan drawer; see [Billing](/help-center/atlas/settings/billing).
+
+![Creative center locked card on a Growth plan with the See plans button](/images/atlas/ad-center/creative-center--locked.png)
+
+You also need at least one connected ad account. Without one, the page reads **Connect an ad account**: the Creative center groups the ads of your connected accounts by the video, image, copy or headline they run. See [Connect ad accounts](/help-center/atlas/ad-center/connect-ad-accounts).
+
+The first time you open a store's Ad center, Atlas may show a **Choose a niche** sheet asking which of its thirteen niches fits the store best; pick one or close it, and it does not appear when your business already has a category.
+
+## What counts as a creative
+
+Atlas identifies a creative by what the ad actually shows, in this order:
+
+1. **The video.** Every ad on the same platform that runs the same video is one creative.
+2. **The image**, for ads without a video. Ads that use an identical image are one creative.
+3. **The ad name**, for ads with neither, compared with spacing and capitalisation ignored.
+
+Spend, revenue and every other metric of the ads that share a creative are added together on its row. Headline and copy reports group the same way by the text itself.
+
+## Reports
+
+The report selector at the top left (**Report: All creatives** by default) lists the **System reports**:
+
+| Report | What it shows |
+| --- | --- |
+| **All creatives** | Every ad on its own row, every format. |
+| **Top spend ad sets** | Ad sets ranked by spend. |
+| **Top spend creatives** | Creatives ranked by spend. |
+| **Top performance creatives** | Creatives ranked by ROAS. |
+| **Top performing images** | Image creatives ranked by ROAS. |
+| **Top performing videos** | Video creatives ranked by ROAS. |
+| **Top performing copies** | Grouped by copy text, ranked by ROAS. |
+| **Top performing headlines** | Grouped by headline, ranked by ROAS. Meta and Google Ads. |
+
+Above the table, two cards sum the scope: **Spend** (what the ad platforms charged for the channels in scope, before the table filters) and **Revenue** (revenue your store tracked to these ads, before the table filters). The **Performance** chart compares the rows you tick in the table, up to ten at once; with nothing ticked it charts the top four.
+
+The **Channels** and **Ad accounts** selectors, the search box, the **Filter** menu (platform, status and metric ranges) and the date range behave as on the [Campaigns](/help-center/atlas/ad-center/campaigns#filter-search-and-show-disabled) page. Paused and removed creatives are hidden while **Show disabled** is off; that switch lives in the Campaigns table menu.
+
+## Scores
+
+Four columns rate each creative from 0 to 100: **Hook**, **Watch**, **Click** and **Overall**. A score is a percentile rank, not a raw value: the creative is compared with the other ads of the same platform, ad account and campaign that had impressions in the range. 100 means it beat every peer; 50 means it sits in the middle. A creative with no peers scores 60, which stands for "no evidence either way".
+
+![Creative center table with the Hook, Watch and Click scores as colored bars](/images/atlas/ad-center/creative-center--scores.png)
+
+| Score | What it measures | Based on |
+| --- | --- | --- |
+| **Hook** | How well the creative captures attention. | The share of impressions that became 3-second views (Meta), 2-second views (TikTok) or 25% views (Google Ads). |
+| **Watch** | How well the creative keeps attention. | Hold views, full views and average watch time. |
+| **Click** | How well the creative drives clicks. | Outbound CTR on Meta, CTR on Google Ads and TikTok, and on TikTok also clicks per 6-second view. |
+| **Overall** | How the creative performs on every important metric. | Results make up half the score (ROAS, CPA, conversion rate, AOV, cost per add to cart); traffic (CTR, CPM, CPC, frequency) and engagement (the Hook, Watch and Click scores) a quarter each. |
+
+Image ads have no video views, so they get no Hook or Watch score; the row carries a note saying so. In the Overall score, a metric the creative has no value for (no orders, no reach) is left out and the remaining weights are rebalanced.
+
+The Overall band reads **Excellent** from 70, **Fair** from 40 and **Poor** below. The Hook, Watch and Click bars are green from 67, amber from 34 and red below. Hover any score for the explanation behind it, including the rate it was ranked on.
+
+![Hook score tooltip showing 75 out of 100 and the thumbstop rate behind it](/images/atlas/ad-center/creative-center--score-tooltip.png)
+
+## Creative insights
+
+Select a row to open the **Creative insights** sheet. On the left you see a preview built from the synced creative: for Meta, a placement selector lets you switch between placements such as Facebook Feed; for TikTok, the preview is the For You feed. On the right, the **Gender & age breakdown** chart shows how the creative's spend was split by audience, from the audience data Atlas reads from Meta.
+
+![Creative insights sheet for a Meta carousel with the Facebook Feed preview and the Gender & age breakdown](/images/atlas/ad-center/creative-center--insights-sheet.png)
+
+![Creative insights sheet for a TikTok creative with the placement selector and the For You feed preview](/images/atlas/ad-center/creative-center--insights-sheet-tiktok.png)
+
+<Note>
+  The breakdown depends on the Meta audience sync, which Atlas skips while an account's API usage is above 50%. If the chart is empty, check the account's **API usage** row on the [Ad accounts](/help-center/atlas/ad-center/connect-ad-accounts#account-health) page and try again after the next sync.
+</Note>
+
+## Color formatting
+
+The **Table settings** menu in the table header has two entries. **Customize columns** picks which metric columns show, from the same list as the Campaigns table plus the four scores. **Color formatting** shades the metric cells so the strong and weak rows stand out without reading every number: green where a row is better than the rest of the column, red where it is worse, with the column's average as the reference.
+
+Each metric column is compared with its own average across the rows on screen: cells above the average turn green and cells below it turn red, with darker shades the further from the average. The menu offers **Off**, **Green**, **Red** or **Both**; both colours are on by default.
+
+Turn it off from the same menu if you prefer plain numbers; the table options menu of the Campaigns page is a separate setting.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Campaigns" icon="table" href="/help-center/atlas/ad-center/campaigns" arrow>
+    The same metrics per campaign, ad set and ad.
+  </Card>
+  <Card title="Metrics" icon="calculator" href="/help-center/atlas/ad-center/metrics" arrow>
+    The video and creative metrics behind the scores.
+  </Card>
+  <Card title="Connect ad accounts" icon="plug" href="/help-center/atlas/ad-center/connect-ad-accounts" arrow>
+    Sync the accounts whose creatives show here.
+  </Card>
+  <Card title="Billing" icon="credit-card" href="/help-center/atlas/settings/billing" arrow>
+    Move to Scale or Enterprise to unlock the Creative center.
+  </Card>
+</Columns>

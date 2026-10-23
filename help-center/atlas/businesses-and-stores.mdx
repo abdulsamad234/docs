@@ -1,0 +1,114 @@
+---
+title: "Businesses and stores"
+description: "How Referly Atlas organises your account into businesses and stores, how to switch between them, when to look at all stores or one store, and how to pause or delete a store."
+keywords: ["Atlas business", "Atlas store", "all stores", "store picker", "add a business Atlas", "switch business", "pause tracking", "delete Atlas store", "store status", "Referly Atlas organisation"]
+---
+Everything in Referly Atlas hangs off two things: a business and its stores. A business is the company or brand; a store is one website or app that Atlas tracks. Reports, pixels, filters and settings belong to a store, while plans, team members and the business switcher sit one level up. This page explains that structure and the controls you use to move around it.
+
+## How Atlas is organised
+
+```text
+Your Referly account
+└── Business (for example Northwind Outfitters)
+    ├── Store: nw-us (Shopify)
+    ├── Store: nw-eu (WooCommerce)
+    └── Store: nw-labs (tracking script)
+```
+
+- **Account**: your Referly login. It carries the Atlas plan, the seats and the monthly tracked revenue meter, counted across every business and store you own.
+- **Business**: a group of stores with a business type (ecommerce, SaaS, courses, marketplace, agency or other) and a team. The type sets the default events for new pixels. The **All stores** page says it plainly: a business groups the stores you track.
+- **Store**: one site or app with its own platform connection (Shopify, WooCommerce or the tracking script), its own [pixels](/help-center/atlas/pixels), [event filters](/help-center/atlas/event-filters), [store settings](/help-center/atlas/settings/store-settings), currency and time zone. Orders, conversions and visits are always recorded against a store.
+
+If you already track a site for your affiliate program, the store wizard offers it under **Or use a site from your affiliate program**, so you do not type its address twice.
+
+How many stores you can add depends on your plan. When you hit the limit, the wizard shows "Your plan includes N stores. Upgrade to add more." with a **See plans** link. Limits per plan are on the [Billing](/help-center/atlas/settings/billing) page.
+
+## Switch between businesses
+
+Open the business switcher by clicking the name of the current business in the navigation. It lists the business with its stores, and offers:
+
+- **Add store**, which opens the [Add a store wizard](/help-center/atlas/setup) for this business.
+- **Add new business**, which starts the three-step business setup described below.
+- **Switch apps**, which takes you to your Referly affiliate program.
+
+![Business switcher open, showing Northwind Outfitters with its stores, Add store, Add new business and the Switch apps row for Referly](/images/atlas/getting-started/businesses-and-stores--switcher.png)
+
+Choose another business to move to it. Every page then shows that business's stores. Team members only see the businesses they were invited to; admins can open every store of a business, while members see only the stores picked for them. See [Team](/help-center/atlas/settings/team).
+
+## All stores or one store
+
+The store picker at the top of every page decides whose numbers you are looking at. Choose **All stores** for the whole business, or one store for that store alone. Each store appears with its status dot, and when the business has seven or more stores a **Find a store** box lets you search.
+
+![Store picker open with All stores selected and the stores of the business listed with their status dots](/images/atlas/getting-started/businesses-and-stores--store-picker.png)
+
+The choice follows you across Overview, Reporting, Live activity and Pixels and destinations:
+
+| Scope | What you see |
+| --- | --- |
+| **All stores** | The Overview is titled **Business overview** with the store count. Revenue and orders are summed across stores, and the Live activity feed gets a **Store** column. Pixels and destinations shows one section per store. |
+| One store | The Overview is titled **Store overview** and shows that store's status banner. Everything else is filtered to that store. |
+
+Some things need one store: the setup wizard, the store settings (which list your stores on the left so you can switch there), and pixel credentials. When you connect an ad account while **All stores** is selected, Atlas asks **For which store?** first.
+
+The **All stores** page itself lists every store of the business with its platform, status badge and an on/off switch. From a store row you can **Open** it, resume its **Setup wizard**, open **Store settings** or **Delete Atlas store**. A store whose setup is not finished also offers **Finish setup**.
+
+![All stores page listing the seven stores of Northwind Outfitters with their platform, status badge and on/off switch](/images/atlas/getting-started/businesses-and-stores--all-stores.png)
+
+![Store row menu with Open, Setup wizard, Store settings and Delete Atlas store](/images/atlas/getting-started/businesses-and-stores--row-menu.png)
+
+## Add a business
+
+You need a second business when the sites you track belong to different brands or clients and should not share reports, pixels or team members. An agency, for example, usually runs one business per client.
+
+1. Open the business switcher and select **Add new business**.
+2. Answer **What kind of business is it**: the same six types as in onboarding, with a category chip underneath. See [Step 1 of onboarding](/help-center/atlas/create-your-account#step-1-what-do-you-sell) for what each type changes.
+3. Fill in **About the new business**: the website URL, the business name (filled in automatically when Atlas can read the site) and an optional logo up to 1MB.
+4. On **Connect its first store**, select **Connect your store** to open the wizard, or **Skip for now** to come back later.
+
+![Add a new business, step 1: What kind of business is it, with the six business type cards from Ecommerce store to Something else](/images/atlas/getting-started/create-your-account--step-1.png)
+
+Only the account owner or an admin can add a business. A new business starts with no stores: its Overview shows an **Add store** button and a **Complete your setup** pill in the top bar until you add one.
+
+![Overview of a business with no stores yet, with the Add store button and the Complete your setup pill in the top bar](/images/atlas/getting-started/businesses-and-stores--no-stores.png)
+
+All businesses on one account share the same Atlas plan: one subscription, one tracked revenue band, one pool of stores, ad accounts and seats. You do not pay per business.
+
+## Store statuses
+
+Every store carries a status badge, shown on the **All stores** page, in the store picker and as a banner on its Overview. The ones you will meet most often:
+
+- **Draft**: the wizard is not finished. No events are tracked yet.
+- **Awaiting data**: connected and waiting for the first event or order.
+- **Running**: events are flowing to your destinations.
+- **Paused**: nothing is sent until you resume the store.
+
+A store goes live on its own once the tracking step of the wizard is done and your plan is active: first **Awaiting data**, then **Running** with the first order. The full list, including **Pending connection**, **Reviewing**, **Disabled** and **Disconnected**, with what to do about each, is in [Store statuses](/help-center/atlas/statuses#store-statuses).
+
+## Pause or delete a store
+
+**Pause** when you want to stop sending events for a while without losing anything. Flip the switch on the store's row on the **All stores** page, or open **Store settings**, scroll to **Danger zone** and select **Pause tracking**. The store moves to **Paused**: Atlas keeps recording orders and visits, but nothing is sent to your pixels until you select **Resume tracking** (or flip the switch back on). Resuming needs an active plan.
+
+**Delete** when the store is gone for good. Choose **Delete Atlas store** from the row menu or from **Danger zone** in Store settings. The confirmation dialog spells out what happens: tracking stops and the store's Atlas data is deleted for good, while your affiliate data stays.
+
+<Warning>
+  Deleting a store cannot be undone. If you only need a break, pause instead.
+</Warning>
+
+Turning a platform off for one store, without pausing the store, is done on [Pixels and destinations](/help-center/atlas/pixels#turn-a-platform-on-or-off).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Add a store" icon="store" href="/help-center/atlas/setup" arrow>
+    Connect a new store to a business in four steps.
+  </Card>
+  <Card title="Statuses and labels" icon="circle-info" href="/help-center/atlas/statuses" arrow>
+    Every store, pixel and delivery status explained.
+  </Card>
+  <Card title="Store settings" icon="sliders" href="/help-center/atlas/settings/store-settings" arrow>
+    Currency, attribution, consent, test mode and the danger zone.
+  </Card>
+  <Card title="Team" icon="users" href="/help-center/atlas/settings/team" arrow>
+    Give people access to a business or to specific stores.
+  </Card>
+</Columns>

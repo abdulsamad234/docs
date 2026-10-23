@@ -1,7 +1,7 @@
 ---
 title: "Bot protection"
 description: "Stop fake and automated affiliate sign-ups in Referly. Turn on reCAPTCHA bot protection to add an 'I'm not a robot' check to your affiliate portal login and sign-up pages."
-keywords: ["bot protection", "reCAPTCHA affiliate portal", "stop fake sign-ups", "I'm not a robot", "spam affiliate applications", "affiliate portal security", "Referly bot protection", "automated sign-ups"]
+keywords: ["bot protection", "reCAPTCHA affiliate portal", "stop fake sign-ups", "I'm not a robot", "spam affiliate applications", "affiliate portal security", "Referly bot protection", "automated sign-ups", "reCAPTCHA custom domain"]
 ---
 Open sign-up pages attract bots. If your portal lets anyone apply, you can end up with a list full of fake accounts made by automated scripts — junk to sort through, and sometimes an attempt to game your program. Bot protection adds an "I'm not a robot" check to your affiliate portal's login and sign-up pages to filter those out.
 
@@ -19,7 +19,11 @@ The **reCAPTCHA protection** card has one switch: **Enable reCAPTCHA verificatio
   When the "reCAPTCHA settings updated successfully" message appears and the bottom of the card reads **reCAPTCHA protection is active** in green, your portal is protected.
 </Check>
 
-There's nothing to sign up for and no keys to copy in. Referly provides the bot protection, and it covers both your Referly address and any [custom domain](/help-center/settings/portal/custom-domain) you've added.
+There's nothing to sign up for and no keys to copy in. Referly provides the bot protection on your portal's Referly address, such as `acme.referly.so`.
+
+<Note>
+  On a [custom domain](/help-center/settings/portal/custom-domain) the check can't load, so it isn't enforced there. Affiliates who use your custom domain sign in and sign up without it rather than being blocked.
+</Note>
 
 To switch it off later, turn the same switch off. The card then reads **reCAPTCHA protection is disabled**, and affiliates sign in and sign up without any check.
 
@@ -31,6 +35,8 @@ With bot protection on, an **I'm not a robot** checkbox appears on your portal's
 
 For a real person this is one click and usually nothing more. Occasionally it shows a short picture puzzle when something looks unusual, such as an affiliate on a shared network.
 
+The checkbox appears again on the next screen, where affiliates type in the verification code emailed to them. If the check doesn't go through, they see **We couldn't verify that you're human. Please try again.** and can tick the box again to retry.
+
 The check applies whenever an affiliate signs in, not only when they first join.
 
 <Note>
@@ -39,7 +45,7 @@ The check applies whenever an affiliate signs in, not only when they first join.
 
 ## Should you turn it on?
 
-Bot protection costs your genuine affiliates one extra click, so it's a trade-off worth thinking about.
+Bot protection costs your genuine affiliates an extra click or two, so it's a trade-off worth thinking about.
 
 Turn it on when:
 

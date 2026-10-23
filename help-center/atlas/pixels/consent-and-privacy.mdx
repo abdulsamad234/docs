@@ -1,0 +1,112 @@
+---
+title: "Consent and privacy"
+description: "How Referly Atlas handles cookie consent and personal data: the Strict, Balanced and Off consent modes, visitors with unknown consent in the EEA, UK and Switzerland, where consent signals come from, allowed domains, what is hashed before it is sent, fingerprint matching, Meta Limited Data Use and data deletion."
+keywords: ["atlas consent mode", "cookie consent ad tracking", "gdpr conversions api", "eea uk switzerland consent", "shopify customer privacy api", "iab tcf consent", "hashed email sha256", "fingerprint matching", "meta limited data use", "atlas data deletion"]
+---
+Atlas sends events to ad platforms on your behalf, so it has to respect what your visitors agreed to. This page explains how consent decides what is sent, where Atlas reads a visitor's choice, what leaves your store hashed and what leaves as is, and how data is matched and deleted.
+
+The settings live in **Store settings**, in the **Privacy and consent** section ("What Atlas sends to your ad platforms when visitors answer, or ignore, your cookie banner."), with the matching options one section up under **Attribution**. See [Store settings](/help-center/atlas/settings/store-settings) for the rest of the page.
+
+## Consent modes
+
+**Consent mode** decides "When Atlas needs marketing consent before it sends a visitor's events." There are three options:
+
+![Consent mode settings: Strict, Balanced (recommended) and Off, plus the choice for visitors with unknown consent](/images/atlas/pixels/consent-and-privacy--settings.png)
+
+| Mode | What it means |
+|---|---|
+| **Strict** | "Nothing is sent for a visitor until marketing consent is granted." The tracking script holds a visitor's events until they grant marketing consent, wherever they are; a visitor who only allowed analytics is sent without identifiers. Orders and conversions that reach Atlas from your platform or billing tool for a visitor whose consent is unknown are still sent outside the consent regions. |
+| **Balanced** (recommended, the default) | "Consent is required only where the law asks for it: EEA, UK and Switzerland." Visitors elsewhere are sent without waiting for a banner. |
+| **Off** | "Consent is ignored. Use it only where no consent law applies to your visitors." Everything is sent except an explicit decline. |
+
+Whatever the mode, a visitor who declined marketing consent is never sent to an ad platform. The event shows as **Skipped** in Live activity with the reason "Visitor declined marketing consent". Klaviyo follows the same marketing flag as the ad platforms.
+
+The consent regions are the EEA, the UK and Switzerland, read from the visitor's country. A visitor whose country Atlas cannot tell counts as not needing consent.
+
+In the browser, the tracker applies the same rules before anything leaves the page. Until a visitor in a consent region answers, it sends no identifiers at all, and in Strict mode it holds that visitor's events entirely. Google Ads conversions on your site use Google's Consent Mode: they start as denied in the consent regions (unless your mode is **Off**) and update the moment the visitor answers.
+
+## Unknown consent
+
+A visitor in a consent region who never answers your banner has unknown consent. **Visitors with unknown consent** ("A visitor from the EEA, UK or Switzerland who never answered your banner.") decides what happens to their events:
+
+- **Skip the event** (the default, marked **Safer**): "Nothing is sent until the visitor answers. The safer choice." The event shows as **Skipped** with the reason "Consent unknown in a consent-required region".
+- **Send the event**: "Events go out anyway. You take responsibility for the consent."
+
+This setting is greyed out while consent mode is **Off** ("Not used while consent mode is Off."). Outside the consent regions, unknown consent is treated as allowed.
+
+An order inherits the consent of the checkout session it came from when Atlas knows it. An order whose visit Atlas could not match has unknown consent, and follows this setting if the customer is in a consent region.
+
+## Where consent comes from
+
+Atlas does not show a banner of its own. The tracker listens to the consent tooling you already run:
+
+- **Shopify's Customer Privacy API.** On Shopify, the tracker reads the store's privacy settings and the choice the visitor makes in Shopify's cookie banner. Nothing to configure.
+- **IAB TCF v2.** If your consent banner implements the IAB Transparency and Consent Framework (most consent management platforms do), the tracker reads the visitor's choice from it.
+- **The consent call.** On a custom site or with a banner that does neither, your developer tells the tracker the visitor's choice with one call; see [Consent on your own site](/help-center/atlas/setup/tracking-script#consent-on-your-own-site) and the [Tracker JS API](/help-center/atlas/developers/tracker-js-api).
+
+A choice given through the consent call is remembered in the visitor's browser for 182 days, so it still applies on the visitor's next visit. Events are also recorded with the consent they were collected under, which is how an order later carries its session's consent.
+
+## Allowed domains
+
+**Allowed domains** restricts which sites can send events to the store: "Accept events only from these domains and their subdomains. Leave the list empty to accept events from any site that loads your script." Type a domain and press Enter or **Add**; you can list up to 20.
+
+Leave the list empty while you set up, then add your domains once tracking is live if you want to be sure that a copied script on a staging site or someone else's page cannot feed events into your store.
+
+## What is hashed and what is sent as is
+
+Ad platforms match events to their users with hashed personal data, so Atlas hashes the fields that identify a person before they leave. Each value is trimmed and lowercased, phone numbers are normalised to the international format, and the result is hashed with SHA-256:
+
+- Email address
+- Phone number
+- First name and last name
+- City, state, zip code and country
+- External id (your own customer id)
+
+The platforms match the hashes against their own, so the raw value never reaches them. Atlas itself keeps the customer's email on the order so you can see who bought; it is removed when the customer's data is erased.
+
+Sent as is, because the platforms need them raw to match the click or the browser:
+
+- The visitor's IP address and user agent
+- Meta's browser and click cookies, and TikTok's browser cookie
+- Click ids from the ad that brought the visitor: Google, Microsoft, TikTok, Snapchat, Pinterest, Reddit, Taboola and X each have their own
+
+Two platforms differ. **Klaviyo** is an email platform that stores profiles, so it receives the email and phone number unhashed. **Taboola** receives no personal data at all; it matches through its click id only.
+
+## Fingerprint matching and the visitor cookie
+
+Atlas recognises a returning browser with a first-party cookie. **Visitor cookie** in the **Attribution** section sets "How long Atlas remembers a returning browser, up to 400 days. Some browsers keep it for less." The default is 400 days.
+
+![Attribution section with the 7, 30 and 90 day attribution window, the visitor cookie length, fingerprint matching and the matching window](/images/atlas/settings/store-settings--attribution.png)
+
+When the cookie is gone (a browser that clears it, or a visit from another device), **Fingerprint matching** can "Stitch a cookie-less return visit to its earlier session with the IP, user agent and screen size." It is on by default. Only one visitor with the same network fingerprint inside the window counts as a match; when the fingerprint is ambiguous, Atlas does not guess. **Matching window** sets "How long after a visit a fingerprint can still match it, up to 168 hours (7 days)", with presets **24h**, **3 days** and **7 days**; the default is 72 hours.
+
+The setting says it in its own words: "Never used on its own for visitors who must consent." In the consent regions, a fingerprint is only used after the visitor granted consent. Orders matched this way show **Fingerprint** in the Match column of the Overview, and the fingerprint sits last in the order of match methods, after the cart, the cookie, the email and the platform customer ids. See [How Atlas works](/help-center/atlas/how-it-works#how-an-order-is-matched-to-a-visit).
+
+## Meta Limited Data Use
+
+Meta's Limited Data Use flag asks Meta to limit how it uses an event's data for people in US states with privacy laws. Atlas can set it on every event a Meta pixel sends, but there is no switch for it in the app. If you need it, contact support with the store and the Meta pixel, and it is turned on for you.
+
+Separately from that setting, a visitor from the US who has opted out of the sale of their data through your store's privacy controls is always sent to Meta with Limited Data Use, whatever the pixel's setting.
+
+## Data deletion
+
+- **Shopify data erase requests.** When a customer asks Shopify to erase their data, Atlas removes the personal data from their orders, deletes their customer and visitor records, and scrubs the IP address and user agent from their events and sessions. When a store asks Shopify to erase the shop's data, every Atlas record of that store is deleted.
+- **Deleting a store.** **Delete Atlas store** in the **Danger zone** of Store settings "Deletes the store's tracking data, pixels, filters and connected ad accounts. Your affiliate data stays." Pausing a store keeps its data; only deleting removes it.
+- **Retention.** Delivery logs are kept for 90 days. Event history is kept for the length your plan includes; see [Billing](/help-center/atlas/settings/billing).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Store settings" icon="sliders" href="/help-center/atlas/settings/store-settings" arrow>
+    Attribution window, visitor cookie, consent and allowed domains.
+  </Card>
+  <Card title="Tracking script" icon="code" href="/help-center/atlas/setup/tracking-script" arrow>
+    Install the tracker on your own site and pass consent to it.
+  </Card>
+  <Card title="Events that need an identity" icon="id-card" href="/help-center/atlas/events#events-that-need-an-identity" arrow>
+    Why some events are skipped before they reach a platform.
+  </Card>
+  <Card title="Live activity" icon="wave-pulse" href="/help-center/atlas/reports/live-activity" arrow>
+    See skipped events and the consent reason on each row.
+  </Card>
+</Columns>

@@ -1,0 +1,121 @@
+---
+title: "Leads, sign ups, trials and subscriptions"
+description: "Referly Atlas tracks more than purchases: send leads, sign ups, trial starts and new subscriptions to your ad platforms from your site, your billing tool, your backend, Zapier or Make, and see them by campaign."
+keywords: ["Atlas conversions", "lead tracking", "sign up tracking", "trial start conversion", "subscription conversion", "CompleteRegistration", "StartTrial", "Subscribe", "server-side conversions", "SaaS ad attribution", "Referly Atlas"]
+---
+Atlas is not only for stores. A SaaS app can send its sign ups, trials and new subscriptions; a lead-gen site can send its form leads; a course business can send leads and sales. Each conversion is matched to the visit and the ad that brought the person in, shown in your reports, and sent to every pixel you turned it on for.
+
+## The four conversions
+
+| Atlas event | When to use it | What Meta, TikTok and the others call it |
+| --- | --- | --- |
+| **Lead** | A form submission, a newsletter sign up, a quote request. | Lead |
+| **Sign up** | A new account on your site or app. | CompleteRegistration, SignUp, sign_up |
+| **Start trial** | A free trial begins. | StartTrial, start_trial |
+| **Subscribe** | A paid subscription starts, or a trial converts. | Subscribe, subscribe |
+
+Each one can carry a value and a currency, for example the first month's price on a subscription, and the person's email or phone so the platforms can match them. Purchases stay purchases: payments arrive as **Purchase** events as before.
+
+Turn each conversion on or off per pixel under **Pixels and destinations**. A new pixel starts with the events that fit your business type: a SaaS business starts with Page view, Lead, Sign up, Start trial and Subscribe; a store starts with the cart funnel. Not every platform takes every event: Pinterest has no trial or subscribe event, Snapchat has no lead event, Reddit receives trials and subscriptions as custom events, and Google Ads and X need a conversion label or event ID per event. The platform guides list what each one accepts.
+
+## Where conversions come from
+
+<AccordionGroup>
+  <Accordion title="Your billing tool or store platform (no code)">
+    Atlas records these from the data integration connected to the store. Payments still arrive as purchases.
+
+    | Platform | Conversions Atlas records |
+    | --- | --- |
+    | Stripe, Paddle, Chargebee | **Start trial** when a subscription starts in trial, **Subscribe** when a paid subscription starts or a trial converts |
+    | Creem, Polar | **Start trial** and **Subscribe**. On Polar, add the subscription created, active and updated events to your webhook. |
+    | Skillplate | **Subscribe** when a subscription starts |
+    | Shopify | **Sign up** when a customer creates a classic customer account, **Lead** for newsletter sign ups from your theme's form |
+    | WooCommerce | **Sign up** when a customer registers, **Lead** from Contact Form 7 and WPForms submissions (Referly plugin 2.2.0 or later), **Start trial** and **Subscribe** from WooCommerce Subscriptions (2.3.3 or later) |
+    | Sharetribe | **Sign up** for every new marketplace user |
+    | Zylvie | **Lead** for free products and opt-ins |
+  </Accordion>
+  <Accordion title="Referly's sign-up call (no extra code)">
+    If your sign-up page already calls the Referly affiliate sign-up helper for your affiliate program, Atlas records every call as a **Sign up**, for all visitors, not only referred ones. Nothing to change.
+  </Accordion>
+  <Accordion title="The tracking script">
+    Call the tracker where the conversion happens. Pass an id so a page reload or a second report of the same conversion is not counted twice, and the person's email so the platforms can match them.
+
+    ```js
+    referlyAtlas.track("CompleteRegistration", { id: user.id, email: user.email });
+    referlyAtlas.track("Lead", { email: form.email });
+    referlyAtlas.track("StartTrial", { id: subscription.id, value: 49, currency: "USD" });
+    referlyAtlas.track("Subscribe", { id: subscription.id, value: 49, currency: "USD" });
+    ```
+
+    The full reference is on the [Tracker JavaScript API](/help-center/atlas/developers/tracker-js-api) page.
+  </Accordion>
+  <Accordion title="Your backend, Zapier or Make">
+    Send a request to the Atlas events endpoint with your Atlas API token (from Store settings) or your Referly API key, and a body like this:
+
+    ```json
+    { "event": "StartTrial", "id": "sub_123", "email": "jane@example.com", "value": 49, "currency": "USD" }
+    ```
+
+    In Zapier use **Webhooks by Zapier**, in Make the **HTTP** module, with the same URL, header and body; the wizard's **Connect your data** step shows them filled in. You can send up to 50 events at once. See the [Events API](/help-center/atlas/developers/events-api).
+  </Accordion>
+</AccordionGroup>
+
+## From your website
+
+The tracking script already records page views and product views. For conversions, add one call where the conversion happens: after the sign-up form succeeds, when the trial starts, on the thank-you page of a lead form. Identify the person first when you can, so a later purchase from the same account is matched too:
+
+```js
+window.referlyAtlas.identify({ email: user.email });
+window.referlyAtlas.track("CompleteRegistration", { id: user.id, email: user.email });
+```
+
+Calls made before the script has loaded are queued and sent once it is ready.
+
+## From your billing tool
+
+Connect the tool in the store wizard's **Connect your data** step (or reopen the wizard from **All stores**). Atlas then records trials and subscriptions straight from the tool's webhooks, with no code on your site. To make the match to the ad exact rather than by email, pass the Atlas visitor id into the checkout: the wizard shows how for each tool (for Stripe, as `referly_vid` in the checkout session metadata). See [Connect your data](/help-center/atlas/setup/connect-your-data).
+
+## From your backend, Zapier or Make
+
+Anything that can send a web request can record a conversion: your own server after it creates an account, a Zap that fires on a new row in your CRM, a Make scenario on a calendar booking. Generate the Atlas API token in Store settings, send the event name, an id, the email and an optional value, and add the visitor id from the browser when you have it. The [Events API](/help-center/atlas/developers/events-api) page lists every field.
+
+## How duplicates are merged
+
+The same conversion reported twice for the same person within 24 hours, for example once by your site and once by Stripe, is counted and sent once. The server report wins: its value and time replace the browser's. Reports from the browser wait a minute for a matching server report before they are sent, so the platforms receive the richer version.
+
+Within one source, the id you pass is the key: a reload of the thank-you page that reports the same id again changes nothing.
+
+## Which platforms receive which conversions
+
+| Platform | Lead | Sign up | Start trial | Subscribe |
+| --- | --- | --- | --- | --- |
+| Meta, TikTok, Microsoft Ads, X, Taboola, Klaviyo | Yes | Yes | Yes | Yes |
+| Google Ads | With a conversion label | With a conversion label | With a conversion label | With a conversion label |
+| Snapchat | No | Yes | Yes | Yes |
+| Pinterest | Yes | Yes | No | No |
+| Reddit | Yes | Yes | As a custom event | As a custom event |
+
+Conversions show in three places: the **Conversions** tiles on the Overview (first, above revenue, for businesses that have no orders), the leads, sign ups, trials and subscriptions columns on **Reporting**, and as green rows in **Live activity**.
+
+![Reporting columns for leads and sign ups on a SaaS store](/images/atlas/events/conversions--reporting.png)
+
+![Conversions tiles on the Overview of a SaaS store](/images/atlas/events/conversions--overview-tiles.png)
+
+![Recent conversions table of a SaaS store](/images/atlas/events/conversions--ledger.png)
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Events Atlas sends" icon="bolt" href="/help-center/atlas/events" arrow>
+    Every event, its defaults by business type, and what each platform calls it.
+  </Card>
+  <Card title="Connect your data" icon="database" href="/help-center/atlas/setup/connect-your-data" arrow>
+    Stripe, Paddle, Chargebee and the other billing tools.
+  </Card>
+  <Card title="Events API" icon="terminal" href="/help-center/atlas/developers/events-api" arrow>
+    The endpoint for your backend, Zapier and Make.
+  </Card>
+  <Card title="Reporting" icon="chart-line" href="/help-center/atlas/reports/reporting" arrow>
+    Conversions by campaign, ad set and ad.
+  </Card>
+</Columns>

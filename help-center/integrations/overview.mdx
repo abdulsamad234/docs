@@ -1,9 +1,13 @@
 ---
 title: "Integrations overview"
-description: "Connect Referly to your payment provider and website. Overview of every Referly integration — Stripe, Shopify, WooCommerce, Paddle, Chargebee, Polar, Zapier, Make — and where to find them in your dashboard."
-keywords: ["referly integrations", "affiliate tracking integration", "connect payment provider", "stripe affiliate tracking", "shopify affiliate integration", "woocommerce affiliate tracking", "paddle integration", "chargebee integration", "polar integration", "zapier affiliate", "integration instructions", "affiliate program setup"]
+description: "Connect Referly to your payment provider and website. Overview of every Referly integration — Stripe, Shopify, WooCommerce, Paddle, Chargebee, Polar, Creem, Ecwid, Sharetribe, Zapier, Make — and where to find them in your dashboard."
+keywords: ["referly integrations", "affiliate tracking integration", "connect payment provider", "stripe affiliate tracking", "shopify affiliate integration", "woocommerce affiliate tracking", "paddle integration", "chargebee integration", "polar integration", "zapier affiliate", "integration instructions", "affiliate program setup", "creem integration", "ecwid integration", "sharetribe integration", "connected integrations"]
 ---
 Referly can only reward the right affiliate if it knows when a referred visitor actually becomes a customer. Integrations are how that information reaches Referly: you connect the tool you take payment with, and you add a small piece of tracking to your checkout or your site. From then on, every referred sale shows up in your dashboard and turns into a commission on its own.
+
+<Note>
+  Looking for your ad platform pixels (Meta, Google Ads, TikTok and more) and server-side conversion events? Those are part of [Referly Atlas](/help-center/atlas), which has its own [pixel guides](/help-center/atlas/pixels).
+</Note>
 
 This page is the map. It covers where integrations live, the two pieces every setup needs, and which guide to open for your platform.
 
@@ -11,14 +15,20 @@ This page is the map. It covers where integrations live, the two pieces every se
 
 ## Where to find your integrations
 
-In the left sidebar, select **Settings**, then **Integrations**. The page is headed **Integration Instructions**.
+In the left sidebar, select **Settings**, then **Integrations**. You land on **Connected integrations**, which shows everything linked to your program in six sections:
 
-![integrations-page](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784770754694-293137-final-integrations-page-1784770754153.png)
+- **Tracking script**: the Referly script on your website, which records clicks and referrals.
+- **Referral tracking**: where Referly learns about sign-ups, free trials and first purchases.
+- **Sales tracking**: where Referly learns about purchases, so commissions can be worked out.
+- **Coupons**: affiliate coupon codes created and tracked through your payment processor.
+- **Payouts**: the providers you pay your affiliates through.
+- **Email integrations**: email tools your new affiliates are added to automatically.
 
-There are two things on it, and you'll usually use both:
+![The Connected integrations page with the numbered Tracking script, Referral tracking and Sales tracking sections and their Add integration cards](/images/help-center/integrations/integrations-page-v2.png)
 
-- The **Connect Integration** button, at the top right, links Referly to your payment provider.
-- The grid of cards below is a library of setup guides, one for each platform and checkout style Referly supports.
+Every section except **Tracking script** ends with a card for adding another integration, such as **Add integration** or **Connect payout method**. If you'd rather be walked through the whole setup in order, select **Setup Integration** at the top right.
+
+The sidebar also has **All integrations**, which opens the full list of Referly integrations on the Referly website in a new tab. If an agency runs your program, it may hide this link.
 
 ## The two pieces of an integration
 
@@ -31,16 +41,17 @@ The one common exception is a coupon-only program. If you track referrals purely
 
 ## Connect your payment provider
 
-Select **Connect Integration** at the top right to open the **Choose Integration** window, then pick your provider.
+In the **Sales tracking** section, select **Add integration**, then pick your provider from the list (you can search for it by name). Its setup steps open, and for most providers the first step has a button such as **Connect Stripe** that opens the provider's connection panel.
 
-![choose-integration](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784770722732-200567-final-choose-integration-1784770722599.png)
+![The Track your sales step of the integration setup with the search box and provider tiles for Stripe, Shopify, WooCommerce, Chargebee, Paddle, Polar, Creem and Sharetribe](/images/help-center/integrations/choose-integration-v2.png)
 
-You can connect **Stripe**, **Shopify**, **Chargebee**, **Paddle**, **WooCommerce**, and **Polar**. A few integrations, like **Zylvie**, are private and only appear once they've been enabled for your account — contact support if you need one of those.
+You can connect **Stripe**, **Shopify**, **Chargebee**, **Paddle**, **WooCommerce**, **Polar**, **Creem**, **Ecwid**, and **Sharetribe**. A few integrations, like **Zylvie**, are private and only appear once they've been enabled for your account — contact support if you need one of those.
 
 How you connect depends on the provider:
 
 - **Stripe** and **Shopify** connect by signing in and approving Referly. There's nothing to copy and paste. Stripe also offers a test mode connection if you want to try the flow before going live.
-- **Chargebee**, **Paddle**, **WooCommerce**, and **Polar** ask for credentials from that tool, such as an API key or access token. Referly tells you exactly which fields it needs and which permissions to switch on before you generate the key, so open that panel first and follow it in order.
+- **Ecwid** connects when you install the Referly app from the Ecwid App Market. See the [Ecwid guide](/help-center/integrations/ecwid).
+- **Chargebee**, **Paddle**, **WooCommerce**, **Polar**, **Creem**, and **Sharetribe** ask for credentials from that tool, such as an API key or access token. Referly tells you exactly which fields it needs and which permissions to switch on before you generate the key, so open that panel first and follow it in order.
 
 Once a provider is linked, it shows a green **Connected** badge along with the account or site it's connected to, so you can tell at a glance that it worked.
 
@@ -50,21 +61,15 @@ To unlink a provider, open the same panel and select **Disconnect**.
 
 ## Choose the right setup guide
 
-The cards on the Integrations page are step-by-step guides. Select **Instructions** on any card to open it — the steps come with your program's own tracking code already filled in, so there's nothing to assemble yourself.
+Every integration you pick under **Referral tracking** or **Sales tracking** comes with its own step-by-step guide. The steps open in the order you do them, with your program's own tracking code already filled in, so there's nothing to assemble yourself.
 
-![guide-card-chips](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784770725963-585312-final-guide-card-chips-1784770725614.png)
+![The Stripe setup guide inside the integration setup, with step 1 Connect Stripe and step 2 Set up sales tracking showing the method dropdown and the code snippet](/images/help-center/integrations/instructions-dialog-v2.png)
 
-Each card tells you what you're in for before you open it:
+Steps Referly can check for itself, such as connecting your account or verifying your tracking script, are ticked off on their own. For the rest, select **Mark as completed** once you've done them.
 
-- The **name and one-line description** describe the exact situation the guide is for, usually phrased as "You use…".
-- A difficulty label: **Easy**, **Medium**, or **Hard**.
-- **No Developer Needed** or **Developer Needed**, so you know whether this is something you can finish yourself.
-- The payment processor the guide applies to.
-- A **Private** label on restricted integrations.
+When a platform can be set up in more than one way, a dropdown at the top of the step lets you choose the method. Pick the one that matches **how you take payment**, not only which company processes it. Stripe alone has five methods, because a Stripe Payment Link and a Stripe Pricing Table are set up in completely different ways. If you're not sure, check your checkout page and see which one it resembles.
 
-![instructions-dialog](https://qnthgdfusotvjgaxpfie.supabase.co/storage/v1/object/public/public-assets/docs/uploads/1784770750814-215712-final-instructions-dialog-1784770750253.png)
-
-Pick the card that matches **how you take payment**, not only which company processes it. Stripe alone has five guides, because a Stripe Payment Link and a Stripe Pricing Table are set up in completely different ways. If you're not sure, check your checkout page and see which one it resembles.
+![The method dropdown at the top of a Stripe setup step, open to show Checkout Sessions API, Coupon codes, Payment Links, Pricing Table and Buy Button](/images/help-center/integrations/guide-card-chips-v2.png)
 
 <Note>
   If an agency runs your program for you, you may see fewer cards than are listed here. Agencies can hide integrations they don't support, so your list reflects what your agency has made available.
@@ -91,8 +96,14 @@ Pick the card that matches **how you take payment**, not only which company proc
   <Card title="Polar" icon="circle-dot" href="/help-center/integrations/polar" arrow>
     Payment links, embedded checkout, or the Polar API.
   </Card>
+  <Card title="Creem" icon="cash-register" href="/help-center/integrations/creem" arrow>
+    Track sales, renewals and refunds from Creem checkouts.
+  </Card>
   <Card title="Ecwid" icon="cart-shopping" href="/help-center/integrations/ecwid" arrow>
-    Track sales on your Ecwid order confirmation page.
+    Install the Referly app from the Ecwid App Market.
+  </Card>
+  <Card title="Sharetribe" icon="store" href="/help-center/integrations/sharetribe" arrow>
+    Track signups, purchases and bookings on your marketplace.
   </Card>
   <Card title="Zylvie" icon="lock" href="/help-center/integrations/zylvie" arrow>
     Track sales on your Zylvie order success page.
@@ -169,7 +180,7 @@ You don't need a named integration to run a program. Four options cover almost e
 
 ## Integrations set up somewhere else
 
-Two kinds of connection don't live on the Integrations page, because they're part of a different job:
+Two kinds of connection have their own settings, because they're part of a different job. You can also connect both from the **Email integrations** and **Payouts** sections of the Integrations page:
 
 - **Email marketing.** Klaviyo, Mailchimp, MailerLite, and Brevo sync your affiliates into a mailing list so you can send them campaigns. Connect these under **Settings**, then **Affiliate portal**, then **Email settings**. See [email marketing integrations](/help-center/engage/emails/integrations).
 - **Payout methods.** Wise, PayPal, and Referly Payouts are how you actually send affiliates their money. Set these up under **Settings**, then **Program details**, then **Payout settings**. See [payout methods](/help-center/manage/payouts/payout-methods).

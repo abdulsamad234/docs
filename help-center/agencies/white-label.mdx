@@ -1,6 +1,74 @@
 ---
 title: "White label"
-description: "Remove Referly branding."
+description: "White label your Referly agency: add your agency name, logos, favicon, email logo and an Open Graph link preview image, and see which Referly branding is hidden from your clients and their affiliates automatically."
+keywords: ["white label affiliate software", "agency white label", "agency logo", "agency favicon", "Open Graph image", "link preview image", "agency email logo", "hide Referly branding", "white label affiliate portal", "Referly agency"]
 ---
+White label puts your agency's name and logos on the dashboards your clients use, so they see your brand instead of Referly's. You set it up once on the **White Label** page, and it applies to your agency dashboard and every client program.
 
-{/* TODO: Write this article. */}
+On top of what you upload, Referly also removes several Referly-branded touches from your client programs automatically. Those are listed in [what your clients and their affiliates see](#what-your-clients-and-their-affiliates-see) below.
+
+## Open the White Label page
+
+Select the gear at the bottom of the left bar to open **Agency Settings**, select the **Customization** tab, then select **White Label**.
+
+Only the agency **Owner** or an **Admin** can save changes here.
+
+![The White Label page under Agency Settings, Customization, with the Agency Name field and the Brand Logos upload boxes for the main logo, collapsed logo, favicon and email logo](/images/help-center/agencies/white-label-page.png)
+
+## Set your agency name
+
+Under **Agency Information**, enter your agency's name in **Agency Name**. It's required, so you can't save the page with it empty.
+
+Your agency name is shown as the page title in the browser tab on your agency's sign-in and sign-up pages, and as the title of link previews when you add an [Open Graph image](#add-a-link-preview-image).
+
+## Upload your logos
+
+Under **Brand Logos**, select an upload box to add each image. Logos and the favicon can be PNG or JPG files of up to 500KB.
+
+| Field | Where it appears | Tips |
+|---|---|---|
+| **Main Logo** | Your agency dashboard and the admin dashboard of every client program. It's the first-choice logo used throughout. | Your full logo. |
+| **Collapsed Logo** | Wherever a smaller logo is needed, such as when the dashboard sidebar is collapsed. | Optional. Use a compact, square version with similar width and height. |
+| **Favicon** | The small icon in the browser tab and in bookmarks. | Square, ideally 32x32 or 64x64 pixels. |
+| **Email Logo** | The notification emails Referly sends on your agency's behalf (see [branded emails](#what-your-clients-and-their-affiliates-see) below). | A horizontal logo with good contrast works best in email. |
+
+## Add a link preview image
+
+**Open Graph Image** is the picture people see when a link to your agency domain is shared in apps like Slack, Discord, or WhatsApp. When you add one, the preview also shows your agency name as its title.
+
+Upload a PNG or JPG of up to 1MB. If you leave it empty, Referly's default preview image is used.
+
+![The Open Graph Image upload box on the White Label page, with the note that it is used for link previews in Slack, Discord and WhatsApp](/images/help-center/agencies/open-graph-image-field.png)
+
+## Save your changes
+
+As soon as you change anything, a **Save Changes** button appears in the bottom right corner. Select it to apply your changes. You'll see **Agency settings saved successfully**.
+
+## What your clients and their affiliates see
+
+Every client program you run is white-labelled automatically, with no settings to change:
+
+- **No Referly help links.** "Learn more" links to Referly's help center are hidden throughout your clients' dashboards. The **Help** section of their sidebar (help center, developer documentation, and booking a call) and the free link shortener are hidden too.
+- **Your logo when connecting a payment processor.** When a client connects a payment processor such as Stripe or Shopify, the connect window shows your **Main Logo** instead of Referly's. If you haven't uploaded a logo, no logos are shown there.
+- **No "Join other programs" for affiliates.** Affiliates of your client programs don't see **Join other programs** in their portal's program switcher, so they aren't sent to Referly's marketplace.
+- **Your domain during setup.** If you've added a [custom domain](/help-center/agencies/custom-domain), then when a client sets up their program, the **Affiliate Portal Subdomain** field and the final setup page show the portal address on your agency domain instead of `referly.so`.
+- **Branded emails to your clients.** Once your [Email Sending Domain](/help-center/agencies/custom-domain#send-client-emails-from-your-own-domain) is verified, the notification emails your clients get (such as new affiliates, new referrals, new sales, payouts, and the weekly report) come from your domain, carry your **Email Logo**, and don't include Referly's footer.
+
+You can also hide a few more Referly options from your clients, such as the **Refer and earn up to $500** button and the marketplace. See [agency-wide switches](/help-center/agencies/feature-access#agency-wide-switches).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Custom domain" icon="globe" href="/help-center/agencies/custom-domain" arrow>
+    Run your dashboard, portals, and emails on your own domain.
+  </Card>
+  <Card title="Feature access and usage limits" icon="sliders" href="/help-center/agencies/feature-access" arrow>
+    Choose what each client can use, and switch options off for everyone.
+  </Card>
+  <Card title="Agencies overview" icon="building" href="/help-center/agencies/overview" arrow>
+    How the agency dashboard and settings fit together.
+  </Card>
+  <Card title="Manage client programs" icon="folder-tree" href="/help-center/agencies/client-programs" arrow>
+    Create programs, hand them to clients, and manage them day to day.
+  </Card>
+</Columns>

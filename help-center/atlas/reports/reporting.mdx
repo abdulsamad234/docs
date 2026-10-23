@@ -1,0 +1,138 @@
+---
+title: "Reporting"
+description: "Use Referly Atlas Reporting to see last-click conversions by campaign, ad set and ad: how a visit gets its platform, which visit gets the order, rows without UTMs, custom and platform columns, search, filters, currency, export and how far back the data goes."
+keywords: ["UTM reporting", "last-click attribution", "campaign ad set ad", "utm_campaign utm_content utm_term", "conversions by campaign", "platform reported purchases", "export CSV JSON Markdown", "attribution window", "Atlas reporting"]
+---
+
+**Reporting** shows every paid order, lead, sign up, trial and subscription grouped by the campaign, ad set and ad that brought the visitor, next to the number each ad platform reported for the same row. Open it from **Reporting** in the left sidebar. The subtitle reads "Last-click conversions for" your store, "by campaign, ad set and ad."
+
+![Reporting page for a store with the Channels, Ad accounts and date controls, the Campaign level selected, and rows per campaign with adds to cart and purchases](/images/atlas/reports/reporting--page.png)
+
+The table follows the store picker and the date range at the top of the page. Campaign rows need UTM parameters on your ad links: [Tag your ads with UTMs](/help-center/atlas/reports/utm-tagging) has a template to paste for each platform.
+
+## Campaign, ad set and ad
+
+Referly Atlas reads three UTM parameters from the landing URL of each visit and uses them as the three levels of the table:
+
+| Level | Comes from |
+|---|---|
+| **Campaign** | `utm_campaign` |
+| **Ad set** | `utm_content` |
+| **Ad** | `utm_term` |
+
+Switch levels with the **Campaign**, **Ad set** and **Ad** tabs above the table, next to the currency selector and **Export**.
+
+![The currency selector, the Campaign, Ad set and Ad level tabs and the export button of the Reporting page](/images/atlas/reports/reporting--levels.png)
+
+Each row has the metrics you chose as columns (see [Choose columns](#choose-columns)). The totals row at the bottom reads **Total · all** followed by the number of campaigns for the whole report, or **Total · this page** for the rows on screen; the **All** and **Page** switch next to it flips between the two. Choose how many rows to show per page: 10, 25 (the default), 50 or 100.
+
+## How a visit gets its platform
+
+Each visit is assigned to an ad platform in two steps:
+
+1. The click id in the landing URL comes first. `fbclid` means Meta; `gclid`, `gbraid` or `wbraid` mean Google Ads; `ttclid` TikTok; `msclkid` Microsoft Ads; `sccid` Snapchat; `epik` Pinterest; `rdt_cid` Reddit; `twclid` X; `tblci` Taboola. Platforms add these to ad clicks on their own.
+2. Without a click id, Atlas reads `utm_source` and recognises the usual names for each platform, such as `facebook`, `instagram` or `meta` for Meta and `google` or `youtube` for Google Ads. The full list is in [Tag your ads with UTMs](/help-center/atlas/reports/utm-tagging#the-parameters-atlas-reads).
+
+The platform decides which logo a row shows and which platform columns compare with it.
+
+## Which visit gets the order
+
+Atlas uses last click. Each paid order, lead, sign up, trial and subscription goes to the last session with a UTM or click id inside the store's attribution window: 7, 30 or 90 days, set under **Attribution** in [Store settings](/help-center/atlas/settings/store-settings#attribution), 30 days by default. When a visitor had several qualifying sessions in the window, a session with a platform click id wins over one with only UTMs, and a session with only UTMs wins over one with only a referrer.
+
+Adds to cart and checkouts work differently: they count for the UTMs of the session they happened in, not the session that later produced the order.
+
+A few rules keep the numbers honest:
+
+- Refunded and cancelled orders are left out; partially refunded orders count net of the refund.
+- Orders recorded in [test mode](/help-center/atlas/settings/store-settings#testing) never count.
+- An order has to be matched to a visitor session first. The **Match** column on [Overview](/help-center/atlas/reports/overview#recent-orders-and-the-match-column) shows how each order was matched; an order with no match cannot be attributed to a campaign.
+
+## Rows without UTMs
+
+Conversions whose session carried no campaign UTMs are grouped by where they came from instead, and pinned to the bottom of the table:
+
+| Row | Meaning |
+|---|---|
+| **Ad click without campaign UTMs** | The visit had a platform click id but no `utm_campaign`. Add the [tracking template](/help-center/atlas/reports/utm-tagging) for that platform so these move into campaign rows. |
+| A bare source such as `newsletter` | The visit had a `utm_source` but no campaign. |
+| A referring site such as `google.com` | No UTMs; the visitor came from that site. |
+| **Affiliate** | The visit came through an affiliate link, shown with the site it was clicked on when known. |
+| **Direct** | No ad, UTM or referrer. |
+
+If you connected ad accounts in Ad center, campaigns, ad sets and ads that synced from them but have no conversions in the range still appear, as rows of zeros, so you can see what is not converting.
+
+## Choose columns
+
+The table starts with the columns that fit your business type: the ecommerce funnel (**Adds to cart**, **Checkouts initiated**, **Purchases**) for stores, and **Leads**, **Sign ups**, **Trials started**, **Subscriptions** and **Purchases** for SaaS businesses.
+
+![Reporting page of a SaaS store with the Total leads, Leads conversion value, Total sign ups and Sign ups conversion value columns](/images/atlas/reports/reporting--saas-columns.png)
+
+Click the columns button at the right end of the table header (its tooltip reads **Customize columns**) to change them. The dialog has two lists:
+
+- **Metrics**: each metric you turn on adds two columns, **Total** plus the metric (for example **Total purchases**) and the metric's conversion value (**Purchases conversion value**). Hover a column header for what it counts, for example "Paid orders whose last click had this UTM. Value is revenue minus refunds." Drag to reorder.
+- **Platforms**: applies to every metric and adds, for each platform you switch on, what Atlas delivered to that platform.
+
+The header shows how many columns are on, for example **6 of 154 columns**. Nothing changes until you press **Apply**; **Reset to default** goes back to the columns for your business type. Your choice is saved per business.
+
+![Customize columns dialog of the report with the seven metrics and the platform columns, each with an on or off switch](/images/atlas/reports/reporting--customize-columns.png)
+
+### Platform columns
+
+A platform column tells you how many of a row's conversions Atlas sent to that platform. On rows that belong to the same platform (a Meta campaign in the Meta column, say), the count cell shows three things: Atlas's own count, a small signed difference, and the number the platform itself reported for that campaign, ad set or ad.
+
+![Meta Ads platform columns of the report: the Total purchases cell shows Atlas's count with the signed difference and the number Meta reported](/images/atlas/reports/reporting--platform-columns.png)
+
+Hover the cell for the full comparison: **Atlas tracked** with the count and value, the platform's own line such as **Meta reported**, the difference between the two, and **Sent to Meta** with how many of Atlas's conversions were delivered to that platform. For Google Ads, whose conversions fire in the browser, that last line reads **Google Ads snippet fired** instead.
+
+![Tooltip card on a Meta purchases cell comparing what Atlas tracked with what Meta reported, the difference and how many purchases were sent to Meta](/images/atlas/reports/reporting--platform-cell-tooltip.png)
+
+The platform's number needs a connected ad account. Without one, the tooltip asks you to connect that platform's ad account in **Ad accounts** to compare; with one, but before the next sync, it says the platform has not reported that metric yet. [Connect ad accounts](/help-center/atlas/ad-center/connect-ad-accounts) explains the sync.
+
+## Search, filter, currency and channels
+
+The controls above the table, from left to right:
+
+- **Search** finds a campaign, ad set or ad by name. The search term is part of the page address, so a bookmarked or shared link keeps it.
+- **Filter** narrows the table to the campaigns or ad sets you pick. Each active filter becomes a chip that you can reopen or clear with its ×; **Clear all** removes them.
+- The currency selector sets the currency every amount is shown in. **Suggested** lists the currencies your stores and ad accounts use; **All currencies** lists the rest. When amounts were converted, a note reads, for example, "Amounts in USD, converted from EUR". Hover it for the **Exchange rates** card, which names the date of the rates and reminds you that "Ad spend converts from each ad account's currency, sales from each store's."
+- **Channels** and **Ad accounts**, next to the date range, list the ad accounts you connected in [Ad center](/help-center/atlas/ad-center/connect-ad-accounts) and work like the same pickers on the Ad center pages. They limit the synced campaign rows to the accounts you tick; if nothing is ticked the table asks you to select at least one. The selection covers the 2,000 most recently seen synced campaigns, so narrow it in **Ad accounts** when you have more.
+
+## Export
+
+**Export**, next to the level tabs, downloads the current level with your columns, filters and date range in one of three formats:
+
+| Format | Use it for |
+|---|---|
+| **CSV** | Spreadsheets. Next to every platform count column the file adds a column with the number that platform reported. |
+| **JSON for AI** | Pasting into an AI assistant or a script. |
+| **Markdown for AI** | Pasting into a chat or a document. |
+
+![Export menu of the report with CSV, JSON for AI and Markdown for AI](/images/atlas/reports/reporting--export-menu.png)
+
+A toast reads **Export ready** when the file is prepared. Tick rows first and the table header turns into a selection bar with **Export selected**, which exports only those rows.
+
+CSV export is included on every Atlas plan.
+
+## How far back you can go
+
+- Any range up to 92 days reads the raw data: every conversion with its value.
+- For longer ranges the page notes "Ranges over 92 days count adds to cart and checkouts from the daily summary, without values or platform columns." A campaign or ad set filter cannot narrow that summary either; shorten the range to see filtered adds to cart and checkouts.
+- Platform columns rely on Atlas's delivery logs, which are kept for 90 days. For an older range the page tells you the date the platform columns start on.
+- Events and sessions are kept for the event history your plan includes; see [Billing](/help-center/atlas/settings/billing#plans-and-prices).
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Tag your ads with UTMs" icon="tag" href="/help-center/atlas/reports/utm-tagging" arrow>
+    The templates to paste in Meta, Google Ads and TikTok so every click carries its campaign.
+  </Card>
+  <Card title="Overview" icon="chart-simple" href="/help-center/atlas/reports/overview" arrow>
+    Revenue, orders, conversions and tracking health at a glance.
+  </Card>
+  <Card title="Date ranges and comparison" icon="calendar" href="/help-center/atlas/reports/date-ranges" arrow>
+    Presets, one range for every page, and how the comparison period is picked.
+  </Card>
+  <Card title="Campaigns in Ad center" icon="bullseye" href="/help-center/atlas/ad-center/campaigns" arrow>
+    Spend, ROAS and CPA per campaign, ad set and ad from your connected ad accounts.
+  </Card>
+</Columns>
