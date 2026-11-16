@@ -361,7 +361,9 @@
                   "help-center/integrations/zylvie",
                   "help-center/integrations/ecwid",
                   "help-center/integrations/creem",
-                  "help-center/integrations/sharetribe"
+                  "help-center/integrations/sharetribe",
+                  "help-center/integrations/jumpseller",
+                  "help-center/integrations/shoplazza"
                 ],
                 "expanded": false
               },
