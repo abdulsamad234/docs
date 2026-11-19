@@ -13,6 +13,10 @@ This article covers the first half in detail, with four different ways to add th
   There's no **WordPress** card in **Settings**, then **Integrations** in your Referly dashboard. That's expected. WordPress is where your site lives, so you'll be using the card that matches your checkout instead: one of the Stripe guides, or **Woocommerce**. This article tells you which.
 </Note>
 
+<Tip>
+  Selling with WooCommerce? You don't need to add the script by hand. Install the [Referly.so plugin](https://wordpress.org/plugins/referly-so/) from the WordPress plugin directory (**Plugins**, then **Add New Plugin**, search **Referly**) and follow [the WooCommerce article](/help-center/integrations/woocommerce).
+</Tip>
+
 ![Referly and WordPress connected by sync arrows](/images/integrations/wordpress/hero.png)
 
 ## What you can and can't track
@@ -209,7 +213,7 @@ The tracking script recognises the visitor. Something else has to tell Referly a
 | Free sign-ups, leads, or a mailing list | The form script in the next section |
 
 <Note>
-  Running WooCommerce? Everything above about installing the script still applies, then follow [the WooCommerce article](/help-center/integrations/woocommerce) for the order side. Don't set up both WooCommerce and a Stripe payment link setup for the same products, or you'll record each sale twice.
+  Running WooCommerce? Skip the script steps above. Install the [Referly.so plugin](https://wordpress.org/plugins/referly-so/) from the WordPress plugin directory instead: it adds the tracking script for you and reports your orders. [The WooCommerce article](/help-center/integrations/woocommerce) walks through it. Don't set up both WooCommerce and a Stripe payment link setup for the same products, or you'll record each sale twice.
 </Note>
 
 If you take payment through Stripe in a way that isn't listed, connecting Stripe to Referly is usually enough on its own. See [the Stripe integration](/help-center/integrations/stripe).

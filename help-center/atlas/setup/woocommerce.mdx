@@ -11,7 +11,7 @@ If you already use the plugin for your affiliate program, you keep it and update
 
 You will need:
 
-- **Admin access to your WordPress site**, to upload and activate a plugin.
+- **Admin access to your WordPress site**, to install and activate a plugin.
 - **The Referly plugin at version 2.1.0 or later.** The block's subtitle asks the question: already use it for your affiliate program? Update it to version 2.1.0 or later.
 - **An Atlas store set up to step 2 of the wizard.** On [Step 1: Your website](/help-center/atlas/setup#step-1-your-website), enter your site address and pick the **WooCommerce** tile.
 
@@ -23,13 +23,17 @@ The plugin's general setup, including its affiliate features, is covered in the 
 
 The first block is **Install the Referly plugin on WordPress**.
 
-![Connect WooCommerce step with Install the Referly plugin, Paste your Atlas token and Verify the connection](/images/atlas/setup/setup-woocommerce--connect-step.png)
+{/* TODO screenshot: setup-woocommerce--connect-step, recapture the Connect WooCommerce step now that it installs from the WordPress plugin directory */}
 
-1. Select **Download plugin** to get the plugin zip file.
-2. In WordPress, go to **Plugins**, **Add New**, **Upload Plugin**, and upload the zip.
-3. Activate the plugin through the **Plugins** menu.
+The plugin is listed in the WordPress plugin directory as [Referly.so – Affiliate & Referral Program for WooCommerce](https://wordpress.org/plugins/referly-so/). **View on WordPress.org** in the block opens that listing.
 
-If the plugin is already installed, upload the new zip the same way; WordPress replaces the old version and keeps your settings. Select **Mark as completed** when it is active. Atlas ticks the block on its own once it hears from the plugin.
+1. In WordPress, go to **Plugins**, **Add New Plugin**.
+2. Search for **Referly** and select **Install Now** on **Referly.so – Affiliate & Referral Program for WooCommerce**.
+3. Select **Activate**.
+
+If the plugin is already installed from the directory, update it under **Plugins** like any other plugin; WordPress keeps your settings. If you installed it from a `.zip` file before, that copy doesn't get updates: deactivate and delete it first, then install it from the directory and enter your settings again, including the Atlas token from Step 2.
+
+Select **Mark as completed** when it is active. Atlas ticks the block on its own once it hears from the plugin.
 
 ## Step 2: Paste your Atlas token
 
@@ -92,7 +96,7 @@ Update to the latest version to get everything. The version you run is visible o
 
 <AccordionGroup>
   <Accordion title="There is no Atlas card in the Referly plugin settings">
-    Your plugin is older than 2.1.0. Select **Download plugin** in the wizard and upload the zip over the old version.
+    Your plugin is older than 2.1.0. Update it under **Plugins** in WordPress. If it was installed from a `.zip` file, it can't update itself: delete it and install Referly from the plugin directory as in [Step 1](#step-1-install-the-plugin).
   </Accordion>
   <Accordion title="Verify and Save in WordPress fails">
     The token was copied incompletely, or it has been regenerated since. Go to **Store settings**, **Tracking and connection**, select **Regenerate** on the **API token** row and paste the new token.

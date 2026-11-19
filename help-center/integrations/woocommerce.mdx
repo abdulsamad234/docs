@@ -39,7 +39,7 @@ There are two parts to the setup, and the second one is optional:
 
 You'll need:
 
-- **Administrator access to your WordPress site**, so you can upload and activate a plugin.
+- **Administrator access to your WordPress site**, so you can install and activate a plugin.
 - **Your Referly program ID.** You'll find it on the WooCommerce guide inside Referly — open your program, go to **Settings**, then **Integrations**, and select the **Woocommerce** card. Your program ID is shown there, ready to copy.
 - **A recent backup of your site.** Standard practice before adding any plugin.
 
@@ -47,17 +47,23 @@ You'll need:
 
 ## Step 1: Install the Referly plugin on your site
 
+The plugin is listed in the WordPress plugin directory as [Referly.so – Affiliate & Referral Program for WooCommerce](https://wordpress.org/plugins/referly-so/). You install it from inside WordPress, and WordPress keeps it up to date for you.
+
 <Steps>
-  <Step title="Download the plugin">
-    On the **Woocommerce** guide in Referly, select the download link to get the plugin file. It downloads as a `.zip` — leave it zipped.
+  <Step title="Open Add New Plugin">
+    In your WordPress admin, go to **Plugins**, then **Add New Plugin**.
   </Step>
-  <Step title="Upload it to WordPress">
-    In your WordPress admin, go to **Plugins**, then **Add New**, and select **Upload Plugin** at the top of the screen. Choose the `.zip` file you downloaded and select **Install Now**.
+  <Step title="Search for Referly">
+    Type **Referly** in the search box. The result is **Referly.so – Affiliate & Referral Program for WooCommerce**. Select **Install Now** on it.
   </Step>
   <Step title="Activate it">
-    When WordPress says the plugin installed successfully, select **Activate Plugin**. WordPress's [plugin documentation](https://wordpress.org/documentation/article/manage-plugins/) covers uploading plugins in more detail if you get stuck.
+    When the button changes, select **Activate**. WordPress's [plugin documentation](https://wordpress.org/documentation/article/manage-plugins/) covers installing plugins in more detail if you get stuck.
   </Step>
 </Steps>
+
+<Note>
+  **Installed Referly from a `.zip` file before?** That copy doesn't get updates from WordPress, and it can't run alongside the directory version. Under **Plugins**, deactivate and delete the old Referly plugin first, then install it from the directory as above. Deleting the old copy clears its settings, so paste your program ID again in Step 2, and your Atlas token if you use [Referly Atlas](/help-center/atlas/setup/woocommerce).
+</Note>
 
 ## Step 2: Point the plugin at your program
 
@@ -194,6 +200,9 @@ Nothing you've already tracked is deleted — affiliates, referred customers, sa
   </Accordion>
   <Accordion title="Orders appear in Referly with no affiliate attached">
     Nothing on the order identified an affiliate. If the buyer arrived through a link, the referral was lost somewhere between landing and checkout — most often a cache serving a page from before the plugin was active, or the buyer clearing cookies. If they used a coupon, check that coupon is one Referly knows about and is assigned to an affiliate.
+  </Accordion>
+  <Accordion title="WordPress says the plugin could not be activated because it triggered a fatal error">
+    An older copy of Referly, installed from a `.zip` file, is still active. Go to **Plugins**, deactivate and delete that copy, then select **Activate** on the one from the plugin directory and paste your program ID again.
   </Accordion>
   <Accordion title="No orders are appearing at all">
     Confirm the plugin is active and shows your program ID, and that your Referly plan is active. If you changed program or reinstalled WordPress, re-enter the program ID in the plugin settings.
